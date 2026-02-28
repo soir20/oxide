@@ -26,6 +26,15 @@ async fn deserialize_len_with_bytes_read(
         }
     }
 
+    if len < 0 {
+        return Err(Error {
+            kind: ErrorKind::NegativeLen(len),
+            offset: tell(file)
+                .await
+                .map(|offset| offset.saturating_sub(bytes_read.try_into().unwrap_or_default())),
+        });
+    }
+
     Ok((len, bytes_read))
 }
 
@@ -64,7 +73,6 @@ trait DeserializeEntry<T, D>: Sized {
 
 pub struct Entry<T, D> {
     pub entry_type: T,
-    pub len: i32,
     pub data: D,
 }
 
@@ -80,14 +88,7 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
             .saturating_add(len_bytes_read)
             .saturating_add(data_bytes_read);
 
-        Ok((
-            Entry {
-                entry_type,
-                len,
-                data,
-            },
-            total_bytes_read,
-        ))
+        Ok((Entry { entry_type, data }, total_bytes_read))
     }
 }
 
@@ -106,16 +107,107 @@ async fn deserialize_entries<T, D, E: DeserializeEntry<T, D>>(
     Ok((entries, bytes_read))
 }
 
+async fn deserialize_f32_be(
+    file: &mut BufReader<&mut File>,
+    len: i32,
+) -> Result<(f32, i32), Error> {
+    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    data.resize(4, 0);
+    Ok((
+        f32::from_be_bytes(data.try_into().expect("data should contain 4 bytes")),
+        usize_to_i32(bytes_read)?,
+    ))
+}
+
+async fn check_int_overflow(
+    file: &mut BufReader<&mut File>,
+    expected_bytes: usize,
+    actual_bytes: usize,
+) -> Result<(), Error> {
+    if actual_bytes > expected_bytes {
+        return Err(Error {
+            kind: ErrorKind::IntegerOverflow {
+                expected_bytes,
+                actual_bytes,
+            },
+            offset: tell(file)
+                .await
+                .map(|offset| offset.saturating_sub(actual_bytes.try_into().unwrap_or_default())),
+        });
+    }
+
+    Ok(())
+}
+
+async fn deserialize_u8(file: &mut BufReader<&mut File>, len: i32) -> Result<(u8, i32), Error> {
+    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    check_int_overflow(file, 1, bytes_read).await?;
+    data.resize(1, 0);
+    Ok((data[0], usize_to_i32(bytes_read)?))
+}
+
+async fn deserialize_u32_le(
+    file: &mut BufReader<&mut File>,
+    len: i32,
+) -> Result<(u32, i32), Error> {
+    let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+    check_int_overflow(file, 4, bytes_read).await?;
+    data.resize(4, 0);
+    Ok((
+        u32::from_le_bytes(data.try_into().expect("data should contain 4 bytes")),
+        usize_to_i32(bytes_read)?,
+    ))
+}
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EntryCountEntryType {
+    EntryCount = 0x1,
+    EntryCount3 = 0x3,
+    EntryCount4 = 0x4,
+}
+
+pub enum EntryCountEntryData {
+    EntryCount { entry_count: u32 },
+    EntryCount3 { entry_count: u32 },
+    EntryCount4 { entry_count: u32 },
+}
+
+impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
+    async fn deserialize(
+        entry_type: &EntryCountEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EntryCountEntryType::EntryCount => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount { entry_count }, bytes_read))
+            }
+            EntryCountEntryType::EntryCount3 => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount3 { entry_count }, bytes_read))
+            }
+            EntryCountEntryType::EntryCount4 => {
+                let (entry_count, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EntryCountEntryData::EntryCount4 { entry_count }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
-    Unknown = 0x2,
+    Scale = 0x2,
 }
 
 pub enum SkeletonData {
     AssetName { name: String },
-    Unknown { data: Vec<u8> },
+    Scale { scale: f32 },
 }
 
 impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
@@ -129,9 +221,9 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((SkeletonData::AssetName { name }, usize_to_i32(bytes_read)?))
             }
-            SkeletonEntryType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((SkeletonData::Unknown { data }, usize_to_i32(bytes_read)?))
+            SkeletonEntryType::Scale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SkeletonData::Scale { scale }, bytes_read))
             }
         }
     }
@@ -144,17 +236,17 @@ pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
 pub enum ModelEntryType {
     ModelAssetName = 0x1,
     MaterialAssetName = 0x2,
-    Radius = 0x3,
-    Unknown1 = 0x4,
-    Unknown2 = 0x5,
+    UpdateRadius = 0x3,
+    WaterDisplacementHeight = 0x4,
+    ObjectTerrainData = 0x5,
 }
 
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
-    Radius { radius: f32 },
-    Unknown1 { data: Vec<u8> },
-    Unknown2 { data: Vec<u8> },
+    UpdateRadius { radius: f32 },
+    WaterDisplacementHeight { height: f32 },
+    ObjectTerrainData { object_terrain_data_id: u32 },
 }
 
 impl DeserializeEntryData<ModelEntryType> for ModelData {
@@ -178,24 +270,22 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            ModelEntryType::Radius => {
-                let (mut radius_bytes, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                radius_bytes.resize(4, 0);
-                let radius = f32::from_be_bytes(
-                    radius_bytes
-                        .try_into()
-                        .expect("radius_bytes should contain 4 bytes"),
-                );
-                Ok((ModelData::Radius { radius }, usize_to_i32(bytes_read)?))
+            ModelEntryType::UpdateRadius => {
+                let (radius, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ModelData::UpdateRadius { radius }, bytes_read))
             }
-            ModelEntryType::Unknown1 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ModelData::Unknown1 { data }, usize_to_i32(bytes_read)?))
+            ModelEntryType::WaterDisplacementHeight => {
+                let (height, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ModelData::WaterDisplacementHeight { height }, bytes_read))
             }
-            ModelEntryType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ModelData::Unknown2 { data }, usize_to_i32(bytes_read)?))
+            ModelEntryType::ObjectTerrainData => {
+                let (object_terrain_data_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    ModelData::ObjectTerrainData {
+                        object_terrain_data_id,
+                    },
+                    bytes_read,
+                ))
             }
         }
     }
@@ -205,189 +295,1602 @@ pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum ParticleEntryType {
-    EffectId = 0x1,
-    Unknown7 = 0xfe,
+pub enum SoundEmitterAssetEntryType {
+    AssetName = 0x1,
+    TimeOffset = 0x2,
+    Weight = 0x3,
 }
 
-pub enum ParticleData {
-    EffectId { effect_id: i32 },
-    Unknown7 { data: Vec<u8> },
+pub enum SoundEmitterAssetEntryData {
+    AssetName { asset_name: String },
+    TimeOffset { time_offset_millis: f32 },
+    Weight { weight: f32 },
 }
 
-impl DeserializeEntryData<ParticleEntryType> for ParticleData {
+impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
     async fn deserialize(
-        entry_type: &ParticleEntryType,
+        entry_type: &SoundEmitterAssetEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleEntryType::EffectId => {
-                let (mut effect_id_bytes, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                effect_id_bytes.resize(4, 0);
-                let effect_id = i32::from_le_bytes(
-                    effect_id_bytes
-                        .try_into()
-                        .expect("effect_id_bytes should contain 4 bytes"),
-                );
+            SoundEmitterAssetEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
                 Ok((
-                    ParticleData::EffectId { effect_id },
+                    SoundEmitterAssetEntryData::AssetName { asset_name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
-            ParticleEntryType::Unknown7 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((ParticleData::Unknown7 { data }, usize_to_i32(bytes_read)?))
+            SoundEmitterAssetEntryType::TimeOffset => {
+                let (time_offset_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterAssetEntryData::TimeOffset { time_offset_millis },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterAssetEntryType::Weight => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterAssetEntryData::Weight { weight }, bytes_read))
             }
         }
     }
 }
 
-pub type ParticleEntry = Entry<ParticleEntryType, ParticleData>;
+pub type SoundEmitterAssetEntry = Entry<SoundEmitterAssetEntryType, SoundEmitterAssetEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum ParticleArrayType {
-    Unknown = 0x1,
-    ParticleEntry = 0x2,
+pub enum SoundEmitterEntryType {
+    Asset = 0x1,
+    Id = 0x2,
+    EmitterName = 0x3,
+    BoneName = 0x4,
+    Heading = 0x5,
+    Pitch = 0x6,
+    Scale = 0x7,
+    OffsetX = 0x8,
+    OffsetY = 0x9,
+    OffsetZ = 0xa,
+    ControlType = 0xb,
+    PlayListType = 0xc,
+    PlayBackType = 0xd,
+    Category = 0xe,
+    SubCategory = 0xf,
+    FadeTime = 0x10,
+    FadeOutTime = 0x11,
+    LoadType = 0x12,
+    Volume = 0x13,
+    VolumeOffset = 0x14,
+    RateMultiplier = 0x15,
+    RateMultiplierOffset = 0x16,
+    RoomTypeScalar = 0x17,
+    AttenuateReverbWithDistance = 0x18,
+    MaxConcurrentSounds = 0x19,
+    AttenuationDistance = 0x1a,
+    ClipDistance = 0x1b,
+    DelayBetweenSounds = 0x1c,
+    DelayBetweenSoundsOffset = 0x1d,
+    EntryCount = 0xfe,
 }
 
-pub enum ParticleArrayData {
-    Unknown { data: Vec<u8> },
-    ParticleEntry { entries: Vec<ParticleEntry> },
+pub enum SoundEmitterEntryData {
+    Asset {
+        entries: Vec<SoundEmitterAssetEntry>,
+    },
+    Id {
+        id: u32,
+    },
+    EmitterName {
+        asset_name: String,
+    },
+    BoneName {
+        bone_name: String,
+    },
+    Heading {
+        heading: f32,
+    },
+    Pitch {
+        pitch: f32,
+    },
+    Scale {
+        scale: f32,
+    },
+    OffsetX {
+        offset_x: f32,
+    },
+    OffsetY {
+        offset_y: f32,
+    },
+    OffsetZ {
+        offset_z: f32,
+    },
+    ControlType {
+        control_type: u8,
+    },
+    PlayListType {
+        play_list_type: u8,
+    },
+    PlayBackType {
+        play_back_type: u8,
+    },
+    Category {
+        category: u32,
+    },
+    SubCategory {
+        sub_category: u32,
+    },
+    FadeTime {
+        fade_time_millis: f32,
+    },
+    FadeOutTime {
+        fade_out_time_millis: f32,
+    },
+    LoadType {
+        load_type: u32,
+    },
+    Volume {
+        volume: f32,
+    },
+    VolumeOffset {
+        volume_offset: f32,
+    },
+    RateMultiplier {
+        rate_multiplier: f32,
+    },
+    RateMultiplierOffset {
+        rate_multiplier_offset: f32,
+    },
+    RoomTypeScalar {
+        room_type_scalar: f32,
+    },
+    AttenuateReverbWithDistance {
+        should_attenuate: bool,
+    },
+    MaxConcurrentSounds {
+        max_concurrent_sounds: u32,
+    },
+    AttenuationDistance {
+        distance: f32,
+    },
+    ClipDistance {
+        clip_distance: f32,
+    },
+    DelayBetweenSounds {
+        delay_between_sounds_millis: f32,
+    },
+    DelayBetweenSoundsOffset {
+        delay_between_sounds_offset_millis: f32,
+    },
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
+    },
 }
 
-impl DeserializeEntryData<ParticleArrayType> for ParticleArrayData {
+impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
     async fn deserialize(
-        entry_type: &ParticleArrayType,
+        entry_type: &SoundEmitterEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            ParticleArrayType::Unknown => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((
-                    ParticleArrayData::Unknown { data },
-                    usize_to_i32(bytes_read)?,
-                ))
-            }
-            ParticleArrayType::ParticleEntry => {
+            SoundEmitterEntryType::Asset => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((ParticleArrayData::ParticleEntry { entries }, bytes_read))
+                Ok((SoundEmitterEntryData::Asset { entries }, bytes_read))
+            }
+            SoundEmitterEntryType::Id => {
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((SoundEmitterEntryData::Id { id }, bytes_read))
+            }
+            SoundEmitterEntryType::EmitterName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    SoundEmitterEntryData::EmitterName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            SoundEmitterEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    SoundEmitterEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            SoundEmitterEntryType::Heading => {
+                let (heading, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::Heading { heading }, bytes_read))
+            }
+            SoundEmitterEntryType::Pitch => {
+                let (pitch, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::Pitch { pitch }, bytes_read))
+            }
+            SoundEmitterEntryType::Scale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::Scale { scale }, bytes_read))
+            }
+            SoundEmitterEntryType::OffsetX => {
+                let (offset_x, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::OffsetX { offset_x }, bytes_read))
+            }
+            SoundEmitterEntryType::OffsetY => {
+                let (offset_y, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::OffsetY { offset_y }, bytes_read))
+            }
+            SoundEmitterEntryType::OffsetZ => {
+                let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::OffsetZ { offset_z }, bytes_read))
+            }
+            SoundEmitterEntryType::ControlType => {
+                let (control_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::ControlType { control_type },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::PlayListType => {
+                let (play_list_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::PlayListType { play_list_type },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::PlayBackType => {
+                let (play_back_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::PlayBackType { play_back_type },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::Category => {
+                let (category, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((SoundEmitterEntryData::Category { category }, bytes_read))
+            }
+            SoundEmitterEntryType::SubCategory => {
+                let (sub_category, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::SubCategory { sub_category },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::FadeTime => {
+                let (fade_time_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::FadeTime { fade_time_millis },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::FadeOutTime => {
+                let (fade_out_time_millis, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::FadeOutTime {
+                        fade_out_time_millis,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::LoadType => {
+                let (load_type, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((SoundEmitterEntryData::LoadType { load_type }, bytes_read))
+            }
+            SoundEmitterEntryType::Volume => {
+                let (volume, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((SoundEmitterEntryData::Volume { volume }, bytes_read))
+            }
+            SoundEmitterEntryType::VolumeOffset => {
+                let (volume_offset, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::VolumeOffset { volume_offset },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RateMultiplier => {
+                let (rate_multiplier, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RateMultiplier { rate_multiplier },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RateMultiplierOffset => {
+                let (rate_multiplier_offset, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RateMultiplierOffset {
+                        rate_multiplier_offset,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::RoomTypeScalar => {
+                let (room_type_scalar, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::RoomTypeScalar { room_type_scalar },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::AttenuateReverbWithDistance => {
+                let (should_attenuate, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::AttenuateReverbWithDistance {
+                        should_attenuate: should_attenuate != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::MaxConcurrentSounds => {
+                let (max_concurrent_sounds, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::MaxConcurrentSounds {
+                        max_concurrent_sounds,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::AttenuationDistance => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::AttenuationDistance { distance },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::ClipDistance => {
+                let (clip_distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::ClipDistance { clip_distance },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::DelayBetweenSounds => {
+                let (delay_between_sounds_millis, bytes_read) =
+                    deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::DelayBetweenSounds {
+                        delay_between_sounds_millis,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::DelayBetweenSoundsOffset => {
+                let (delay_between_sounds_offset_millis, bytes_read) =
+                    deserialize_f32_be(file, len).await?;
+                Ok((
+                    SoundEmitterEntryData::DelayBetweenSoundsOffset {
+                        delay_between_sounds_offset_millis,
+                    },
+                    bytes_read,
+                ))
+            }
+            SoundEmitterEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterEntryData::EntryCount { entries }, bytes_read))
             }
         }
     }
 }
 
-pub type ParticleArray = Entry<ParticleArrayType, ParticleArrayData>;
+pub type SoundEmitterEntry = Entry<SoundEmitterEntryType, SoundEmitterEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationEntryType {
-    AnimationName = 0x1,
-    AssetName = 0x2,
-    Unknown1 = 0x3,
-    Duration = 0x4,
-    LoadType = 0x5,
-    Unknown2 = 0x7,
+pub enum SoundEmitterType {
+    SoundEmitter = 0x1,
+    EntryCount = 0xfe,
 }
+
+pub enum SoundEmitterData {
+    SoundEmitter { entries: Vec<SoundEmitterEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
+    async fn deserialize(
+        entry_type: &SoundEmitterType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            SoundEmitterType::SoundEmitter => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterData::SoundEmitter { entries }, bytes_read))
+            }
+            SoundEmitterType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((SoundEmitterData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ParticleEmitterEntryType {
+    Id = 0x1,
+    EmitterName = 0x2,
+    BoneName = 0x3,
+    Heading = 0x4,
+    Pitch = 0x5,
+    Scale = 0x6,
+    OffsetX = 0x7,
+    OffsetY = 0x8,
+    OffsetZ = 0x9,
+    AssetName = 0xa,
+    SourceBoneName = 0xb,
+    LocalSpaceDerived = 0xc,
+    WorldOrientation = 0xd,
+    HardStop = 0xe,
+}
+
+pub enum ParticleEmitterEntryData {
+    Id { id: u32 },
+    EmitterName { emitter_name: String },
+    BoneName { bone_name: String },
+    Heading { heading: f32 },
+    Pitch { pitch: f32 },
+    Scale { scale: f32 },
+    OffsetX { offset_x: f32 },
+    OffsetY { offset_y: f32 },
+    OffsetZ { offset_z: f32 },
+    AssetName { asset_name: String },
+    SourceBoneName { bone_name: String },
+    LocalSpaceDerived { is_local_space_derived: bool },
+    WorldOrientation { use_world_orientation: bool },
+    HardStop { is_hard_stop: bool },
+}
+
+impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
+    async fn deserialize(
+        entry_type: &ParticleEmitterEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ParticleEmitterEntryType::Id => {
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((ParticleEmitterEntryData::Id { id }, bytes_read))
+            }
+            ParticleEmitterEntryType::EmitterName => {
+                let (emitter_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterEntryData::EmitterName { emitter_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterEntryType::Heading => {
+                let (heading, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Heading { heading }, bytes_read))
+            }
+            ParticleEmitterEntryType::Pitch => {
+                let (pitch, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Pitch { pitch }, bytes_read))
+            }
+            ParticleEmitterEntryType::Scale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::Scale { scale }, bytes_read))
+            }
+            ParticleEmitterEntryType::OffsetX => {
+                let (offset_x, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetX { offset_x }, bytes_read))
+            }
+            ParticleEmitterEntryType::OffsetY => {
+                let (offset_y, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetY { offset_y }, bytes_read))
+            }
+            ParticleEmitterEntryType::OffsetZ => {
+                let (offset_z, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ParticleEmitterEntryData::OffsetZ { offset_z }, bytes_read))
+            }
+            ParticleEmitterEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterEntryData::AssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterEntryType::SourceBoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ParticleEmitterEntryData::SourceBoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ParticleEmitterEntryType::LocalSpaceDerived => {
+                let (is_local_space_derived, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    ParticleEmitterEntryData::LocalSpaceDerived {
+                        is_local_space_derived: is_local_space_derived != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            ParticleEmitterEntryType::WorldOrientation => {
+                let (use_world_orientation, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    ParticleEmitterEntryData::WorldOrientation {
+                        use_world_orientation: use_world_orientation != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            ParticleEmitterEntryType::HardStop => {
+                let (is_hard_stop, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    ParticleEmitterEntryData::HardStop {
+                        is_hard_stop: is_hard_stop != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ParticleEmitterType {
+    ParticleEmitter = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum ParticleEmitterData {
+    ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
+    async fn deserialize(
+        entry_type: &ParticleEmitterType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ParticleEmitterType::ParticleEmitter => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ParticleEmitterData::ParticleEmitter { entries }, bytes_read))
+            }
+            ParticleEmitterType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ParticleEmitterData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EffectDefinitionArrayType {
+    SoundEmitterArray = 0x1,
+    ParticleEmitterArray = 0x2,
+}
+
+pub enum EffectDefinitionArrayData {
+    SoundEmitterArray {
+        sound_emitters: Vec<SoundEmitter>,
+    },
+    ParticleEmitterArray {
+        particle_emitters: Vec<ParticleEmitter>,
+    },
+}
+
+impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayData {
+    async fn deserialize(
+        entry_type: &EffectDefinitionArrayType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EffectDefinitionArrayType::SoundEmitterArray => {
+                let (sound_emitters, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    EffectDefinitionArrayData::SoundEmitterArray { sound_emitters },
+                    bytes_read,
+                ))
+            }
+            EffectDefinitionArrayType::ParticleEmitterArray => {
+                let (particle_emitters, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    EffectDefinitionArrayData::ParticleEmitterArray { particle_emitters },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type EffectDefinitionArray = Entry<EffectDefinitionArrayType, EffectDefinitionArrayData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MaterialTagEntryType {
+    Name = 0x1,
+    MaterialIndex = 0x2,
+    SemanticHash = 0x3,
+    TintSetId = 0x4,
+    DefaultTintId = 0x5,
+}
+
+pub enum MaterialTagEntryData {
+    Name { name: String },
+    MaterialIndex { material_index: u32 },
+    SemanticHash { hash: u32 },
+    TintSetId { tint_set_id: u32 },
+    DefaultTintId { tint_id: u32 },
+}
+
+impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
+    async fn deserialize(
+        entry_type: &MaterialTagEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MaterialTagEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MaterialTagEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MaterialTagEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    MaterialTagEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
+            MaterialTagEntryType::SemanticHash => {
+                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MaterialTagEntryData::SemanticHash { hash }, bytes_read))
+            }
+            MaterialTagEntryType::TintSetId => {
+                let (tint_set_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MaterialTagEntryData::TintSetId { tint_set_id }, bytes_read))
+            }
+            MaterialTagEntryType::DefaultTintId => {
+                let (tint_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MaterialTagEntryData::DefaultTintId { tint_id }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type MaterialTagEntry = Entry<MaterialTagEntryType, MaterialTagEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MaterialTagType {
+    MaterialTag = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum MaterialTagData {
+    Material { entries: Vec<MaterialTagEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<MaterialTagType> for MaterialTagData {
+    async fn deserialize(
+        entry_type: &MaterialTagType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MaterialTagType::MaterialTag => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MaterialTagData::Material { entries }, bytes_read))
+            }
+            MaterialTagType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MaterialTagData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type MaterialTag = Entry<MaterialTagType, MaterialTagData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TextureAliasEntryType {
+    ModelType = 0x1,
+    MaterialIndex = 0x2,
+    SemanticHash = 0x3,
+    Name = 0x4,
+    AssetName = 0x5,
+    OcclusionBitMask = 0x6,
+    IsDefault = 0x7,
+}
+
+pub enum TextureAliasEntryData {
+    ModelType { model_type: u32 },
+    MaterialIndex { material_index: u32 },
+    SemanticHash { hash: u32 },
+    Name { name: String },
+    AssetName { asset_name: String },
+    OcclusionBitMask { bit_mask: u32 },
+    IsDefault { is_default: bool },
+}
+
+impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
+    async fn deserialize(
+        entry_type: &TextureAliasEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TextureAliasEntryType::ModelType => {
+                let (model_type, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TextureAliasEntryData::ModelType { model_type }, bytes_read))
+            }
+            TextureAliasEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    TextureAliasEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
+            TextureAliasEntryType::SemanticHash => {
+                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TextureAliasEntryData::SemanticHash { hash }, bytes_read))
+            }
+            TextureAliasEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            TextureAliasEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    TextureAliasEntryData::AssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            TextureAliasEntryType::OcclusionBitMask => {
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    TextureAliasEntryData::OcclusionBitMask { bit_mask },
+                    bytes_read,
+                ))
+            }
+            TextureAliasEntryType::IsDefault => {
+                let (is_default, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TextureAliasEntryData::IsDefault {
+                        is_default: is_default != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TextureAliasType {
+    TextureAlias = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum TextureAliasData {
+    TextureAlias { entries: Vec<TextureAliasEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
+    async fn deserialize(
+        entry_type: &TextureAliasType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TextureAliasType::TextureAlias => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TextureAliasData::TextureAlias { entries }, bytes_read))
+            }
+            TextureAliasType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TextureAliasData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TintAliasEntryType {
+    ModelType = 0x1,
+    MaterialIndex = 0x2,
+    SemanticHash = 0x3,
+    Name = 0x4,
+    Red = 0x5,
+    Green = 0x6,
+    Blue = 0x7,
+    IsDefault = 0x8,
+}
+
+pub enum TintAliasEntryData {
+    ModelType { model_type: u32 },
+    MaterialIndex { material_index: u32 },
+    SemanticHash { hash: u32 },
+    Name { name: String },
+    Red { red: f32 },
+    Green { green: f32 },
+    Blue { blue: f32 },
+    IsDefault { is_default: bool },
+}
+
+impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
+    async fn deserialize(
+        entry_type: &TintAliasEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TintAliasEntryType::ModelType => {
+                let (model_type, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TintAliasEntryData::ModelType { model_type }, bytes_read))
+            }
+            TintAliasEntryType::MaterialIndex => {
+                let (material_index, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    TintAliasEntryData::MaterialIndex { material_index },
+                    bytes_read,
+                ))
+            }
+            TintAliasEntryType::SemanticHash => {
+                let (hash, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((TintAliasEntryData::SemanticHash { hash }, bytes_read))
+            }
+            TintAliasEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((TintAliasEntryData::Name { name }, usize_to_i32(bytes_read)?))
+            }
+            TintAliasEntryType::Red => {
+                let (red, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Red { red }, bytes_read))
+            }
+            TintAliasEntryType::Green => {
+                let (green, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Green { green }, bytes_read))
+            }
+            TintAliasEntryType::Blue => {
+                let (blue, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((TintAliasEntryData::Blue { blue }, bytes_read))
+            }
+            TintAliasEntryType::IsDefault => {
+                let (is_default, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    TintAliasEntryData::IsDefault {
+                        is_default: is_default != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum TintAliasType {
+    TintAlias = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum TintAliasData {
+    TintAlias { entries: Vec<TintAliasEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<TintAliasType> for TintAliasData {
+    async fn deserialize(
+        entry_type: &TintAliasType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            TintAliasType::TintAlias => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TintAliasData::TintAlias { entries }, bytes_read))
+            }
+            TintAliasType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((TintAliasData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type TintAlias = Entry<TintAliasType, TintAliasData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EffectEntryType {
+    Type = 0x2,
+    Name = 0x3,
+    ToolName = 0x4,
+    Id = 0x5,
+}
+
+pub enum EffectEntryData {
+    Type { effect_type: u8 },
+    Name { name: String },
+    ToolName { tool_name: String },
+    Id { id: u32 },
+}
+
+impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
+    async fn deserialize(
+        entry_type: &EffectEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EffectEntryType::Type => {
+                let (effect_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((EffectEntryData::Type { effect_type }, bytes_read))
+            }
+            EffectEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((EffectEntryData::Name { name }, usize_to_i32(bytes_read)?))
+            }
+            EffectEntryType::ToolName => {
+                let (tool_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EffectEntryData::ToolName { tool_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EffectEntryType::Id => {
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EffectEntryData::Id { id }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EffectType {
+    Effect = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum EffectData {
+    Effect { entries: Vec<EffectEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<EffectType> for EffectData {
+    async fn deserialize(
+        entry_type: &EffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EffectType::Effect => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((EffectData::Effect { entries }, bytes_read))
+            }
+            EffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((EffectData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type Effect = Entry<EffectType, EffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LevelOfDetailAssetEntryType {
+    AssetName = 0x1,
+    Distance = 0x2,
+}
+
+pub enum LevelOfDetailAssetEntryData {
+    AssetName { asset_name: String },
+    Distance { distance: f32 },
+}
+
+impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEntryData {
+    async fn deserialize(
+        entry_type: &LevelOfDetailAssetEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LevelOfDetailAssetEntryType::AssetName => {
+                let (asset_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LevelOfDetailAssetEntryData::AssetName { asset_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LevelOfDetailAssetEntryType::Distance => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    LevelOfDetailAssetEntryData::Distance { distance },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LevelOfDetailEntryType {
+    Asset = 0x1,
+    Lod0aMaxDistanceFromCamera = 0x2,
+}
+
+pub enum LevelOfDetailEntryData {
+    Asset {
+        entries: Vec<LevelOfDetailAssetEntry>,
+    },
+    Lod0aMaxDistanceFromCamera {
+        distance: f32,
+    },
+}
+
+impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
+    async fn deserialize(
+        entry_type: &LevelOfDetailEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LevelOfDetailEntryType::Asset => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LevelOfDetailEntryData::Asset { entries }, bytes_read))
+            }
+            LevelOfDetailEntryType::Lod0aMaxDistanceFromCamera => {
+                let (distance, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    LevelOfDetailEntryData::Lod0aMaxDistanceFromCamera { distance },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type LevelOfDetailEntry = Entry<LevelOfDetailEntryType, LevelOfDetailEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LevelOfDetailType {
+    LevelOfDetail = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum LevelOfDetailData {
+    LevelOfDetail { entries: Vec<LevelOfDetailEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
+    async fn deserialize(
+        entry_type: &LevelOfDetailType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LevelOfDetailType::LevelOfDetail => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LevelOfDetailData::LevelOfDetail { entries }, bytes_read))
+            }
+            LevelOfDetailType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LevelOfDetailData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
-    Unknown1 = 0x0,
-    Unknown2 = 0x1,
-    Unknown3 = 0x2,
-    Unknown4 = 0x4,
+    Required = 0x0,
+    Preload = 0x1,
+    OnDemand = 0x2,
+    InheritFromParent = 0x3,
+    RequiredFirst = 0x4,
 }
 
-pub enum AnimationData {
-    AnimationName { name: String },
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationEntryType {
+    Name = 0x1,
+    AssetName = 0x2,
+    PlayBackScale = 0x3,
+    Duration = 0x4,
+    LoadType = 0x5,
+    Required = 0x6,
+    EffectsPersist = 0x7,
+}
+
+pub enum AnimationEntryData {
+    Name { name: String },
     AssetName { name: String },
-    Unknown1 { data: Vec<u8> },
+    PlayBackScale { scale: f32 },
     Duration { duration_seconds: f32 },
     LoadType { load_type: AnimationLoadType },
-    Unknown2 { data: Vec<u8> },
+    Required { required: bool },
+    EffectsPersist { do_effects_persist: bool },
 }
 
-impl DeserializeEntryData<AnimationEntryType> for AnimationData {
+impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
     async fn deserialize(
         entry_type: &AnimationEntryType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationEntryType::AnimationName => {
+            AnimationEntryType::Name => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
-                Ok((
-                    AnimationData::AnimationName { name },
-                    usize_to_i32(bytes_read)?,
-                ))
+                Ok((AnimationEntryData::Name { name }, usize_to_i32(bytes_read)?))
             }
             AnimationEntryType::AssetName => {
                 let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::AssetName { name }, usize_to_i32(bytes_read)?))
+                Ok((
+                    AnimationEntryData::AssetName { name },
+                    usize_to_i32(bytes_read)?,
+                ))
             }
-            AnimationEntryType::Unknown1 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::Unknown1 { data }, usize_to_i32(bytes_read)?))
+            AnimationEntryType::PlayBackScale => {
+                let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((AnimationEntryData::PlayBackScale { scale }, bytes_read))
             }
             AnimationEntryType::Duration => {
-                let (mut duration_bytes, bytes_read) =
-                    deserialize_exact(file, i32_to_usize(len)?).await?;
-                duration_bytes.resize(4, 0);
-                let duration_seconds = f32::from_be_bytes(
-                    duration_bytes
-                        .try_into()
-                        .expect("duration_bytes should contain 4 bytes"),
-                );
+                let (duration_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationData::Duration { duration_seconds },
-                    usize_to_i32(bytes_read)?,
+                    AnimationEntryData::Duration { duration_seconds },
+                    bytes_read,
                 ))
             }
             AnimationEntryType::LoadType => {
                 let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
-                Ok((AnimationData::LoadType { load_type }, bytes_read))
+                Ok((AnimationEntryData::LoadType { load_type }, bytes_read))
             }
-            AnimationEntryType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AnimationData::Unknown2 { data }, usize_to_i32(bytes_read)?))
+            AnimationEntryType::Required => {
+                let (required, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationEntryData::Required {
+                        required: required != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            AnimationEntryType::EffectsPersist => {
+                let (do_effects_persist, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationEntryData::EffectsPersist {
+                        do_effects_persist: do_effects_persist != 0,
+                    },
+                    bytes_read,
+                ))
             }
         }
     }
 }
 
-pub type AnimationEntry = Entry<AnimationEntryType, AnimationData>;
+pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
-pub enum AnimationArrayType {
-    AnimationEntry = 0x1,
-    Unknown2 = 0xfe,
+pub enum AnimationType {
+    Animation = 0x1,
+    EntryCount = 0xfe,
 }
 
-pub enum AnimationArrayData {
-    AnimationEntry { entries: Vec<AnimationEntry> },
-    Unknown2 { data: Vec<u8> },
+pub enum AnimationData {
+    Animation { entries: Vec<AnimationEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
 }
 
-impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
+impl DeserializeEntryData<AnimationType> for AnimationData {
     async fn deserialize(
-        entry_type: &AnimationArrayType,
+        entry_type: &AnimationType,
         len: i32,
         file: &mut BufReader<&mut File>,
     ) -> Result<(Self, i32), Error> {
         match entry_type {
-            AnimationArrayType::AnimationEntry => {
+            AnimationType::Animation => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AnimationArrayData::AnimationEntry { entries }, bytes_read))
+                Ok((AnimationData::Animation { entries }, bytes_read))
             }
-            AnimationArrayType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+            AnimationType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type Animation = Entry<AnimationType, AnimationData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationEffectTriggerEventType {
+    Start = 0x1,
+    End = 0x2,
+}
+
+pub enum AnimationEffectTriggerEventData {
+    Start { start_seconds: f32 },
+    End { end_seconds: f32 },
+}
+
+impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTriggerEventData {
+    async fn deserialize(
+        entry_type: &AnimationEffectTriggerEventType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationEffectTriggerEventType::Start => {
+                let (start_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((
-                    AnimationArrayData::Unknown2 { data },
+                    AnimationEffectTriggerEventData::Start { start_seconds },
+                    bytes_read,
+                ))
+            }
+            AnimationEffectTriggerEventType::End => {
+                let (end_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((
+                    AnimationEffectTriggerEventData::End { end_seconds },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationEffectTriggerEvent =
+    Entry<AnimationEffectTriggerEventType, AnimationEffectTriggerEventData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationEffectEntryType {
+    TriggerEventArray = 0x1,
+    Type = 0x2,
+    Name = 0x3,
+    ToolName = 0x4,
+    Id = 0x5,
+    PlayOnce = 0x6,
+    LoadType = 0x7,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationEffectEntryData {
+    TriggerEventArray {
+        trigger_events: Vec<AnimationEffectTriggerEvent>,
+    },
+    Type {
+        effect_type: u8,
+    },
+    Name {
+        name: String,
+    },
+    ToolName {
+        tool_name: String,
+    },
+    Id {
+        id: u32,
+    },
+    PlayOnce {
+        should_play_once: bool,
+    },
+    LoadType {
+        load_type: AnimationLoadType,
+    },
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
+    },
+}
+
+impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData {
+    async fn deserialize(
+        entry_type: &AnimationEffectEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationEffectEntryType::TriggerEventArray => {
+                let (trigger_events, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationEffectEntryData::TriggerEventArray { trigger_events },
+                    bytes_read,
+                ))
+            }
+            AnimationEffectEntryType::Type => {
+                let (effect_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((AnimationEffectEntryData::Type { effect_type }, bytes_read))
+            }
+            AnimationEffectEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationEffectEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationEffectEntryType::ToolName => {
+                let (tool_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationEffectEntryData::ToolName { tool_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationEffectEntryType::Id => {
+                let (id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((AnimationEffectEntryData::Id { id }, bytes_read))
+            }
+            AnimationEffectEntryType::PlayOnce => {
+                let (should_play_once, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    AnimationEffectEntryData::PlayOnce {
+                        should_play_once: should_play_once != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            AnimationEffectEntryType::LoadType => {
+                let (load_type, bytes_read) = AnimationLoadType::deserialize(file).await?;
+                Ok((AnimationEffectEntryData::LoadType { load_type }, bytes_read))
+            }
+            AnimationEffectEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationEffectEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationEffectType {
+    Effect = 0x1,
+    Name = 0x2,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationEffectData {
+    Effect { entries: Vec<AnimationEffectEntry> },
+    Name { name: String },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
+    async fn deserialize(
+        entry_type: &AnimationEffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationEffectType::Effect => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationEffectData::Effect { entries }, bytes_read))
+            }
+            AnimationEffectType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationEffectData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            AnimationEffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationEffectData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationSoundEffectType {
+    EffectArray = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationSoundEffectData {
+    EffectArray { effects: Vec<AnimationEffect> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData {
+    async fn deserialize(
+        entry_type: &AnimationSoundEffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationSoundEffectType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationSoundEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
+            }
+            AnimationSoundEffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationSoundEffectData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationParticleEffectType {
+    EffectArray = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationParticleEffectData {
+    EffectArray { effects: Vec<AnimationEffect> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffectData {
+    async fn deserialize(
+        entry_type: &AnimationParticleEffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationParticleEffectType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationParticleEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
+            }
+            AnimationParticleEffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationParticleEffectData::EntryCount { entries },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ActionPointEntryType {
+    Name = 0x1,
+    Time = 0x2,
+}
+
+pub enum ActionPointEntryData {
+    Name { name: String },
+    Time { time_seconds: f32 },
+}
+
+impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
+    async fn deserialize(
+        entry_type: &ActionPointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ActionPointEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    ActionPointEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            ActionPointEntryType::Time => {
+                let (time_seconds, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((ActionPointEntryData::Time { time_seconds }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ActionPointType {
+    ActionPoint = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum ActionPointData {
+    ActionPoint { entries: Vec<ActionPointEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<ActionPointType> for ActionPointData {
+    async fn deserialize(
+        entry_type: &ActionPointType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ActionPointType::ActionPoint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ActionPointData::ActionPoint { entries }, bytes_read))
+            }
+            ActionPointType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((ActionPointData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type ActionPoint = Entry<ActionPointType, ActionPointData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationActionPointEntryType {
+    ActionPointArray = 0x1,
+    Name = 0x2,
+}
+
+pub enum AnimationActionPointEntryData {
+    ActionPointArray { action_points: Vec<ActionPoint> },
+    Name { name: String },
+}
+
+impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPointEntryData {
+    async fn deserialize(
+        entry_type: &AnimationActionPointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationActionPointEntryType::ActionPointArray => {
+                let (action_points, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationActionPointEntryData::ActionPointArray { action_points },
+                    bytes_read,
+                ))
+            }
+            AnimationActionPointEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    AnimationActionPointEntryData::Name { name },
                     usize_to_i32(bytes_read)?,
                 ))
             }
@@ -395,7 +1898,48 @@ impl DeserializeEntryData<AnimationArrayType> for AnimationArrayData {
     }
 }
 
-pub type AnimationArray = Entry<AnimationArrayType, AnimationArrayData>;
+pub type AnimationActionPointEntry =
+    Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationActionPointType {
+    AnimationActionPoint = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationActionPointData {
+    AnimationActionPoint {
+        entries: Vec<AnimationActionPointEntry>,
+    },
+    EntryCount {
+        entries: Vec<EntryCountEntry>,
+    },
+}
+
+impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData {
+    async fn deserialize(
+        entry_type: &AnimationActionPointType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationActionPointType::AnimationActionPoint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationActionPointData::AnimationActionPoint { entries },
+                    bytes_read,
+                ))
+            }
+            AnimationActionPointType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AnimationActionPointData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type AnimationActionPoint = Entry<AnimationActionPointType, AnimationActionPointData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
@@ -426,54 +1970,849 @@ pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
+pub enum CoveredSlotEntryType {
+    SlotId = 0x1,
+}
+
+pub enum CoveredSlotEntryData {
+    SlotId { slot_id: u32 },
+}
+
+impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
+    async fn deserialize(
+        entry_type: &CoveredSlotEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            CoveredSlotEntryType::SlotId => {
+                let (bone_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    CoveredSlotEntryData::SlotId { slot_id: bone_id },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum OcclusionEntryType {
+    SlotBitMask = 0x1,
+    BitMask = 0x2,
+    CoveredSlot = 0x4,
+    EntryCount = 0xfe,
+}
+
+pub enum OcclusionData {
+    SlotBitMask { bit_mask: u32 },
+    BitMask { bit_mask: u32 },
+    CoveredSlot { entries: Vec<CoveredSlotEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
+    async fn deserialize(
+        entry_type: &OcclusionEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            OcclusionEntryType::SlotBitMask => {
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((OcclusionData::SlotBitMask { bit_mask }, bytes_read))
+            }
+            OcclusionEntryType::BitMask => {
+                let (bit_mask, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((OcclusionData::BitMask { bit_mask }, bytes_read))
+            }
+            OcclusionEntryType::CoveredSlot => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((OcclusionData::CoveredSlot { entries }, bytes_read))
+            }
+            OcclusionEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((OcclusionData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum UsageEntryType {
+    Usage = 0x1,
+    AttachmentBoneName = 0x2,
+    ValidatePcNpc = 0x3,
+    InheritAnimations = 0x4,
+    ReplicationBoneName = 0x5,
+}
+
+pub enum UsageEntryData {
+    Usage { usage: u8 },
+    AttachmentBoneName { bone_name: String },
+    ValidatePcNpc { validate: bool },
+    InheritAnimations { should_inherit_animations: bool },
+    ReplicationBoneName { bone_name: String },
+}
+
+impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
+    async fn deserialize(
+        entry_type: &UsageEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            UsageEntryType::Usage => {
+                let (usage, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((UsageEntryData::Usage { usage }, bytes_read))
+            }
+            UsageEntryType::AttachmentBoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    UsageEntryData::AttachmentBoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            UsageEntryType::ValidatePcNpc => {
+                let (validate, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    UsageEntryData::ValidatePcNpc {
+                        validate: validate != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            UsageEntryType::InheritAnimations => {
+                let (should_inherit_animations, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    UsageEntryData::InheritAnimations {
+                        should_inherit_animations: should_inherit_animations != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            UsageEntryType::ReplicationBoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    UsageEntryData::ReplicationBoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum HatHairEntryType {
+    CoverFacialHair = 0x1,
+    Type = 0x2,
+}
+
+pub enum HatHairEntryData {
+    CoverFacialHair { should_cover_facial_hair: bool },
+    Type { hat_hair_type: u8 },
+}
+
+impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
+    async fn deserialize(
+        entry_type: &HatHairEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            HatHairEntryType::CoverFacialHair => {
+                let (should_cover_facial_hair, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    HatHairEntryData::CoverFacialHair {
+                        should_cover_facial_hair: should_cover_facial_hair != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+            HatHairEntryType::Type => {
+                let (hat_hair_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((HatHairEntryData::Type { hat_hair_type }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum ShadowEntryType {
+    CheckShadowVisibility = 0x1,
+}
+
+pub enum ShadowEntryData {
+    CheckShadowVisibility {
+        should_check_shadow_visibility: bool,
+    },
+}
+
+impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
+    async fn deserialize(
+        entry_type: &ShadowEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            ShadowEntryType::CheckShadowVisibility => {
+                let (should_check_shadow_visibility, bytes_read) =
+                    deserialize_u8(file, len).await?;
+                Ok((
+                    ShadowEntryData::CheckShadowVisibility {
+                        should_check_shadow_visibility: should_check_shadow_visibility != 0,
+                    },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type ShadowEntry = Entry<ShadowEntryType, ShadowEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum EquippedSlotEntryType {
+    Type = 0x1,
+    SlotId = 0x2,
+    ParentAttachSlot = 0x3,
+    ChildAttachSlot = 0x4,
+    SlotName = 0x5,
+}
+
+pub enum EquippedSlotEntryData {
+    Type { equipped_slot_type: u8 },
+    SlotId { slot_id: u32 },
+    ParentAttachSlot { slot_name: String },
+    ChildAttachSlot { slot_name: String },
+    SlotName { slot_name: String },
+}
+
+impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
+    async fn deserialize(
+        entry_type: &EquippedSlotEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            EquippedSlotEntryType::Type => {
+                let (equipped_slot_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((
+                    EquippedSlotEntryData::Type { equipped_slot_type },
+                    bytes_read,
+                ))
+            }
+            EquippedSlotEntryType::SlotId => {
+                let (slot_id, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((EquippedSlotEntryData::SlotId { slot_id }, bytes_read))
+            }
+            EquippedSlotEntryType::ParentAttachSlot => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::ParentAttachSlot { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EquippedSlotEntryType::ChildAttachSlot => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::ChildAttachSlot { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            EquippedSlotEntryType::SlotName => {
+                let (slot_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    EquippedSlotEntryData::SlotName { slot_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum BoneMetadataEntryType {
+    BoneName = 0x1,
+    CollisionType = 0x2,
+    Joint1 = 0x3,
+    Weight1 = 0x4,
+    Joint2 = 0x5,
+    Weight2 = 0x6,
+}
+
+pub enum BoneMetadataEntryData {
+    BoneName { bone_name: String },
+    CollisionType { collision_type: u32 },
+    Joint1 { joint_name: String },
+    Weight1 { weight: f32 },
+    Joint2 { joint_name: String },
+    Weight2 { weight: f32 },
+}
+
+impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
+    async fn deserialize(
+        entry_type: &BoneMetadataEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            BoneMetadataEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::CollisionType => {
+                let (collision_type, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((
+                    BoneMetadataEntryData::CollisionType { collision_type },
+                    bytes_read,
+                ))
+            }
+            BoneMetadataEntryType::Joint1 => {
+                let (joint_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::Joint1 { joint_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::Weight1 => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((BoneMetadataEntryData::Weight1 { weight }, bytes_read))
+            }
+            BoneMetadataEntryType::Joint2 => {
+                let (joint_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    BoneMetadataEntryData::Joint2 { joint_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            BoneMetadataEntryType::Weight2 => {
+                let (weight, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((BoneMetadataEntryData::Weight2 { weight }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum BoneMetadataType {
+    BoneMetadata = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum BoneMetadataData {
+    BoneMetadata { entries: Vec<BoneMetadataEntry> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
+    async fn deserialize(
+        entry_type: &BoneMetadataType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            BoneMetadataType::BoneMetadata => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((BoneMetadataData::BoneMetadata { entries }, bytes_read))
+            }
+            BoneMetadataType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((BoneMetadataData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type BoneMetadata = Entry<BoneMetadataType, BoneMetadataData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MountSeatEntranceExitEntryType {
+    BoneName = 0x1,
+    Animation = 0x2,
+    Location = 0x3,
+}
+
+pub enum MountSeatEntranceExitEntryData {
+    BoneName { bone_name: String },
+    Animation { animation_name: String },
+    Location { location: String },
+}
+
+impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceExitEntryData {
+    async fn deserialize(
+        entry_type: &MountSeatEntranceExitEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountSeatEntranceExitEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceExitEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntranceExitEntryType::Animation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceExitEntryData::Animation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntranceExitEntryType::Location => {
+                let (location, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntranceExitEntryData::Location { location },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type MountSeatEntranceExitEntry =
+    Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MountSeatEntryType {
+    Entrance = 0x1,
+    Exit = 0x2,
+    BoneName = 0x3,
+    Animation = 0x4,
+}
+
+pub enum MountSeatEntryData {
+    Entrance {
+        entries: Vec<MountSeatEntranceExitEntry>,
+    },
+    Exit {
+        entries: Vec<MountSeatEntranceExitEntry>,
+    },
+    Bone {
+        bone_name: String,
+    },
+    Animation {
+        animation_name: String,
+    },
+}
+
+impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
+    async fn deserialize(
+        entry_type: &MountSeatEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountSeatEntryType::Entrance => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountSeatEntryData::Entrance { entries }, bytes_read))
+            }
+            MountSeatEntryType::Exit => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountSeatEntryData::Exit { entries }, bytes_read))
+            }
+            MountSeatEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntryData::Bone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountSeatEntryType::Animation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountSeatEntryData::Animation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+        }
+    }
+}
+
+pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum MountEntryType {
+    Seat = 0x1,
+    MinOccupancy = 0x4,
+    StandAnimation = 0x5,
+    StandToSprintAnimation = 0x6,
+    SprintAnimation = 0x7,
+    SprintToStandAnimation = 0x8,
+    AnimationPrefix = 0x9,
+    EntryCount = 0xfe,
+}
+
+pub enum MountEntryData {
+    Seat { entries: Vec<MountSeatEntry> },
+    MinOccupancy { min_occupancy: u32 },
+    StandAnimation { animation_name: String },
+    StandToSprintAnimation { animation_name: String },
+    SprintAnimation { animation_name: String },
+    SprintToStandAnimation { animation_name: String },
+    AnimationPrefix { animation_prefix: String },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<MountEntryType> for MountEntryData {
+    async fn deserialize(
+        entry_type: &MountEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            MountEntryType::Seat => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountEntryData::Seat { entries }, bytes_read))
+            }
+            MountEntryType::MinOccupancy => {
+                let (min_occupancy, bytes_read) = deserialize_u32_le(file, len).await?;
+                Ok((MountEntryData::MinOccupancy { min_occupancy }, bytes_read))
+            }
+            MountEntryType::StandAnimation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::StandAnimation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountEntryType::StandToSprintAnimation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::StandToSprintAnimation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountEntryType::SprintAnimation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::SprintAnimation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountEntryType::SprintToStandAnimation => {
+                let (animation_name, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::SprintToStandAnimation { animation_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountEntryType::AnimationPrefix => {
+                let (animation_prefix, bytes_read) =
+                    deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    MountEntryData::AnimationPrefix { animation_prefix },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            MountEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((MountEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type MountEntry = Entry<MountEntryType, MountEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum AnimationCompositeEffectType {
+    EffectArray = 0x1,
+    EntryCount = 0xfe,
+}
+
+pub enum AnimationCompositeEffectData {
+    EffectArray { effects: Vec<AnimationEffect> },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEffectData {
+    async fn deserialize(
+        entry_type: &AnimationCompositeEffectType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            AnimationCompositeEffectType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationCompositeEffectData::EffectArray { effects },
+                    bytes_read,
+                ))
+            }
+            AnimationCompositeEffectType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AnimationCompositeEffectData::EntryCount { entries },
+                    bytes_read,
+                ))
+            }
+        }
+    }
+}
+
+pub type AnimationCompositeEffect =
+    Entry<AnimationCompositeEffectType, AnimationCompositeEffectData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum JointEntryType {
+    BoneName = 0x1,
+    PitchLimit = 0x2,
+    YawLimit = 0x3,
+    TurnRate = 0x4,
+}
+
+pub enum JointEntryData {
+    BoneName { bone_name: String },
+    PitchLimit { pitch_limit: f32 },
+    YawLimit { yaw_limit: f32 },
+    TurnRate { turn_rate: f32 },
+}
+
+impl DeserializeEntryData<JointEntryType> for JointEntryData {
+    async fn deserialize(
+        entry_type: &JointEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            JointEntryType::BoneName => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    JointEntryData::BoneName { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            JointEntryType::PitchLimit => {
+                let (pitch_limit, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::PitchLimit { pitch_limit }, bytes_read))
+            }
+            JointEntryType::YawLimit => {
+                let (yaw_limit, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::YawLimit { yaw_limit }, bytes_read))
+            }
+            JointEntryType::TurnRate => {
+                let (turn_rate, bytes_read) = deserialize_f32_be(file, len).await?;
+                Ok((JointEntryData::TurnRate { turn_rate }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type JointEntry = Entry<JointEntryType, JointEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LookControlEntryType {
+    Name = 0x1,
+    Type = 0x2,
+    Joint = 0x3,
+    EffectorBone = 0x4,
+    EntryCount = 0xfe,
+}
+
+pub enum LookControlEntryData {
+    Name { name: String },
+    Type { look_control_type: u8 },
+    Joint { entries: Vec<JointEntry> },
+    EffectorBone { bone_name: String },
+    EntryCount { entries: Vec<EntryCountEntry> },
+}
+
+impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
+    async fn deserialize(
+        entry_type: &LookControlEntryType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LookControlEntryType::Name => {
+                let (name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LookControlEntryData::Name { name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LookControlEntryType::Type => {
+                let (look_control_type, bytes_read) = deserialize_u8(file, len).await?;
+                Ok((LookControlEntryData::Type { look_control_type }, bytes_read))
+            }
+            LookControlEntryType::Joint => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlEntryData::Joint { entries }, bytes_read))
+            }
+            LookControlEntryType::EffectorBone => {
+                let (bone_name, bytes_read) = deserialize_string(file, i32_to_usize(len)?).await?;
+                Ok((
+                    LookControlEntryData::EffectorBone { bone_name },
+                    usize_to_i32(bytes_read)?,
+                ))
+            }
+            LookControlEntryType::EntryCount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlEntryData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
+pub enum LookControlType {
+    LookControl = 0x1,
+}
+
+pub enum LookControlData {
+    LookControl { entries: Vec<LookControlEntry> },
+}
+
+impl DeserializeEntryData<LookControlType> for LookControlData {
+    async fn deserialize(
+        entry_type: &LookControlType,
+        len: i32,
+        file: &mut BufReader<&mut File>,
+    ) -> Result<(Self, i32), Error> {
+        match entry_type {
+            LookControlType::LookControl => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((LookControlData::LookControl { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+pub type LookControl = Entry<LookControlType, LookControlData>;
+
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
     Model = 0x2,
-    Particle = 0x3,
-    Unknown2 = 0x4,
-    Unknown3 = 0x5,
-    Unknown4 = 0x6,
-    Unknown5 = 0x7,
-    Unknown6 = 0x8,
-    Animation = 0x9,
-    Unknown7 = 0xa,
-    AnimatedParticle = 0xb,
-    Unknown8 = 0xc,
+    EffectDefinitionArrayArray = 0x3,
+    MaterialTagArray = 0x4,
+    TextureAliasArray = 0x5,
+    TintAliasArray = 0x6,
+    EffectArray = 0x7,
+    LevelOfDetailArray = 0x8,
+    AnimationArray = 0x9,
+    AnimationSoundEffectArray = 0xa,
+    AnimationParticleEffectArray = 0xb,
+    AnimationActionPointArray = 0xc,
     Collision = 0xd,
-    Unknown9 = 0xe,
-    Unknown10 = 0xf,
-    Unknown11 = 0x10,
-    Unknown12 = 0x11,
-    Unknown13 = 0x12,
-    Unknown14 = 0x13,
-    Unknown15 = 0x14,
-    Unknown16 = 0x15,
-    Unknown17 = 0x16,
+    Occlusion = 0xe,
+    Usage = 0xf,
+    HatHair = 0x10,
+    Shadow = 0x11,
+    EquippedSlot = 0x12,
+    BoneMetadataArray = 0x13,
+    Mount = 0x14,
+    AnimationCompositeEffectArray = 0x15,
+    LookControlArray = 0x16,
 }
 
 pub enum AdrData {
-    Skeleton { entries: Vec<SkeletonEntry> },
-    Model { entries: Vec<ModelEntry> },
-    Particle { entries: Vec<ParticleArray> },
-    Unknown2 { data: Vec<u8> },
-    Unknown3 { data: Vec<u8> },
-    Unknown4 { data: Vec<u8> },
-    Unknown5 { data: Vec<u8> },
-    Unknown6 { data: Vec<u8> },
-    Animation { entries: Vec<AnimationArray> },
-    Unknown7 { data: Vec<u8> },
-    AnimatedParticle { data: Vec<u8> },
-    Unknown8 { data: Vec<u8> },
-    Collision { entries: Vec<CollisionEntry> },
-    Unknown9 { data: Vec<u8> },
-    Unknown10 { data: Vec<u8> },
-    Unknown11 { data: Vec<u8> },
-    Unknown12 { data: Vec<u8> },
-    Unknown13 { data: Vec<u8> },
-    Unknown14 { data: Vec<u8> },
-    Unknown15 { data: Vec<u8> },
-    Unknown16 { data: Vec<u8> },
-    Unknown17 { data: Vec<u8> },
+    Skeleton {
+        entries: Vec<SkeletonEntry>,
+    },
+    Model {
+        entries: Vec<ModelEntry>,
+    },
+    EffectDefinitionArrayArray {
+        arrays: Vec<EffectDefinitionArray>,
+    },
+    MaterialTagArray {
+        material_tags: Vec<MaterialTag>,
+    },
+    TextureAliasArray {
+        texture_aliases: Vec<TextureAlias>,
+    },
+    TintAliasArray {
+        tint_aliases: Vec<TintAlias>,
+    },
+    EffectArray {
+        effects: Vec<Effect>,
+    },
+    LevelOfDetailArray {
+        levels_of_detail: Vec<LevelOfDetail>,
+    },
+    AnimationArray {
+        animations: Vec<Animation>,
+    },
+    AnimationSoundEffectArray {
+        sounds: Vec<AnimationSoundEffect>,
+    },
+    AnimationParticleEffectArray {
+        particles: Vec<AnimationParticleEffect>,
+    },
+    AnimationActionPointArray {
+        action_points: Vec<AnimationActionPoint>,
+    },
+    Collision {
+        entries: Vec<CollisionEntry>,
+    },
+    Occlusion {
+        entries: Vec<OcclusionEntry>,
+    },
+    Usage {
+        entries: Vec<UsageEntry>,
+    },
+    HatHair {
+        entries: Vec<HatHairEntry>,
+    },
+    Shadow {
+        entries: Vec<ShadowEntry>,
+    },
+    EquippedSlot {
+        entries: Vec<EquippedSlotEntry>,
+    },
+    BoneMetadataArray {
+        bone_metadata: Vec<BoneMetadata>,
+    },
+    Mount {
+        entries: Vec<MountEntry>,
+    },
+    AnimationCompositeEffectArray {
+        composites: Vec<AnimationCompositeEffect>,
+    },
+    LookControlArray {
+        look_controls: Vec<LookControl>,
+    },
 }
 
 impl DeserializeEntryData<AdrEntryType> for AdrData {
@@ -491,88 +2830,99 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Model { entries }, bytes_read))
             }
-            AdrEntryType::Particle => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Particle { entries }, bytes_read))
+            AdrEntryType::EffectDefinitionArrayArray => {
+                let (arrays, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::EffectDefinitionArrayArray { arrays }, bytes_read))
             }
-            AdrEntryType::Unknown2 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown2 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::Unknown3 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown3 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::Unknown4 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown4 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::Unknown5 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown5 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::Unknown6 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown6 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::Animation => {
-                let (entries, bytes_read) = deserialize_entries(file, len).await?;
-                Ok((AdrData::Animation { entries }, bytes_read))
-            }
-            AdrEntryType::Unknown7 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown7 { data }, usize_to_i32(bytes_read)?))
-            }
-            AdrEntryType::AnimatedParticle => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
+            AdrEntryType::MaterialTagArray => {
+                let (materials, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((
-                    AdrData::AnimatedParticle { data },
-                    usize_to_i32(bytes_read)?,
+                    AdrData::MaterialTagArray {
+                        material_tags: materials,
+                    },
+                    bytes_read,
                 ))
             }
-            AdrEntryType::Unknown8 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown8 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::TextureAliasArray => {
+                let (texture_aliases, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::TextureAliasArray { texture_aliases }, bytes_read))
+            }
+            AdrEntryType::TintAliasArray => {
+                let (tint_aliases, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::TintAliasArray { tint_aliases }, bytes_read))
+            }
+            AdrEntryType::EffectArray => {
+                let (effects, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::EffectArray { effects }, bytes_read))
+            }
+            AdrEntryType::LevelOfDetailArray => {
+                let (levels_of_detail, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::LevelOfDetailArray { levels_of_detail }, bytes_read))
+            }
+            AdrEntryType::AnimationArray => {
+                let (animations, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::AnimationArray { animations }, bytes_read))
+            }
+            AdrEntryType::AnimationSoundEffectArray => {
+                let (sounds, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::AnimationSoundEffectArray { sounds }, bytes_read))
+            }
+            AdrEntryType::AnimationParticleEffectArray => {
+                let (particles, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::AnimationParticleEffectArray { particles },
+                    bytes_read,
+                ))
+            }
+            AdrEntryType::AnimationActionPointArray => {
+                let (action_points, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::AnimationActionPointArray { action_points },
+                    bytes_read,
+                ))
             }
             AdrEntryType::Collision => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AdrData::Collision { entries }, bytes_read))
             }
-            AdrEntryType::Unknown9 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown9 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Occlusion => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Occlusion { entries }, bytes_read))
             }
-            AdrEntryType::Unknown10 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown10 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Usage => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Usage { entries }, bytes_read))
             }
-            AdrEntryType::Unknown11 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown11 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::HatHair => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::HatHair { entries }, bytes_read))
             }
-            AdrEntryType::Unknown12 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown12 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Shadow => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Shadow { entries }, bytes_read))
             }
-            AdrEntryType::Unknown13 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown13 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::EquippedSlot => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::EquippedSlot { entries }, bytes_read))
             }
-            AdrEntryType::Unknown14 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown14 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::BoneMetadataArray => {
+                let (bone_metadata, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::BoneMetadataArray { bone_metadata }, bytes_read))
             }
-            AdrEntryType::Unknown15 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown15 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::Mount => {
+                let (entries, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::Mount { entries }, bytes_read))
             }
-            AdrEntryType::Unknown16 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown16 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::AnimationCompositeEffectArray => {
+                let (composites, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((
+                    AdrData::AnimationCompositeEffectArray { composites },
+                    bytes_read,
+                ))
             }
-            AdrEntryType::Unknown17 => {
-                let (data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
-                Ok((AdrData::Unknown17 { data }, usize_to_i32(bytes_read)?))
+            AdrEntryType::LookControlArray => {
+                let (look_controls, bytes_read) = deserialize_entries(file, len).await?;
+                Ok((AdrData::LookControlArray { look_controls }, bytes_read))
             }
         }
     }
