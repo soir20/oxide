@@ -1,3 +1,5 @@
+use std::io::Cursor;
+
 use num_enum::TryFromPrimitive;
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
@@ -5,31 +7,6 @@ use crate::{
     deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
     usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error, ErrorKind,
 };
-
-async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<(), Error> {
-    if len < 0 {
-        return Err(Error {
-            kind: ErrorKind::NegativeLen(len),
-            offset: tell(file).await,
-        });
-    }
-
-    if len >= 0x80 {
-        let upper_byte = ((len & 0x7f00) >> 8) as u8 | 0x80;
-        if upper_byte == 0xff {
-            serialize(file, W::write_u8, 0xff).await?;
-            serialize(file, W::write_i32_le, len).await?;
-        } else {
-            let lower_byte = (len & 0xff) as u8;
-            serialize(file, W::write_u8, upper_byte).await?;
-            serialize(file, W::write_u8, lower_byte).await?;
-        }
-    } else {
-        serialize(file, W::write_u8, (len & 0xff) as u8).await?;
-    }
-
-    Ok(())
-}
 
 async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
     file: &mut W,
@@ -60,6 +37,32 @@ async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>
     Ok((len, bytes_read))
 }
 
+async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<i32, Error> {
+    if len < 0 {
+        return Err(Error {
+            kind: ErrorKind::NegativeLen(len),
+            offset: tell(file).await,
+        });
+    }
+
+    if len >= 0x80 {
+        let upper_byte = ((len & 0x7f00) >> 8) as u8 | 0x80;
+        if upper_byte == 0xff {
+            serialize(file, W::write_u8, 0xff).await?;
+            serialize(file, W::write_i32_le, len).await?;
+            Ok(5)
+        } else {
+            let lower_byte = (len & 0xff) as u8;
+            serialize(file, W::write_u8, upper_byte).await?;
+            serialize(file, W::write_u8, lower_byte).await?;
+            Ok(2)
+        }
+    } else {
+        serialize(file, W::write_u8, (len & 0xff) as u8).await?;
+        Ok(1)
+    }
+}
+
 trait DeserializeEntryType: Sized {
     fn deserialize<R: AsyncReader>(
         file: &mut R,
@@ -79,6 +82,24 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
     }
 }
 
+trait SerializeEntryType: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
+
+impl<T> SerializeEntryType for T
+where
+    T: Sync,
+    for<'a> &'a T: Into<u8>,
+{
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        serialize(file, W::write_u8, self.into()).await?;
+        Ok(1)
+    }
+}
+
 trait DeserializeEntryData<T>: Sized {
     fn deserialize<R: AsyncReader>(
         entry_type: &T,
@@ -87,12 +108,25 @@ trait DeserializeEntryData<T>: Sized {
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
+trait SerializeEntryData<T>: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
+
 trait DeserializeEntry<T, D>: Sized {
     fn deserialize<R: AsyncReader>(
         file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
+trait SerializeEntry<T, D>: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
 pub struct Entry<T, D> {
     pub entry_type: T,
     pub data: D,
@@ -111,6 +145,38 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
             .saturating_add(data_bytes_read);
 
         Ok((Entry { entry_type, data }, total_bytes_read))
+    }
+}
+
+impl<T: SerializeEntryType, D: SerializeEntryData<T>> SerializeEntry<T, D> for Entry<T, D> {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        let mut bytes_written = self.entry_type.serialize(file).await?;
+
+        let mut entry_data = Vec::new();
+        let data_len = self
+            .data
+            .serialize(&mut Cursor::new(&mut entry_data))
+            .await?;
+
+        match bytes_written
+            .checked_add(serialize_len(file, data_len).await?)
+            .and_then(|bytes_written| bytes_written.checked_add(data_len))
+        {
+            Some(new_bytes_written) => bytes_written = new_bytes_written,
+            None => {
+                return Err(Error {
+                    kind: ErrorKind::IntegerOverflow {
+                        expected_bytes: 4,
+                        actual_bytes: 5,
+                    },
+                    offset: tell(file).await,
+                })
+            }
+        }
+
+        serialize(file, W::write_all, &entry_data).await?;
+
+        Ok(bytes_written)
     }
 }
 
