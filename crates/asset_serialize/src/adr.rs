@@ -9,8 +9,8 @@ use crate::{
     usize_to_i32, DeserializeAsset, Error, ErrorKind,
 };
 
-async fn serialize_len<'a, W: AsyncSeekExt + AsyncWriteExt + Unpin>(
-    file: &'a mut W,
+async fn serialize_len<W: AsyncSeekExt + AsyncWriteExt + Unpin>(
+    file: &mut W,
     len: i32,
 ) -> Result<(), Error> {
     if len < 0 {
@@ -20,12 +20,12 @@ async fn serialize_len<'a, W: AsyncSeekExt + AsyncWriteExt + Unpin>(
         });
     }
 
-    if len >= 128 {
-        if len > i16::MAX.into() {
+    if len >= 0x80 {
+        let upper_byte = ((len & 0x7f00) >> 8) as u8 | 0x80;
+        if upper_byte == 0xff {
             serialize(file, W::write_u8, 0xff).await?;
-            serialize(file, W::write_i32, len).await?;
+            serialize(file, W::write_i32_le, len).await?;
         } else {
-            let upper_byte = ((len & 0b0111_1111_0000_0000) >> 8) as u8 & 0b1000_0000;
             let lower_byte = (len & 0xff) as u8;
             serialize(file, W::write_u8, upper_byte).await?;
             serialize(file, W::write_u8, lower_byte).await?;
@@ -2981,9 +2981,55 @@ impl DeserializeAsset for Adr {
 #[cfg(test)]
 mod tests {
     use std::env;
+    use std::io::Cursor;
 
     use super::*;
     use walkdir::WalkDir;
+
+    #[tokio::test]
+    async fn test_serialize_adr_len() {
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0)
+            .await
+            .unwrap();
+        assert_eq!(vec![0x0], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 1)
+            .await
+            .unwrap();
+        assert_eq!(vec![0x1], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0x7f)
+            .await
+            .unwrap();
+        assert_eq!(vec![0x7f], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0xff)
+            .await
+            .unwrap();
+        assert_eq!(vec![0x80, 0xff], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0x7eff)
+            .await
+            .unwrap();
+        assert_eq!(vec![0xfe, 0xff], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0x7ffe)
+            .await
+            .unwrap();
+        assert_eq!(vec![0xff, 0xfe, 0x7f, 0x0, 0x0], buffer);
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0x7fff)
+            .await
+            .unwrap();
+        assert_eq!(vec![0xff, 0xff, 0x7f, 0x0, 0x0], buffer);
+    }
 
     #[tokio::test]
     #[ignore]
