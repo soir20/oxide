@@ -4,8 +4,9 @@ use num_enum::TryFromPrimitive;
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
-    usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error, ErrorKind,
+    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize,
+    serialize_exact, serialize_string, tell, usize_to_i32, AsyncReader, AsyncWriter,
+    DeserializeAsset, Error, ErrorKind,
 };
 
 async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
@@ -306,6 +307,14 @@ async fn serialize_u32_le<W: AsyncWriter>(file: &mut W, value: u32) -> Result<i3
     Ok(bytes_to_write as i32)
 }
 
+async fn serialize_exact_i32<W: AsyncWriter>(file: &mut W, value: &[u8]) -> Result<i32, Error> {
+    usize_to_i32(serialize_exact(file, value).await?)
+}
+
+async fn serialize_string_i32<W: AsyncWriter>(file: &mut W, value: &str) -> Result<i32, Error> {
+    usize_to_i32(serialize_string(file, value).await?)
+}
+
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u8)]
 pub enum EntryCountEntryType {
@@ -343,6 +352,22 @@ impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
     }
 }
 
+impl SerializeEntryData<EntryCountEntryType> for EntryCountEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EntryCountEntryData::EntryCount { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+            EntryCountEntryData::EntryCount3 { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+            EntryCountEntryData::EntryCount4 { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+        }
+    }
+}
+
 pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
@@ -372,6 +397,15 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
                 let (scale, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((SkeletonData::Scale { scale }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData<SkeletonEntryType> for SkeletonData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SkeletonData::AssetName { name } => serialize_string_i32(file, name).await,
+            SkeletonData::Scale { scale } => serialize_f32_be(file, *scale).await,
         }
     }
 }
@@ -434,6 +468,20 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
                     bytes_read,
                 ))
             }
+        }
+    }
+}
+
+impl SerializeEntryData<ModelEntryType> for ModelData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ModelData::ModelAssetName { name } => serialize_string_i32(file, name).await,
+            ModelData::MaterialAssetName { name } => serialize_string_i32(file, name).await,
+            ModelData::UpdateRadius { radius } => serialize_f32_be(file, *radius).await,
+            ModelData::WaterDisplacementHeight { height } => serialize_f32_be(file, *height).await,
+            ModelData::ObjectTerrainData {
+                object_terrain_data_id,
+            } => serialize_u32_le(file, *object_terrain_data_id).await,
         }
     }
 }
