@@ -124,6 +124,8 @@ trait SerializeEntry: Sized {
         file: &mut W,
     ) -> impl std::future::Future<Output = Result<i32, Error>>;
 }
+
+#[derive(PartialEq)]
 pub struct Entry<T, D> {
     pub entry_type: T,
     pub data: D,
@@ -310,7 +312,7 @@ async fn serialize_string_i32<W: AsyncWriter>(file: &mut W, value: &str) -> Resu
     usize_to_i32(serialize_string(file, value).await?)
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EntryCountEntryType {
     EntryCount = 0x1,
@@ -318,6 +320,7 @@ pub enum EntryCountEntryType {
     EntryCount4 = 0x4,
 }
 
+#[derive(PartialEq)]
 pub enum EntryCountEntryData {
     EntryCount { entry_count: u32 },
     EntryCount3 { entry_count: u32 },
@@ -365,13 +368,14 @@ impl SerializeEntryData for EntryCountEntryData {
 
 pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
     Scale = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum SkeletonData {
     AssetName { name: String },
     Scale { scale: f32 },
@@ -407,7 +411,7 @@ impl SerializeEntryData for SkeletonData {
 
 pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ModelEntryType {
     ModelAssetName = 0x1,
@@ -417,6 +421,7 @@ pub enum ModelEntryType {
     ObjectTerrainData = 0x5,
 }
 
+#[derive(PartialEq)]
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
@@ -483,7 +488,7 @@ impl SerializeEntryData for ModelData {
 
 pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterAssetEntryType {
     AssetName = 0x1,
@@ -491,6 +496,7 @@ pub enum SoundEmitterAssetEntryType {
     Weight = 0x3,
 }
 
+#[derive(PartialEq)]
 pub enum SoundEmitterAssetEntryData {
     AssetName { asset_name: String },
     TimeOffset { time_offset_millis: f32 },
@@ -542,7 +548,7 @@ impl SerializeEntryData for SoundEmitterAssetEntryData {
 
 pub type SoundEmitterAssetEntry = Entry<SoundEmitterAssetEntryType, SoundEmitterAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterEntryType {
     Asset = 0x1,
@@ -577,6 +583,7 @@ pub enum SoundEmitterEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum SoundEmitterEntryData {
     Asset {
         entries: Vec<SoundEmitterAssetEntry>,
@@ -946,13 +953,14 @@ impl SerializeEntryData for SoundEmitterEntryData {
 
 pub type SoundEmitterEntry = Entry<SoundEmitterEntryType, SoundEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterType {
     SoundEmitter = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum SoundEmitterData {
     SoundEmitter { entries: Vec<SoundEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -988,7 +996,7 @@ impl SerializeEntryData for SoundEmitterData {
 
 pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterEntryType {
     Id = 0x1,
@@ -1007,6 +1015,7 @@ pub enum ParticleEmitterEntryType {
     HardStop = 0xe,
 }
 
+#[derive(PartialEq)]
 pub enum ParticleEmitterEntryData {
     Id { id: u32 },
     EmitterName { emitter_name: String },
@@ -1162,13 +1171,14 @@ impl SerializeEntryData for ParticleEmitterEntryData {
 
 pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterType {
     ParticleEmitter = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum ParticleEmitterData {
     ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1206,13 +1216,14 @@ impl SerializeEntryData for ParticleEmitterData {
 
 pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectDefinitionArrayType {
     SoundEmitterArray = 0x1,
     ParticleEmitterArray = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum EffectDefinitionArrayData {
     SoundEmitterArray {
         sound_emitters: Vec<SoundEmitter>,
@@ -1262,7 +1273,7 @@ impl SerializeEntryData for EffectDefinitionArrayData {
 
 pub type EffectDefinitionArray = Entry<EffectDefinitionArrayType, EffectDefinitionArrayData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagEntryType {
     Name = 0x1,
@@ -1272,6 +1283,7 @@ pub enum MaterialTagEntryType {
     DefaultTintId = 0x5,
 }
 
+#[derive(PartialEq)]
 pub enum MaterialTagEntryData {
     Name { name: String },
     MaterialIndex { material_index: u32 },
@@ -1337,13 +1349,14 @@ impl SerializeEntryData for MaterialTagEntryData {
 
 pub type MaterialTagEntry = Entry<MaterialTagEntryType, MaterialTagEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagType {
     MaterialTag = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum MaterialTagData {
     Material { entries: Vec<MaterialTagEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1379,7 +1392,7 @@ impl SerializeEntryData for MaterialTagData {
 
 pub type MaterialTag = Entry<MaterialTagType, MaterialTagData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasEntryType {
     ModelType = 0x1,
@@ -1391,6 +1404,7 @@ pub enum TextureAliasEntryType {
     IsDefault = 0x7,
 }
 
+#[derive(PartialEq)]
 pub enum TextureAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1483,13 +1497,14 @@ impl SerializeEntryData for TextureAliasEntryData {
 
 pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasType {
     TextureAlias = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum TextureAliasData {
     TextureAlias { entries: Vec<TextureAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1524,7 +1539,7 @@ impl SerializeEntryData for TextureAliasData {
 }
 
 pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasEntryType {
     ModelType = 0x1,
@@ -1537,6 +1552,7 @@ pub enum TintAliasEntryType {
     IsDefault = 0x8,
 }
 
+#[derive(PartialEq)]
 pub enum TintAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1622,13 +1638,14 @@ impl SerializeEntryData for TintAliasEntryData {
 
 pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasType {
     TintAlias = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1664,7 +1681,7 @@ impl SerializeEntryData for TintAliasData {
 
 pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectEntryType {
     Type = 0x2,
@@ -1673,6 +1690,7 @@ pub enum EffectEntryType {
     Id = 0x5,
 }
 
+#[derive(PartialEq)]
 pub enum EffectEntryData {
     Type { effect_type: u8 },
     Name { name: String },
@@ -1723,13 +1741,14 @@ impl SerializeEntryData for EffectEntryData {
 
 pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectType {
     Effect = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum EffectData {
     Effect { entries: Vec<EffectEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1765,13 +1784,14 @@ impl SerializeEntryData for EffectData {
 
 pub type Effect = Entry<EffectType, EffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailAssetEntryType {
     AssetName = 0x1,
     Distance = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum LevelOfDetailAssetEntryData {
     AssetName { asset_name: String },
     Distance { distance: f32 },
@@ -1817,13 +1837,14 @@ impl SerializeEntryData for LevelOfDetailAssetEntryData {
 
 pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailEntryType {
     Asset = 0x1,
     Lod0aMaxDistanceFromCamera = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum LevelOfDetailEntryData {
     Asset {
         entries: Vec<LevelOfDetailAssetEntry>,
@@ -1868,13 +1889,14 @@ impl SerializeEntryData for LevelOfDetailEntryData {
 
 pub type LevelOfDetailEntry = Entry<LevelOfDetailEntryType, LevelOfDetailEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailType {
     LevelOfDetail = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum LevelOfDetailData {
     LevelOfDetail { entries: Vec<LevelOfDetailEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1910,7 +1932,7 @@ impl SerializeEntryData for LevelOfDetailData {
 
 pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
     Required = 0x0,
@@ -1920,7 +1942,7 @@ pub enum AnimationLoadType {
     RequiredFirst = 0x4,
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEntryType {
     Name = 0x1,
@@ -1932,6 +1954,7 @@ pub enum AnimationEntryType {
     EffectsPersist = 0x7,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationEntryData {
     Name { name: String },
     AssetName { name: String },
@@ -2019,13 +2042,14 @@ impl SerializeEntryData for AnimationEntryData {
 
 pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationType {
     Animation = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationData {
     Animation { entries: Vec<AnimationEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2061,13 +2085,14 @@ impl SerializeEntryData for AnimationData {
 
 pub type Animation = Entry<AnimationType, AnimationData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectTriggerEventType {
     Start = 0x1,
     End = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationEffectTriggerEventData {
     Start { start_seconds: f32 },
     End { end_seconds: f32 },
@@ -2114,7 +2139,7 @@ impl SerializeEntryData for AnimationEffectTriggerEventData {
 pub type AnimationEffectTriggerEvent =
     Entry<AnimationEffectTriggerEventType, AnimationEffectTriggerEventData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectEntryType {
     TriggerEventArray = 0x1,
@@ -2127,6 +2152,7 @@ pub enum AnimationEffectEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationEffectEntryData {
     TriggerEventArray {
         trigger_events: Vec<AnimationEffectTriggerEvent>,
@@ -2238,7 +2264,7 @@ impl SerializeEntryData for AnimationEffectEntryData {
 
 pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectType {
     Effect = 0x1,
@@ -2246,6 +2272,7 @@ pub enum AnimationEffectType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationEffectData {
     Effect { entries: Vec<AnimationEffectEntry> },
     Name { name: String },
@@ -2290,13 +2317,14 @@ impl SerializeEntryData for AnimationEffectData {
 
 pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationSoundEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationSoundEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2339,13 +2367,14 @@ impl SerializeEntryData for AnimationSoundEffectData {
 
 pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationParticleEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationParticleEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2391,13 +2420,14 @@ impl SerializeEntryData for AnimationParticleEffectData {
 
 pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointEntryType {
     Name = 0x1,
     Time = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum ActionPointEntryData {
     Name { name: String },
     Time { time_seconds: f32 },
@@ -2438,13 +2468,14 @@ impl SerializeEntryData for ActionPointEntryData {
 
 pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointType {
     ActionPoint = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum ActionPointData {
     ActionPoint { entries: Vec<ActionPointEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2480,13 +2511,14 @@ impl SerializeEntryData for ActionPointData {
 
 pub type ActionPoint = Entry<ActionPointType, ActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointEntryType {
     ActionPointArray = 0x1,
     Name = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationActionPointEntryData {
     ActionPointArray { action_points: Vec<ActionPoint> },
     Name { name: String },
@@ -2531,13 +2563,14 @@ impl SerializeEntryData for AnimationActionPointEntryData {
 pub type AnimationActionPointEntry =
     Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointType {
     AnimationActionPoint = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationActionPointData {
     AnimationActionPoint {
         entries: Vec<AnimationActionPointEntry>,
@@ -2584,12 +2617,13 @@ impl SerializeEntryData for AnimationActionPointData {
 
 pub type AnimationActionPoint = Entry<AnimationActionPointType, AnimationActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CollisionEntryType {
     AssetName = 0x1,
 }
 
+#[derive(PartialEq)]
 pub enum CollisionData {
     AssetName { name: String },
 }
@@ -2619,12 +2653,13 @@ impl SerializeEntryData for CollisionData {
 
 pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CoveredSlotEntryType {
     SlotId = 0x1,
 }
 
+#[derive(PartialEq)]
 pub enum CoveredSlotEntryData {
     SlotId { slot_id: u32 },
 }
@@ -2657,7 +2692,7 @@ impl SerializeEntryData for CoveredSlotEntryData {
 
 pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum OcclusionEntryType {
     SlotBitMask = 0x1,
@@ -2666,6 +2701,7 @@ pub enum OcclusionEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum OcclusionData {
     SlotBitMask { bit_mask: u32 },
     BitMask { bit_mask: u32 },
@@ -2713,7 +2749,7 @@ impl SerializeEntryData for OcclusionData {
 
 pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum UsageEntryType {
     Usage = 0x1,
@@ -2723,6 +2759,7 @@ pub enum UsageEntryType {
     ReplicationBoneName = 0x5,
 }
 
+#[derive(PartialEq)]
 pub enum UsageEntryData {
     Usage { usage: u8 },
     AttachmentBoneName { bone_name: String },
@@ -2800,13 +2837,14 @@ impl SerializeEntryData for UsageEntryData {
 
 pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum HatHairEntryType {
     CoverFacialHair = 0x1,
     Type = 0x2,
 }
 
+#[derive(PartialEq)]
 pub enum HatHairEntryData {
     CoverFacialHair { should_cover_facial_hair: bool },
     Type { hat_hair_type: u8 },
@@ -2849,12 +2887,13 @@ impl SerializeEntryData for HatHairEntryData {
 
 pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ShadowEntryType {
     CheckShadowVisibility = 0x1,
 }
 
+#[derive(PartialEq)]
 pub enum ShadowEntryData {
     CheckShadowVisibility {
         should_check_shadow_visibility: bool,
@@ -2894,7 +2933,7 @@ impl SerializeEntryData for ShadowEntryData {
 
 pub type ShadowEntry = Entry<ShadowEntryType, ShadowEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EquippedSlotEntryType {
     Type = 0x1,
@@ -2904,6 +2943,7 @@ pub enum EquippedSlotEntryType {
     SlotName = 0x5,
 }
 
+#[derive(PartialEq)]
 pub enum EquippedSlotEntryData {
     Type { equipped_slot_type: u8 },
     SlotId { slot_id: u32 },
@@ -2977,7 +3017,7 @@ impl SerializeEntryData for EquippedSlotEntryData {
 
 pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataEntryType {
     BoneName = 0x1,
@@ -2988,6 +3028,7 @@ pub enum BoneMetadataEntryType {
     Weight2 = 0x6,
 }
 
+#[derive(PartialEq)]
 pub enum BoneMetadataEntryData {
     BoneName { bone_name: String },
     CollisionType { collision_type: u32 },
@@ -3067,13 +3108,14 @@ impl SerializeEntryData for BoneMetadataEntryData {
 
 pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataType {
     BoneMetadata = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum BoneMetadataData {
     BoneMetadata { entries: Vec<BoneMetadataEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -3109,7 +3151,7 @@ impl SerializeEntryData for BoneMetadataData {
 
 pub type BoneMetadata = Entry<BoneMetadataType, BoneMetadataData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntranceExitEntryType {
     BoneName = 0x1,
@@ -3117,6 +3159,7 @@ pub enum MountSeatEntranceExitEntryType {
     Location = 0x3,
 }
 
+#[derive(PartialEq)]
 pub enum MountSeatEntranceExitEntryData {
     BoneName { bone_name: String },
     Animation { animation_name: String },
@@ -3175,7 +3218,7 @@ impl SerializeEntryData for MountSeatEntranceExitEntryData {
 pub type MountSeatEntranceExitEntry =
     Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntryType {
     Entrance = 0x1,
@@ -3184,6 +3227,7 @@ pub enum MountSeatEntryType {
     Animation = 0x4,
 }
 
+#[derive(PartialEq)]
 pub enum MountSeatEntryData {
     Entrance {
         entries: Vec<MountSeatEntranceExitEntry>,
@@ -3248,7 +3292,7 @@ impl SerializeEntryData for MountSeatEntryData {
 
 pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountEntryType {
     Seat = 0x1,
@@ -3261,6 +3305,7 @@ pub enum MountEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
     MinOccupancy { min_occupancy: u32 },
@@ -3364,13 +3409,14 @@ impl SerializeEntryData for MountEntryData {
 
 pub type MountEntry = Entry<MountEntryType, MountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationCompositeEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum AnimationCompositeEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -3417,7 +3463,7 @@ impl SerializeEntryData for AnimationCompositeEffectData {
 pub type AnimationCompositeEffect =
     Entry<AnimationCompositeEffectType, AnimationCompositeEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum JointEntryType {
     BoneName = 0x1,
@@ -3426,6 +3472,7 @@ pub enum JointEntryType {
     TurnRate = 0x4,
 }
 
+#[derive(PartialEq)]
 pub enum JointEntryData {
     BoneName { bone_name: String },
     PitchLimit { pitch_limit: f32 },
@@ -3478,7 +3525,7 @@ impl SerializeEntryData for JointEntryData {
 
 pub type JointEntry = Entry<JointEntryType, JointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlEntryType {
     Name = 0x1,
@@ -3488,6 +3535,7 @@ pub enum LookControlEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(PartialEq)]
 pub enum LookControlEntryData {
     Name { name: String },
     Type { look_control_type: u8 },
@@ -3551,12 +3599,13 @@ impl SerializeEntryData for LookControlEntryData {
 
 pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlType {
     LookControl = 0x1,
 }
 
+#[derive(PartialEq)]
 pub enum LookControlData {
     LookControl { entries: Vec<LookControlEntry> },
 }
@@ -3586,7 +3635,7 @@ impl SerializeEntryData for LookControlData {
 
 pub type LookControl = Entry<LookControlType, LookControlData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
@@ -3613,6 +3662,7 @@ pub enum AdrEntryType {
     LookControlArray = 0x16,
 }
 
+#[derive(PartialEq)]
 pub enum AdrData {
     Skeleton {
         entries: Vec<SkeletonEntry>,
@@ -3842,6 +3892,7 @@ impl SerializeEntryData for AdrData {
 
 pub type AdrEntry = Entry<AdrEntryType, AdrData>;
 
+#[derive(PartialEq)]
 pub struct Adr {
     pub entries: Vec<AdrEntry>,
 }
