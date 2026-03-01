@@ -237,6 +237,16 @@ async fn deserialize_f32_be<R: AsyncReader>(file: &mut R, len: i32) -> Result<(f
     ))
 }
 
+async fn serialize_f32_be<W: AsyncWriter>(file: &mut W, value: f32) -> Result<i32, Error> {
+    if value == 0.0 {
+        serialize(file, W::write_u8, 0).await?;
+        Ok(1)
+    } else {
+        serialize(file, W::write_f32, value).await?;
+        Ok(4)
+    }
+}
+
 async fn check_int_overflow<R: AsyncReader>(
     file: &mut R,
     expected_bytes: usize,
@@ -264,6 +274,11 @@ async fn deserialize_u8<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u8, i
     Ok((data[0], usize_to_i32(bytes_read)?))
 }
 
+async fn serialize_u8<W: AsyncWriter>(file: &mut W, value: u8) -> Result<i32, Error> {
+    serialize(file, W::write_u8, value).await?;
+    Ok(1)
+}
+
 async fn deserialize_u32_le<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u32, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
     check_int_overflow(file, 4, bytes_read).await?;
@@ -272,6 +287,23 @@ async fn deserialize_u32_le<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u
         u32::from_le_bytes(data.try_into().expect("data should contain 4 bytes")),
         usize_to_i32(bytes_read)?,
     ))
+}
+
+async fn serialize_u32_le<W: AsyncWriter>(file: &mut W, value: u32) -> Result<i32, Error> {
+    let bytes = value.to_le_bytes();
+    let bytes_to_write = if value > 0xffffff {
+        4
+    } else if value > 0xffff {
+        3
+    } else if value > 0xff {
+        2
+    } else {
+        1
+    };
+
+    serialize(file, W::write_all, &bytes[0..bytes_to_write]).await?;
+
+    Ok(bytes_to_write as i32)
 }
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
