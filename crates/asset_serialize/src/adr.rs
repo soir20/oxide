@@ -105,20 +105,20 @@ trait DeserializeEntryData<T>: Sized {
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
-trait SerializeEntryData<T>: Sized {
+trait SerializeEntryData: Sized {
     fn serialize<W: AsyncWriter>(
         &self,
         file: &mut W,
     ) -> impl std::future::Future<Output = Result<i32, Error>>;
 }
 
-trait DeserializeEntry<T, D>: Sized {
+trait DeserializeEntry: Sized {
     fn deserialize<R: AsyncReader>(
         file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
-trait SerializeEntry<T, D>: Sized {
+trait SerializeEntry: Sized {
     fn serialize<W: AsyncWriter>(
         &self,
         file: &mut W,
@@ -149,7 +149,7 @@ fn checked_add_i32(values: &[i32], offset: Option<u64>) -> Result<i32, Error> {
     Ok(sum)
 }
 
-impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry<T, D>
+impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry
     for Entry<T, D>
 {
     async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<(Self, i32), Error> {
@@ -166,7 +166,7 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
     }
 }
 
-impl<T: SerializeEntryType, D: SerializeEntryData<T>> SerializeEntry<T, D> for Entry<T, D> {
+impl<T: SerializeEntryType, D: SerializeEntryData> SerializeEntry for Entry<T, D> {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         let mut bytes_written = self.entry_type.serialize(file).await?;
 
@@ -198,7 +198,7 @@ impl<T: SerializeEntryType, D: SerializeEntryData<T>> SerializeEntry<T, D> for E
     }
 }
 
-async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
+async fn deserialize_entries<R: AsyncReader, E: DeserializeEntry>(
     file: &mut R,
     len: i32,
 ) -> Result<(Vec<E>, i32), Error> {
@@ -213,7 +213,7 @@ async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
     Ok((entries, bytes_read))
 }
 
-async fn serialize_entries<W: AsyncWriter, T, D, E: SerializeEntry<T, D>>(
+async fn serialize_entries<W: AsyncWriter, E: SerializeEntry>(
     file: &mut W,
     entries: &[E],
 ) -> Result<i32, Error> {
@@ -351,7 +351,7 @@ impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
     }
 }
 
-impl SerializeEntryData<EntryCountEntryType> for EntryCountEntryData {
+impl SerializeEntryData for EntryCountEntryData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             EntryCountEntryData::EntryCount { entry_count } => {
@@ -400,7 +400,7 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
     }
 }
 
-impl SerializeEntryData<SkeletonEntryType> for SkeletonData {
+impl SerializeEntryData for SkeletonData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             SkeletonData::AssetName { name } => serialize_string_i32(file, name).await,
@@ -471,7 +471,7 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
     }
 }
 
-impl SerializeEntryData<ModelEntryType> for ModelData {
+impl SerializeEntryData for ModelData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             ModelData::ModelAssetName { name } => serialize_string_i32(file, name).await,
@@ -530,7 +530,7 @@ impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntry
     }
 }
 
-impl SerializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
+impl SerializeEntryData for SoundEmitterAssetEntryData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             SoundEmitterAssetEntryData::AssetName { asset_name } => {
@@ -873,7 +873,7 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
     }
 }
 
-impl SerializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
+impl SerializeEntryData for SoundEmitterEntryData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             SoundEmitterEntryData::Asset { entries } => serialize_entries(file, entries).await,
@@ -981,7 +981,7 @@ impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
     }
 }
 
-impl SerializeEntryData<SoundEmitterType> for SoundEmitterData {
+impl SerializeEntryData for SoundEmitterData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             SoundEmitterData::SoundEmitter { entries } => serialize_entries(file, entries).await,
@@ -1123,7 +1123,7 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
     }
 }
 
-impl SerializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
+impl SerializeEntryData for ParticleEmitterEntryData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             ParticleEmitterEntryData::Id { id } => serialize_u32_le(file, *id).await,
@@ -1197,7 +1197,7 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
     }
 }
 
-impl SerializeEntryData<ParticleEmitterType> for ParticleEmitterData {
+impl SerializeEntryData for ParticleEmitterData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             ParticleEmitterData::ParticleEmitter { entries } => {
@@ -1251,7 +1251,7 @@ impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayDa
     }
 }
 
-impl SerializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayData {
+impl SerializeEntryData for EffectDefinitionArrayData {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
         match self {
             EffectDefinitionArrayData::SoundEmitterArray { sound_emitters } => {
