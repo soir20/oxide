@@ -1,6 +1,6 @@
 use std::io::Cursor;
 
-use num_enum::TryFromPrimitive;
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
 use crate::{
@@ -90,13 +90,9 @@ trait SerializeEntryType: Sized {
     ) -> impl std::future::Future<Output = Result<i32, Error>>;
 }
 
-impl<T> SerializeEntryType for T
-where
-    T: Sync,
-    for<'a> &'a T: Into<u8>,
-{
+impl<T: Copy + Into<u8> + Sync> SerializeEntryType for T {
     async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
-        serialize(file, W::write_u8, self.into()).await?;
+        serialize(file, W::write_u8, (*self).into()).await?;
         Ok(1)
     }
 }
@@ -223,7 +219,10 @@ async fn serialize_entries<W: AsyncWriter, T, D, E: SerializeEntry<T, D>>(
 ) -> Result<i32, Error> {
     let mut bytes_written = 0;
     for entry in entries.iter() {
-        bytes_written = checked_add_i32(&[entry.serialize(file).await?], tell(file).await)?;
+        bytes_written = checked_add_i32(
+            &[bytes_written, entry.serialize(file).await?],
+            tell(file).await,
+        )?;
     }
 
     Ok(bytes_written)
@@ -315,7 +314,7 @@ async fn serialize_string_i32<W: AsyncWriter>(file: &mut W, value: &str) -> Resu
     usize_to_i32(serialize_string(file, value).await?)
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EntryCountEntryType {
     EntryCount = 0x1,
@@ -370,7 +369,7 @@ impl SerializeEntryData<EntryCountEntryType> for EntryCountEntryData {
 
 pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
@@ -412,7 +411,7 @@ impl SerializeEntryData<SkeletonEntryType> for SkeletonData {
 
 pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ModelEntryType {
     ModelAssetName = 0x1,
@@ -488,7 +487,7 @@ impl SerializeEntryData<ModelEntryType> for ModelData {
 
 pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterAssetEntryType {
     AssetName = 0x1,
@@ -531,9 +530,23 @@ impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntry
     }
 }
 
+impl SerializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterAssetEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            SoundEmitterAssetEntryData::TimeOffset { time_offset_millis } => {
+                serialize_f32_be(file, *time_offset_millis).await
+            }
+            SoundEmitterAssetEntryData::Weight { weight } => serialize_f32_be(file, *weight).await,
+        }
+    }
+}
+
 pub type SoundEmitterAssetEntry = Entry<SoundEmitterAssetEntryType, SoundEmitterAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterEntryType {
     Asset = 0x1,
@@ -860,9 +873,84 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
     }
 }
 
+impl SerializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterEntryData::Asset { entries } => serialize_entries(file, entries).await,
+            SoundEmitterEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            SoundEmitterEntryData::EmitterName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            SoundEmitterEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            SoundEmitterEntryData::Heading { heading } => serialize_f32_be(file, *heading).await,
+            SoundEmitterEntryData::Pitch { pitch } => serialize_f32_be(file, *pitch).await,
+            SoundEmitterEntryData::Scale { scale } => serialize_f32_be(file, *scale).await,
+            SoundEmitterEntryData::OffsetX { offset_x } => serialize_f32_be(file, *offset_x).await,
+            SoundEmitterEntryData::OffsetY { offset_y } => serialize_f32_be(file, *offset_y).await,
+            SoundEmitterEntryData::OffsetZ { offset_z } => serialize_f32_be(file, *offset_z).await,
+            SoundEmitterEntryData::ControlType { control_type } => {
+                serialize_u8(file, *control_type).await
+            }
+            SoundEmitterEntryData::PlayListType { play_list_type } => {
+                serialize_u8(file, *play_list_type).await
+            }
+            SoundEmitterEntryData::PlayBackType { play_back_type } => {
+                serialize_u8(file, *play_back_type).await
+            }
+            SoundEmitterEntryData::Category { category } => serialize_u32_le(file, *category).await,
+            SoundEmitterEntryData::SubCategory { sub_category } => {
+                serialize_u32_le(file, *sub_category).await
+            }
+            SoundEmitterEntryData::FadeTime { fade_time_millis } => {
+                serialize_f32_be(file, *fade_time_millis).await
+            }
+            SoundEmitterEntryData::FadeOutTime {
+                fade_out_time_millis,
+            } => serialize_f32_be(file, *fade_out_time_millis).await,
+            SoundEmitterEntryData::LoadType { load_type } => {
+                serialize_u32_le(file, *load_type).await
+            }
+            SoundEmitterEntryData::Volume { volume } => serialize_f32_be(file, *volume).await,
+            SoundEmitterEntryData::VolumeOffset { volume_offset } => {
+                serialize_f32_be(file, *volume_offset).await
+            }
+            SoundEmitterEntryData::RateMultiplier { rate_multiplier } => {
+                serialize_f32_be(file, *rate_multiplier).await
+            }
+            SoundEmitterEntryData::RateMultiplierOffset {
+                rate_multiplier_offset,
+            } => serialize_f32_be(file, *rate_multiplier_offset).await,
+            SoundEmitterEntryData::RoomTypeScalar { room_type_scalar } => {
+                serialize_f32_be(file, *room_type_scalar).await
+            }
+            SoundEmitterEntryData::AttenuateReverbWithDistance { should_attenuate } => {
+                serialize_u8(file, (*should_attenuate).into()).await
+            }
+            SoundEmitterEntryData::MaxConcurrentSounds {
+                max_concurrent_sounds,
+            } => serialize_u32_le(file, *max_concurrent_sounds).await,
+            SoundEmitterEntryData::AttenuationDistance { distance } => {
+                serialize_f32_be(file, *distance).await
+            }
+            SoundEmitterEntryData::ClipDistance { clip_distance } => {
+                serialize_f32_be(file, *clip_distance).await
+            }
+            SoundEmitterEntryData::DelayBetweenSounds {
+                delay_between_sounds_millis,
+            } => serialize_f32_be(file, *delay_between_sounds_millis).await,
+            SoundEmitterEntryData::DelayBetweenSoundsOffset {
+                delay_between_sounds_offset_millis,
+            } => serialize_f32_be(file, *delay_between_sounds_offset_millis).await,
+            SoundEmitterEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type SoundEmitterEntry = Entry<SoundEmitterEntryType, SoundEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterType {
     SoundEmitter = 0x1,
@@ -895,7 +983,7 @@ impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
 
 pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterEntryType {
     Id = 0x1,
@@ -1028,7 +1116,7 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
 
 pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterType {
     ParticleEmitter = 0x1,
@@ -1061,7 +1149,7 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
 
 pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectDefinitionArrayType {
     SoundEmitterArray = 0x1,
@@ -1104,7 +1192,7 @@ impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayDa
 
 pub type EffectDefinitionArray = Entry<EffectDefinitionArrayType, EffectDefinitionArrayData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagEntryType {
     Name = 0x1,
@@ -1161,7 +1249,7 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
 
 pub type MaterialTagEntry = Entry<MaterialTagEntryType, MaterialTagEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagType {
     MaterialTag = 0x1,
@@ -1194,7 +1282,7 @@ impl DeserializeEntryData<MaterialTagType> for MaterialTagData {
 
 pub type MaterialTag = Entry<MaterialTagType, MaterialTagData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasEntryType {
     ModelType = 0x1,
@@ -1274,7 +1362,7 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
 
 pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasType {
     TextureAlias = 0x1,
@@ -1306,7 +1394,7 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
 }
 
 pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasEntryType {
     ModelType = 0x1,
@@ -1383,7 +1471,7 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
 
 pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasType {
     TintAlias = 0x1,
@@ -1416,7 +1504,7 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
 
 pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectEntryType {
     Type = 0x2,
@@ -1464,7 +1552,7 @@ impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
 
 pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectType {
     Effect = 0x1,
@@ -1497,7 +1585,7 @@ impl DeserializeEntryData<EffectType> for EffectData {
 
 pub type Effect = Entry<EffectType, EffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailAssetEntryType {
     AssetName = 0x1,
@@ -1536,7 +1624,7 @@ impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEnt
 
 pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailEntryType {
     Asset = 0x1,
@@ -1576,7 +1664,7 @@ impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
 
 pub type LevelOfDetailEntry = Entry<LevelOfDetailEntryType, LevelOfDetailEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailType {
     LevelOfDetail = 0x1,
@@ -1609,7 +1697,7 @@ impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
 
 pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
     Required = 0x0,
@@ -1619,7 +1707,7 @@ pub enum AnimationLoadType {
     RequiredFirst = 0x4,
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEntryType {
     Name = 0x1,
@@ -1698,7 +1786,7 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
 
 pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationType {
     Animation = 0x1,
@@ -1731,7 +1819,7 @@ impl DeserializeEntryData<AnimationType> for AnimationData {
 
 pub type Animation = Entry<AnimationType, AnimationData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectTriggerEventType {
     Start = 0x1,
@@ -1771,7 +1859,7 @@ impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTr
 pub type AnimationEffectTriggerEvent =
     Entry<AnimationEffectTriggerEventType, AnimationEffectTriggerEventData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectEntryType {
     TriggerEventArray = 0x1,
@@ -1870,7 +1958,7 @@ impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData
 
 pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectType {
     Effect = 0x1,
@@ -1912,7 +2000,7 @@ impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
 
 pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationSoundEffectType {
     EffectArray = 0x1,
@@ -1948,7 +2036,7 @@ impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData
 
 pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationParticleEffectType {
     EffectArray = 0x1,
@@ -1987,7 +2075,7 @@ impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffe
 
 pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointEntryType {
     Name = 0x1,
@@ -2023,7 +2111,7 @@ impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
 
 pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointType {
     ActionPoint = 0x1,
@@ -2056,7 +2144,7 @@ impl DeserializeEntryData<ActionPointType> for ActionPointData {
 
 pub type ActionPoint = Entry<ActionPointType, ActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointEntryType {
     ActionPointArray = 0x1,
@@ -2096,7 +2184,7 @@ impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPoin
 pub type AnimationActionPointEntry =
     Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointType {
     AnimationActionPoint = 0x1,
@@ -2136,7 +2224,7 @@ impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData
 
 pub type AnimationActionPoint = Entry<AnimationActionPointType, AnimationActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CollisionEntryType {
     AssetName = 0x1,
@@ -2163,7 +2251,7 @@ impl DeserializeEntryData<CollisionEntryType> for CollisionData {
 
 pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CoveredSlotEntryType {
     SlotId = 0x1,
@@ -2193,7 +2281,7 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
 
 pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum OcclusionEntryType {
     SlotBitMask = 0x1,
@@ -2238,7 +2326,7 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
 
 pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum UsageEntryType {
     Usage = 0x1,
@@ -2305,7 +2393,7 @@ impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
 
 pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum HatHairEntryType {
     CoverFacialHair = 0x1,
@@ -2343,7 +2431,7 @@ impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
 
 pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ShadowEntryType {
     CheckShadowVisibility = 0x1,
@@ -2378,7 +2466,7 @@ impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
 
 pub type ShadowEntry = Entry<ShadowEntryType, ShadowEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EquippedSlotEntryType {
     Type = 0x1,
@@ -2441,7 +2529,7 @@ impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
 
 pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataEntryType {
     BoneName = 0x1,
@@ -2510,7 +2598,7 @@ impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
 
 pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataType {
     BoneMetadata = 0x1,
@@ -2543,7 +2631,7 @@ impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
 
 pub type BoneMetadata = Entry<BoneMetadataType, BoneMetadataData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntranceExitEntryType {
     BoneName = 0x1,
@@ -2593,7 +2681,7 @@ impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceE
 pub type MountSeatEntranceExitEntry =
     Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntryType {
     Entrance = 0x1,
@@ -2653,7 +2741,7 @@ impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
 
 pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountEntryType {
     Seat = 0x1,
@@ -2742,7 +2830,7 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
 
 pub type MountEntry = Entry<MountEntryType, MountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationCompositeEffectType {
     EffectArray = 0x1,
@@ -2782,7 +2870,7 @@ impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEf
 pub type AnimationCompositeEffect =
     Entry<AnimationCompositeEffectType, AnimationCompositeEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum JointEntryType {
     BoneName = 0x1,
@@ -2830,7 +2918,7 @@ impl DeserializeEntryData<JointEntryType> for JointEntryData {
 
 pub type JointEntry = Entry<JointEntryType, JointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlEntryType {
     Name = 0x1,
@@ -2887,7 +2975,7 @@ impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
 
 pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlType {
     LookControl = 0x1,
@@ -2914,7 +3002,7 @@ impl DeserializeEntryData<LookControlType> for LookControlData {
 
 pub type LookControl = Entry<LookControlType, LookControlData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
