@@ -2215,6 +2215,31 @@ impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData
     }
 }
 
+impl SerializeEntryData for AnimationEffectEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectEntryData::TriggerEventArray { trigger_events } => {
+                serialize_entries(file, trigger_events).await
+            }
+            AnimationEffectEntryData::Type { effect_type } => {
+                serialize_u8(file, *effect_type).await
+            }
+            AnimationEffectEntryData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEffectEntryData::ToolName { tool_name } => {
+                serialize_string_i32(file, tool_name).await
+            }
+            AnimationEffectEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            AnimationEffectEntryData::PlayOnce { should_play_once } => {
+                serialize_u8(file, (*should_play_once).into()).await
+            }
+            AnimationEffectEntryData::LoadType { load_type } => load_type.serialize(file).await,
+            AnimationEffectEntryData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2257,6 +2282,16 @@ impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
     }
 }
 
+impl SerializeEntryData for AnimationEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectData::Effect { entries } => serialize_entries(file, entries).await,
+            AnimationEffectData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEffectData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2288,6 +2323,19 @@ impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData
             AnimationSoundEffectType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationSoundEffectData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for AnimationSoundEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationSoundEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationSoundEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
             }
         }
     }
@@ -2332,6 +2380,19 @@ impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffe
     }
 }
 
+impl SerializeEntryData for AnimationParticleEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationParticleEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationParticleEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2368,6 +2429,17 @@ impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
     }
 }
 
+impl SerializeEntryData for ActionPointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ActionPointEntryData::Name { name } => serialize_string_i32(file, name).await,
+            ActionPointEntryData::Time { time_seconds } => {
+                serialize_f32_be(file, *time_seconds).await
+            }
+        }
+    }
+}
+
 pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2397,6 +2469,15 @@ impl DeserializeEntryData<ActionPointType> for ActionPointData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((ActionPointData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for ActionPointData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ActionPointData::ActionPoint { entries } => serialize_entries(file, entries).await,
+            ActionPointData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -2440,6 +2521,17 @@ impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPoin
     }
 }
 
+impl SerializeEntryData for AnimationActionPointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationActionPointEntryData::ActionPointArray { action_points } => {
+                serialize_entries(file, action_points).await
+            }
+            AnimationActionPointEntryData::Name { name } => serialize_string_i32(file, name).await,
+        }
+    }
+}
+
 pub type AnimationActionPointEntry =
     Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
 
@@ -2476,6 +2568,19 @@ impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData
             AnimationActionPointType::EntryCount => {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationActionPointData::EntryCount { entries }, bytes_read))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for AnimationActionPointData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationActionPointData::AnimationActionPoint { entries } => {
+                serialize_entries(file, entries).await
+            }
+            AnimationActionPointData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
             }
         }
     }
