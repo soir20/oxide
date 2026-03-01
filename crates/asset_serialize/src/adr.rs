@@ -6,7 +6,7 @@ use tokio::io::{AsyncReadExt, AsyncSeekExt};
 use crate::{
     deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize,
     serialize_exact, serialize_string, tell, usize_to_i32, AsyncReader, AsyncWriter,
-    DeserializeAsset, Error, ErrorKind,
+    DeserializeAsset, Error, ErrorKind, SerializeAsset,
 };
 
 async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
@@ -3799,6 +3799,51 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
     }
 }
 
+impl SerializeEntryData for AdrData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AdrData::Skeleton { entries } => serialize_entries(file, entries).await,
+            AdrData::Model { entries } => serialize_entries(file, entries).await,
+            AdrData::EffectDefinitionArrayArray { arrays } => serialize_entries(file, arrays).await,
+            AdrData::MaterialTagArray { material_tags } => {
+                serialize_entries(file, material_tags).await
+            }
+            AdrData::TextureAliasArray { texture_aliases } => {
+                serialize_entries(file, texture_aliases).await
+            }
+            AdrData::TintAliasArray { tint_aliases } => serialize_entries(file, tint_aliases).await,
+            AdrData::EffectArray { effects } => serialize_entries(file, effects).await,
+            AdrData::LevelOfDetailArray { levels_of_detail } => {
+                serialize_entries(file, levels_of_detail).await
+            }
+            AdrData::AnimationArray { animations } => serialize_entries(file, animations).await,
+            AdrData::AnimationSoundEffectArray { sounds } => serialize_entries(file, sounds).await,
+            AdrData::AnimationParticleEffectArray { particles } => {
+                serialize_entries(file, particles).await
+            }
+            AdrData::AnimationActionPointArray { action_points } => {
+                serialize_entries(file, action_points).await
+            }
+            AdrData::Collision { entries } => serialize_entries(file, entries).await,
+            AdrData::Occlusion { entries } => serialize_entries(file, entries).await,
+            AdrData::Usage { entries } => serialize_entries(file, entries).await,
+            AdrData::HatHair { entries } => serialize_entries(file, entries).await,
+            AdrData::Shadow { entries } => serialize_entries(file, entries).await,
+            AdrData::EquippedSlot { entries } => serialize_entries(file, entries).await,
+            AdrData::BoneMetadataArray { bone_metadata } => {
+                serialize_entries(file, bone_metadata).await
+            }
+            AdrData::Mount { entries } => serialize_entries(file, entries).await,
+            AdrData::AnimationCompositeEffectArray { composites } => {
+                serialize_entries(file, composites).await
+            }
+            AdrData::LookControlArray { look_controls } => {
+                serialize_entries(file, look_controls).await
+            }
+        }
+    }
+}
+
 pub type AdrEntry = Entry<AdrEntryType, AdrData>;
 
 pub struct Adr {
@@ -3817,6 +3862,16 @@ impl DeserializeAsset for Adr {
         }
 
         Ok(Adr { entries })
+    }
+}
+
+impl SerializeAsset for Adr {
+    async fn serialize<W: AsyncWriter + Send>(&self, file: &mut W) -> Result<(), Error> {
+        for entry in self.entries.iter() {
+            entry.serialize(file).await?;
+        }
+
+        Ok(())
     }
 }
 

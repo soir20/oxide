@@ -67,6 +67,13 @@ pub trait DeserializeAsset: Sized {
     ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
 }
 
+pub trait SerializeAsset: Sized {
+    fn serialize<W: AsyncWriter + Send>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<(), Error>> + Send;
+}
+
 pub trait AsyncReader: AsyncSeekExt + AsyncBufReadExt + Unpin + Send {}
 impl<R: AsyncSeekExt + AsyncBufReadExt + Unpin + Send> AsyncReader for R {}
 pub trait AsyncWriter: AsyncSeekExt + AsyncWriteExt + Unpin {}
