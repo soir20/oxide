@@ -132,6 +132,26 @@ pub struct Entry<T, D> {
     pub data: D,
 }
 
+fn checked_add_i32(values: &[i32], offset: Option<u64>) -> Result<i32, Error> {
+    let mut sum: i32 = 0;
+    for value in values.iter() {
+        match sum.checked_add(*value) {
+            Some(new_sum) => sum = new_sum,
+            None => {
+                return Err(Error {
+                    kind: ErrorKind::IntegerOverflow {
+                        expected_bytes: 4,
+                        actual_bytes: 5,
+                    },
+                    offset,
+                })
+            }
+        }
+    }
+
+    Ok(sum)
+}
+
 impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry<T, D>
     for Entry<T, D>
 {
@@ -140,9 +160,10 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
         let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         let (data, data_bytes_read) = D::deserialize(&entry_type, len, file).await?;
 
-        let total_bytes_read = type_bytes_read
-            .saturating_add(len_bytes_read)
-            .saturating_add(data_bytes_read);
+        let total_bytes_read = checked_add_i32(
+            &[type_bytes_read, len_bytes_read, data_bytes_read],
+            tell(file).await,
+        )?;
 
         Ok((Entry { entry_type, data }, total_bytes_read))
     }
@@ -188,11 +209,23 @@ async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
     let mut bytes_read = 0;
     while bytes_read < len {
         let (entry, entry_bytes_read) = E::deserialize(file).await?;
-        bytes_read = bytes_read.saturating_add(entry_bytes_read);
+        bytes_read = checked_add_i32(&[bytes_read, entry_bytes_read], tell(file).await)?;
         entries.push(entry);
     }
 
     Ok((entries, bytes_read))
+}
+
+async fn serialize_entries<W: AsyncWriter, T, D, E: SerializeEntry<T, D>>(
+    file: &mut W,
+    entries: &[E],
+) -> Result<i32, Error> {
+    let mut bytes_written = 0;
+    for entry in entries.iter() {
+        bytes_written = checked_add_i32(&[entry.serialize(file).await?], tell(file).await)?;
+    }
+
+    Ok(bytes_written)
 }
 
 async fn deserialize_f32_be<R: AsyncReader>(file: &mut R, len: i32) -> Result<(f32, i32), Error> {
