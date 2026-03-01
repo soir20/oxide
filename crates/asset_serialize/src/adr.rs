@@ -5,8 +5,8 @@ use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
 use crate::{
     deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize,
-    serialize_exact, serialize_string, tell, usize_to_i32, AsyncReader, AsyncWriter,
-    DeserializeAsset, Error, ErrorKind, SerializeAsset,
+    serialize_string, tell, usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error,
+    ErrorKind, SerializeAsset,
 };
 
 async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
@@ -304,10 +304,6 @@ async fn serialize_u32_le<W: AsyncWriter>(file: &mut W, value: u32) -> Result<i3
     serialize(file, W::write_all, &bytes[0..bytes_to_write]).await?;
 
     Ok(bytes_to_write as i32)
-}
-
-async fn serialize_exact_i32<W: AsyncWriter>(file: &mut W, value: &[u8]) -> Result<i32, Error> {
-    usize_to_i32(serialize_exact(file, value).await?)
 }
 
 async fn serialize_string_i32<W: AsyncWriter>(file: &mut W, value: &str) -> Result<i32, Error> {
