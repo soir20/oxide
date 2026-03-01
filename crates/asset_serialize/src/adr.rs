@@ -1321,6 +1321,24 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
     }
 }
 
+impl SerializeEntryData for MaterialTagEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MaterialTagEntryData::Name { name } => serialize_string_i32(file, name).await,
+            MaterialTagEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            MaterialTagEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            MaterialTagEntryData::TintSetId { tint_set_id } => {
+                serialize_u32_le(file, *tint_set_id).await
+            }
+            MaterialTagEntryData::DefaultTintId { tint_id } => {
+                serialize_u32_le(file, *tint_id).await
+            }
+        }
+    }
+}
+
 pub type MaterialTagEntry = Entry<MaterialTagEntryType, MaterialTagEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1350,6 +1368,15 @@ impl DeserializeEntryData<MaterialTagType> for MaterialTagData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((MaterialTagData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for MaterialTagData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MaterialTagData::Material { entries } => serialize_entries(file, entries).await,
+            MaterialTagData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -1434,6 +1461,30 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
     }
 }
 
+impl SerializeEntryData for TextureAliasEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TextureAliasEntryData::ModelType { model_type } => {
+                serialize_u32_le(file, *model_type).await
+            }
+            TextureAliasEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            TextureAliasEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            TextureAliasEntryData::Name { name } => serialize_string_i32(file, name).await,
+            TextureAliasEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            TextureAliasEntryData::OcclusionBitMask { bit_mask } => {
+                serialize_u32_le(file, *bit_mask).await
+            }
+            TextureAliasEntryData::IsDefault { is_default } => {
+                serialize_u8(file, (*is_default).into()).await
+            }
+        }
+    }
+}
+
 pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1463,6 +1514,15 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TextureAliasData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for TextureAliasData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TextureAliasData::TextureAlias { entries } => serialize_entries(file, entries).await,
+            TextureAliasData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -1543,6 +1603,27 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
     }
 }
 
+impl SerializeEntryData for TintAliasEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TintAliasEntryData::ModelType { model_type } => {
+                serialize_u32_le(file, *model_type).await
+            }
+            TintAliasEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            TintAliasEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            TintAliasEntryData::Name { name } => serialize_string_i32(file, name).await,
+            TintAliasEntryData::Red { red } => serialize_f32_be(file, *red).await,
+            TintAliasEntryData::Green { green } => serialize_f32_be(file, *green).await,
+            TintAliasEntryData::Blue { blue } => serialize_f32_be(file, *blue).await,
+            TintAliasEntryData::IsDefault { is_default } => {
+                serialize_u8(file, (*is_default).into()).await
+            }
+        }
+    }
+}
+
 pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1572,6 +1653,15 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((TintAliasData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for TintAliasData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TintAliasData::TintAlias { entries } => serialize_entries(file, entries).await,
+            TintAliasData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -1624,6 +1714,17 @@ impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
     }
 }
 
+impl SerializeEntryData for EffectEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectEntryData::Type { effect_type } => serialize_u8(file, *effect_type).await,
+            EffectEntryData::Name { name } => serialize_string_i32(file, name).await,
+            EffectEntryData::ToolName { tool_name } => serialize_string_i32(file, tool_name).await,
+            EffectEntryData::Id { id } => serialize_u32_le(file, *id).await,
+        }
+    }
+}
+
 pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1653,6 +1754,15 @@ impl DeserializeEntryData<EffectType> for EffectData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((EffectData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for EffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectData::Effect { entries } => serialize_entries(file, entries).await,
+            EffectData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -1696,6 +1806,19 @@ impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEnt
     }
 }
 
+impl SerializeEntryData for LevelOfDetailAssetEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailAssetEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            LevelOfDetailAssetEntryData::Distance { distance } => {
+                serialize_f32_be(file, *distance).await
+            }
+        }
+    }
+}
+
 pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1731,6 +1854,17 @@ impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
                     LevelOfDetailEntryData::Lod0aMaxDistanceFromCamera { distance },
                     bytes_read,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for LevelOfDetailEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailEntryData::Asset { entries } => serialize_entries(file, entries).await,
+            LevelOfDetailEntryData::Lod0aMaxDistanceFromCamera { distance } => {
+                serialize_f32_be(file, *distance).await
             }
         }
     }
