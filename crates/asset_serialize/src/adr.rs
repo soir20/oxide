@@ -981,6 +981,15 @@ impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
     }
 }
 
+impl SerializeEntryData<SoundEmitterType> for SoundEmitterData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterData::SoundEmitter { entries } => serialize_entries(file, entries).await,
+            SoundEmitterData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1114,6 +1123,47 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
     }
 }
 
+impl SerializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ParticleEmitterEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            ParticleEmitterEntryData::EmitterName { emitter_name } => {
+                serialize_string_i32(file, emitter_name).await
+            }
+            ParticleEmitterEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            ParticleEmitterEntryData::Heading { heading } => serialize_f32_be(file, *heading).await,
+            ParticleEmitterEntryData::Pitch { pitch } => serialize_f32_be(file, *pitch).await,
+            ParticleEmitterEntryData::Scale { scale } => serialize_f32_be(file, *scale).await,
+            ParticleEmitterEntryData::OffsetX { offset_x } => {
+                serialize_f32_be(file, *offset_x).await
+            }
+            ParticleEmitterEntryData::OffsetY { offset_y } => {
+                serialize_f32_be(file, *offset_y).await
+            }
+            ParticleEmitterEntryData::OffsetZ { offset_z } => {
+                serialize_f32_be(file, *offset_z).await
+            }
+            ParticleEmitterEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            ParticleEmitterEntryData::SourceBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            ParticleEmitterEntryData::LocalSpaceDerived {
+                is_local_space_derived,
+            } => serialize_u8(file, (*is_local_space_derived).into()).await,
+            ParticleEmitterEntryData::WorldOrientation {
+                use_world_orientation,
+            } => serialize_u8(file, (*use_world_orientation).into()).await,
+            ParticleEmitterEntryData::HardStop { is_hard_stop } => {
+                serialize_u8(file, (*is_hard_stop).into()).await
+            }
+        }
+    }
+}
+
 pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1143,6 +1193,17 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((ParticleEmitterData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData<ParticleEmitterType> for ParticleEmitterData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ParticleEmitterData::ParticleEmitter { entries } => {
+                serialize_entries(file, entries).await
+            }
+            ParticleEmitterData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -1185,6 +1246,19 @@ impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayDa
                     EffectDefinitionArrayData::ParticleEmitterArray { particle_emitters },
                     bytes_read,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectDefinitionArrayData::SoundEmitterArray { sound_emitters } => {
+                serialize_entries(file, sound_emitters).await
+            }
+            EffectDefinitionArrayData::ParticleEmitterArray { particle_emitters } => {
+                serialize_entries(file, particle_emitters).await
             }
         }
     }
