@@ -47,7 +47,7 @@ async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<i32, Er
     }
 
     if len >= 0b1000_0000 {
-        if len >= 0b1000_0000_0000_0000 {
+        if len >= 0b0111_1111_0000_0000 {
             serialize(file, W::write_u8, 0xff).await?;
             serialize(file, W::write_i32, len).await?;
             Ok(5)
