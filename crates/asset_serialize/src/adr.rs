@@ -3875,10 +3875,11 @@ impl SerializeAsset for Adr {
 mod tests {
     use std::env;
     use std::io::Cursor;
+    use std::path::PathBuf;
 
     use super::*;
     use tokio::fs::File;
-    use tokio::io::BufReader;
+    use tokio::io::{AsyncWriteExt, BufReader};
     use walkdir::WalkDir;
 
     #[tokio::test]
@@ -3989,6 +3990,56 @@ mod tests {
             Adr::deserialize(entry.path(), &mut BufReader::new(file))
                 .await
                 .expect(&format!("Failed to deserialize {}", entry.path().display()));
+        }
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_serialize_adr() {
+        let target_extension = "adr";
+        let search_path = env::var("ADR_ROOT").unwrap();
+
+        for entry in WalkDir::new(search_path)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.path()
+                    .extension()
+                    .map_or(false, |ext| ext == target_extension)
+            })
+        {
+            let file = File::open(entry.path())
+                .await
+                .expect(&format!("Failed to open {}", entry.path().display()));
+            let adr = Adr::deserialize(entry.path(), &mut BufReader::new(file))
+                .await
+                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+
+            let mut buffer = Vec::new();
+            Adr::serialize(&adr, &mut Cursor::new(&mut buffer))
+                .await
+                .expect(&format!("Failed to serialize {}", entry.path().display()));
+
+            let deserialize_result =
+                Adr::deserialize(entry.path(), &mut Cursor::new(&mut buffer)).await;
+
+            // Optionally write to file for debugging
+            if deserialize_result.is_err() {
+                if let Ok(out_path) = env::var("ADR_OUT_DIR") {
+                    let mut file = File::create(
+                        PathBuf::from(out_path.clone()).join(entry.path().file_name().unwrap()),
+                    )
+                    .await
+                    .unwrap();
+                    file.write_all(&buffer).await.unwrap();
+                    file.flush().await.unwrap();
+                }
+            }
+
+            deserialize_result.expect(&format!(
+                "Failed to re-deserialize {}",
+                entry.path().display()
+            ));
         }
     }
 }
