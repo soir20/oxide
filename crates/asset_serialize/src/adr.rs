@@ -2613,6 +2613,14 @@ impl DeserializeEntryData<CollisionEntryType> for CollisionData {
     }
 }
 
+impl SerializeEntryData for CollisionData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            CollisionData::AssetName { name } => serialize_string_i32(file, name).await,
+        }
+    }
+}
+
 pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2639,6 +2647,14 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
                     bytes_read,
                 ))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for CoveredSlotEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            CoveredSlotEntryData::SlotId { slot_id } => serialize_u32_le(file, *slot_id).await,
         }
     }
 }
@@ -2684,6 +2700,17 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((OcclusionData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for OcclusionData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            OcclusionData::SlotBitMask { bit_mask } => serialize_u32_le(file, *bit_mask).await,
+            OcclusionData::BitMask { bit_mask } => serialize_u32_le(file, *bit_mask).await,
+            OcclusionData::CoveredSlot { entries } => serialize_entries(file, entries).await,
+            OcclusionData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -2755,6 +2782,26 @@ impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
     }
 }
 
+impl SerializeEntryData for UsageEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            UsageEntryData::Usage { usage } => serialize_u8(file, *usage).await,
+            UsageEntryData::AttachmentBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            UsageEntryData::ValidatePcNpc { validate } => {
+                serialize_u8(file, (*validate).into()).await
+            }
+            UsageEntryData::InheritAnimations {
+                should_inherit_animations,
+            } => serialize_u8(file, (*should_inherit_animations).into()).await,
+            UsageEntryData::ReplicationBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+        }
+    }
+}
+
 pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2793,6 +2840,17 @@ impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
     }
 }
 
+impl SerializeEntryData for HatHairEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            HatHairEntryData::CoverFacialHair {
+                should_cover_facial_hair,
+            } => serialize_u8(file, (*should_cover_facial_hair).into()).await,
+            HatHairEntryData::Type { hat_hair_type } => serialize_u8(file, *hat_hair_type).await,
+        }
+    }
+}
+
 pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2824,6 +2882,16 @@ impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
                     bytes_read,
                 ))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for ShadowEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ShadowEntryData::CheckShadowVisibility {
+                should_check_shadow_visibility,
+            } => serialize_u8(file, (*should_check_shadow_visibility).into()).await,
         }
     }
 }
@@ -2886,6 +2954,26 @@ impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
                     EquippedSlotEntryData::SlotName { slot_name },
                     usize_to_i32(bytes_read)?,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for EquippedSlotEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EquippedSlotEntryData::Type { equipped_slot_type } => {
+                serialize_u8(file, *equipped_slot_type).await
+            }
+            EquippedSlotEntryData::SlotId { slot_id } => serialize_u32_le(file, *slot_id).await,
+            EquippedSlotEntryData::ParentAttachSlot { slot_name } => {
+                serialize_string_i32(file, slot_name).await
+            }
+            EquippedSlotEntryData::ChildAttachSlot { slot_name } => {
+                serialize_string_i32(file, slot_name).await
+            }
+            EquippedSlotEntryData::SlotName { slot_name } => {
+                serialize_string_i32(file, slot_name).await
             }
         }
     }
@@ -2960,6 +3048,27 @@ impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
     }
 }
 
+impl SerializeEntryData for BoneMetadataEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            BoneMetadataEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            BoneMetadataEntryData::CollisionType { collision_type } => {
+                serialize_u32_le(file, *collision_type).await
+            }
+            BoneMetadataEntryData::Joint1 { joint_name } => {
+                serialize_string_i32(file, joint_name).await
+            }
+            BoneMetadataEntryData::Weight1 { weight } => serialize_f32_be(file, *weight).await,
+            BoneMetadataEntryData::Joint2 { joint_name } => {
+                serialize_string_i32(file, joint_name).await
+            }
+            BoneMetadataEntryData::Weight2 { weight } => serialize_f32_be(file, *weight).await,
+        }
+    }
+}
+
 pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2989,6 +3098,15 @@ impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((BoneMetadataData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for BoneMetadataData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            BoneMetadataData::BoneMetadata { entries } => serialize_entries(file, entries).await,
+            BoneMetadataData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
