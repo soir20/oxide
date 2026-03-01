@@ -3160,6 +3160,22 @@ impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceE
     }
 }
 
+impl SerializeEntryData for MountSeatEntranceExitEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountSeatEntranceExitEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            MountSeatEntranceExitEntryData::Animation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountSeatEntranceExitEntryData::Location { location } => {
+                serialize_string_i32(file, location).await
+            }
+        }
+    }
+}
+
 pub type MountSeatEntranceExitEntry =
     Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
 
@@ -3216,6 +3232,19 @@ impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
                     MountSeatEntryData::Animation { animation_name },
                     usize_to_i32(bytes_read)?,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for MountSeatEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountSeatEntryData::Entrance { entries } => serialize_entries(file, entries).await,
+            MountSeatEntryData::Exit { entries } => serialize_entries(file, entries).await,
+            MountSeatEntryData::Bone { bone_name } => serialize_string_i32(file, bone_name).await,
+            MountSeatEntryData::Animation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
             }
         }
     }
@@ -3310,6 +3339,33 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
     }
 }
 
+impl SerializeEntryData for MountEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountEntryData::Seat { entries } => serialize_entries(file, entries).await,
+            MountEntryData::MinOccupancy { min_occupancy } => {
+                serialize_u32_le(file, *min_occupancy).await
+            }
+            MountEntryData::StandAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::StandToSprintAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::SprintAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::SprintToStandAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::AnimationPrefix { animation_prefix } => {
+                serialize_string_i32(file, animation_prefix).await
+            }
+            MountEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type MountEntry = Entry<MountEntryType, MountEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -3344,6 +3400,19 @@ impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEf
                     AnimationCompositeEffectData::EntryCount { entries },
                     bytes_read,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for AnimationCompositeEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationCompositeEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationCompositeEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
             }
         }
     }
@@ -3394,6 +3463,19 @@ impl DeserializeEntryData<JointEntryType> for JointEntryData {
                 let (turn_rate, bytes_read) = deserialize_f32_be(file, len).await?;
                 Ok((JointEntryData::TurnRate { turn_rate }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for JointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            JointEntryData::BoneName { bone_name } => serialize_string_i32(file, bone_name).await,
+            JointEntryData::PitchLimit { pitch_limit } => {
+                serialize_f32_be(file, *pitch_limit).await
+            }
+            JointEntryData::YawLimit { yaw_limit } => serialize_f32_be(file, *yaw_limit).await,
+            JointEntryData::TurnRate { turn_rate } => serialize_f32_be(file, *turn_rate).await,
         }
     }
 }
@@ -3455,6 +3537,22 @@ impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
     }
 }
 
+impl SerializeEntryData for LookControlEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LookControlEntryData::Name { name } => serialize_string_i32(file, name).await,
+            LookControlEntryData::Type { look_control_type } => {
+                serialize_u8(file, *look_control_type).await
+            }
+            LookControlEntryData::Joint { entries } => serialize_entries(file, entries).await,
+            LookControlEntryData::EffectorBone { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            LookControlEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -3478,6 +3576,14 @@ impl DeserializeEntryData<LookControlType> for LookControlData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((LookControlData::LookControl { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for LookControlData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LookControlData::LookControl { entries } => serialize_entries(file, entries).await,
         }
     }
 }
