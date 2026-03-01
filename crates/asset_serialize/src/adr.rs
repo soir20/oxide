@@ -125,7 +125,7 @@ trait SerializeEntry: Sized {
     ) -> impl std::future::Future<Output = Result<i32, Error>>;
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Entry<T, D> {
     pub entry_type: T,
     pub data: D,
@@ -320,7 +320,7 @@ pub enum EntryCountEntryType {
     EntryCount4 = 0x4,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum EntryCountEntryData {
     EntryCount { entry_count: u32 },
     EntryCount3 { entry_count: u32 },
@@ -375,7 +375,7 @@ pub enum SkeletonEntryType {
     Scale = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum SkeletonData {
     AssetName { name: String },
     Scale { scale: f32 },
@@ -421,7 +421,7 @@ pub enum ModelEntryType {
     ObjectTerrainData = 0x5,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
@@ -496,7 +496,7 @@ pub enum SoundEmitterAssetEntryType {
     Weight = 0x3,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterAssetEntryData {
     AssetName { asset_name: String },
     TimeOffset { time_offset_millis: f32 },
@@ -583,7 +583,7 @@ pub enum SoundEmitterEntryType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterEntryData {
     Asset {
         entries: Vec<SoundEmitterAssetEntry>,
@@ -960,7 +960,7 @@ pub enum SoundEmitterType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterData {
     SoundEmitter { entries: Vec<SoundEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1015,7 +1015,7 @@ pub enum ParticleEmitterEntryType {
     HardStop = 0xe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ParticleEmitterEntryData {
     Id { id: u32 },
     EmitterName { emitter_name: String },
@@ -1178,7 +1178,7 @@ pub enum ParticleEmitterType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ParticleEmitterData {
     ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1223,7 +1223,7 @@ pub enum EffectDefinitionArrayType {
     ParticleEmitterArray = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum EffectDefinitionArrayData {
     SoundEmitterArray {
         sound_emitters: Vec<SoundEmitter>,
@@ -1283,7 +1283,7 @@ pub enum MaterialTagEntryType {
     DefaultTintId = 0x5,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MaterialTagEntryData {
     Name { name: String },
     MaterialIndex { material_index: u32 },
@@ -1356,7 +1356,7 @@ pub enum MaterialTagType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MaterialTagData {
     Material { entries: Vec<MaterialTagEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1404,7 +1404,7 @@ pub enum TextureAliasEntryType {
     IsDefault = 0x7,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TextureAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1504,7 +1504,7 @@ pub enum TextureAliasType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TextureAliasData {
     TextureAlias { entries: Vec<TextureAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1552,7 +1552,7 @@ pub enum TintAliasEntryType {
     IsDefault = 0x8,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TintAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1645,7 +1645,7 @@ pub enum TintAliasType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1690,7 +1690,7 @@ pub enum EffectEntryType {
     Id = 0x5,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum EffectEntryData {
     Type { effect_type: u8 },
     Name { name: String },
@@ -1748,7 +1748,7 @@ pub enum EffectType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum EffectData {
     Effect { entries: Vec<EffectEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1791,7 +1791,7 @@ pub enum LevelOfDetailAssetEntryType {
     Distance = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailAssetEntryData {
     AssetName { asset_name: String },
     Distance { distance: f32 },
@@ -1844,7 +1844,7 @@ pub enum LevelOfDetailEntryType {
     Lod0aMaxDistanceFromCamera = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailEntryData {
     Asset {
         entries: Vec<LevelOfDetailAssetEntry>,
@@ -1896,7 +1896,7 @@ pub enum LevelOfDetailType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailData {
     LevelOfDetail { entries: Vec<LevelOfDetailEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1954,7 +1954,7 @@ pub enum AnimationEntryType {
     EffectsPersist = 0x7,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationEntryData {
     Name { name: String },
     AssetName { name: String },
@@ -2049,7 +2049,7 @@ pub enum AnimationType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationData {
     Animation { entries: Vec<AnimationEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2092,7 +2092,7 @@ pub enum AnimationEffectTriggerEventType {
     End = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectTriggerEventData {
     Start { start_seconds: f32 },
     End { end_seconds: f32 },
@@ -2152,7 +2152,7 @@ pub enum AnimationEffectEntryType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectEntryData {
     TriggerEventArray {
         trigger_events: Vec<AnimationEffectTriggerEvent>,
@@ -2272,7 +2272,7 @@ pub enum AnimationEffectType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectData {
     Effect { entries: Vec<AnimationEffectEntry> },
     Name { name: String },
@@ -2324,7 +2324,7 @@ pub enum AnimationSoundEffectType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationSoundEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2374,7 +2374,7 @@ pub enum AnimationParticleEffectType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationParticleEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2427,7 +2427,7 @@ pub enum ActionPointEntryType {
     Time = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ActionPointEntryData {
     Name { name: String },
     Time { time_seconds: f32 },
@@ -2475,7 +2475,7 @@ pub enum ActionPointType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ActionPointData {
     ActionPoint { entries: Vec<ActionPointEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2518,7 +2518,7 @@ pub enum AnimationActionPointEntryType {
     Name = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationActionPointEntryData {
     ActionPointArray { action_points: Vec<ActionPoint> },
     Name { name: String },
@@ -2570,7 +2570,7 @@ pub enum AnimationActionPointType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationActionPointData {
     AnimationActionPoint {
         entries: Vec<AnimationActionPointEntry>,
@@ -2623,7 +2623,7 @@ pub enum CollisionEntryType {
     AssetName = 0x1,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum CollisionData {
     AssetName { name: String },
 }
@@ -2659,7 +2659,7 @@ pub enum CoveredSlotEntryType {
     SlotId = 0x1,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum CoveredSlotEntryData {
     SlotId { slot_id: u32 },
 }
@@ -2701,7 +2701,7 @@ pub enum OcclusionEntryType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum OcclusionData {
     SlotBitMask { bit_mask: u32 },
     BitMask { bit_mask: u32 },
@@ -2759,7 +2759,7 @@ pub enum UsageEntryType {
     ReplicationBoneName = 0x5,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum UsageEntryData {
     Usage { usage: u8 },
     AttachmentBoneName { bone_name: String },
@@ -2844,7 +2844,7 @@ pub enum HatHairEntryType {
     Type = 0x2,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum HatHairEntryData {
     CoverFacialHair { should_cover_facial_hair: bool },
     Type { hat_hair_type: u8 },
@@ -2893,7 +2893,7 @@ pub enum ShadowEntryType {
     CheckShadowVisibility = 0x1,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum ShadowEntryData {
     CheckShadowVisibility {
         should_check_shadow_visibility: bool,
@@ -2943,7 +2943,7 @@ pub enum EquippedSlotEntryType {
     SlotName = 0x5,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum EquippedSlotEntryData {
     Type { equipped_slot_type: u8 },
     SlotId { slot_id: u32 },
@@ -3028,7 +3028,7 @@ pub enum BoneMetadataEntryType {
     Weight2 = 0x6,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum BoneMetadataEntryData {
     BoneName { bone_name: String },
     CollisionType { collision_type: u32 },
@@ -3115,7 +3115,7 @@ pub enum BoneMetadataType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum BoneMetadataData {
     BoneMetadata { entries: Vec<BoneMetadataEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -3159,7 +3159,7 @@ pub enum MountSeatEntranceExitEntryType {
     Location = 0x3,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MountSeatEntranceExitEntryData {
     BoneName { bone_name: String },
     Animation { animation_name: String },
@@ -3227,7 +3227,7 @@ pub enum MountSeatEntryType {
     Animation = 0x4,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MountSeatEntryData {
     Entrance {
         entries: Vec<MountSeatEntranceExitEntry>,
@@ -3305,7 +3305,7 @@ pub enum MountEntryType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
     MinOccupancy { min_occupancy: u32 },
@@ -3416,7 +3416,7 @@ pub enum AnimationCompositeEffectType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AnimationCompositeEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -3472,7 +3472,7 @@ pub enum JointEntryType {
     TurnRate = 0x4,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum JointEntryData {
     BoneName { bone_name: String },
     PitchLimit { pitch_limit: f32 },
@@ -3535,7 +3535,7 @@ pub enum LookControlEntryType {
     EntryCount = 0xfe,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LookControlEntryData {
     Name { name: String },
     Type { look_control_type: u8 },
@@ -3605,7 +3605,7 @@ pub enum LookControlType {
     LookControl = 0x1,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum LookControlData {
     LookControl { entries: Vec<LookControlEntry> },
 }
@@ -3662,7 +3662,7 @@ pub enum AdrEntryType {
     LookControlArray = 0x16,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum AdrData {
     Skeleton {
         entries: Vec<SkeletonEntry>,
@@ -3892,7 +3892,7 @@ impl SerializeEntryData for AdrData {
 
 pub type AdrEntry = Entry<AdrEntryType, AdrData>;
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Adr {
     pub entries: Vec<AdrEntry>,
 }
@@ -4099,10 +4099,12 @@ mod tests {
                 }
             }
 
-            deserialize_result.expect(&format!(
+            let new_adr = deserialize_result.expect(&format!(
                 "Failed to re-deserialize {}",
                 entry.path().display()
             ));
+
+            assert_eq!(adr, new_adr);
         }
     }
 }
