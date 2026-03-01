@@ -18,7 +18,7 @@ async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<(), Err
         let upper_byte = ((len & 0x7f00) >> 8) as u8 | 0x80;
         if upper_byte == 0xff {
             serialize(file, W::write_u8, 0xff).await?;
-            serialize(file, W::write_i32_le, len).await?;
+            serialize(file, W::write_i32, len).await?;
         } else {
             let lower_byte = (len & 0xff) as u8;
             serialize(file, W::write_u8, upper_byte).await?;
@@ -39,7 +39,7 @@ async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>
     let mut bytes_read = 1;
     if len_marker >= 128 {
         if len_marker == 0xff {
-            len = deserialize(file, W::read_i32_le).await?;
+            len = deserialize(file, W::read_i32).await?;
             bytes_read += 4;
         } else {
             let len_byte2 = deserialize(file, W::read_u8).await?;
@@ -3041,7 +3041,7 @@ mod tests {
         serialize_len(&mut Cursor::new(&mut buffer), 0x7ffe)
             .await
             .unwrap();
-        assert_eq!(vec![0xff, 0xfe, 0x7f, 0x0, 0x0], buffer);
+        assert_eq!(vec![0xff, 0x0, 0x0, 0x7f, 0xfe], buffer);
         assert_eq!(
             (0x7ffe, 5),
             deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
@@ -3053,7 +3053,7 @@ mod tests {
         serialize_len(&mut Cursor::new(&mut buffer), 0x7fff)
             .await
             .unwrap();
-        assert_eq!(vec![0xff, 0xff, 0x7f, 0x0, 0x0], buffer);
+        assert_eq!(vec![0xff, 0x0, 0x0, 0x7f, 0xff], buffer);
         assert_eq!(
             (0x7fff, 5),
             deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
