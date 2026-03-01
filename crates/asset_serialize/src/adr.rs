@@ -1903,6 +1903,15 @@ impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
     }
 }
 
+impl SerializeEntryData for LevelOfDetailData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailData::LevelOfDetail { entries } => serialize_entries(file, entries).await,
+            LevelOfDetailData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -1992,6 +2001,26 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
     }
 }
 
+impl SerializeEntryData for AnimationEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEntryData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEntryData::AssetName { name } => serialize_string_i32(file, name).await,
+            AnimationEntryData::PlayBackScale { scale } => serialize_f32_be(file, *scale).await,
+            AnimationEntryData::Duration { duration_seconds } => {
+                serialize_f32_be(file, *duration_seconds).await
+            }
+            AnimationEntryData::LoadType { load_type } => load_type.serialize(file).await,
+            AnimationEntryData::Required { required } => {
+                serialize_u8(file, (*required).into()).await
+            }
+            AnimationEntryData::EffectsPersist { do_effects_persist } => {
+                serialize_u8(file, (*do_effects_persist).into()).await
+            }
+        }
+    }
+}
+
 pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 
 #[derive(Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive)]
@@ -2021,6 +2050,15 @@ impl DeserializeEntryData<AnimationType> for AnimationData {
                 let (entries, bytes_read) = deserialize_entries(file, len).await?;
                 Ok((AnimationData::EntryCount { entries }, bytes_read))
             }
+        }
+    }
+}
+
+impl SerializeEntryData for AnimationData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationData::Animation { entries } => serialize_entries(file, entries).await,
+            AnimationData::EntryCount { entries } => serialize_entries(file, entries).await,
         }
     }
 }
@@ -2059,6 +2097,19 @@ impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTr
                     AnimationEffectTriggerEventData::End { end_seconds },
                     bytes_read,
                 ))
+            }
+        }
+    }
+}
+
+impl SerializeEntryData for AnimationEffectTriggerEventData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectTriggerEventData::Start { start_seconds } => {
+                serialize_f32_be(file, *start_seconds).await
+            }
+            AnimationEffectTriggerEventData::End { end_seconds } => {
+                serialize_f32_be(file, *end_seconds).await
             }
         }
     }
