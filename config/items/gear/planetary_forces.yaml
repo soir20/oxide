@@ -1580,7 +1580,7 @@
   category: 63
   members: true
 # Onderon Guard Suit
-- guid: 190152
+- guid: 190149
   name_id: 53542
   description_id: 14
   icon_set_id: 3182
@@ -1591,7 +1591,7 @@
   category: 61
   members: true
 # Onderon Guard Helmet
-- guid: 190153
+- guid: 190150
   name_id: 53540
   description_id: 14
   icon_set_id: 3180
@@ -1602,7 +1602,7 @@
   category: 60
   members: true
 # Onderon Guard Gloves
-- guid: 190154
+- guid: 190151
   name_id: 53541
   description_id: 14
   icon_set_id: 3181
@@ -1613,7 +1613,7 @@
   category: 62
   members: true
 # Onderon Guard Boots
-- guid: 190155
+- guid: 190152
   name_id: 53543
   description_id: 14
   icon_set_id: 3183
@@ -1624,7 +1624,7 @@
   category: 63
   members: true
 # Police Guard Armor
-- guid: 190156
+- guid: 190153
   name_id: 43707
   description_id: 14
   icon_set_id: 1884
@@ -1635,7 +1635,7 @@
   category: 61
   members: true
 # Police Guard Helmet
-- guid: 190157
+- guid: 190154
   name_id: 43705
   description_id: 14
   icon_set_id: 1887
@@ -1646,7 +1646,7 @@
   category: 60
   members: true
 # Police Guard Gloves
-- guid: 190158
+- guid: 190155
   name_id: 43706
   description_id: 14
   icon_set_id: 1886
@@ -1657,7 +1657,7 @@
   category: 62
   members: true
 # Police Guard Boots
-- guid: 190159
+- guid: 190156
   name_id: 43708
   description_id: 14
   icon_set_id: 1885
@@ -1668,7 +1668,7 @@
   category: 63
   members: true
 # Jiro's Suit
-- guid: 190160
+- guid: 190157
   name_id: 52886
   description_id: 14
   icon_set_id: 3813
@@ -1678,7 +1678,7 @@
   item_type: 1
   category: 61
 # Jiro's Gloves
-- guid: 190161
+- guid: 190158
   name_id: 54547
   description_id: 14
   icon_set_id: 3812
@@ -1688,7 +1688,7 @@
   item_type: 1
   category: 62
 # Jiro's Boots
-- guid: 190162
+- guid: 190159
   name_id: 52887
   description_id: 14
   icon_set_id: 3814
@@ -1698,7 +1698,7 @@
   item_type: 1
   category: 63
 # Craggy Pirate Suit
-- guid: 190163
+- guid: 190160
   name_id: 54495
   description_id: 14
   icon_set_id: 3748
@@ -1709,7 +1709,7 @@
   category: 61
   members: true
 # Craggy Pirate Gloves
-- guid: 190164
+- guid: 190161
   name_id: 54494
   description_id: 14
   icon_set_id: 3747
@@ -1720,7 +1720,7 @@
   category: 62
   members: true
 # Craggy Pirate Boots
-- guid: 190165
+- guid: 190162
   name_id: 54496
   description_id: 14
   icon_set_id: 3749
@@ -1731,7 +1731,7 @@
   category: 63
   members: true
 # Weequay Pirate Suit
-- guid: 190166
+- guid: 190163
   name_id: 53546
   description_id: 14
   icon_set_id: 3187
@@ -1742,7 +1742,7 @@
   category: 61
   members: true
 # Weequay Pirate Bandana
-- guid: 190167
+- guid: 190164
   name_id: 53544
   description_id: 14
   icon_set_id: 3185
@@ -1753,7 +1753,7 @@
   category: 60
   members: true
 # Weequay Pirate Gloves
-- guid: 190168
+- guid: 190165
   name_id: 53545
   description_id: 14
   icon_set_id: 3186
@@ -1764,7 +1764,7 @@
   category: 62
   members: true
 # Weequay Pirate Boots
-- guid: 190169
+- guid: 190166
   name_id: 53547
   description_id: 14
   icon_set_id: 3188
@@ -1775,7 +1775,7 @@
   category: 63
   members: true
 # Black Sun Armor
-- guid: 190170
+- guid: 190167
   name_id: 54508
   description_id: 14
   icon_set_id: 3763
@@ -1785,7 +1785,7 @@
   item_type: 1
   category: 61
 # Black Sun Helmet
-- guid: 190171
+- guid: 190168
   name_id: 54506
   description_id: 14
   icon_set_id: 3762
@@ -1795,7 +1795,7 @@
   item_type: 1
   category: 60
 # Black Sun Foot Soldier Boots
-- guid: 190172
+- guid: 190169
   name_id: 54203
   description_id: 14
   icon_set_id: 3764
@@ -1805,7 +1805,7 @@
   item_type: 1
   category: 63
 # Nikto Spacesuit
-- guid: 190173
+- guid: 190170
   name_id: 60771
   description_id: 14
   icon_set_id: 3855
@@ -1815,7 +1815,7 @@
   item_type: 1
   category: 61
 # Nikto Helmet
-- guid: 190174
+- guid: 190171
   name_id: 60774
   description_id: 14
   icon_set_id: 3858
@@ -1825,7 +1825,7 @@
   item_type: 1
   category: 60
 # Nikto Gloves
-- guid: 190175
+- guid: 190172
   name_id: 60772
   description_id: 14
   icon_set_id: 3857
@@ -1835,7 +1835,7 @@
   item_type: 1
   category: 62
 # Nikto Boots
-- guid: 190176
+- guid: 190173
   name_id: 60773
   description_id: 14
   icon_set_id: 3856
@@ -1845,7 +1845,7 @@
   item_type: 1
   category: 63
 # Ming Po Robe
-- guid: 190177
+- guid: 190174
   name_id: 52835
   description_id: 14
   icon_set_id: 3061
@@ -1856,7 +1856,7 @@
   category: 61
   members: true
 # Ming Po Gloves
-- guid: 190178
+- guid: 190175
   name_id: 52834
   description_id: 14
   icon_set_id: 3060
@@ -1867,7 +1867,7 @@
   category: 62
   members: true
 # Ming Po Boots
-- guid: 190179
+- guid: 190176
   name_id: 52836
   description_id: 14
   icon_set_id: 3062
@@ -1878,7 +1878,7 @@
   category: 63
   members: true
 # Ming Po Militia Suit
-- guid: 190183
+- guid: 190177
   name_id: 52855
   description_id: 14
   icon_set_id: 3083
@@ -1889,7 +1889,7 @@
   category: 61
   members: true
 # Ming Po Militia Helmet
-- guid: 190184
+- guid: 190178
   name_id: 52853
   description_id: 14
   icon_set_id: 3081
@@ -1900,7 +1900,7 @@
   category: 60
   members: true
 # Ming Po Militia Gloves
-- guid: 190185
+- guid: 190179
   name_id: 52854
   description_id: 14
   icon_set_id: 3082
@@ -1911,7 +1911,7 @@
   category: 62
   members: true
 # Ming Po Militia Boots
-- guid: 190186
+- guid: 190180
   name_id: 52856
   description_id: 14
   icon_set_id: 3084
@@ -1922,7 +1922,7 @@
   category: 63
   members: true
 # Cold Warrior Armor
-- guid: 190187
+- guid: 190181
   name_id: 52062
   description_id: 14
   icon_set_id: 2971
@@ -1933,7 +1933,7 @@
   category: 61
   members: true
 # Cold Warrior Helmet
-- guid: 190188
+- guid: 190182
   name_id: 52061
   description_id: 14
   icon_set_id: 2974
@@ -1944,7 +1944,7 @@
   category: 60
   members: true
 # Cold Warrior Gloves
-- guid: 190189
+- guid: 190183
   name_id: 52063
   description_id: 14
   icon_set_id: 2973
@@ -1955,7 +1955,7 @@
   category: 62
   members: true
 # Cold Warrior Boots
-- guid: 190190
+- guid: 190184
   name_id: 52064
   description_id: 14
   icon_set_id: 2972
@@ -1966,7 +1966,7 @@
   category: 63
   members: true
 # Carlac Death Watch Elite Suit
-- guid: 190191
+- guid: 190185
   name_id: 4905
   description_id: 14
   icon_set_id: 2936
@@ -1976,7 +1976,7 @@
   item_type: 1
   category: 61
 # Carlac Death Watch Elite Helmet
-- guid: 190192
+- guid: 190186
   name_id: 4903
   description_id: 14
   icon_set_id: 2934
@@ -1986,7 +1986,7 @@
   item_type: 1
   category: 60
 # Carlac Death Watch Elite Gloves
-- guid: 190193
+- guid: 190187
   name_id: 4904
   description_id: 14
   icon_set_id: 2935
@@ -1996,7 +1996,7 @@
   item_type: 1
   category: 62
 # Carlac Death Watch Elite Boots
-- guid: 190194
+- guid: 190188
   name_id: 4906
   description_id: 14
   icon_set_id: 2937
@@ -2006,7 +2006,7 @@
   item_type: 1
   category: 63
 # Orange Death Watch Commander Suit
-- guid: 190199
+- guid: 190189
   name_id: 53709
   description_id: 14
   icon_set_id: 3226
@@ -2016,7 +2016,7 @@
   item_type: 1
   category: 61
 # Orange Death Watch Commander Helmet
-- guid: 190200
+- guid: 190190
   name_id: 53707
   description_id: 14
   icon_set_id: 3224
@@ -2026,7 +2026,7 @@
   item_type: 1
   category: 60
 # Orange Death Watch Commander Gloves
-- guid: 190201
+- guid: 190191
   name_id: 53708
   description_id: 14
   icon_set_id: 3225
@@ -2036,7 +2036,7 @@
   item_type: 1
   category: 62
 # Orange Death Watch Commander Boots
-- guid: 190202
+- guid: 190192
   name_id: 53710
   description_id: 14
   icon_set_id: 3227
@@ -2046,7 +2046,7 @@
   item_type: 1
   category: 63
 # Death Watch Night Owl Armor
-- guid: 190211
+- guid: 190193
   name_id: 54255
   description_id: 14
   icon_set_id: 3634
@@ -2057,7 +2057,7 @@
   category: 61
   members: true
 # Death Watch Night Owl Helmet
-- guid: 190212
+- guid: 190194
   name_id: 54253
   description_id: 14
   icon_set_id: 3632
@@ -2068,7 +2068,7 @@
   category: 60
   members: true
 # Death Watch Night Owl Gloves
-- guid: 190213
+- guid: 190195
   name_id: 54254
   description_id: 14
   icon_set_id: 3633
@@ -2079,7 +2079,7 @@
   category: 62
   members: true
 # Death Watch Night Owl Boots
-- guid: 190214
+- guid: 190196
   name_id: 54256
   description_id: 14
   icon_set_id: 3635
@@ -2090,7 +2090,7 @@
   category: 63
   members: true
 # Death Watch Lieutenant Armor
-- guid: 190215
+- guid: 190197
   name_id: 54249
   description_id: 14
   icon_set_id: 3629
@@ -2101,7 +2101,7 @@
   category: 61
   members: true
 # Death Watch Lieutenant Helmet
-- guid: 190216
+- guid: 190198
   name_id: 54247
   description_id: 14
   icon_set_id: 3627
@@ -2112,7 +2112,7 @@
   category: 60
   members: true
 # Death Watch Lieutenant Gloves
-- guid: 190217
+- guid: 190199
   name_id: 54248
   description_id: 14
   icon_set_id: 3628
@@ -2123,7 +2123,7 @@
   category: 62
   members: true
 # Death Watch Lieutenant Boots
-- guid: 190218
+- guid: 190200
   name_id: 54250
   description_id: 14
   icon_set_id: 3630
@@ -2134,7 +2134,7 @@
   category: 63
   members: true
 # Super Commando Captain Armor
-- guid: 190219
+- guid: 190201
   name_id: 54416
   description_id: 14
   icon_set_id: 3687
@@ -2145,7 +2145,7 @@
   category: 61
   members: true
 # Super Commando Captain Helmet
-- guid: 190220
+- guid: 190202
   name_id: 54414
   description_id: 14
   icon_set_id: 3685
@@ -2156,7 +2156,7 @@
   category: 60
   members: true
 # Super Commando Captain Gloves
-- guid: 190221
+- guid: 190203
   name_id: 54415
   description_id: 14
   icon_set_id: 3686
@@ -2167,7 +2167,7 @@
   category: 62
   members: true
 # Super Commando Captain Boots
-- guid: 190222
+- guid: 190204
   name_id: 54417
   description_id: 14
   icon_set_id: 3688
@@ -2178,7 +2178,7 @@
   category: 63
   members: true
 # Mandalorian Super Commando Armor
-- guid: 190223
+- guid: 190205
   name_id: 54435
   description_id: 14
   icon_set_id: 3699
@@ -2189,7 +2189,7 @@
   category: 61
   members: true
 # Mandalorian Super Commando Helmet
-- guid: 190224
+- guid: 190206
   name_id: 54433
   description_id: 14
   icon_set_id: 3700
@@ -2200,7 +2200,7 @@
   category: 60
   members: true
 # Camouflaged Death Watch Armor
-- guid: 190225
+- guid: 190207
   name_id: 2697
   description_id: 14
   icon_set_id: 2591
@@ -2210,7 +2210,7 @@
   item_type: 1
   category: 61
 # Camouflaged Death Watch Helmet
-- guid: 190226
+- guid: 190208
   name_id: 2695
   description_id: 14
   icon_set_id: 2589
@@ -2220,7 +2220,7 @@
   item_type: 1
   category: 60
 # Camouflaged Death Watch Gloves
-- guid: 190227
+- guid: 190209
   name_id: 2696
   description_id: 14
   icon_set_id: 2590
@@ -2230,7 +2230,7 @@
   item_type: 1
   category: 62
 # Camouflaged Death Watch Boots
-- guid: 190228
+- guid: 190210
   name_id: 2698
   description_id: 14
   icon_set_id: 2592
@@ -2240,7 +2240,7 @@
   item_type: 1
   category: 63
 # Gold Death Watch Armor
-- guid: 190229
+- guid: 190211
   name_id: 2693
   description_id: 14
   icon_set_id: 2741
@@ -2250,7 +2250,7 @@
   item_type: 1
   category: 61
 # Gold Death Watch Helmet
-- guid: 190230
+- guid: 190212
   name_id: 2691
   description_id: 14
   icon_set_id: 2739
@@ -2260,7 +2260,7 @@
   item_type: 1
   category: 60
 # Gold Death Watch Gloves
-- guid: 190231
+- guid: 190213
   name_id: 2692
   description_id: 14
   icon_set_id: 2740
@@ -2270,7 +2270,7 @@
   item_type: 1
   category: 62
 # Gold Death Watch Boots
-- guid: 190232
+- guid: 190214
   name_id: 2694
   description_id: 14
   icon_set_id: 2742
@@ -2280,7 +2280,7 @@
   item_type: 1
   category: 63
 # Vicious Savage's Pants
-- guid: 190237
+- guid: 190215
   name_id: 44885
   description_id: 14
   icon_set_id: 2118
@@ -2290,7 +2290,7 @@
   item_type: 1
   category: 61
 # Dark Side Acolyte Suit
-- guid: 190238
+- guid: 190216
   name_id: 4747
   description_id: 14
   icon_set_id: 2787
@@ -2301,7 +2301,7 @@
   category: 61
   members: true
 # Dark Side Acolyte Cloak
-- guid: 190239
+- guid: 190217
   name_id: 4745
   description_id: 14
   icon_set_id: 2785
@@ -2312,7 +2312,7 @@
   category: 60
   members: true
 # Dark Side Acolyte Gloves
-- guid: 190240
+- guid: 190218
   name_id: 4746
   description_id: 14
   icon_set_id: 2786
@@ -2323,7 +2323,7 @@
   category: 62
   members: true
 # Dark Side Acolyte Boots
-- guid: 190241
+- guid: 190219
   name_id: 4748
   description_id: 14
   icon_set_id: 2788
@@ -2334,7 +2334,7 @@
   category: 63
   members: true
 # Dark Side Adept Suit
-- guid: 190242
+- guid: 190220
   name_id: 4743
   description_id: 14
   icon_set_id: 2783
@@ -2345,7 +2345,7 @@
   category: 61
   members: true
 # Dark Side Adept Cloak
-- guid: 190243
+- guid: 190221
   name_id: 4741
   description_id: 14
   icon_set_id: 2781
@@ -2356,7 +2356,7 @@
   category: 60
   members: true
 # Dark Side Adept Gloves
-- guid: 190244
+- guid: 190222
   name_id: 4742
   description_id: 14
   icon_set_id: 2782
@@ -2367,7 +2367,7 @@
   category: 62
   members: true
 # Dark Side Adept Boots
-- guid: 190245
+- guid: 190223
   name_id: 4744
   description_id: 14
   icon_set_id: 2784
@@ -2378,7 +2378,7 @@
   category: 63
   members: true
 # Byzantium Sith Agent Suit
-- guid: 190246
+- guid: 190224
   name_id: 4947
   description_id: 14
   icon_set_id: 3005
@@ -2388,7 +2388,7 @@
   item_type: 1
   category: 61
 # Byzantium Sith Agent Hood
-- guid: 190247
+- guid: 190225
   name_id: 4945
   description_id: 14
   icon_set_id: 3003
@@ -2398,7 +2398,7 @@
   item_type: 1
   category: 60
 # Byzantium Sith Agent Gloves
-- guid: 190248
+- guid: 190226
   name_id: 4946
   description_id: 14
   icon_set_id: 3004
@@ -2408,7 +2408,7 @@
   item_type: 1
   category: 62
 # Byzantium Sith Agent Boots
-- guid: 190249
+- guid: 190227
   name_id: 4948
   description_id: 14
   icon_set_id: 3006
@@ -2418,7 +2418,7 @@
   item_type: 1
   category: 63
 # Carmine Sith Agent Suit
-- guid: 190250
+- guid: 190228
   name_id: 4951
   description_id: 14
   icon_set_id: 3009
@@ -2428,7 +2428,7 @@
   item_type: 1
   category: 61
 # Carmine Sith Agent Hood
-- guid: 190251
+- guid: 190229
   name_id: 4949
   description_id: 14
   icon_set_id: 3007
@@ -2438,7 +2438,7 @@
   item_type: 1
   category: 60
 # Carmine Sith Agent Gloves
-- guid: 190252
+- guid: 190230
   name_id: 4950
   description_id: 14
   icon_set_id: 3008
@@ -2448,7 +2448,7 @@
   item_type: 1
   category: 62
 # Carmine Sith Agent Boots
-- guid: 190253
+- guid: 190231
   name_id: 4952
   description_id: 14
   icon_set_id: 3010
@@ -2458,7 +2458,7 @@
   item_type: 1
   category: 63
 # Gray Sith Agent Suit
-- guid: 190254
+- guid: 190232
   name_id: 4955
   description_id: 14
   icon_set_id: 3013
@@ -2468,7 +2468,7 @@
   item_type: 1
   category: 61
 # Gray Sith Agent Hood
-- guid: 190255
+- guid: 190233
   name_id: 4953
   description_id: 14
   icon_set_id: 3011
@@ -2478,7 +2478,7 @@
   item_type: 1
   category: 60
 # Gray Sith Agent Gloves
-- guid: 190256
+- guid: 190234
   name_id: 4954
   description_id: 14
   icon_set_id: 3012
@@ -2488,7 +2488,7 @@
   item_type: 1
   category: 62
 # Gray Sith Agent Boots
-- guid: 190257
+- guid: 190235
   name_id: 4956
   description_id: 14
   icon_set_id: 3014
@@ -2498,7 +2498,7 @@
   item_type: 1
   category: 63
 # Darth Maul's Suit
-- guid: 190258
+- guid: 190236
   name_id: 54481
   description_id: 14
   icon_set_id: 3706
@@ -2508,7 +2508,7 @@
   item_type: 1
   category: 61
 # Darth Maul's Gloves
-- guid: 190259
+- guid: 190237
   name_id: 54480
   description_id: 14
   icon_set_id: 3705
@@ -2518,7 +2518,7 @@
   item_type: 1
   category: 62
 # Darth Maul's Robotic Legs
-- guid: 190260
+- guid: 190238
   name_id: 54482
   description_id: 14
   icon_set_id: 3707
@@ -2528,7 +2528,7 @@
   item_type: 1
   category: 63
 # Scoundrel Suit
-- guid: 190261
+- guid: 190239
   name_id: 54609
   description_id: 14
   icon_set_id: 3841
@@ -2538,7 +2538,7 @@
   item_type: 1
   category: 61
 # Scoundrel Shoes
-- guid: 190262
+- guid: 190240
   name_id: 54610
   description_id: 14
   icon_set_id: 3842
@@ -2548,7 +2548,7 @@
   item_type: 1
   category: 63
 # Smuggler Vest
-- guid: 190263
+- guid: 190241
   name_id: 54608
   description_id: 14
   icon_set_id: 3839
@@ -2558,7 +2558,7 @@
   item_type: 1
   category: 61
 # Smuggler Boots
-- guid: 190264
+- guid: 190242
   name_id: 54607
   description_id: 14
   icon_set_id: 3840

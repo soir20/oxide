@@ -1185,7 +1185,7 @@
   category: 63
   members: true
 # Kit Fisto's Robes
-- guid: 180117
+- guid: 180114
   name_id: 8902
   description_id: 14
   icon_set_id: 99
@@ -1195,7 +1195,7 @@
   item_type: 1
   category: 61
 # Kit Fisto's Gloves
-- guid: 180118
+- guid: 180115
   name_id: 8906
   description_id: 14
   icon_set_id: 170
@@ -1205,7 +1205,7 @@
   item_type: 1
   category: 62
 # Kit Fisto's Boots
-- guid: 180119
+- guid: 180116
   name_id: 8904
   description_id: 14
   icon_set_id: 141
@@ -1215,7 +1215,7 @@
   item_type: 1
   category: 63
 # Cold Weather Kit Fisto's Suit
-- guid: 180120
+- guid: 180117
   name_id: 44879
   description_id: 14
   icon_set_id: 2110
@@ -1226,7 +1226,7 @@
   category: 61
   members: true
 # Cold Weather Kit Fisto's Hood
-- guid: 180121
+- guid: 180118
   name_id: 44877
   description_id: 14
   icon_set_id: 2108
@@ -1237,7 +1237,7 @@
   category: 60
   members: true
 # Cold Weather Kit Fisto's Gloves
-- guid: 180122
+- guid: 180119
   name_id: 44878
   description_id: 14
   icon_set_id: 2109
@@ -1248,7 +1248,7 @@
   category: 62
   members: true
 # Cold Weather Kit Fisto's Boots
-- guid: 180123
+- guid: 180120
   name_id: 44880
   description_id: 14
   icon_set_id: 2111
@@ -1259,7 +1259,7 @@
   category: 63
   members: true
 # Flanneled Cold Weather Kit Fisto's Suit
-- guid: 180124
+- guid: 180121
   name_id: 2677
   description_id: 14
   icon_set_id: 3334
@@ -1269,7 +1269,7 @@
   item_type: 1
   category: 61
 # Flanneled Cold Weather Kit Fisto's Hood
-- guid: 180125
+- guid: 180122
   name_id: 2675
   description_id: 14
   icon_set_id: 3332
@@ -1279,7 +1279,7 @@
   item_type: 1
   category: 60
 # Flanneled Cold Weather Kit Fisto's Gloves
-- guid: 180126
+- guid: 180123
   name_id: 2676
   description_id: 14
   icon_set_id: 3333
@@ -1289,7 +1289,7 @@
   item_type: 1
   category: 62
 # Flanneled Cold Weather Kit Fisto's Boots
-- guid: 180127
+- guid: 180124
   name_id: 2678
   description_id: 14
   icon_set_id: 3335
@@ -1299,7 +1299,7 @@
   item_type: 1
   category: 63
 # Simple Padawan Robes
-- guid: 180128
+- guid: 180125
   name_id: 8611
   description_id: 14
   icon_set_id: 112
@@ -1309,7 +1309,7 @@
   item_type: 1
   category: 61
 # Light Padawan Helmet
-- guid: 180129
+- guid: 180126
   name_id: 8546
   description_id: 14
   icon_set_id: 211
@@ -1319,7 +1319,7 @@
   item_type: 1
   category: 60
 # Brown Padawan Boots
-- guid: 180130
+- guid: 180127
   name_id: 67
   description_id: 14
   icon_set_id: 123
@@ -1329,7 +1329,7 @@
   item_type: 1
   category: 63
 # Green Padawan Robes
-- guid: 180131
+- guid: 180128
   name_id: 8610
   description_id: 14
   icon_set_id: 111
@@ -1339,7 +1339,7 @@
   item_type: 1
   category: 61
 # Tan Padawan Boots
-- guid: 180132
+- guid: 180129
   name_id: 8880
   description_id: 14
   icon_set_id: 121
@@ -1349,7 +1349,7 @@
   item_type: 1
   category: 63
 # Dark Padawan Helmet
-- guid: 180133
+- guid: 180130
   name_id: 8882
   description_id: 14
   icon_set_id: 210
@@ -1359,7 +1359,7 @@
   item_type: 1
   category: 60
 # Long Padawan Robes
-- guid: 180134
+- guid: 180131
   name_id: 8609
   description_id: 14
   icon_set_id: 113
@@ -1369,7 +1369,7 @@
   item_type: 1
   category: 61
 # Rusty Padawan Boots
-- guid: 180135
+- guid: 180132
   name_id: 8886
   description_id: 14
   icon_set_id: 144
@@ -1379,7 +1379,7 @@
   item_type: 1
   category: 63
 # Bariss' Cloak
-- guid: 180136
+- guid: 180133
   name_id: 54470
   description_id: 14
   icon_set_id: 3714
@@ -1390,7 +1390,7 @@
   category: 61
   members: true
 # Bariss' Hood
-- guid: 180137
+- guid: 180134
   name_id: 54468
   description_id: 14
   icon_set_id: 3712
@@ -1401,7 +1401,7 @@
   category: 60
   members: true
 # Bariss' Gloves
-- guid: 180138
+- guid: 180135
   name_id: 54469
   description_id: 14
   icon_set_id: 3713
@@ -1412,7 +1412,7 @@
   category: 62
   members: true
 # Bariss' Shoes
-- guid: 180139
+- guid: 180136
   name_id: 54471
   description_id: 14
   icon_set_id: 3715
@@ -1423,7 +1423,7 @@
   category: 63
   members: true
 # Adept Jedi Cloak
-- guid: 180140
+- guid: 180137
   name_id: 4619
   description_id: 14
   icon_set_id: 2686
@@ -1433,7 +1433,7 @@
   item_type: 1
   category: 61
 # Adept Jedi Hood
-- guid: 180141
+- guid: 180138
   name_id: 4617
   description_id: 14
   icon_set_id: 2684
@@ -1443,7 +1443,7 @@
   item_type: 1
   category: 60
 # Adept Jedi Vambrace
-- guid: 180142
+- guid: 180139
   name_id: 4618
   description_id: 14
   icon_set_id: 2685
@@ -1453,7 +1453,7 @@
   item_type: 1
   category: 62
 # Adept Jedi Greaves
-- guid: 180143
+- guid: 180140
   name_id: 4620
   description_id: 14
   icon_set_id: 2687
@@ -1463,7 +1463,7 @@
   item_type: 1
   category: 63
 # Kofun Jedi Armor
-- guid: 180144
+- guid: 180141
   name_id: 4818
   description_id: 14
   icon_set_id: 2848
@@ -1473,7 +1473,7 @@
   item_type: 1
   category: 61
 # Kofun Jedi Helm
-- guid: 180145
+- guid: 180142
   name_id: 4816
   description_id: 14
   icon_set_id: 2846
@@ -1483,7 +1483,7 @@
   item_type: 1
   category: 60
 # Kofun Jedi Hand Wraps
-- guid: 180146
+- guid: 180143
   name_id: 4817
   description_id: 14
   icon_set_id: 2847
@@ -1493,7 +1493,7 @@
   item_type: 1
   category: 62
 # Kofun Jedi Leg Wraps
-- guid: 180147
+- guid: 180144
   name_id: 4819
   description_id: 14
   icon_set_id: 2849
@@ -1503,7 +1503,7 @@
   item_type: 1
   category: 63
 # Forgotten Jedi Armor
-- guid: 180148
+- guid: 180145
   name_id: 60289
   description_id: 14
   icon_set_id: 3738
@@ -1514,7 +1514,7 @@
   category: 61
   members: true
 # Forgotten Jedi Breather
-- guid: 180149
+- guid: 180146
   name_id: 60287
   description_id: 14
   icon_set_id: 3736
@@ -1525,7 +1525,7 @@
   category: 60
   members: true
 # Forgotten Jedi Gloves
-- guid: 180150
+- guid: 180147
   name_id: 60288
   description_id: 14
   icon_set_id: 3737
@@ -1536,7 +1536,7 @@
   category: 62
   members: true
 # Forgotten Jedi Boots
-- guid: 180151
+- guid: 180148
   name_id: 60290
   description_id: 14
   icon_set_id: 3739
@@ -1547,7 +1547,7 @@
   category: 63
   members: true
 # Jedi Exile Tunic
-- guid: 180152
+- guid: 180149
   name_id: 54600
   description_id: 14
   icon_set_id: 3833
@@ -1557,7 +1557,7 @@
   item_type: 1
   category: 61
 # Jedi Exile Cowl
-- guid: 180153
+- guid: 180150
   name_id: 54598
   description_id: 14
   icon_set_id: 3831
@@ -1567,7 +1567,7 @@
   item_type: 1
   category: 60
 # Jedi Exile Gloves
-- guid: 180154
+- guid: 180151
   name_id: 54599
   description_id: 14
   icon_set_id: 3832
@@ -1577,7 +1577,7 @@
   item_type: 1
   category: 62
 # Jedi Exile Boots
-- guid: 180155
+- guid: 180152
   name_id: 54601
   description_id: 14
   icon_set_id: 3834
@@ -1587,7 +1587,7 @@
   item_type: 1
   category: 63
 # Jedi Champion Robe
-- guid: 180156
+- guid: 180153
   name_id: 52787
   description_id: 14
   icon_set_id: 3110
@@ -1598,7 +1598,7 @@
   category: 61
   members: true
 # Jedi Champion Hood
-- guid: 180157
+- guid: 180154
   name_id: 52790
   description_id: 14
   icon_set_id: 3113
@@ -1609,7 +1609,7 @@
   category: 60
   members: true
 # Jedi Champion Gauntlets
-- guid: 180158
+- guid: 180155
   name_id: 52788
   description_id: 14
   icon_set_id: 3112
@@ -1620,7 +1620,7 @@
   category: 62
   members: true
 # Jedi Champion Boots
-- guid: 180159
+- guid: 180156
   name_id: 52789
   description_id: 14
   icon_set_id: 3111
@@ -1631,7 +1631,7 @@
   category: 63
   members: true
 # Even Piell's Climbing Suit
-- guid: 180160
+- guid: 180157
   name_id: 44891
   description_id: 14
   icon_set_id: 2125
@@ -1642,7 +1642,7 @@
   category: 61
   members: true
 # Even Piell's Gloves
-- guid: 180161
+- guid: 180158
   name_id: 44890
   description_id: 14
   icon_set_id: 2124
@@ -1653,7 +1653,7 @@
   category: 62
   members: true
 # Even Piell's Boots
-- guid: 180162
+- guid: 180159
   name_id: 44892
   description_id: 14
   icon_set_id: 2126
@@ -1664,7 +1664,7 @@
   category: 63
   members: true
 # Jocasta Nu's Robes
-- guid: 180163
+- guid: 180160
   name_id: 198
   description_id: 14
   icon_set_id: 98
@@ -1675,7 +1675,7 @@
   category: 61
   members: true
 # Jocasta Nu's Shoes
-- guid: 180164
+- guid: 180161
   name_id: 200
   description_id: 14
   icon_set_id: 140
@@ -1686,7 +1686,7 @@
   category: 63
   members: true
 # Sulon Jedi Suit
-- guid: 180165
+- guid: 180162
   name_id: 54605
   description_id: 14
   icon_set_id: 3837
@@ -1696,7 +1696,7 @@
   item_type: 1
   category: 61
 # Sulon Jedi Gloves
-- guid: 180166
+- guid: 180163
   name_id: 54604
   description_id: 14
   icon_set_id: 3836
@@ -1706,7 +1706,7 @@
   item_type: 1
   category: 62
 # Sulon Jedi Boots
-- guid: 180167
+- guid: 180164
   name_id: 54606
   description_id: 14
   icon_set_id: 3838

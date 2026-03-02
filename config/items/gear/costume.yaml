@@ -680,7 +680,7 @@
   item_type: 1
   category: 63
 # Petro's Gypsy Suit
-- guid: 170071
+- guid: 170065
   name_id: 53605
   description_id: 14
   icon_set_id: 3204
@@ -690,7 +690,7 @@
   item_type: 1
   category: 61
 # Petro's Gypsy Helmet
-- guid: 170072
+- guid: 170066
   name_id: 53603
   description_id: 14
   icon_set_id: 3202
@@ -700,7 +700,7 @@
   item_type: 1
   category: 60
 # Petro's Gypsy Gloves
-- guid: 170073
+- guid: 170067
   name_id: 53604
   description_id: 14
   icon_set_id: 3203
@@ -710,7 +710,7 @@
   item_type: 1
   category: 62
 # Petro's Gypsy Boots
-- guid: 170074
+- guid: 170068
   name_id: 53606
   description_id: 14
   icon_set_id: 3205

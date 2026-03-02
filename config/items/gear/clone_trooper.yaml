@@ -1,6 +1,6 @@
 ---
 # Clone Diver Armored Suit
-- guid: 160004
+- guid: 160000
   name_id: 2382
   description_id: 14
   icon_set_id: 2348
@@ -11,7 +11,7 @@
   category: 61
   members: true
 # Clone Diver Helmet
-- guid: 160005
+- guid: 160001
   name_id: 2378
   description_id: 14
   icon_set_id: 2351
@@ -22,7 +22,7 @@
   category: 60
   members: true
 # Clone Diver Gloves
-- guid: 160006
+- guid: 160002
   name_id: 2380
   description_id: 14
   icon_set_id: 2350
@@ -33,7 +33,7 @@
   category: 62
   members: true
 # Clone Diver Fins
-- guid: 160007
+- guid: 160003
   name_id: 2384
   description_id: 14
   icon_set_id: 2349
@@ -44,7 +44,7 @@
   category: 63
   members: true
 # Commander Gree's Suit
-- guid: 160012
+- guid: 160004
   name_id: 836
   description_id: 14
   icon_set_id: 454
@@ -55,7 +55,7 @@
   category: 61
   members: true
 # Commander Gree's Helmet
-- guid: 160013
+- guid: 160005
   name_id: 832
   description_id: 14
   icon_set_id: 457
@@ -66,7 +66,7 @@
   category: 60
   members: true
 # Commander Gree's Gloves
-- guid: 160014
+- guid: 160006
   name_id: 834
   description_id: 14
   icon_set_id: 456
@@ -77,7 +77,7 @@
   category: 62
   members: true
 # Commander Gree's Boots
-- guid: 160015
+- guid: 160007
   name_id: 838
   description_id: 14
   icon_set_id: 455
@@ -88,7 +88,7 @@
   category: 63
   members: true
 # Captain Rex's Armor
-- guid: 160016
+- guid: 160008
   name_id: 8532
   description_id: 14
   icon_set_id: 93
@@ -99,7 +99,7 @@
   category: 61
   members: true
 # Captain Rex's Helmet
-- guid: 160017
+- guid: 160009
   name_id: 8518
   description_id: 14
   icon_set_id: 196
@@ -110,7 +110,7 @@
   category: 60
   members: true
 # Captain Rex's Gloves
-- guid: 160018
+- guid: 160010
   name_id: 8524
   description_id: 14
   icon_set_id: 162
@@ -121,7 +121,7 @@
   category: 62
   members: true
 # Captain Rex's Boots
-- guid: 160019
+- guid: 160011
   name_id: 8520
   description_id: 14
   icon_set_id: 129
@@ -132,7 +132,7 @@
   category: 63
   members: true
 # Captain Rex's Aerial Armor
-- guid: 160020
+- guid: 160012
   name_id: 44893
   description_id: 14
   icon_set_id: 2128
@@ -143,7 +143,7 @@
   category: 61
   members: true
 # Captain Rex's Phase II Armor
-- guid: 160021
+- guid: 160013
   name_id: 4307
   description_id: 14
   icon_set_id: 2411
@@ -154,7 +154,7 @@
   category: 61
   members: true
 # Captain Rex's Phase II Helmet
-- guid: 160022
+- guid: 160014
   name_id: 4305
   description_id: 14
   icon_set_id: 2414
@@ -165,7 +165,7 @@
   category: 60
   members: true
 # Captain Rex's Phase II Gloves
-- guid: 160023
+- guid: 160015
   name_id: 4306
   description_id: 14
   icon_set_id: 2413
@@ -176,7 +176,7 @@
   category: 62
   members: true
 # Captain Rex's Phase II Boots
-- guid: 160024
+- guid: 160016
   name_id: 4308
   description_id: 14
   icon_set_id: 2412
@@ -187,7 +187,7 @@
   category: 63
   members: true
 # Captain Rex Onderon Suit
-- guid: 160025
+- guid: 160017
   name_id: 52912
   description_id: 14
   icon_set_id: 3155
@@ -198,7 +198,7 @@
   category: 61
   members: true
 # Captain Rex Onderon Helmet
-- guid: 160026
+- guid: 160018
   name_id: 52910
   description_id: 14
   icon_set_id: 3153
@@ -209,7 +209,7 @@
   category: 60
   members: true
 # Captain Rex Onderon Gloves
-- guid: 160027
+- guid: 160019
   name_id: 52911
   description_id: 14
   icon_set_id: 3154
@@ -220,7 +220,7 @@
   category: 62
   members: true
 # Captain Rex Onderon Boots
-- guid: 160028
+- guid: 160020
   name_id: 52913
   description_id: 14
   icon_set_id: 3156
@@ -231,7 +231,7 @@
   category: 63
   members: true
 # Captain Rex's Zygerrian Uniform
-- guid: 160029
+- guid: 160021
   name_id: 4461
   description_id: 14
   icon_set_id: 2516
@@ -241,7 +241,7 @@
   item_type: 1
   category: 61
 # Captain Rex's Zygerrian Helmet
-- guid: 160030
+- guid: 160022
   name_id: 4459
   description_id: 14
   icon_set_id: 2514
@@ -251,7 +251,7 @@
   item_type: 1
   category: 60
 # Captain Rex's Zygerrian Gloves
-- guid: 160031
+- guid: 160023
   name_id: 4460
   description_id: 14
   icon_set_id: 2515
@@ -261,7 +261,7 @@
   item_type: 1
   category: 62
 # Captain Rex's Zygerrian Boots
-- guid: 160032
+- guid: 160024
   name_id: 4462
   description_id: 14
   icon_set_id: 2517
@@ -271,7 +271,7 @@
   item_type: 1
   category: 63
 # Commander Cody's Armor
-- guid: 160033
+- guid: 160025
   name_id: 8530
   description_id: 14
   icon_set_id: 90
@@ -281,7 +281,7 @@
   item_type: 1
   category: 61
 # Commander Cody's Helmet
-- guid: 160034
+- guid: 160026
   name_id: 8528
   description_id: 14
   icon_set_id: 198
@@ -291,7 +291,7 @@
   item_type: 1
   category: 60
 # Commander Cody's Gloves
-- guid: 160035
+- guid: 160027
   name_id: 8526
   description_id: 14
   icon_set_id: 163
@@ -301,7 +301,7 @@
   item_type: 1
   category: 62
 # Commander Cody's Boots
-- guid: 160036
+- guid: 160028
   name_id: 8522
   description_id: 14
   icon_set_id: 130
@@ -311,7 +311,7 @@
   item_type: 1
   category: 63
 # Commander Cody's Phase II Armor
-- guid: 160037
+- guid: 160029
   name_id: 4392
   description_id: 14
   icon_set_id: 2485
@@ -322,7 +322,7 @@
   category: 61
   members: true
 # Commander Cody's Phase II Helmet
-- guid: 160038
+- guid: 160030
   name_id: 4390
   description_id: 14
   icon_set_id: 2483
@@ -333,7 +333,7 @@
   category: 60
   members: true
 # Commander Cody's Phase II Gloves
-- guid: 160039
+- guid: 160031
   name_id: 4391
   description_id: 14
   icon_set_id: 2484
@@ -344,7 +344,7 @@
   category: 62
   members: true
 # Commander Cody's Phase II Boots
-- guid: 160040
+- guid: 160032
   name_id: 4393
   description_id: 14
   icon_set_id: 2486
@@ -355,7 +355,7 @@
   category: 63
   members: true
 # Commander Fil's Suit
-- guid: 160041
+- guid: 160033
   name_id: 54554
   description_id: 14
   icon_set_id: 3818
@@ -366,7 +366,7 @@
   category: 61
   members: true
 # Commander Fil's Helmet
-- guid: 160042
+- guid: 160034
   name_id: 54552
   description_id: 14
   icon_set_id: 3816
@@ -377,7 +377,7 @@
   category: 60
   members: true
 # Commander Fil's Gloves
-- guid: 160043
+- guid: 160035
   name_id: 54553
   description_id: 14
   icon_set_id: 3817
@@ -388,7 +388,7 @@
   category: 62
   members: true
 # Commander Fil's Boots
-- guid: 160044
+- guid: 160036
   name_id: 54555
   description_id: 14
   icon_set_id: 3819
@@ -399,7 +399,7 @@
   category: 63
   members: true
 # Commander Bly's Armor
-- guid: 160049
+- guid: 160037
   name_id: 170
   description_id: 14
   icon_set_id: 91
@@ -409,7 +409,7 @@
   item_type: 1
   category: 61
 # Commander Bly's Helmet
-- guid: 160050
+- guid: 160038
   name_id: 166
   description_id: 14
   icon_set_id: 193
@@ -419,7 +419,7 @@
   item_type: 1
   category: 60
 # Commander Bly's Gloves
-- guid: 160051
+- guid: 160039
   name_id: 168
   description_id: 14
   icon_set_id: 159
@@ -429,7 +429,7 @@
   item_type: 1
   category: 62
 # Commander Bly's Boots
-- guid: 160052
+- guid: 160040
   name_id: 172
   description_id: 14
   icon_set_id: 126
@@ -439,7 +439,7 @@
   item_type: 1
   category: 63
 # Commander Blitz's Suit
-- guid: 160053
+- guid: 160041
   name_id: 54543
   description_id: 14
   icon_set_id: 3809
@@ -450,7 +450,7 @@
   category: 61
   members: true
 # Commander Blitz's Helmet
-- guid: 160054
+- guid: 160042
   name_id: 54541
   description_id: 14
   icon_set_id: 3807
@@ -461,7 +461,7 @@
   category: 60
   members: true
 # Commander Blitz's Gloves
-- guid: 160055
+- guid: 160043
   name_id: 54542
   description_id: 14
   icon_set_id: 3808
@@ -472,7 +472,7 @@
   category: 62
   members: true
 # Commander Blitz's Boots
-- guid: 160056
+- guid: 160044
   name_id: 54544
   description_id: 14
   icon_set_id: 3810
@@ -483,7 +483,7 @@
   category: 63
   members: true
 # Commander Bacara Suit
-- guid: 160057
+- guid: 160045
   name_id: 54532
   description_id: 14
   icon_set_id: 3800
@@ -494,7 +494,7 @@
   category: 61
   members: true
 # Commander Bacara Helmet
-- guid: 160058
+- guid: 160046
   name_id: 54530
   description_id: 14
   icon_set_id: 3798
@@ -505,7 +505,7 @@
   category: 60
   members: true
 # Commander Bacara Gloves
-- guid: 160059
+- guid: 160047
   name_id: 54531
   description_id: 14
   icon_set_id: 3799
@@ -516,7 +516,7 @@
   category: 62
   members: true
 # Commander Bacara Boots
-- guid: 160060
+- guid: 160048
   name_id: 54533
   description_id: 14
   icon_set_id: 3801
@@ -527,7 +527,7 @@
   category: 63
   members: true
 # Commando Boss' Armor
-- guid: 160061
+- guid: 160049
   name_id: 33103
   description_id: 14
   icon_set_id: 1648
@@ -537,7 +537,7 @@
   item_type: 1
   category: 61
 # Commando Boss' Helmet
-- guid: 160062
+- guid: 160050
   name_id: 33102
   description_id: 14
   icon_set_id: 1651
@@ -547,7 +547,7 @@
   item_type: 1
   category: 60
 # Commando Boss' Gloves
-- guid: 160063
+- guid: 160051
   name_id: 33104
   description_id: 14
   icon_set_id: 1650
@@ -557,7 +557,7 @@
   item_type: 1
   category: 62
 # Commando Boss' Boots
-- guid: 160064
+- guid: 160052
   name_id: 33105
   description_id: 14
   icon_set_id: 1649
@@ -567,7 +567,7 @@
   item_type: 1
   category: 63
 # Commando Scorch's Armor
-- guid: 160065
+- guid: 160053
   name_id: 33107
   description_id: 14
   icon_set_id: 1652
@@ -578,7 +578,7 @@
   category: 61
   members: true
 # Commando Scorch's Helmet
-- guid: 160066
+- guid: 160054
   name_id: 33106
   description_id: 14
   icon_set_id: 1655
@@ -589,7 +589,7 @@
   category: 60
   members: true
 # Commando Scorch's Gloves
-- guid: 160067
+- guid: 160055
   name_id: 33108
   description_id: 14
   icon_set_id: 1654
@@ -600,7 +600,7 @@
   category: 62
   members: true
 # Commando Scorch's Boots
-- guid: 160068
+- guid: 160056
   name_id: 33109
   description_id: 14
   icon_set_id: 1653
@@ -611,7 +611,7 @@
   category: 63
   members: true
 # Zag's Armor
-- guid: 160069
+- guid: 160057
   name_id: 43731
   description_id: 14
   icon_set_id: 1908
@@ -621,7 +621,7 @@
   item_type: 1
   category: 61
 # Zag's Helmet
-- guid: 160070
+- guid: 160058
   name_id: 43729
   description_id: 14
   icon_set_id: 1911
@@ -631,7 +631,7 @@
   item_type: 1
   category: 60
 # Zag's Gloves
-- guid: 160071
+- guid: 160059
   name_id: 43730
   description_id: 14
   icon_set_id: 1910
@@ -641,7 +641,7 @@
   item_type: 1
   category: 62
 # Zag's Boots
-- guid: 160072
+- guid: 160060
   name_id: 43732
   description_id: 14
   icon_set_id: 1909
@@ -651,7 +651,7 @@
   item_type: 1
   category: 63
 # Evader's Armor
-- guid: 160073
+- guid: 160061
   name_id: 43691
   description_id: 14
   icon_set_id: 1868
@@ -662,7 +662,7 @@
   category: 61
   members: true
 # Evader's Helmet
-- guid: 160074
+- guid: 160062
   name_id: 43689
   description_id: 14
   icon_set_id: 1871
@@ -673,7 +673,7 @@
   category: 60
   members: true
 # Evader's Gloves
-- guid: 160075
+- guid: 160063
   name_id: 43690
   description_id: 14
   icon_set_id: 1870
@@ -684,7 +684,7 @@
   category: 62
   members: true
 # Evader's Boots
-- guid: 160076
+- guid: 160064
   name_id: 43692
   description_id: 14
   icon_set_id: 1869
@@ -695,7 +695,7 @@
   category: 63
   members: true
 # Clone Commando Gregor's Armor
-- guid: 160077
+- guid: 160065
   name_id: 54085
   description_id: 14
   icon_set_id: 3338
@@ -705,7 +705,7 @@
   item_type: 1
   category: 61
 # Clone Commando Gregor's Helmet
-- guid: 160078
+- guid: 160066
   name_id: 54083
   description_id: 14
   icon_set_id: 3336
@@ -715,7 +715,7 @@
   item_type: 1
   category: 60
 # Clone Commando Gregor's Gloves
-- guid: 160079
+- guid: 160067
   name_id: 54084
   description_id: 14
   icon_set_id: 3337
@@ -725,7 +725,7 @@
   item_type: 1
   category: 62
 # Clone Commando Gregor's Boots
-- guid: 160080
+- guid: 160068
   name_id: 54086
   description_id: 14
   icon_set_id: 3339
@@ -735,7 +735,7 @@
   item_type: 1
   category: 63
 # Felucian Commando Armor
-- guid: 160081
+- guid: 160069
   name_id: 60181
   description_id: 14
   icon_set_id: 3722
@@ -745,7 +745,7 @@
   item_type: 1
   category: 61
 # Felucian Commando Helmet
-- guid: 160082
+- guid: 160070
   name_id: 60179
   description_id: 14
   icon_set_id: 3725
@@ -755,7 +755,7 @@
   item_type: 1
   category: 60
 # Felucian Commando Gloves
-- guid: 160083
+- guid: 160071
   name_id: 60180
   description_id: 14
   icon_set_id: 3724
@@ -765,7 +765,7 @@
   item_type: 1
   category: 62
 # Felucian Commando Boots
-- guid: 160084
+- guid: 160072
   name_id: 60182
   description_id: 14
   icon_set_id: 3723
@@ -775,7 +775,7 @@
   item_type: 1
   category: 63
 # Scraps' Armor
-- guid: 160085
+- guid: 160073
   name_id: 43715
   description_id: 14
   icon_set_id: 1892
@@ -786,7 +786,7 @@
   category: 61
   members: true
 # Scraps' Helmet
-- guid: 160086
+- guid: 160074
   name_id: 43713
   description_id: 14
   icon_set_id: 1895
@@ -797,7 +797,7 @@
   category: 60
   members: true
 # Scraps' Gloves
-- guid: 160087
+- guid: 160075
   name_id: 43714
   description_id: 14
   icon_set_id: 1894
@@ -808,7 +808,7 @@
   category: 62
   members: true
 # Scraps' Boots
-- guid: 160088
+- guid: 160076
   name_id: 43716
   description_id: 14
   icon_set_id: 1893
@@ -819,7 +819,7 @@
   category: 63
   members: true
 # Racket's Armor
-- guid: 160089
+- guid: 160077
   name_id: 43679
   description_id: 14
   icon_set_id: 1856
@@ -830,7 +830,7 @@
   category: 61
   members: true
 # Racket's Helmet
-- guid: 160090
+- guid: 160078
   name_id: 43677
   description_id: 14
   icon_set_id: 1859
@@ -841,7 +841,7 @@
   category: 60
   members: true
 # Racket's Gloves
-- guid: 160091
+- guid: 160079
   name_id: 43678
   description_id: 14
   icon_set_id: 1858
@@ -852,7 +852,7 @@
   category: 62
   members: true
 # Racket's Boots
-- guid: 160092
+- guid: 160080
   name_id: 43680
   description_id: 14
   icon_set_id: 1857
@@ -863,7 +863,7 @@
   category: 63
   members: true
 # Throttle's Armor
-- guid: 160093
+- guid: 160081
   name_id: 43719
   description_id: 14
   icon_set_id: 1896
@@ -874,7 +874,7 @@
   category: 61
   members: true
 # Throttle's Helmet
-- guid: 160094
+- guid: 160082
   name_id: 43717
   description_id: 14
   icon_set_id: 1899
@@ -885,7 +885,7 @@
   category: 60
   members: true
 # Throttle's Gloves
-- guid: 160095
+- guid: 160083
   name_id: 43718
   description_id: 14
   icon_set_id: 1898
@@ -896,7 +896,7 @@
   category: 62
   members: true
 # Throttle's Boots
-- guid: 160096
+- guid: 160084
   name_id: 43720
   description_id: 14
   icon_set_id: 1897
@@ -907,7 +907,7 @@
   category: 63
   members: true
 # Trigger's Armor
-- guid: 160097
+- guid: 160085
   name_id: 43723
   description_id: 14
   icon_set_id: 1900
@@ -918,7 +918,7 @@
   category: 61
   members: true
 # Trigger's Helmet
-- guid: 160098
+- guid: 160086
   name_id: 43721
   description_id: 14
   icon_set_id: 1903
@@ -929,7 +929,7 @@
   category: 60
   members: true
 # Trigger's Gloves
-- guid: 160099
+- guid: 160087
   name_id: 43722
   description_id: 14
   icon_set_id: 1902
@@ -940,7 +940,7 @@
   category: 62
   members: true
 # Trigger's Boots
-- guid: 160100
+- guid: 160088
   name_id: 43724
   description_id: 14
   icon_set_id: 1901
@@ -951,7 +951,7 @@
   category: 63
   members: true
 # Wookiee Clone Trooper Armor
-- guid: 160101
+- guid: 160089
   name_id: 43727
   description_id: 14
   icon_set_id: 1904
@@ -962,7 +962,7 @@
   category: 61
   members: true
 # Wookiee Clone Trooper Helmet
-- guid: 160102
+- guid: 160090
   name_id: 43725
   description_id: 14
   icon_set_id: 1907
@@ -973,7 +973,7 @@
   category: 60
   members: true
 # Wookiee Clone Trooper Gloves
-- guid: 160103
+- guid: 160091
   name_id: 43726
   description_id: 14
   icon_set_id: 1906
@@ -984,7 +984,7 @@
   category: 62
   members: true
 # Wookiee Clone Trooper Boots
-- guid: 160104
+- guid: 160092
   name_id: 43728
   description_id: 14
   icon_set_id: 1905
@@ -995,7 +995,7 @@
   category: 63
   members: true
 # Commander Fox Suit
-- guid: 160105
+- guid: 160093
   name_id: 54281
   description_id: 14
   icon_set_id: 3651
@@ -1005,7 +1005,7 @@
   item_type: 1
   category: 61
 # Commander Fox Helmet
-- guid: 160106
+- guid: 160094
   name_id: 54279
   description_id: 14
   icon_set_id: 3649
@@ -1015,7 +1015,7 @@
   item_type: 1
   category: 60
 # Commander Fox Gloves
-- guid: 160107
+- guid: 160095
   name_id: 54280
   description_id: 14
   icon_set_id: 3650
@@ -1025,7 +1025,7 @@
   item_type: 1
   category: 62
 # Commander Fox Boots
-- guid: 160108
+- guid: 160096
   name_id: 54282
   description_id: 14
   icon_set_id: 3652
@@ -1035,7 +1035,7 @@
   item_type: 1
   category: 63
 # Commander Neyo's Suit
-- guid: 160109
+- guid: 160097
   name_id: 53966
   description_id: 14
   icon_set_id: 3268
@@ -1046,7 +1046,7 @@
   category: 61
   members: true
 # Commander Neyo's Helmet
-- guid: 160110
+- guid: 160098
   name_id: 53964
   description_id: 14
   icon_set_id: 3266
@@ -1057,7 +1057,7 @@
   category: 60
   members: true
 # Commander Neyo's Gloves
-- guid: 160111
+- guid: 160099
   name_id: 53965
   description_id: 14
   icon_set_id: 3267
@@ -1068,7 +1068,7 @@
   category: 62
   members: true
 # Commander Neyo's Boots
-- guid: 160112
+- guid: 160100
   name_id: 53967
   description_id: 14
   icon_set_id: 3269
@@ -1079,7 +1079,7 @@
   category: 63
   members: true
 # Commander Jet's Armor
-- guid: 160113
+- guid: 160101
   name_id: 8908
   description_id: 14
   icon_set_id: 92
@@ -1089,7 +1089,7 @@
   item_type: 1
   category: 61
 # Commander Jet's Helmet
-- guid: 160114
+- guid: 160102
   name_id: 8914
   description_id: 14
   icon_set_id: 195
@@ -1099,7 +1099,7 @@
   item_type: 1
   category: 60
 # Commander Jet's Gloves
-- guid: 160115
+- guid: 160103
   name_id: 8912
   description_id: 14
   icon_set_id: 164
@@ -1109,7 +1109,7 @@
   item_type: 1
   category: 62
 # Commander Jet's Boots
-- guid: 160116
+- guid: 160104
   name_id: 8910
   description_id: 14
   icon_set_id: 131
@@ -1119,7 +1119,7 @@
   item_type: 1
   category: 63
 # Flamethrower Clone Trooper Armor
-- guid: 160117
+- guid: 160105
   name_id: 20301
   description_id: 14
   icon_set_id: 1504
@@ -1129,7 +1129,7 @@
   item_type: 1
   category: 61
 # Flamethrower Clone Trooper Helm
-- guid: 160118
+- guid: 160106
   name_id: 20299
   description_id: 14
   icon_set_id: 1507
@@ -1139,7 +1139,7 @@
   item_type: 1
   category: 60
 # Flamethrower Clone Trooper Gloves
-- guid: 160119
+- guid: 160107
   name_id: 20297
   description_id: 14
   icon_set_id: 1506
@@ -1149,7 +1149,7 @@
   item_type: 1
   category: 62
 # Flamethrower Clone Trooper Boots
-- guid: 160120
+- guid: 160108
   name_id: 20303
   description_id: 14
   icon_set_id: 1505
@@ -1159,7 +1159,7 @@
   item_type: 1
   category: 63
 # Desert Trooper Armor
-- guid: 160121
+- guid: 160109
   name_id: 8934
   description_id: 14
   icon_set_id: 88
@@ -1170,7 +1170,7 @@
   category: 61
   members: true
 # Desert Trooper Helmet
-- guid: 160122
+- guid: 160110
   name_id: 8940
   description_id: 14
   icon_set_id: 186
@@ -1181,7 +1181,7 @@
   category: 60
   members: true
 # Desert Trooper Gloves
-- guid: 160123
+- guid: 160111
   name_id: 8938
   description_id: 14
   icon_set_id: 166
@@ -1192,7 +1192,7 @@
   category: 62
   members: true
 # Desert Trooper Boots
-- guid: 160124
+- guid: 160112
   name_id: 8936
   description_id: 14
   icon_set_id: 134
@@ -1203,7 +1203,7 @@
   category: 63
   members: true
 # Spark's Stealth Pilot Armor
-- guid: 160125
+- guid: 160113
   name_id: 162
   description_id: 14
   icon_set_id: 85
@@ -1213,7 +1213,7 @@
   item_type: 1
   category: 61
 # Spark's Stealth Pilot Helmet
-- guid: 160126
+- guid: 160114
   name_id: 158
   description_id: 14
   icon_set_id: 194
@@ -1223,7 +1223,7 @@
   item_type: 1
   category: 60
 # Spark's Stealth Pilot Gloves
-- guid: 160127
+- guid: 160115
   name_id: 160
   description_id: 14
   icon_set_id: 158
@@ -1233,7 +1233,7 @@
   item_type: 1
   category: 62
 # Spark's Stealth Pilot Boots
-- guid: 160128
+- guid: 160116
   name_id: 164
   description_id: 14
   icon_set_id: 125
@@ -1243,7 +1243,7 @@
   item_type: 1
   category: 63
 # Special Ops Armor
-- guid: 160129
+- guid: 160117
   name_id: 44883
   description_id: 14
   icon_set_id: 2115
@@ -1254,7 +1254,7 @@
   category: 61
   members: true
 # Special Ops Helm
-- guid: 160130
+- guid: 160118
   name_id: 44881
   description_id: 14
   icon_set_id: 2113
@@ -1265,7 +1265,7 @@
   category: 60
   members: true
 # Special Ops Gloves
-- guid: 160131
+- guid: 160119
   name_id: 44882
   description_id: 14
   icon_set_id: 2114
@@ -1276,7 +1276,7 @@
   category: 62
   members: true
 # Special Ops Boots
-- guid: 160132
+- guid: 160120
   name_id: 44884
   description_id: 14
   icon_set_id: 2116
@@ -1287,7 +1287,7 @@
   category: 63
   members: true
 # Rookie Echo's Armor
-- guid: 160133
+- guid: 160121
   name_id: 186
   description_id: 14
   icon_set_id: 86
@@ -1298,7 +1298,7 @@
   category: 61
   members: true
 # Rookie Echo's Helmet
-- guid: 160134
+- guid: 160122
   name_id: 182
   description_id: 14
   icon_set_id: 190
@@ -1309,7 +1309,7 @@
   category: 60
   members: true
 # Rookie Echo's Gloves
-- guid: 160135
+- guid: 160123
   name_id: 184
   description_id: 14
   icon_set_id: 160
@@ -1320,7 +1320,7 @@
   category: 62
   members: true
 # Rookie Echo's Armor
-- guid: 160136
+- guid: 160124
   name_id: 186
   description_id: 14
   icon_set_id: 127
@@ -1331,7 +1331,7 @@
   category: 63
   members: true
 # ARC Trooper Echo's Armor
-- guid: 160137
+- guid: 160125
   name_id: 43058
   description_id: 14
   icon_set_id: 1743
@@ -1341,7 +1341,7 @@
   item_type: 1
   category: 61
 # ARC Trooper Echo's Helmet
-- guid: 160138
+- guid: 160126
   name_id: 43056
   description_id: 14
   icon_set_id: 1741
@@ -1351,7 +1351,7 @@
   item_type: 1
   category: 60
 # ARC Trooper Echo's Gloves
-- guid: 160139
+- guid: 160127
   name_id: 43057
   description_id: 14
   icon_set_id: 1742
@@ -1361,7 +1361,7 @@
   item_type: 1
   category: 62
 # ARC Trooper Echo's Boots
-- guid: 160140
+- guid: 160128
   name_id: 43059
   description_id: 14
   icon_set_id: 1744
@@ -1371,7 +1371,7 @@
   item_type: 1
   category: 63
 # ARC Trooper Fives' Armor
-- guid: 160141
+- guid: 160129
   name_id: 43062
   description_id: 14
   icon_set_id: 1747
@@ -1382,7 +1382,7 @@
   category: 61
   members: true
 # ARC Trooper Fives' Helmet
-- guid: 160142
+- guid: 160130
   name_id: 43060
   description_id: 14
   icon_set_id: 1745
@@ -1393,7 +1393,7 @@
   category: 60
   members: true
 # ARC Trooper Fives' Gloves
-- guid: 160143
+- guid: 160131
   name_id: 43061
   description_id: 14
   icon_set_id: 1746
@@ -1404,7 +1404,7 @@
   category: 62
   members: true
 # ARC Trooper Fives' Boots
-- guid: 160144
+- guid: 160132
   name_id: 43063
   description_id: 14
   icon_set_id: 1748
@@ -1415,7 +1415,7 @@
   category: 63
   members: true
 # Arc Trooper Fives Phase II
-- guid: 160145
+- guid: 160133
   name_id: 4356
   description_id: 14
   icon_set_id: 2466
@@ -1426,7 +1426,7 @@
   category: 61
   members: true
 # Fives' Phase II Helmet
-- guid: 160146
+- guid: 160134
   name_id: 4382
   description_id: 14
   icon_set_id: 2464
@@ -1437,7 +1437,7 @@
   category: 60
   members: true
 # Fives' Phase II Gloves
-- guid: 160147
+- guid: 160135
   name_id: 4383
   description_id: 14
   icon_set_id: 2465
@@ -1448,7 +1448,7 @@
   category: 62
   members: true
 # Fives' Phase II Boots
-- guid: 160148
+- guid: 160136
   name_id: 4385
   description_id: 14
   icon_set_id: 2467
@@ -1459,7 +1459,7 @@
   category: 63
   members: true
 # ARC Trooper Sergeant's Armor
-- guid: 160149
+- guid: 160137
   name_id: 1297
   description_id: 14
   icon_set_id: 1121
@@ -1469,7 +1469,7 @@
   item_type: 1
   category: 61
 # ARC Trooper Sergeant's Helmet
-- guid: 160150
+- guid: 160138
   name_id: 1396
   description_id: 14
   icon_set_id: 1124
@@ -1479,7 +1479,7 @@
   item_type: 1
   category: 60
 # ARC Trooper Sergeant's Gloves
-- guid: 160151
+- guid: 160139
   name_id: 1368
   description_id: 14
   icon_set_id: 1123
@@ -1489,7 +1489,7 @@
   item_type: 1
   category: 62
 # ARC Trooper Sergeant's Boots
-- guid: 160152
+- guid: 160140
   name_id: 1335
   description_id: 14
   icon_set_id: 1122
@@ -1499,7 +1499,7 @@
   item_type: 1
   category: 63
 # ARC Trooper Lieutenant's Armor
-- guid: 160153
+- guid: 160141
   name_id: 1299
   description_id: 14
   icon_set_id: 1125
@@ -1509,7 +1509,7 @@
   item_type: 1
   category: 61
 # ARC Trooper Lieutenant's Helmet
-- guid: 160154
+- guid: 160142
   name_id: 1398
   description_id: 14
   icon_set_id: 1128
@@ -1519,7 +1519,7 @@
   item_type: 1
   category: 60
 # ARC Trooper Lieutenant's Gloves
-- guid: 160155
+- guid: 160143
   name_id: 1370
   description_id: 14
   icon_set_id: 1127
@@ -1529,7 +1529,7 @@
   item_type: 1
   category: 62
 # ARC Trooper Lieutenant's Boots
-- guid: 160156
+- guid: 160144
   name_id: 1337
   description_id: 14
   icon_set_id: 1126
@@ -1539,7 +1539,7 @@
   item_type: 1
   category: 63
 # ARC Trooper Captain's Armor
-- guid: 160157
+- guid: 160145
   name_id: 1301
   description_id: 14
   icon_set_id: 1129
@@ -1549,7 +1549,7 @@
   item_type: 1
   category: 61
 # ARC Trooper Captain's Helmet
-- guid: 160158
+- guid: 160146
   name_id: 1400
   description_id: 14
   icon_set_id: 1132
@@ -1559,7 +1559,7 @@
   item_type: 1
   category: 60
 # ARC Trooper Captain's Gloves
-- guid: 160159
+- guid: 160147
   name_id: 1372
   description_id: 14
   icon_set_id: 1131
@@ -1569,7 +1569,7 @@
   item_type: 1
   category: 62
 # ARC Trooper Captain's Boots
-- guid: 160160
+- guid: 160148
   name_id: 1339
   description_id: 14
   icon_set_id: 1130
@@ -1579,7 +1579,7 @@
   item_type: 1
   category: 63
 # ARC Trooper Commander's Armor
-- guid: 160161
+- guid: 160149
   name_id: 1303
   description_id: 14
   icon_set_id: 1133
@@ -1589,7 +1589,7 @@
   item_type: 1
   category: 61
 # ARC Trooper Commander's Helmet
-- guid: 160162
+- guid: 160150
   name_id: 1402
   description_id: 14
   icon_set_id: 1136
@@ -1599,7 +1599,7 @@
   item_type: 1
   category: 60
 # ARC Trooper Commander's Gloves
-- guid: 160163
+- guid: 160151
   name_id: 1374
   description_id: 14
   icon_set_id: 1135
@@ -1609,7 +1609,7 @@
   item_type: 1
   category: 62
 # ARC Trooper Commander's Boots
-- guid: 160164
+- guid: 160152
   name_id: 1341
   description_id: 14
   icon_set_id: 1134
@@ -1619,7 +1619,7 @@
   item_type: 1
   category: 63
 # ARC Trooper General's Armor
-- guid: 160165
+- guid: 160153
   name_id: 1307
   description_id: 14
   icon_set_id: 1137
@@ -1629,7 +1629,7 @@
   item_type: 1
   category: 61
 # ARC Trooper General's Helmet
-- guid: 160166
+- guid: 160154
   name_id: 1406
   description_id: 14
   icon_set_id: 1140
@@ -1639,7 +1639,7 @@
   item_type: 1
   category: 60
 # ARC Trooper General's Gloves
-- guid: 160167
+- guid: 160155
   name_id: 1376
   description_id: 14
   icon_set_id: 1139
@@ -1649,7 +1649,7 @@
   item_type: 1
   category: 62
 # ARC Trooper General's Boots
-- guid: 160168
+- guid: 160156
   name_id: 1343
   description_id: 14
   icon_set_id: 1138
@@ -1659,7 +1659,7 @@
   item_type: 1
   category: 63
 # Commander Trauma's Armor
-- guid: 160169
+- guid: 160157
   name_id: 32977
   description_id: 14
   icon_set_id: 1608
@@ -1670,7 +1670,7 @@
   category: 61
   members: true
 # Commander Trauma's Helmet
-- guid: 160170
+- guid: 160158
   name_id: 32975
   description_id: 14
   icon_set_id: 1611
@@ -1681,7 +1681,7 @@
   category: 60
   members: true
 # Commander Trauma's Gloves
-- guid: 160171
+- guid: 160159
   name_id: 32976
   description_id: 14
   icon_set_id: 1610
@@ -1692,7 +1692,7 @@
   category: 62
   members: true
 # Commander Trauma's Boots
-- guid: 160172
+- guid: 160160
   name_id: 32978
   description_id: 14
   icon_set_id: 1609
@@ -1703,7 +1703,7 @@
   category: 63
   members: true
 # Commander Colt's Armor
-- guid: 160173
+- guid: 160161
   name_id: 54514
   description_id: 14
   icon_set_id: 3768
@@ -1714,7 +1714,7 @@
   category: 61
   members: true
 # Commander Colt's Helmet
-- guid: 160174
+- guid: 160162
   name_id: 54512
   description_id: 14
   icon_set_id: 3766
@@ -1725,7 +1725,7 @@
   category: 60
   members: true
 # Commander Colt's Gloves
-- guid: 160175
+- guid: 160163
   name_id: 54513
   description_id: 14
   icon_set_id: 3767
@@ -1736,7 +1736,7 @@
   category: 62
   members: true
 # Commander Colt's Boots
-- guid: 160176
+- guid: 160164
   name_id: 54515
   description_id: 14
   icon_set_id: 3769
@@ -1747,7 +1747,7 @@
   category: 63
   members: true
 # Forest Trooper Armor
-- guid: 160177
+- guid: 160165
   name_id: 936
   description_id: 14
   icon_set_id: 468
@@ -1757,7 +1757,7 @@
   item_type: 1
   category: 61
 # Forest Trooper Helmet
-- guid: 160178
+- guid: 160166
   name_id: 964
   description_id: 14
   icon_set_id: 684
@@ -1767,7 +1767,7 @@
   item_type: 1
   category: 60
 # Forest Trooper Gloves
-- guid: 160179
+- guid: 160167
   name_id: 954
   description_id: 14
   icon_set_id: 470
@@ -1777,7 +1777,7 @@
   item_type: 1
   category: 62
 # Forest Trooper Boots
-- guid: 160180
+- guid: 160168
   name_id: 944
   description_id: 14
   icon_set_id: 469
@@ -1787,7 +1787,7 @@
   item_type: 1
   category: 63
 # Kamino ARF Trooper Armor
-- guid: 160181
+- guid: 160169
   name_id: 44888
   description_id: 14
   icon_set_id: 2122
@@ -1797,7 +1797,7 @@
   item_type: 1
   category: 61
 # Kamino ARF Trooper Helm
-- guid: 160182
+- guid: 160170
   name_id: 44886
   description_id: 14
   icon_set_id: 2120
@@ -1807,7 +1807,7 @@
   item_type: 1
   category: 60
 # Kamino ARF Trooper Gloves
-- guid: 160183
+- guid: 160171
   name_id: 44887
   description_id: 14
   icon_set_id: 2121
@@ -1817,7 +1817,7 @@
   item_type: 1
   category: 62
 # ARF Trooper Helmet
-- guid: 160184
+- guid: 160172
   name_id: 8916
   description_id: 14
   icon_set_id: 184
@@ -1827,7 +1827,7 @@
   item_type: 1
   category: 60
 # Swamp Trooper Armor
-- guid: 160185
+- guid: 160173
   name_id: 8926
   description_id: 14
   icon_set_id: 87
@@ -1838,7 +1838,7 @@
   category: 61
   members: true
 # Swamp Trooper Helmet
-- guid: 160186
+- guid: 160174
   name_id: 8932
   description_id: 14
   icon_set_id: 185
@@ -1849,7 +1849,7 @@
   category: 60
   members: true
 # Swamp Trooper Gloves
-- guid: 160187
+- guid: 160175
   name_id: 8930
   description_id: 14
   icon_set_id: 165
@@ -1860,7 +1860,7 @@
   category: 62
   members: true
 # Swamp Trooper Boots
-- guid: 160188
+- guid: 160176
   name_id: 8928
   description_id: 14
   icon_set_id: 133
@@ -1871,7 +1871,7 @@
   category: 63
   members: true
 # 501st Clone Trooper Suit
-- guid: 160189
+- guid: 160177
   name_id: 54269
   description_id: 14
   icon_set_id: 3642
@@ -1882,7 +1882,7 @@
   category: 61
   members: true
 # 501st Clone Trooper Helmet
-- guid: 160190
+- guid: 160178
   name_id: 54267
   description_id: 14
   icon_set_id: 3640
@@ -1893,7 +1893,7 @@
   category: 60
   members: true
 # 501st Clone Trooper Gloves
-- guid: 160191
+- guid: 160179
   name_id: 54268
   description_id: 14
   icon_set_id: 3641
@@ -1904,7 +1904,7 @@
   category: 62
   members: true
 # 501st Clone Trooper Boots
-- guid: 160192
+- guid: 160180
   name_id: 54270
   description_id: 14
   icon_set_id: 3643
@@ -1915,7 +1915,7 @@
   category: 63
   members: true
 # Jet Pack Clone Trooper Armor
-- guid: 160193
+- guid: 160181
   name_id: 194
   description_id: 14
   icon_set_id: 97
@@ -1925,7 +1925,7 @@
   item_type: 1
   category: 61
 # Jet Pack Clone Trooper Helmet
-- guid: 160194
+- guid: 160182
   name_id: 190
   description_id: 14
   icon_set_id: 191
@@ -1935,7 +1935,7 @@
   item_type: 1
   category: 60
 # Jet Pack Clone Trooper Gloves
-- guid: 160195
+- guid: 160183
   name_id: 192
   description_id: 14
   icon_set_id: 161
@@ -1945,7 +1945,7 @@
   item_type: 1
   category: 62
 # Jet Pack Clone Trooper Boots
-- guid: 160196
+- guid: 160184
   name_id: 196
   description_id: 14
   icon_set_id: 128
@@ -1955,7 +1955,7 @@
   item_type: 1
   category: 63
 # Kix's Clone Trooper Armor
-- guid: 160197
+- guid: 160185
   name_id: 4388
   description_id: 14
   icon_set_id: 2470
@@ -1965,7 +1965,7 @@
   item_type: 1
   category: 61
 # Kix's Clone Trooper Helmet
-- guid: 160198
+- guid: 160186
   name_id: 4386
   description_id: 14
   icon_set_id: 2468
@@ -1975,7 +1975,7 @@
   item_type: 1
   category: 60
 # Kix's Clone Trooper Gloves
-- guid: 160199
+- guid: 160187
   name_id: 4387
   description_id: 14
   icon_set_id: 2469
@@ -1985,7 +1985,7 @@
   item_type: 1
   category: 62
 # Boost's Armor
-- guid: 160200
+- guid: 160188
   name_id: 2370
   description_id: 14
   icon_set_id: 2344
@@ -1996,7 +1996,7 @@
   category: 61
   members: true
 # Boost's Helmet
-- guid: 160201
+- guid: 160189
   name_id: 2366
   description_id: 14
   icon_set_id: 2347
@@ -2007,7 +2007,7 @@
   category: 60
   members: true
 # Boost's Gloves
-- guid: 160202
+- guid: 160190
   name_id: 2368
   description_id: 14
   icon_set_id: 2346
@@ -2018,7 +2018,7 @@
   category: 62
   members: true
 # Boost's Boots
-- guid: 160203
+- guid: 160191
   name_id: 2372
   description_id: 14
   icon_set_id: 2345
@@ -2029,7 +2029,7 @@
   category: 63
   members: true
 # Commander Wolffe's Armor
-- guid: 160204
+- guid: 160192
   name_id: 43683
   description_id: 14
   icon_set_id: 1860
@@ -2040,7 +2040,7 @@
   category: 61
   members: true
 # Commander Wolffe's Helmet
-- guid: 160205
+- guid: 160193
   name_id: 43681
   description_id: 14
   icon_set_id: 1863
@@ -2051,7 +2051,7 @@
   category: 60
   members: true
 # Commander Wolffe's Gloves
-- guid: 160206
+- guid: 160194
   name_id: 43682
   description_id: 14
   icon_set_id: 1862
@@ -2062,7 +2062,7 @@
   category: 62
   members: true
 # Commander Wolffe's Boots
-- guid: 160207
+- guid: 160195
   name_id: 43684
   description_id: 14
   icon_set_id: 1861
@@ -2073,7 +2073,7 @@
   category: 63
   members: true
 # Wolffe's Snow Armor
-- guid: 160208
+- guid: 160196
   name_id: 44757
   description_id: 14
   icon_set_id: 2030
@@ -2083,7 +2083,7 @@
   item_type: 1
   category: 61
 # Wolffe's Snow Helmet
-- guid: 160209
+- guid: 160197
   name_id: 44755
   description_id: 14
   icon_set_id: 2028
@@ -2093,7 +2093,7 @@
   item_type: 1
   category: 60
 # Wolffe's Snow Gloves
-- guid: 160210
+- guid: 160198
   name_id: 44756
   description_id: 14
   icon_set_id: 2029
@@ -2103,7 +2103,7 @@
   item_type: 1
   category: 62
 # Wolffe's Snow Boots
-- guid: 160211
+- guid: 160199
   name_id: 44758
   description_id: 14
   icon_set_id: 2031
@@ -2113,7 +2113,7 @@
   item_type: 1
   category: 63
 # Commander Wolffe's Phase II Armor
-- guid: 160212
+- guid: 160200
   name_id: 2943
   description_id: 14
   icon_set_id: 2378
@@ -2124,7 +2124,7 @@
   category: 61
   members: true
 # Commander Wolffe's Phase II Helmet
-- guid: 160213
+- guid: 160201
   name_id: 2388
   description_id: 14
   icon_set_id: 2364
@@ -2135,7 +2135,7 @@
   category: 60
   members: true
 # Commander Wolffe's Phase II Gloves
-- guid: 160214
+- guid: 160202
   name_id: 2941
   description_id: 14
   icon_set_id: 2380
@@ -2146,7 +2146,7 @@
   category: 62
   members: true
 # Commander Wolffe's Phase II Boots
-- guid: 160215
+- guid: 160203
   name_id: 2945
   description_id: 14
   icon_set_id: 2379
@@ -2157,7 +2157,7 @@
   category: 63
   members: true
 # Wolfpack Jetpack
-- guid: 160216
+- guid: 160204
   name_id: 4544
   description_id: 14
   icon_set_id: 2626
@@ -2168,7 +2168,7 @@
   category: 61
   members: true
 # Draa's Armor
-- guid: 160221
+- guid: 160205
   name_id: 43687
   description_id: 14
   icon_set_id: 1864
@@ -2179,7 +2179,7 @@
   category: 61
   members: true
 # Draa's Helmet
-- guid: 160222
+- guid: 160206
   name_id: 43685
   description_id: 14
   icon_set_id: 1867
@@ -2190,7 +2190,7 @@
   category: 60
   members: true
 # Draa's Gloves
-- guid: 160223
+- guid: 160207
   name_id: 43686
   description_id: 14
   icon_set_id: 1866
@@ -2201,7 +2201,7 @@
   category: 62
   members: true
 # Draa's Boots
-- guid: 160224
+- guid: 160208
   name_id: 43688
   description_id: 14
   icon_set_id: 1865
@@ -2212,7 +2212,7 @@
   category: 63
   members: true
 # Burner's Armor
-- guid: 160225
+- guid: 160209
   name_id: 43711
   description_id: 14
   icon_set_id: 1888
@@ -2222,7 +2222,7 @@
   item_type: 1
   category: 61
 # Burner's Helmet
-- guid: 160226
+- guid: 160210
   name_id: 43709
   description_id: 14
   icon_set_id: 1891
@@ -2232,7 +2232,7 @@
   item_type: 1
   category: 60
 # Burner's Gloves
-- guid: 160227
+- guid: 160211
   name_id: 43710
   description_id: 14
   icon_set_id: 1890
@@ -2242,7 +2242,7 @@
   item_type: 1
   category: 62
 # Burner's Boots
-- guid: 160228
+- guid: 160212
   name_id: 43712
   description_id: 14
   icon_set_id: 1889
@@ -2252,7 +2252,7 @@
   item_type: 1
   category: 63
 # Breaker's Armor
-- guid: 160229
+- guid: 160213
   name_id: 44752
   description_id: 14
   icon_set_id: 2014
@@ -2263,7 +2263,7 @@
   category: 61
   members: true
 # Breaker's Helmet
-- guid: 160230
+- guid: 160214
   name_id: 44750
   description_id: 14
   icon_set_id: 2017
@@ -2274,7 +2274,7 @@
   category: 60
   members: true
 # Breaker's Gloves
-- guid: 160231
+- guid: 160215
   name_id: 44751
   description_id: 14
   icon_set_id: 2016
@@ -2285,7 +2285,7 @@
   category: 62
   members: true
 # Breaker's Boots
-- guid: 160232
+- guid: 160216
   name_id: 44753
   description_id: 14
   icon_set_id: 2015
@@ -2296,7 +2296,7 @@
   category: 63
   members: true
 # Space Trooper Armor
-- guid: 160233
+- guid: 160217
   name_id: 14172
   description_id: 14
   icon_set_id: 491
@@ -2306,7 +2306,7 @@
   item_type: 1
   category: 61
 # Space Trooper Helmet
-- guid: 160234
+- guid: 160218
   name_id: 14178
   description_id: 14
   icon_set_id: 494
@@ -2316,7 +2316,7 @@
   item_type: 1
   category: 60
 # Space Trooper Gloves
-- guid: 160235
+- guid: 160219
   name_id: 14176
   description_id: 14
   icon_set_id: 493
@@ -2326,7 +2326,7 @@
   item_type: 1
   category: 62
 # Space Trooper Boots
-- guid: 160236
+- guid: 160220
   name_id: 14174
   description_id: 14
   icon_set_id: 492
@@ -2336,7 +2336,7 @@
   item_type: 1
   category: 63
 # Elite Space Trooper Suit
-- guid: 160237
+- guid: 160221
   name_id: 53650
   description_id: 14
   icon_set_id: 3217
@@ -2346,7 +2346,7 @@
   item_type: 1
   category: 61
 # Elite Space Trooper Helmet
-- guid: 160238
+- guid: 160222
   name_id: 53648
   description_id: 14
   icon_set_id: 3215
@@ -2356,7 +2356,7 @@
   item_type: 1
   category: 60
 # Elite Space Trooper Gloves
-- guid: 160239
+- guid: 160223
   name_id: 53649
   description_id: 14
   icon_set_id: 3216
@@ -2366,7 +2366,7 @@
   item_type: 1
   category: 62
 # Elite Space Trooper Boots
-- guid: 160240
+- guid: 160224
   name_id: 53651
   description_id: 14
   icon_set_id: 3218
@@ -2376,7 +2376,7 @@
   item_type: 1
   category: 63
 # Super Trooper Armor
-- guid: 160241
+- guid: 160225
   name_id: 1186
   description_id: 14
   icon_set_id: 374
@@ -2386,7 +2386,7 @@
   item_type: 1
   category: 61
 # Super Trooper Helmet
-- guid: 160242
+- guid: 160226
   name_id: 1192
   description_id: 14
   icon_set_id: 392
@@ -2396,7 +2396,7 @@
   item_type: 1
   category: 60
 # Super Trooper Gloves
-- guid: 160243
+- guid: 160227
   name_id: 1190
   description_id: 14
   icon_set_id: 386
@@ -2406,7 +2406,7 @@
   item_type: 1
   category: 62
 # Super Trooper Boots
-- guid: 160244
+- guid: 160228
   name_id: 1188
   description_id: 14
   icon_set_id: 380
@@ -2416,7 +2416,7 @@
   item_type: 1
   category: 63
 # Clone Trooper Armor
-- guid: 160245
+- guid: 160229
   name_id: 2506
   description_id: 14
   icon_set_id: 89
@@ -2426,7 +2426,7 @@
   item_type: 1
   category: 61
 # Clone Trooper Helmet
-- guid: 160246
+- guid: 160230
   name_id: 2505
   description_id: 14
   icon_set_id: 192
@@ -2436,7 +2436,7 @@
   item_type: 1
   category: 60
 # Clone Trooper Gloves
-- guid: 160247
+- guid: 160231
   name_id: 2507
   description_id: 14
   icon_set_id: 167
@@ -2446,7 +2446,7 @@
   item_type: 1
   category: 62
 # Clone Trooper Boots
-- guid: 160248
+- guid: 160232
   name_id: 2508
   description_id: 14
   icon_set_id: 135
@@ -2456,7 +2456,7 @@
   item_type: 1
   category: 63
 # Battle-Damaged Clone Trooper Suit
-- guid: 160253
+- guid: 160233
   name_id: 53725
   description_id: 14
   icon_set_id: 3242
@@ -2466,7 +2466,7 @@
   item_type: 1
   category: 61
 # Battle-Damaged Clone Trooper Helmet
-- guid: 160254
+- guid: 160234
   name_id: 53723
   description_id: 14
   icon_set_id: 3240
@@ -2476,7 +2476,7 @@
   item_type: 1
   category: 60
 # Battle-Damaged Clone Trooper Gloves
-- guid: 160255
+- guid: 160235
   name_id: 53724
   description_id: 14
   icon_set_id: 3241
@@ -2486,7 +2486,7 @@
   item_type: 1
   category: 62
 # Battle-Damaged Clone Trooper Boots
-- guid: 160256
+- guid: 160236
   name_id: 53726
   description_id: 14
   icon_set_id: 3243
@@ -2496,7 +2496,7 @@
   item_type: 1
   category: 63
 # Shock Trooper Suit
-- guid: 160257
+- guid: 160237
   name_id: 54275
   description_id: 14
   icon_set_id: 3646
@@ -2507,7 +2507,7 @@
   category: 61
   members: true
 # Shock Trooper Helmet
-- guid: 160258
+- guid: 160238
   name_id: 54273
   description_id: 14
   icon_set_id: 3645
@@ -2518,7 +2518,7 @@
   category: 60
   members: true
 # Shock Trooper Gloves
-- guid: 160259
+- guid: 160239
   name_id: 54274
   description_id: 14
   icon_set_id: 167
@@ -2529,7 +2529,7 @@
   category: 62
   members: true
 # Shock Trooper Boots
-- guid: 160260
+- guid: 160240
   name_id: 54276
   description_id: 14
   icon_set_id: 3647
@@ -2540,7 +2540,7 @@
   category: 63
   members: true
 # Clone Cadet Casual Red Tunic
-- guid: 160261
+- guid: 160241
   name_id: 1587
   description_id: 14
   icon_set_id: 1238
@@ -2550,7 +2550,7 @@
   item_type: 1
   category: 61
 # Clone Cadet Casual Black Boots
-- guid: 160262
+- guid: 160242
   name_id: 1589
   description_id: 14
   icon_set_id: 1240
@@ -2560,7 +2560,7 @@
   item_type: 1
   category: 63
 # Clone Cadet Casual Tan Tunic
-- guid: 160263
+- guid: 160243
   name_id: 44317
   description_id: 14
   icon_set_id: 1972
@@ -2570,7 +2570,7 @@
   item_type: 1
   category: 61
 # Clone Cadet Casual Tan Boots
-- guid: 160264
+- guid: 160244
   name_id: 44318
   description_id: 14
   icon_set_id: 1973
@@ -2580,7 +2580,7 @@
   item_type: 1
   category: 63
 # Clone Cadet Casual Grey Tunic
-- guid: 160265
+- guid: 160245
   name_id: 44315
   description_id: 14
   icon_set_id: 1970
@@ -2590,7 +2590,7 @@
   item_type: 1
   category: 61
 # 'Clone Cadet Casual Grey Boots '
-- guid: 160266
+- guid: 160246
   name_id: 44316
   description_id: 14
   icon_set_id: 1971
@@ -2600,7 +2600,7 @@
   item_type: 1
   category: 63
 # Sergeant Appo's Suit
-- guid: 160267
+- guid: 160247
   name_id: 54579
   description_id: 14
   icon_set_id: 3824
@@ -2611,7 +2611,7 @@
   category: 61
   members: true
 # Sergeant Appo's Helmet
-- guid: 160268
+- guid: 160248
   name_id: 54577
   description_id: 14
   icon_set_id: 3822
@@ -2622,7 +2622,7 @@
   category: 60
   members: true
 # Sergeant Appo's Gloves
-- guid: 160269
+- guid: 160249
   name_id: 54578
   description_id: 14
   icon_set_id: 3823
@@ -2633,7 +2633,7 @@
   category: 62
   members: true
 # Sergeant Appo's Boots
-- guid: 160270
+- guid: 160250
   name_id: 54580
   description_id: 14
   icon_set_id: 3825
@@ -2644,7 +2644,7 @@
   category: 63
   members: true
 # Clone Snowtrooper Armor
-- guid: 160271
+- guid: 160251
   name_id: 8888
   description_id: 14
   icon_set_id: 94
@@ -2655,7 +2655,7 @@
   category: 61
   members: true
 # Clone Snowtrooper Helmet
-- guid: 160272
+- guid: 160252
   name_id: 8894
   description_id: 14
   icon_set_id: 199
@@ -2666,7 +2666,7 @@
   category: 60
   members: true
 # Clone Snowtrooper Gloves
-- guid: 160273
+- guid: 160253
   name_id: 8892
   description_id: 14
   icon_set_id: 168
@@ -2677,7 +2677,7 @@
   category: 62
   members: true
 # Clone Snowtrooper Boots
-- guid: 160274
+- guid: 160254
   name_id: 8890
   description_id: 14
   icon_set_id: 136
@@ -2688,7 +2688,7 @@
   category: 63
   members: true
 # Elite Clone Armor
-- guid: 160275
+- guid: 160255
   name_id: 1559
   description_id: 14
   icon_set_id: 2836
@@ -2698,7 +2698,7 @@
   item_type: 1
   category: 61
 # Elite Clone Helmet
-- guid: 160276
+- guid: 160256
   name_id: 1555
   description_id: 14
   icon_set_id: 2834
@@ -2708,7 +2708,7 @@
   item_type: 1
   category: 60
 # Elite Clone Gloves
-- guid: 160277
+- guid: 160257
   name_id: 1557
   description_id: 14
   icon_set_id: 2835
@@ -2718,7 +2718,7 @@
   item_type: 1
   category: 62
 # Elite Clone Boots
-- guid: 160278
+- guid: 160258
   name_id: 1561
   description_id: 14
   icon_set_id: 2837
@@ -2728,7 +2728,7 @@
   item_type: 1
   category: 63
 # Clone Gunner Armor
-- guid: 160279
+- guid: 160259
   name_id: 866
   description_id: 14
   icon_set_id: 476
@@ -2739,7 +2739,7 @@
   category: 61
   members: true
 # Clone Gunner Helmet
-- guid: 160280
+- guid: 160260
   name_id: 862
   description_id: 14
   icon_set_id: 479
@@ -2750,7 +2750,7 @@
   category: 60
   members: true
 # Clone Gunner Helmet
-- guid: 160281
+- guid: 160261
   name_id: 862
   description_id: 14
   icon_set_id: 479
@@ -2761,7 +2761,7 @@
   category: 60
   members: true
 # Clone Gunner Gloves
-- guid: 160282
+- guid: 160262
   name_id: 864
   description_id: 14
   icon_set_id: 478
@@ -2772,7 +2772,7 @@
   category: 62
   members: true
 # Clone Gunner Boots
-- guid: 160283
+- guid: 160263
   name_id: 868
   description_id: 14
   icon_set_id: 477
@@ -2783,7 +2783,7 @@
   category: 63
   members: true
 # Clone Pilot Helmet
-- guid: 160284
+- guid: 160264
   name_id: 244
   description_id: 14
   icon_set_id: 197
@@ -2793,7 +2793,7 @@
   item_type: 1
   category: 60
 # Grey Darkside Trooper Armor
-- guid: 160285
+- guid: 160265
   name_id: 4915
   description_id: 14
   icon_set_id: 2945
@@ -2803,7 +2803,7 @@
   item_type: 1
   category: 61
 # Grey Darkside Trooper Helmet
-- guid: 160286
+- guid: 160266
   name_id: 4913
   description_id: 14
   icon_set_id: 2943
@@ -2813,7 +2813,7 @@
   item_type: 1
   category: 60
 # Grey Darkside Trooper Gloves
-- guid: 160287
+- guid: 160267
   name_id: 4914
   description_id: 14
   icon_set_id: 2944
@@ -2823,7 +2823,7 @@
   item_type: 1
   category: 62
 # Grey Darkside Trooper Boots
-- guid: 160288
+- guid: 160268
   name_id: 4916
   description_id: 14
   icon_set_id: 2946
@@ -2833,7 +2833,7 @@
   item_type: 1
   category: 63
 # White Darkside Trooper Armor
-- guid: 160289
+- guid: 160269
   name_id: 4911
   description_id: 14
   icon_set_id: 2941
@@ -2843,7 +2843,7 @@
   item_type: 1
   category: 61
 # White Darkside Trooper Helmet
-- guid: 160290
+- guid: 160270
   name_id: 4909
   description_id: 14
   icon_set_id: 2939
@@ -2853,7 +2853,7 @@
   item_type: 1
   category: 60
 # White Darkside Trooper Gloves
-- guid: 160291
+- guid: 160271
   name_id: 4910
   description_id: 14
   icon_set_id: 2940
@@ -2863,7 +2863,7 @@
   item_type: 1
   category: 62
 # White Darkside Trooper Boots
-- guid: 160292
+- guid: 160272
   name_id: 4912
   description_id: 14
   icon_set_id: 2942
@@ -2873,7 +2873,7 @@
   item_type: 1
   category: 63
 # Red Darkside Trooper Armor
-- guid: 160293
+- guid: 160273
   name_id: 4919
   description_id: 14
   icon_set_id: 2949
@@ -2883,7 +2883,7 @@
   item_type: 1
   category: 61
 # Red Darkside Trooper Helmet
-- guid: 160294
+- guid: 160274
   name_id: 4917
   description_id: 14
   icon_set_id: 2947
@@ -2893,7 +2893,7 @@
   item_type: 1
   category: 60
 # Red Darkside Trooper Gloves
-- guid: 160295
+- guid: 160275
   name_id: 4918
   description_id: 14
   icon_set_id: 2948
@@ -2903,7 +2903,7 @@
   item_type: 1
   category: 62
 # Red Darkside Trooper Boots
-- guid: 160296
+- guid: 160276
   name_id: 4920
   description_id: 14
   icon_set_id: 2950
@@ -2913,7 +2913,7 @@
   item_type: 1
   category: 63
 # Shadow Tech Armor
-- guid: 160297
+- guid: 160277
   name_id: 4480
   description_id: 14
   icon_set_id: 2569
@@ -2924,7 +2924,7 @@
   category: 61
   members: true
 # Shadow Tech Helmet
-- guid: 160298
+- guid: 160278
   name_id: 4478
   description_id: 14
   icon_set_id: 2567
@@ -2935,7 +2935,7 @@
   category: 60
   members: true
 # Shadow Tech Gloves
-- guid: 160299
+- guid: 160279
   name_id: 4479
   description_id: 14
   icon_set_id: 2568
@@ -2946,7 +2946,7 @@
   category: 62
   members: true
 # Shadow Tech Boots
-- guid: 160300
+- guid: 160280
   name_id: 4481
   description_id: 14
   icon_set_id: 2570
@@ -2957,7 +2957,7 @@
   category: 63
   members: true
 # Warthog Helmet
-- guid: 160301
+- guid: 160281
   name_id: 4545
   description_id: 14
   icon_set_id: 2627
@@ -2968,7 +2968,7 @@
   category: 60
   members: true
 # Phase 2 Red Armor
-- guid: 160302
+- guid: 160282
   description_id: 14
   icon_set_id: 373
   slot: !Equipment Body
@@ -2977,7 +2977,7 @@
   item_type: 1
   category: 61
 # Phase 2 Red Helmet
-- guid: 160303
+- guid: 160283
   description_id: 14
   icon_set_id: 391
   slot: !Equipment Head
@@ -2986,7 +2986,7 @@
   item_type: 1
   category: 60
 # Phase 2 Red Gloves
-- guid: 160304
+- guid: 160284
   description_id: 14
   icon_set_id: 385
   slot: !Equipment Hands
@@ -2995,7 +2995,7 @@
   item_type: 1
   category: 62
 # Phase 2 Red Boots
-- guid: 160305
+- guid: 160285
   description_id: 14
   icon_set_id: 379
   slot: !Equipment Feet
@@ -3004,7 +3004,7 @@
   item_type: 1
   category: 63
 # Grand Officer Armor
-- guid: 160306
+- guid: 160286
   name_id: 52799
   description_id: 14
   icon_set_id: 3104
@@ -3014,7 +3014,7 @@
   item_type: 1
   category: 61
 # Grand Officer Helmet
-- guid: 160307
+- guid: 160287
   name_id: 52802
   description_id: 14
   icon_set_id: 3107
@@ -3024,7 +3024,7 @@
   item_type: 1
   category: 60
 # Grand Officer Gloves
-- guid: 160308
+- guid: 160288
   name_id: 52800
   description_id: 14
   icon_set_id: 3106
@@ -3034,7 +3034,7 @@
   item_type: 1
   category: 62
 # Grand Officer Boots
-- guid: 160309
+- guid: 160289
   name_id: 52801
   description_id: 14
   icon_set_id: 3105
@@ -3044,7 +3044,7 @@
   item_type: 1
   category: 63
 # Barrage's Armor
-- guid: 160318
+- guid: 160290
   name_id: 43695
   description_id: 14
   icon_set_id: 1872
@@ -3055,7 +3055,7 @@
   category: 61
   members: true
 # Barrage's Helmet
-- guid: 160319
+- guid: 160291
   name_id: 43693
   description_id: 14
   icon_set_id: 1875
@@ -3066,7 +3066,7 @@
   category: 60
   members: true
 # Barrage's Gloves
-- guid: 160320
+- guid: 160292
   name_id: 43694
   description_id: 14
   icon_set_id: 1874
@@ -3077,7 +3077,7 @@
   category: 62
   members: true
 # Barrage's Boots
-- guid: 160321
+- guid: 160293
   name_id: 43696
   description_id: 14
   icon_set_id: 1873
@@ -3088,7 +3088,7 @@
   category: 63
   members: true
 # Hevy's Training Armor
-- guid: 160323
+- guid: 160294
   name_id: 1460
   description_id: 14
   icon_set_id: 1092
@@ -3098,7 +3098,7 @@
   item_type: 1
   category: 61
 # Hevy's Training Helmet
-- guid: 160324
+- guid: 160295
   name_id: 1488
   description_id: 14
   icon_set_id: 1095
@@ -3108,7 +3108,7 @@
   item_type: 1
   category: 60
 # Hevy's Training Gloves
-- guid: 160325
+- guid: 160296
   name_id: 1482
   description_id: 14
   icon_set_id: 1094
@@ -3118,7 +3118,7 @@
   item_type: 1
   category: 62
 # Hevy's Training Boots
-- guid: 160326
+- guid: 160297
   name_id: 1470
   description_id: 14
   icon_set_id: 1093

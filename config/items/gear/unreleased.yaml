@@ -20,7 +20,7 @@
   item_type: 1
   category: 63
 # Kyle Katarn's Uniform
-- guid: 230003
+- guid: 230002
   name_id: 204
   description_id: 14
   icon_set_id: 673
@@ -30,7 +30,7 @@
   item_type: 1
   category: 61
 # Kyle Katarn's Gloves
-- guid: 230004
+- guid: 230003
   name_id: 202
   description_id: 14
   icon_set_id: 676
@@ -40,7 +40,7 @@
   item_type: 1
   category: 62
 # Kyle Katarn's Boots
-- guid: 230005
+- guid: 230004
   name_id: 206
   description_id: 14
   icon_set_id: 680
@@ -50,7 +50,7 @@
   item_type: 1
   category: 63
 # Lando Calrissian's Suit
-- guid: 230006
+- guid: 230005
   name_id: 1462
   description_id: 14
   icon_set_id: 673
@@ -60,7 +60,7 @@
   item_type: 1
   category: 61
 # Lando Calrissian's Shoes
-- guid: 230007
+- guid: 230006
   name_id: 1472
   description_id: 14
   icon_set_id: 680
@@ -70,7 +70,7 @@
   item_type: 1
   category: 63
 # Tamtel Skreej's Armor
-- guid: 230008
+- guid: 230007
   name_id: 930
   description_id: 14
   icon_set_id: 495
@@ -80,7 +80,7 @@
   item_type: 1
   category: 61
 # Tamtel Skreej's Helm
-- guid: 230009
+- guid: 230008
   name_id: 928
   description_id: 14
   icon_set_id: 497
@@ -90,7 +90,7 @@
   item_type: 1
   category: 60
 # Tamtel Skreej's Boots
-- guid: 230010
+- guid: 230009
   name_id: 932
   description_id: 14
   icon_set_id: 496
@@ -100,7 +100,7 @@
   item_type: 1
   category: 63
 # Mara Jade's Battle Suit
-- guid: 230011
+- guid: 230010
   name_id: 216
   description_id: 14
   icon_set_id: 104
@@ -110,7 +110,7 @@
   item_type: 1
   category: 61
 # Mara Jade's Gloves
-- guid: 230012
+- guid: 230011
   name_id: 214
   description_id: 14
   icon_set_id: 174
@@ -120,7 +120,7 @@
   item_type: 1
   category: 62
 # Mara Jade's Boots
-- guid: 230013
+- guid: 230012
   name_id: 218
   description_id: 14
   icon_set_id: 147
@@ -130,7 +130,7 @@
   item_type: 1
   category: 63
 # Imperial Royal Guard Armor
-- guid: 230014
+- guid: 230013
   name_id: 1650
   description_id: 14
   icon_set_id: 673
@@ -140,7 +140,7 @@
   item_type: 1
   category: 61
 # Imperial Royal Guard Helmet
-- guid: 230015
+- guid: 230014
   name_id: 1646
   description_id: 14
   icon_set_id: 677
@@ -150,7 +150,7 @@
   item_type: 1
   category: 60
 # Imperial Royal Guard Gloves
-- guid: 230016
+- guid: 230015
   name_id: 1648
   description_id: 14
   icon_set_id: 676
@@ -160,7 +160,7 @@
   item_type: 1
   category: 62
 # Imperial Royal Guard Boots
-- guid: 230017
+- guid: 230016
   name_id: 1652
   description_id: 14
   icon_set_id: 680
@@ -170,7 +170,7 @@
   item_type: 1
   category: 63
 # Dash Rendar's Suit
-- guid: 230018
+- guid: 230017
   name_id: 1565
   description_id: 14
   icon_set_id: 673
@@ -180,7 +180,7 @@
   item_type: 1
   category: 61
 # Dash Rendar's Gloves
-- guid: 230019
+- guid: 230018
   name_id: 1563
   description_id: 14
   icon_set_id: 676
@@ -190,7 +190,7 @@
   item_type: 1
   category: 62
 # Dash Rendar's Boots
-- guid: 230020
+- guid: 230019
   name_id: 1567
   description_id: 14
   icon_set_id: 680
@@ -200,7 +200,7 @@
   item_type: 1
   category: 63
 # Han Solo's Outfit
-- guid: 230021
+- guid: 230020
   name_id: 302
   description_id: 14
   icon_set_id: 673
@@ -210,7 +210,7 @@
   item_type: 1
   category: 61
 # Han Solo's Boots
-- guid: 230022
+- guid: 230021
   name_id: 304
   description_id: 14
   icon_set_id: 680
@@ -220,7 +220,7 @@
   item_type: 1
   category: 63
 # Rebel Pilot Jumpsuit
-- guid: 230023
+- guid: 230022
   name_id: 240
   description_id: 14
   icon_set_id: 108
@@ -230,7 +230,7 @@
   item_type: 1
   category: 61
 # Rebel Pilot Helmet
-- guid: 230024
+- guid: 230023
   name_id: 236
   description_id: 14
   icon_set_id: 205
@@ -240,7 +240,7 @@
   item_type: 1
   category: 60
 # Rebel Pilot Gloves
-- guid: 230025
+- guid: 230024
   name_id: 238
   description_id: 14
   icon_set_id: 177
@@ -250,7 +250,7 @@
   item_type: 1
   category: 62
 # Rebel Pilot Boots
-- guid: 230026
+- guid: 230025
   name_id: 242
   description_id: 14
   icon_set_id: 150
@@ -260,7 +260,7 @@
   item_type: 1
   category: 63
 # Rebel Pilot Jumpsuit
-- guid: 230027
+- guid: 230026
   name_id: 240
   description_id: 14
   icon_set_id: 673
@@ -270,7 +270,7 @@
   item_type: 1
   category: 61
 # Rebel Pilot Helmet
-- guid: 230028
+- guid: 230027
   name_id: 236
   description_id: 14
   icon_set_id: 677
@@ -280,7 +280,7 @@
   item_type: 1
   category: 60
 # Rebel Pilot Jumpsuit
-- guid: 230029
+- guid: 230028
   name_id: 240
   description_id: 14
   icon_set_id: 673
@@ -290,7 +290,7 @@
   item_type: 1
   category: 61
 # Rebel Pilot Helmet
-- guid: 230030
+- guid: 230029
   name_id: 236
   description_id: 14
   icon_set_id: 677
@@ -300,7 +300,7 @@
   item_type: 1
   category: 60
 # Unknown boots
-- guid: 230031
+- guid: 230030
   description_id: 14
   icon_set_id: 680
   slot: !Equipment Feet
@@ -309,7 +309,7 @@
   item_type: 1
   category: 63
 # C-3PO Backpack
-- guid: 230032
+- guid: 230031
   name_id: 3074
   description_id: 14
   icon_set_id: 673
@@ -319,7 +319,7 @@
   item_type: 1
   category: 61
 # wearable_body_mandalorian_mustafar
-- guid: 230033
+- guid: 230032
   name_id: 2701
   description_id: 14
   icon_set_id: 673
@@ -329,7 +329,7 @@
   item_type: 1
   category: 61
 # wearable_head_mandalorian_mustafar
-- guid: 230034
+- guid: 230033
   name_id: 2699
   description_id: 14
   icon_set_id: 677
@@ -339,7 +339,7 @@
   item_type: 1
   category: 60
 # wearable_hands_mandalorian_mustafar
-- guid: 230035
+- guid: 230034
   name_id: 2700
   description_id: 14
   icon_set_id: 676
@@ -349,7 +349,7 @@
   item_type: 1
   category: 62
 # wearable_feet_mandalorian_mustafar
-- guid: 230036
+- guid: 230035
   name_id: 2702
   description_id: 14
   icon_set_id: 680
@@ -359,7 +359,7 @@
   item_type: 1
   category: 63
 # Clone Trooper Diver Suit
-- guid: 230037
+- guid: 230036
   name_id: 828
   description_id: 14
   icon_set_id: 450
@@ -369,7 +369,7 @@
   item_type: 1
   category: 61
 # Clone Trooper Diver Helmet
-- guid: 230038
+- guid: 230037
   name_id: 824
   description_id: 14
   icon_set_id: 453
@@ -379,7 +379,7 @@
   item_type: 1
   category: 60
 # Clone Trooper Diver Gloves
-- guid: 230039
+- guid: 230038
   name_id: 826
   description_id: 14
   icon_set_id: 452
@@ -389,7 +389,7 @@
   item_type: 1
   category: 62
 # Clone Trooper Diver Fins
-- guid: 230040
+- guid: 230039
   name_id: 830
   description_id: 14
   icon_set_id: 451
@@ -399,7 +399,7 @@
   item_type: 1
   category: 63
 # Commander Stone's Armor
-- guid: 230041
+- guid: 230040
   name_id: 1178
   description_id: 14
   icon_set_id: 372
@@ -409,7 +409,7 @@
   item_type: 1
   category: 61
 # Commander Stone's Helmet
-- guid: 230042
+- guid: 230041
   name_id: 1184
   description_id: 14
   icon_set_id: 390
@@ -419,7 +419,7 @@
   item_type: 1
   category: 60
 # Commander Stone's Gloves
-- guid: 230043
+- guid: 230042
   name_id: 1182
   description_id: 14
   icon_set_id: 384
@@ -429,7 +429,7 @@
   item_type: 1
   category: 62
 # Commander Stone's Boots
-- guid: 230044
+- guid: 230043
   name_id: 1180
   description_id: 14
   icon_set_id: 378
@@ -439,7 +439,7 @@
   item_type: 1
   category: 63
 # wearable_body_clone_blue_squares
-- guid: 230045
+- guid: 230044
   name_id: 2705
   description_id: 14
   icon_set_id: 673
@@ -449,7 +449,7 @@
   item_type: 1
   category: 61
 # wearable_head_clone_blue_squares
-- guid: 230046
+- guid: 230045
   name_id: 2703
   description_id: 14
   icon_set_id: 677
@@ -459,7 +459,7 @@
   item_type: 1
   category: 60
 # wearable_hands_clone_blue_squares
-- guid: 230047
+- guid: 230046
   name_id: 2704
   description_id: 14
   icon_set_id: 676
@@ -469,7 +469,7 @@
   item_type: 1
   category: 62
 # wearable_feet_clone_blue_squares
-- guid: 230048
+- guid: 230047
   name_id: 2706
   description_id: 14
   icon_set_id: 680
@@ -479,7 +479,7 @@
   item_type: 1
   category: 63
 # wearable_body_clone_red_stripe
-- guid: 230049
+- guid: 230048
   name_id: 2709
   description_id: 14
   icon_set_id: 673
@@ -489,7 +489,7 @@
   item_type: 1
   category: 61
 # wearable_head_clone_red_stripe
-- guid: 230050
+- guid: 230049
   name_id: 2707
   description_id: 14
   icon_set_id: 677
@@ -499,7 +499,7 @@
   item_type: 1
   category: 60
 # wearable_hands_clone_red_stripe
-- guid: 230051
+- guid: 230050
   name_id: 2708
   description_id: 14
   icon_set_id: 676
@@ -509,7 +509,7 @@
   item_type: 1
   category: 62
 # wearable_feet_clone_red_stripe
-- guid: 230052
+- guid: 230051
   name_id: 2710
   description_id: 14
   icon_set_id: 680
@@ -519,7 +519,7 @@
   item_type: 1
   category: 63
 # Captain Keeli's Armor
-- guid: 230053
+- guid: 230052
   name_id: 1458
   description_id: 14
   icon_set_id: 1076
@@ -529,7 +529,7 @@
   item_type: 1
   category: 61
 # Captain Keeli's Helmet
-- guid: 230054
+- guid: 230053
   name_id: 1486
   description_id: 14
   icon_set_id: 1079
@@ -539,7 +539,7 @@
   item_type: 1
   category: 60
 # Captain Keeli's Gloves
-- guid: 230055
+- guid: 230054
   name_id: 1480
   description_id: 14
   icon_set_id: 1078
@@ -549,7 +549,7 @@
   item_type: 1
   category: 62
 # Captain Keeli's Boots
-- guid: 230056
+- guid: 230055
   name_id: 1468
   description_id: 14
   icon_set_id: 1077
@@ -559,7 +559,7 @@
   item_type: 1
   category: 63
 # wearable_body_commander_wolffe
-- guid: 230057
+- guid: 230056
   name_id: 2681
   description_id: 14
   icon_set_id: 673
@@ -569,7 +569,7 @@
   item_type: 1
   category: 61
 # wearable_head_commander_wolffe
-- guid: 230058
+- guid: 230057
   name_id: 2679
   description_id: 14
   icon_set_id: 677
@@ -579,7 +579,7 @@
   item_type: 1
   category: 60
 # wearable_hands_commander_wolffe
-- guid: 230059
+- guid: 230058
   name_id: 2680
   description_id: 14
   icon_set_id: 676
@@ -589,7 +589,7 @@
   item_type: 1
   category: 62
 # wearable_feet_commander_wolffe
-- guid: 230060
+- guid: 230059
   name_id: 2682
   description_id: 14
   icon_set_id: 680
@@ -599,7 +599,7 @@
   item_type: 1
   category: 63
 # Phase II Armor
-- guid: 230061
+- guid: 230060
   name_id: 43699
   description_id: 14
   icon_set_id: 89
@@ -609,7 +609,7 @@
   item_type: 1
   category: 61
 # Phase II Helmet
-- guid: 230062
+- guid: 230061
   name_id: 1216
   description_id: 14
   icon_set_id: 677
@@ -619,7 +619,7 @@
   item_type: 1
   category: 60
 # Phase II Gloves
-- guid: 230063
+- guid: 230062
   name_id: 43698
   description_id: 14
   icon_set_id: 676
@@ -629,7 +629,7 @@
   item_type: 1
   category: 62
 # Phase II Boots
-- guid: 230064
+- guid: 230063
   name_id: 1212
   description_id: 14
   icon_set_id: 680
@@ -639,7 +639,7 @@
   item_type: 1
   category: 63
 # Azure Death Watch Commander Suit
-- guid: 230065
+- guid: 230064
   name_id: 53721
   description_id: 14
   icon_set_id: 3238
@@ -649,7 +649,7 @@
   item_type: 1
   category: 61
 # Azure Death Watch Commander Helmet
-- guid: 230066
+- guid: 230065
   name_id: 53719
   description_id: 14
   icon_set_id: 3236
@@ -659,7 +659,7 @@
   item_type: 1
   category: 60
 # Azure Death Watch Commander Gloves
-- guid: 230067
+- guid: 230066
   name_id: 53720
   description_id: 14
   icon_set_id: 3237
@@ -669,7 +669,7 @@
   item_type: 1
   category: 62
 # Azure Death Watch Commander Boots
-- guid: 230068
+- guid: 230067
   name_id: 53722
   description_id: 14
   icon_set_id: 3239
@@ -679,7 +679,7 @@
   item_type: 1
   category: 63
 # Byzantium Death Watch Commander Suit
-- guid: 230069
+- guid: 230068
   name_id: 53713
   description_id: 14
   icon_set_id: 3230
@@ -689,7 +689,7 @@
   item_type: 1
   category: 61
 # Byzantium Death Watch Commander Helmet
-- guid: 230070
+- guid: 230069
   name_id: 53711
   description_id: 14
   icon_set_id: 3228
@@ -699,7 +699,7 @@
   item_type: 1
   category: 60
 # Byzantium Death Watch Commander Gloves
-- guid: 230071
+- guid: 230070
   name_id: 53712
   description_id: 14
   icon_set_id: 3229
@@ -709,7 +709,7 @@
   item_type: 1
   category: 62
 # Byzantium Death Watch Commander Boots
-- guid: 230072
+- guid: 230071
   name_id: 53714
   description_id: 14
   icon_set_id: 3231
@@ -719,7 +719,7 @@
   item_type: 1
   category: 63
 # Cobalt Death Watch Commander Suit
-- guid: 230073
+- guid: 230072
   name_id: 53717
   description_id: 14
   icon_set_id: 3234
@@ -729,7 +729,7 @@
   item_type: 1
   category: 61
 # Cobalt Death Watch Commander Helmet
-- guid: 230074
+- guid: 230073
   name_id: 53715
   description_id: 14
   icon_set_id: 3232
@@ -739,7 +739,7 @@
   item_type: 1
   category: 60
 # Cobalt Death Watch Commander Gloves
-- guid: 230075
+- guid: 230074
   name_id: 53716
   description_id: 14
   icon_set_id: 3233
@@ -749,7 +749,7 @@
   item_type: 1
   category: 62
 # Cobalt Death Watch Commander Boots
-- guid: 230076
+- guid: 230075
   name_id: 53718
   description_id: 14
   icon_set_id: 3235
@@ -759,7 +759,7 @@
   item_type: 1
   category: 63
 # Republic General's Snow Hat - Do Not Use
-- guid: 230077
+- guid: 230076
   name_id: 1490
   description_id: 14
   icon_set_id: 474
@@ -769,7 +769,7 @@
   item_type: 1
   category: 60
 # Lurmen Suit
-- guid: 230078
+- guid: 230077
   description_id: 14
   icon_set_id: 673
   slot: !Equipment Body
@@ -778,7 +778,7 @@
   item_type: 1
   category: 61
 # Lurmen Beanie
-- guid: 230079
+- guid: 230078
   description_id: 14
   icon_set_id: 677
   slot: !Equipment Head
@@ -787,7 +787,7 @@
   item_type: 1
   category: 60
 # Lurmen Gloves
-- guid: 230080
+- guid: 230079
   description_id: 14
   icon_set_id: 676
   slot: !Equipment Hands
@@ -796,7 +796,7 @@
   item_type: 1
   category: 62
 # Lurmen Boots
-- guid: 230081
+- guid: 230080
   description_id: 14
   icon_set_id: 680
   slot: !Equipment Feet
@@ -805,7 +805,7 @@
   item_type: 1
   category: 63
 # Republic Fleet Officer Uniform
-- guid: 230082
+- guid: 230081
   name_id: 8540
   description_id: 14
   icon_set_id: 106
@@ -816,7 +816,7 @@
   category: 61
   members: true
 # Republic Fleet Officer Hat
-- guid: 230083
+- guid: 230082
   name_id: 8542
   description_id: 14
   icon_set_id: 203
@@ -827,7 +827,7 @@
   category: 60
   members: true
 # Senatorial Naboo Bodysuit
-- guid: 230084
+- guid: 230083
   name_id: 248
   description_id: 14
   icon_set_id: 110
@@ -837,7 +837,7 @@
   item_type: 1
   category: 61
 # Senatorial Naboo Headwrap
-- guid: 230085
+- guid: 230084
   name_id: 246
   description_id: 14
   icon_set_id: 207
@@ -847,7 +847,7 @@
   item_type: 1
   category: 60
 # Senatorial Naboo Boots
-- guid: 230086
+- guid: 230085
   name_id: 250
   description_id: 14
   icon_set_id: 151
@@ -857,7 +857,7 @@
   item_type: 1
   category: 63
 # wearable_body_anakin_tatooine
-- guid: 230087
+- guid: 230086
   name_id: 2673
   description_id: 14
   icon_set_id: 673
@@ -867,7 +867,7 @@
   item_type: 1
   category: 61
 # wearable_hands_anakin_tatooine
-- guid: 230088
+- guid: 230087
   name_id: 2672
   description_id: 14
   icon_set_id: 676
@@ -877,7 +877,7 @@
   item_type: 1
   category: 62
 # wearable_feet_anakin_tatooine
-- guid: 230089
+- guid: 230088
   name_id: 2674
   description_id: 14
   icon_set_id: 680
@@ -887,7 +887,7 @@
   item_type: 1
   category: 63
 # Boba Phat's Suit
-- guid: 230090
+- guid: 230089
   name_id: 1454
   description_id: 14
   icon_set_id: 673
@@ -897,7 +897,7 @@
   item_type: 1
   category: 61
 # Boba Phat's Gloves
-- guid: 230091
+- guid: 230090
   name_id: 1478
   description_id: 14
   icon_set_id: 676
@@ -907,7 +907,7 @@
   item_type: 1
   category: 62
 # Ming Po Robe
-- guid: 230092
+- guid: 230091
   name_id: 52835
   description_id: 14
   icon_set_id: 673
@@ -917,7 +917,7 @@
   item_type: 1
   category: 61
 # Ming Po Gloves
-- guid: 230093
+- guid: 230092
   name_id: 52834
   description_id: 14
   icon_set_id: 676
@@ -927,7 +927,7 @@
   item_type: 1
   category: 62
 # Ming Po Boots
-- guid: 230094
+- guid: 230093
   name_id: 52836
   description_id: 14
   icon_set_id: 680
@@ -937,7 +937,7 @@
   item_type: 1
   category: 63
 # DC-17m Interchangable Weapons System
-- guid: 230095
+- guid: 230094
   description_id: 14
   icon_set_id: 681
   item_class: 10000
@@ -947,7 +947,7 @@
   item_type: 1
   category: 64
 # Blaster Test E11
-- guid: 230096
+- guid: 230095
   name_id: 2561
   description_id: 14
   icon_set_id: 214
@@ -957,7 +957,7 @@
   texture_alias: Stormtrooper
   item_type: 1
   category: 64
-- guid: 230097
+- guid: 230096
   description_id: 14
   icon_set_id: 681
   item_class: 10008
@@ -966,7 +966,7 @@
   texture_alias: Basic
   item_type: 1
   category: 64
-- guid: 230098
+- guid: 230097
   description_id: 14
   icon_set_id: 681
   item_class: 10002
@@ -976,7 +976,7 @@
   item_type: 1
   category: 64
 # 'Umbara Academy: Ghost Attack 1'
-- guid: 230099
+- guid: 230098
   name_id: 51036
   description_id: 14
   icon_set_id: 425
@@ -987,7 +987,7 @@
   item_type: 25
   category: 64
 # 'Umbara Academy: Ghost Attack 2'
-- guid: 230100
+- guid: 230099
   name_id: 51037
   description_id: 14
   icon_set_id: 425
@@ -998,7 +998,7 @@
   item_type: 25
   category: 64
 # 'Umbara Academy: Ghost Attack 3'
-- guid: 230101
+- guid: 230100
   name_id: 51038
   description_id: 14
   icon_set_id: 425
@@ -1009,7 +1009,7 @@
   item_type: 25
   category: 64
 # 'Umbara Academy: Ghost Attack 1'
-- guid: 230102
+- guid: 230101
   name_id: 51036
   description_id: 14
   icon_set_id: 425
@@ -1019,7 +1019,7 @@
   texture_alias: Ahsoka
   item_type: 25
 # 'Umbara Academy: Ghost Attack 2'
-- guid: 230103
+- guid: 230102
   name_id: 51037
   description_id: 14
   icon_set_id: 425
@@ -1029,7 +1029,7 @@
   texture_alias: Anakin
   item_type: 25
 # 'Umbara Academy: Ghost Attack 3'
-- guid: 230104
+- guid: 230103
   name_id: 51038
   description_id: 14
   icon_set_id: 425
@@ -1039,7 +1039,7 @@
   texture_alias: MaceWindu
   item_type: 25
 # Mandalorian Shatterer Battle Rifle
-- guid: 230105
+- guid: 230104
   name_id: 8780
   description_id: 14
   icon_set_id: 241
@@ -1050,7 +1050,7 @@
   item_type: 1
   category: 64
 # Rebel Pilot Blaster
-- guid: 230106
+- guid: 230105
   name_id: 2412
   description_id: 14
   icon_set_id: 245
@@ -1061,7 +1061,7 @@
   item_type: 1
   category: 64
 # Covert Diplomat Blaster Pistol
-- guid: 230107
+- guid: 230106
   name_id: 8792
   description_id: 14
   icon_set_id: 249
@@ -1072,7 +1072,7 @@
   item_type: 1
   category: 64
 # Imperial Royal Guard Force Pike
-- guid: 230108
+- guid: 230107
   name_id: 8799
   description_id: 14
   icon_set_id: 251
@@ -1083,7 +1083,7 @@
   item_type: 1
   category: 64
 # Tamtel Skreej's Pike
-- guid: 230109
+- guid: 230108
   name_id: 8798
   description_id: 14
   icon_set_id: 252
@@ -1094,7 +1094,7 @@
   item_type: 1
   category: 64
 # His cane
-- guid: 230110
+- guid: 230109
   name_id: 10423
   description_id: 14
   icon_set_id: 681
@@ -1104,7 +1104,7 @@
   item_type: 1
   category: 64
 # Renegade Heavy Blaster Pistol (Right)
-- guid: 230111
+- guid: 230110
   name_id: 54522
   description_id: 14
   icon_set_id: 3792
@@ -1115,7 +1115,7 @@
   item_type: 1
   category: 64
 # Renegade Heavy Blaster Pistol (Left)
-- guid: 230112
+- guid: 230111
   description_id: 14
   icon_set_id: 3792
   item_class: 9

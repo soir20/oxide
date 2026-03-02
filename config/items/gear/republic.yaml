@@ -117,7 +117,7 @@
   category: 61
   members: true
 # Republic Fleet Officer Gloves
-- guid: 200013
+- guid: 200011
   name_id: 312
   description_id: 14
   icon_set_id: 181
@@ -128,7 +128,7 @@
   category: 62
   members: true
 # Republic Fleet Officer Boots
-- guid: 200014
+- guid: 200012
   name_id: 310
   description_id: 14
   icon_set_id: 139
@@ -139,7 +139,7 @@
   category: 63
   members: true
 # Orn Free Taa's Robes
-- guid: 200015
+- guid: 200013
   name_id: 878
   description_id: 14
   icon_set_id: 481
@@ -150,7 +150,7 @@
   category: 61
   members: true
 # Orn Free Taa's Boots
-- guid: 200016
+- guid: 200014
   name_id: 880
   description_id: 14
   icon_set_id: 482
@@ -161,7 +161,7 @@
   category: 63
   members: true
 # Republic Technician's Jumpsuit
-- guid: 200017
+- guid: 200015
   name_id: 850
   description_id: 14
   icon_set_id: 464
@@ -172,7 +172,7 @@
   category: 61
   members: true
 # Republic Technician's Helmet
-- guid: 200018
+- guid: 200016
   name_id: 846
   description_id: 14
   icon_set_id: 467
@@ -183,7 +183,7 @@
   category: 60
   members: true
 # Republic Technician's Gloves
-- guid: 200019
+- guid: 200017
   name_id: 848
   description_id: 14
   icon_set_id: 466
@@ -194,7 +194,7 @@
   category: 62
   members: true
 # Republic Technician's Boots
-- guid: 200020
+- guid: 200018
   name_id: 852
   description_id: 14
   icon_set_id: 465
@@ -205,7 +205,7 @@
   category: 63
   members: true
 # Medical Officer Uniform
-- guid: 200021
+- guid: 200019
   name_id: 874
   description_id: 14
   icon_set_id: 377
@@ -216,7 +216,7 @@
   category: 61
   members: true
 # Medical Officer Cap
-- guid: 200022
+- guid: 200020
   name_id: 870
   description_id: 14
   icon_set_id: 395
@@ -227,7 +227,7 @@
   category: 60
   members: true
 # Medical Officer Gloves
-- guid: 200023
+- guid: 200021
   name_id: 872
   description_id: 14
   icon_set_id: 389
@@ -238,7 +238,7 @@
   category: 62
   members: true
 # Medical Officer Boots
-- guid: 200024
+- guid: 200022
   name_id: 876
   description_id: 14
   icon_set_id: 383
@@ -249,7 +249,7 @@
   category: 63
   members: true
 # General Snow Uniform Coat
-- guid: 200025
+- guid: 200023
   name_id: 856
   description_id: 14
   icon_set_id: 471
@@ -259,7 +259,7 @@
   item_type: 1
   category: 61
 # General Snow Uniform Hood
-- guid: 200026
+- guid: 200024
   name_id: 860
   description_id: 14
   icon_set_id: 475
@@ -269,7 +269,7 @@
   item_type: 1
   category: 60
 # General Snow Uniform Gloves
-- guid: 200027
+- guid: 200025
   name_id: 854
   description_id: 14
   icon_set_id: 473
@@ -279,7 +279,7 @@
   item_type: 1
   category: 62
 # General Snow Uniform Boots
-- guid: 200028
+- guid: 200026
   name_id: 858
   description_id: 14
   icon_set_id: 472
