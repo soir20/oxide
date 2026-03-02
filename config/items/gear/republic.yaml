@@ -116,28 +116,6 @@
   item_type: 1
   category: 61
   members: true
-# Republic Fleet Officer Uniform
-- guid: 200011
-  name_id: 8540
-  description_id: 14
-  icon_set_id: 106
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_OfficerUniform.adr
-  texture_alias: OfficerGrey
-  item_type: 1
-  category: 61
-  members: true
-# Republic Fleet Officer Hat
-- guid: 200012
-  name_id: 8542
-  description_id: 14
-  icon_set_id: 203
-  slot: !Equipment Head
-  model_name: Wear_<race>_<gender>_Head_OfficerCap.adr
-  texture_alias: OfficerGrey
-  item_type: 1
-  category: 60
-  members: true
 # Republic Fleet Officer Gloves
 - guid: 200013
   name_id: 312
@@ -310,13 +288,3 @@
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 63
-# Republic General's Snow Hat - Do Not Use
-- guid: 200029
-  name_id: 1490
-  description_id: 14
-  icon_set_id: 474
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_GeneralSnowHoodieDown.adr
-  texture_alias: GeneralSnowHoodieDown
-  item_type: 1
-  category: 60

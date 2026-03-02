@@ -38,13 +38,13 @@
 - hilt_item_guid: 110012
   shape_item_guid: 90000
   color_item_guid: 100001
-- hilt_item_guid: 110013
+- hilt_item_guid: 230099
   shape_item_guid: 90000
   color_item_guid: 100004
 - hilt_item_guid: 110015
   shape_item_guid: 90000
   color_item_guid: 100000
-- hilt_item_guid: 110016
+- hilt_item_guid: 230100
   shape_item_guid: 90000
   color_item_guid: 100004
 - hilt_item_guid: 110017
@@ -128,7 +128,7 @@
 - hilt_item_guid: 110043
   shape_item_guid: 90000
   color_item_guid: 100005
-- hilt_item_guid: 110044
+- hilt_item_guid: 230101
   shape_item_guid: 90000
   color_item_guid: 100004
 - hilt_item_guid: 110045
@@ -194,7 +194,7 @@
 - hilt_item_guid: 140011
   shape_item_guid: 120000
   color_item_guid: 130000
-- hilt_item_guid: 140013
+- hilt_item_guid: 230102
   shape_item_guid: 120000
   color_item_guid: 130004
 - hilt_item_guid: 140014
@@ -203,7 +203,7 @@
 - hilt_item_guid: 140015
   shape_item_guid: 120000
   color_item_guid: 130000
-- hilt_item_guid: 140016
+- hilt_item_guid: 230103
   shape_item_guid: 120000
   color_item_guid: 130004
 - hilt_item_guid: 140017
@@ -287,7 +287,7 @@
 - hilt_item_guid: 140043
   shape_item_guid: 120000
   color_item_guid: 130005
-- hilt_item_guid: 140044
+- hilt_item_guid: 230104
   shape_item_guid: 120000
   color_item_guid: 130004
 - hilt_item_guid: 140045

@@ -147,17 +147,6 @@
   texture_alias: Ahsoka
   item_type: 25
   category: 64
-# 'Umbara Academy: Ghost Attack 1'
-- guid: 110013
-  name_id: 51036
-  description_id: 14
-  icon_set_id: 425
-  item_class: 7
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
-  texture_alias: Ahsoka
-  item_type: 25
-  category: 64
 # Anakin Skywalker's Lightsaber
 - guid: 110015
   name_id: 8762
@@ -166,17 +155,6 @@
   item_class: 10
   slot: !Equipment PrimaryWeapon
   model_name: Wield_LightsaberHiltStandard_Anakin.adr
-  texture_alias: Anakin
-  item_type: 25
-  category: 64
-# 'Umbara Academy: Ghost Attack 2'
-- guid: 110016
-  name_id: 51037
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
   texture_alias: Anakin
   item_type: 25
   category: 64
@@ -484,17 +462,6 @@
   item_class: 10
   slot: !Equipment PrimaryWeapon
   model_name: Wield_LightsaberHiltStandard_MaceWindu.adr
-  texture_alias: MaceWindu
-  item_type: 25
-  category: 64
-# 'Umbara Academy: Ghost Attack 3'
-- guid: 110044
-  name_id: 51038
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
   texture_alias: MaceWindu
   item_type: 25
   category: 64

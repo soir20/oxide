@@ -1184,36 +1184,6 @@
   item_type: 1
   category: 63
   members: true
-# wearable_body_anakin_tatooine
-- guid: 180114
-  name_id: 2673
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
-  texture_alias: Tatooine
-  item_type: 1
-  category: 61
-# wearable_hands_anakin_tatooine
-- guid: 180115
-  name_id: 2672
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
-  texture_alias: Tatooine
-  item_type: 1
-  category: 62
-# wearable_feet_anakin_tatooine
-- guid: 180116
-  name_id: 2674
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
-  texture_alias: Tatooine
-  item_type: 1
-  category: 63
 # Kit Fisto's Robes
 - guid: 180117
   name_id: 8902

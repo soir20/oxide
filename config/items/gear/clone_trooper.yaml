@@ -1,44 +1,4 @@
 ---
-# Clone Trooper Diver Suit
-- guid: 160000
-  name_id: 828
-  description_id: 14
-  icon_set_id: 450
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneDiverSuit.adr
-  texture_alias: CloneDiver
-  item_type: 1
-  category: 61
-# Clone Trooper Diver Helmet
-- guid: 160001
-  name_id: 824
-  description_id: 14
-  icon_set_id: 453
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneDiverHelmet.adr
-  texture_alias: CloneDiver
-  item_type: 1
-  category: 60
-# Clone Trooper Diver Gloves
-- guid: 160002
-  name_id: 826
-  description_id: 14
-  icon_set_id: 452
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneDiverGloves.adr
-  texture_alias: CloneDiver
-  item_type: 1
-  category: 62
-# Clone Trooper Diver Fins
-- guid: 160003
-  name_id: 830
-  description_id: 14
-  icon_set_id: 451
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneDiverFins.adr
-  texture_alias: CloneDiver
-  item_type: 1
-  category: 63
 # Clone Diver Armored Suit
 - guid: 160004
   name_id: 2382
@@ -83,46 +43,6 @@
   item_type: 1
   category: 63
   members: true
-# Commander Stone's Armor
-- guid: 160008
-  name_id: 1178
-  description_id: 14
-  icon_set_id: 372
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
-  texture_alias: CommanderStone
-  item_type: 1
-  category: 61
-# Commander Stone's Helmet
-- guid: 160009
-  name_id: 1184
-  description_id: 14
-  icon_set_id: 390
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
-  texture_alias: CommanderStone
-  item_type: 1
-  category: 60
-# Commander Stone's Gloves
-- guid: 160010
-  name_id: 1182
-  description_id: 14
-  icon_set_id: 384
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
-  texture_alias: CommanderStone
-  item_type: 1
-  category: 62
-# Commander Stone's Boots
-- guid: 160011
-  name_id: 1180
-  description_id: 14
-  icon_set_id: 378
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
-  texture_alias: CommanderStone
-  item_type: 1
-  category: 63
 # Commander Gree's Suit
 - guid: 160012
   name_id: 836
@@ -478,46 +398,6 @@
   item_type: 1
   category: 63
   members: true
-# Captain Keeli's Armor
-- guid: 160045
-  name_id: 1458
-  description_id: 14
-  icon_set_id: 1076
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneShoulderGuardSkirt.adr
-  texture_alias: CaptainKeeli
-  item_type: 1
-  category: 61
-# Captain Keeli's Helmet
-- guid: 160046
-  name_id: 1486
-  description_id: 14
-  icon_set_id: 1079
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelmEyepiece.adr
-  texture_alias: CaptainKeeli
-  item_type: 1
-  category: 60
-# Captain Keeli's Gloves
-- guid: 160047
-  name_id: 1480
-  description_id: 14
-  icon_set_id: 1078
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
-  texture_alias: CaptainKeeli
-  item_type: 1
-  category: 62
-# Captain Keeli's Boots
-- guid: 160048
-  name_id: 1468
-  description_id: 14
-  icon_set_id: 1077
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneBootsAsymmetrical.adr
-  texture_alias: CaptainKeeli
-  item_type: 1
-  category: 63
 # Commander Bly's Armor
 - guid: 160049
   name_id: 170
@@ -2287,46 +2167,6 @@
   item_type: 1
   category: 61
   members: true
-# wearable_body_commander_wolffe
-- guid: 160217
-  name_id: 2681
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneCommanderWolffe.adr
-  texture_alias: CommanderWolffe
-  item_type: 1
-  category: 61
-# wearable_head_commander_wolffe
-- guid: 160218
-  name_id: 2679
-  description_id: 14
-  icon_set_id: 677
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelmEyepiece.adr
-  texture_alias: CommanderWolffe
-  item_type: 1
-  category: 60
-# wearable_hands_commander_wolffe
-- guid: 160219
-  name_id: 2680
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
-  texture_alias: CommanderWolffe
-  item_type: 1
-  category: 62
-# wearable_feet_commander_wolffe
-- guid: 160220
-  name_id: 2682
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
-  texture_alias: CommanderWolffe
-  item_type: 1
-  category: 63
 # Draa's Armor
 - guid: 160221
   name_id: 43687
@@ -2613,46 +2453,6 @@
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
   texture_alias: White
-  item_type: 1
-  category: 63
-# Phase II Armor
-- guid: 160249
-  name_id: 43699
-  description_id: 14
-  icon_set_id: 89
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneSeason4Armor.adr
-  texture_alias: CloneBasic
-  item_type: 1
-  category: 61
-# Phase II Helmet
-- guid: 160250
-  name_id: 1216
-  description_id: 14
-  icon_set_id: 677
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneSeason4Helm.adr
-  texture_alias: CloneBasic
-  item_type: 1
-  category: 60
-# Phase II Gloves
-- guid: 160251
-  name_id: 43698
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneSeason4Gloves.adr
-  texture_alias: CloneBasic
-  item_type: 1
-  category: 62
-# Phase II Boots
-- guid: 160252
-  name_id: 1212
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
-  texture_alias: CloneBasic
   item_type: 1
   category: 63
 # Battle-Damaged Clone Trooper Suit
@@ -3243,86 +3043,6 @@
   texture_alias: GrandOfficer
   item_type: 1
   category: 63
-# wearable_body_clone_red_stripe
-- guid: 160310
-  name_id: 2709
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
-  texture_alias: RedStripe
-  item_type: 1
-  category: 61
-# wearable_head_clone_red_stripe
-- guid: 160311
-  name_id: 2707
-  description_id: 14
-  icon_set_id: 677
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
-  texture_alias: RedStripe
-  item_type: 1
-  category: 60
-# wearable_hands_clone_red_stripe
-- guid: 160312
-  name_id: 2708
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
-  texture_alias: RedStripe
-  item_type: 1
-  category: 62
-# wearable_feet_clone_red_stripe
-- guid: 160313
-  name_id: 2710
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
-  texture_alias: RedStripe
-  item_type: 1
-  category: 63
-# wearable_body_clone_blue_squares
-- guid: 160314
-  name_id: 2705
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
-  texture_alias: BlueSquares
-  item_type: 1
-  category: 61
-# wearable_head_clone_blue_squares
-- guid: 160315
-  name_id: 2703
-  description_id: 14
-  icon_set_id: 677
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
-  texture_alias: BlueSquares
-  item_type: 1
-  category: 60
-# wearable_hands_clone_blue_squares
-- guid: 160316
-  name_id: 2704
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
-  texture_alias: BlueSquares
-  item_type: 1
-  category: 62
-# wearable_feet_clone_blue_squares
-- guid: 160317
-  name_id: 2706
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
-  texture_alias: BlueSquares
-  item_type: 1
-  category: 63
 # Barrage's Armor
 - guid: 160318
   name_id: 43695
@@ -3367,16 +3087,6 @@
   item_type: 1
   category: 63
   members: true
-# C-3PO Backpack
-- guid: 160322
-  name_id: 3074
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_CloneDroidBackpackSet.adr
-  texture_alias: C3POPack
-  item_type: 1
-  category: 61
 # Hevy's Training Armor
 - guid: 160323
   name_id: 1460

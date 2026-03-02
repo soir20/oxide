@@ -44,16 +44,6 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 64
-# DC-17m Interchangable Weapons System
-- guid: 80004
-  description_id: 14
-  icon_set_id: 681
-  item_class: 10000
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_BlasterRifle_DC17M.adr
-  texture_alias: CloneCommando
-  item_type: 1
-  category: 64
 # Mandalorian Blaster Rifle
 - guid: 80005
   name_id: 14782
@@ -78,17 +68,6 @@
   item_type: 1
   category: 64
   members: true
-# Blaster Test E11
-- guid: 80007
-  name_id: 2561
-  description_id: 14
-  icon_set_id: 214
-  item_class: 10000
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_BlasterRifle_E11.adr
-  texture_alias: Stormtrooper
-  item_type: 1
-  category: 64
 # Boba Fett's Blaster Rifle
 - guid: 80008
   name_id: 8789
@@ -249,15 +228,6 @@
   texture_alias: Basic
   item_type: 1
   category: 64
-- guid: 80022
-  description_id: 14
-  icon_set_id: 681
-  item_class: 10008
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_HeavyHipGun_HeavyHipGun04.adr
-  texture_alias: Basic
-  item_type: 1
-  category: 64
 # Mandalorian Repeater
 - guid: 80023
   name_id: 54520
@@ -311,15 +281,6 @@
   slot: !Equipment PrimaryWeapon
   model_name: Wield_HeavyHipGun_Z6.adr
   texture_alias: Silver
-  item_type: 1
-  category: 64
-- guid: 80028
-  description_id: 14
-  icon_set_id: 681
-  item_class: 10002
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_HeavyShoulderGun_QuadCannon.adr
-  texture_alias: Metallic
   item_type: 1
   category: 64
 # Republic Missile Launcher
@@ -437,17 +398,6 @@
   item_type: 1
   category: 64
   members: true
-# Mandalorian Shatterer Battle Rifle
-- guid: 80039
-  name_id: 8780
-  description_id: 14
-  icon_set_id: 241
-  item_class: 10001
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_LongRifle_MandalorianSniper.adr
-  texture_alias: Deathwatch
-  item_type: 1
-  category: 64
 # Rako Hardeen's Sniper Rifle
 - guid: 80040
   name_id: 4542
@@ -620,17 +570,6 @@
   item_type: 1
   category: 64
   members: true
-# Rebel Pilot Blaster
-- guid: 80055
-  name_id: 2412
-  description_id: 14
-  icon_set_id: 245
-  item_class: 9
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_Pistol_DL18.adr
-  texture_alias: RebelPilot
-  item_type: 1
-  category: 64
 # Han Solo's Blaster Pistol
 - guid: 80056
   name_id: 2414
@@ -745,37 +684,6 @@
   texture_alias: Pyke
   item_type: 1
   category: 64
-# Covert Diplomat Blaster Pistol
-- guid: 80066
-  name_id: 8792
-  description_id: 14
-  icon_set_id: 249
-  item_class: 9
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_Pistol_Q2.adr
-  texture_alias: QueenJamilla
-  item_type: 1
-  category: 64
-# Renegade Heavy Blaster Pistol
-- guid: 80067
-  name_id: 54522
-  description_id: 14
-  icon_set_id: 3792
-  item_class: 9
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_Pistol_RenegadeHeavyBlaster.adr
-  texture_alias: RenegadeHeavyBlaster
-  item_type: 1
-  category: 64
-- guid: 80068
-  description_id: 14
-  icon_set_id: 3792
-  item_class: 9
-  slot: !Equipment SecondaryWeapon
-  model_name: Wield_Pistol_RenegadeHeavyBlaster_LEFT.adr
-  texture_alias: RenegadeHeavyBlaster
-  item_type: 1
-  category: 64
 # Onderon Blaster Pistol
 - guid: 80069
   name_id: 53492
@@ -819,17 +727,6 @@
   item_class: 10004
   slot: !Equipment PrimaryWeapon
   model_name: Wield_PoleArm_ElectroStaff.adr
-  item_type: 1
-  category: 64
-# Imperial Royal Guard Force Pike
-- guid: 80073
-  name_id: 8799
-  description_id: 14
-  icon_set_id: 251
-  item_class: 10004
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_PoleArm_ForcePike.adr
-  texture_alias: RoyalGuard
   item_type: 1
   category: 64
 # IG-113's Electrostaff
@@ -878,17 +775,6 @@
   item_type: 1
   category: 64
   members: true
-# Tamtel Skreej's Pike
-- guid: 80078
-  name_id: 8798
-  description_id: 14
-  icon_set_id: 252
-  item_class: 10004
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_PoleArm_SkreejPike.adr
-  texture_alias: TamtelSkreej
-  item_type: 1
-  category: 64
 # Gaffi Stick
 - guid: 80079
   name_id: 300
@@ -997,13 +883,3 @@
   item_type: 1
   category: 64
   members: true
-# His cane
-- guid: 80088
-  name_id: 10423
-  description_id: 14
-  icon_set_id: 681
-  item_class: 10007
-  slot: !Equipment PrimaryWeapon
-  model_name: Wield_YodaCane.adr
-  item_type: 1
-  category: 64

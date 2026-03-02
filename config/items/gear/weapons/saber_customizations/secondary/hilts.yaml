@@ -20,16 +20,6 @@
   texture_alias: AdiGallia
   item_type: 25
   members: true
-# 'Umbara Academy: Ghost Attack 1'
-- guid: 140013
-  name_id: 51036
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment None
-  model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
-  texture_alias: Ahsoka
-  item_type: 25
 # Ahsoka Tano's Offhand Lightsaber
 - guid: 140014
   name_id: 19893
@@ -49,16 +39,6 @@
   item_class: 10
   slot: !Equipment None
   model_name: Wield_LightsaberHiltStandard_Anakin.adr
-  texture_alias: Anakin
-  item_type: 25
-# 'Umbara Academy: Ghost Attack 2'
-- guid: 140016
-  name_id: 51037
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment None
-  model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
   texture_alias: Anakin
   item_type: 25
 # Barriss Offee's Lightsaber
@@ -339,16 +319,6 @@
   item_class: 10
   slot: !Equipment None
   model_name: Wield_LightsaberHiltStandard_MaceWindu.adr
-  texture_alias: MaceWindu
-  item_type: 25
-# 'Umbara Academy: Ghost Attack 3'
-- guid: 140044
-  name_id: 51038
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment None
-  model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
   texture_alias: MaceWindu
   item_type: 25
 # Obi-Wan Kenobi's Lightsaber

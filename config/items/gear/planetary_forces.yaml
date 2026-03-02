@@ -1579,36 +1579,6 @@
   item_type: 1
   category: 63
   members: true
-# Senatorial Naboo Bodysuit
-- guid: 190149
-  name_id: 248
-  description_id: 14
-  icon_set_id: 110
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_SenatorialNabooBodySuit.adr
-  texture_alias: PadmeBodySuit
-  item_type: 1
-  category: 61
-# Senatorial Naboo Headwrap
-- guid: 190150
-  name_id: 246
-  description_id: 14
-  icon_set_id: 207
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_SenatorialNabooHat.adr
-  texture_alias: PadmePurple
-  item_type: 1
-  category: 60
-# Senatorial Naboo Boots
-- guid: 190151
-  name_id: 250
-  description_id: 14
-  icon_set_id: 151
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_SenatorialNabooBoots.adr
-  texture_alias: PadmeBodySuit
-  item_type: 1
-  category: 63
 # Onderon Guard Suit
 - guid: 190152
   name_id: 53542
@@ -1907,36 +1877,6 @@
   item_type: 1
   category: 63
   members: true
-# Ming Po Robe
-- guid: 190180
-  name_id: 52835
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_MingPoOutfit.adr
-  texture_alias: Plain
-  item_type: 1
-  category: 61
-# Ming Po Gloves
-- guid: 190181
-  name_id: 52834
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_MingPoGloves.adr
-  texture_alias: Plain
-  item_type: 1
-  category: 62
-# Ming Po Boots
-- guid: 190182
-  name_id: 52836
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_MingPoShoes.adr
-  texture_alias: Plain
-  item_type: 1
-  category: 63
 # Ming Po Militia Suit
 - guid: 190183
   name_id: 52855
@@ -2065,46 +2005,6 @@
   texture_alias: DeathWatchElite
   item_type: 1
   category: 63
-# Cobalt Death Watch Commander Suit
-- guid: 190195
-  name_id: 53717
-  description_id: 14
-  icon_set_id: 3234
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
-  texture_alias: CommanderBlue
-  item_type: 1
-  category: 61
-# Cobalt Death Watch Commander Helmet
-- guid: 190196
-  name_id: 53715
-  description_id: 14
-  icon_set_id: 3232
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
-  texture_alias: CommanderBlue
-  item_type: 1
-  category: 60
-# Cobalt Death Watch Commander Gloves
-- guid: 190197
-  name_id: 53716
-  description_id: 14
-  icon_set_id: 3233
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
-  texture_alias: CommanderBlue
-  item_type: 1
-  category: 62
-# Cobalt Death Watch Commander Boots
-- guid: 190198
-  name_id: 53718
-  description_id: 14
-  icon_set_id: 3235
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
-  texture_alias: CommanderBlue
-  item_type: 1
-  category: 63
 # Orange Death Watch Commander Suit
 - guid: 190199
   name_id: 53709
@@ -2143,86 +2043,6 @@
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
   texture_alias: CommanderOrange
-  item_type: 1
-  category: 63
-# Azure Death Watch Commander Suit
-- guid: 190203
-  name_id: 53721
-  description_id: 14
-  icon_set_id: 3238
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
-  texture_alias: CommanderAqua
-  item_type: 1
-  category: 61
-# Azure Death Watch Commander Helmet
-- guid: 190204
-  name_id: 53719
-  description_id: 14
-  icon_set_id: 3236
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
-  texture_alias: CommanderAqua
-  item_type: 1
-  category: 60
-# Azure Death Watch Commander Gloves
-- guid: 190205
-  name_id: 53720
-  description_id: 14
-  icon_set_id: 3237
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
-  texture_alias: CommanderAqua
-  item_type: 1
-  category: 62
-# Azure Death Watch Commander Boots
-- guid: 190206
-  name_id: 53722
-  description_id: 14
-  icon_set_id: 3239
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
-  texture_alias: CommanderAqua
-  item_type: 1
-  category: 63
-# Byzantium Death Watch Commander Suit
-- guid: 190207
-  name_id: 53713
-  description_id: 14
-  icon_set_id: 3230
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
-  texture_alias: CommanderPlum
-  item_type: 1
-  category: 61
-# Byzantium Death Watch Commander Helmet
-- guid: 190208
-  name_id: 53711
-  description_id: 14
-  icon_set_id: 3228
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
-  texture_alias: CommanderPlum
-  item_type: 1
-  category: 60
-# Byzantium Death Watch Commander Gloves
-- guid: 190209
-  name_id: 53712
-  description_id: 14
-  icon_set_id: 3229
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
-  texture_alias: CommanderPlum
-  item_type: 1
-  category: 62
-# Byzantium Death Watch Commander Boots
-- guid: 190210
-  name_id: 53714
-  description_id: 14
-  icon_set_id: 3231
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
-  texture_alias: CommanderPlum
   item_type: 1
   category: 63
 # Death Watch Night Owl Armor
@@ -2457,46 +2277,6 @@
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_DeathwatchShoesShiny.adr
   texture_alias: Gold
-  item_type: 1
-  category: 63
-# wearable_body_mandalorian_mustafar
-- guid: 190233
-  name_id: 2701
-  description_id: 14
-  icon_set_id: 673
-  slot: !Equipment Body
-  model_name: Wear_Human_<gender>_Body_DeathwatchSuit.adr
-  texture_alias: Mustafar
-  item_type: 1
-  category: 61
-# wearable_head_mandalorian_mustafar
-- guid: 190234
-  name_id: 2699
-  description_id: 14
-  icon_set_id: 677
-  slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
-  texture_alias: Mustafar
-  item_type: 1
-  category: 60
-# wearable_hands_mandalorian_mustafar
-- guid: 190235
-  name_id: 2700
-  description_id: 14
-  icon_set_id: 676
-  slot: !Equipment Hands
-  model_name: Wear_Human_<gender>_Hands_DeathwatchGloves.adr
-  texture_alias: Mustafar
-  item_type: 1
-  category: 62
-# wearable_feet_mandalorian_mustafar
-- guid: 190236
-  name_id: 2702
-  description_id: 14
-  icon_set_id: 680
-  slot: !Equipment Feet
-  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
-  texture_alias: Mustafar
   item_type: 1
   category: 63
 # Vicious Savage's Pants
