@@ -2953,10 +2953,10 @@
 - guid: 160281
   name_id: 862
   description_id: 14
-  icon_set_id: 192
+  icon_set_id: 479
   slot: !Equipment Head
-  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
-  texture_alias: CloneBasic
+  model_name: Wear_Human_<gender>_Head_CloneSeason4Helm.adr
+  texture_alias: CloneGunner
   item_type: 1
   category: 60
   members: true
