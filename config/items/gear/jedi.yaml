@@ -123,9 +123,9 @@
   texture_alias: AnakinScuba
   item_type: 1
   category: 63
-# Diver Anakin Skywalker
+# Republic Diver Wetsuit
 - guid: 180012
-  name_id: 2899
+  name_id: 2348
   description_id: 14
   icon_set_id: 2323
   slot: !Equipment Body
