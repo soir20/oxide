@@ -2949,8 +2949,19 @@
   item_type: 1
   category: 60
   members: true
-# Clone Gunner Gloves
+# Clone Gunner Helmet
 - guid: 160281
+  name_id: 862
+  description_id: 14
+  icon_set_id: 192
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 60
+  members: true
+# Clone Gunner Gloves
+- guid: 160282
   name_id: 864
   description_id: 14
   icon_set_id: 478
@@ -2961,7 +2972,7 @@
   category: 62
   members: true
 # Clone Gunner Boots
-- guid: 160282
+- guid: 160283
   name_id: 868
   description_id: 14
   icon_set_id: 477
@@ -2972,7 +2983,7 @@
   category: 63
   members: true
 # Clone Pilot Helmet
-- guid: 160283
+- guid: 160284
   name_id: 244
   description_id: 14
   icon_set_id: 197
@@ -2982,7 +2993,7 @@
   item_type: 1
   category: 60
 # Grey Darkside Trooper Armor
-- guid: 160284
+- guid: 160285
   name_id: 4915
   description_id: 14
   icon_set_id: 2945
@@ -2992,7 +3003,7 @@
   item_type: 1
   category: 61
 # Grey Darkside Trooper Helmet
-- guid: 160285
+- guid: 160286
   name_id: 4913
   description_id: 14
   icon_set_id: 2943
@@ -3002,7 +3013,7 @@
   item_type: 1
   category: 60
 # Grey Darkside Trooper Gloves
-- guid: 160286
+- guid: 160287
   name_id: 4914
   description_id: 14
   icon_set_id: 2944
@@ -3012,7 +3023,7 @@
   item_type: 1
   category: 62
 # Grey Darkside Trooper Boots
-- guid: 160287
+- guid: 160288
   name_id: 4916
   description_id: 14
   icon_set_id: 2946
@@ -3022,7 +3033,7 @@
   item_type: 1
   category: 63
 # White Darkside Trooper Armor
-- guid: 160288
+- guid: 160289
   name_id: 4911
   description_id: 14
   icon_set_id: 2941
@@ -3032,7 +3043,7 @@
   item_type: 1
   category: 61
 # White Darkside Trooper Helmet
-- guid: 160289
+- guid: 160290
   name_id: 4909
   description_id: 14
   icon_set_id: 2939
@@ -3042,7 +3053,7 @@
   item_type: 1
   category: 60
 # White Darkside Trooper Gloves
-- guid: 160290
+- guid: 160291
   name_id: 4910
   description_id: 14
   icon_set_id: 2940
@@ -3052,7 +3063,7 @@
   item_type: 1
   category: 62
 # White Darkside Trooper Boots
-- guid: 160291
+- guid: 160292
   name_id: 4912
   description_id: 14
   icon_set_id: 2942
@@ -3062,7 +3073,7 @@
   item_type: 1
   category: 63
 # Red Darkside Trooper Armor
-- guid: 160292
+- guid: 160293
   name_id: 4919
   description_id: 14
   icon_set_id: 2949
@@ -3072,7 +3083,7 @@
   item_type: 1
   category: 61
 # Red Darkside Trooper Helmet
-- guid: 160293
+- guid: 160294
   name_id: 4917
   description_id: 14
   icon_set_id: 2947
@@ -3082,7 +3093,7 @@
   item_type: 1
   category: 60
 # Red Darkside Trooper Gloves
-- guid: 160294
+- guid: 160295
   name_id: 4918
   description_id: 14
   icon_set_id: 2948
@@ -3092,7 +3103,7 @@
   item_type: 1
   category: 62
 # Red Darkside Trooper Boots
-- guid: 160295
+- guid: 160296
   name_id: 4920
   description_id: 14
   icon_set_id: 2950
@@ -3102,7 +3113,7 @@
   item_type: 1
   category: 63
 # Shadow Tech Armor
-- guid: 160296
+- guid: 160297
   name_id: 4480
   description_id: 14
   icon_set_id: 2569
@@ -3113,7 +3124,7 @@
   category: 61
   members: true
 # Shadow Tech Helmet
-- guid: 160297
+- guid: 160298
   name_id: 4478
   description_id: 14
   icon_set_id: 2567
@@ -3124,7 +3135,7 @@
   category: 60
   members: true
 # Shadow Tech Gloves
-- guid: 160298
+- guid: 160299
   name_id: 4479
   description_id: 14
   icon_set_id: 2568
@@ -3135,7 +3146,7 @@
   category: 62
   members: true
 # Shadow Tech Boots
-- guid: 160299
+- guid: 160300
   name_id: 4481
   description_id: 14
   icon_set_id: 2570
@@ -3146,7 +3157,7 @@
   category: 63
   members: true
 # Warthog Helmet
-- guid: 160300
+- guid: 160301
   name_id: 4545
   description_id: 14
   icon_set_id: 2627
@@ -3157,7 +3168,7 @@
   category: 60
   members: true
 # Phase 2 Red Armor
-- guid: 160301
+- guid: 160302
   description_id: 14
   icon_set_id: 373
   slot: !Equipment Body
@@ -3166,7 +3177,7 @@
   item_type: 1
   category: 61
 # Phase 2 Red Helmet
-- guid: 160302
+- guid: 160303
   description_id: 14
   icon_set_id: 391
   slot: !Equipment Head
@@ -3175,7 +3186,7 @@
   item_type: 1
   category: 60
 # Phase 2 Red Gloves
-- guid: 160303
+- guid: 160304
   description_id: 14
   icon_set_id: 385
   slot: !Equipment Hands
@@ -3184,7 +3195,7 @@
   item_type: 1
   category: 62
 # Phase 2 Red Boots
-- guid: 160304
+- guid: 160305
   description_id: 14
   icon_set_id: 379
   slot: !Equipment Feet
@@ -3193,7 +3204,7 @@
   item_type: 1
   category: 63
 # Grand Officer Armor
-- guid: 160305
+- guid: 160306
   name_id: 52799
   description_id: 14
   icon_set_id: 3104
@@ -3203,7 +3214,7 @@
   item_type: 1
   category: 61
 # Grand Officer Helmet
-- guid: 160306
+- guid: 160307
   name_id: 52802
   description_id: 14
   icon_set_id: 3107
@@ -3213,7 +3224,7 @@
   item_type: 1
   category: 60
 # Grand Officer Gloves
-- guid: 160307
+- guid: 160308
   name_id: 52800
   description_id: 14
   icon_set_id: 3106
@@ -3223,7 +3234,7 @@
   item_type: 1
   category: 62
 # Grand Officer Boots
-- guid: 160308
+- guid: 160309
   name_id: 52801
   description_id: 14
   icon_set_id: 3105
@@ -3233,7 +3244,7 @@
   item_type: 1
   category: 63
 # wearable_body_clone_red_stripe
-- guid: 160309
+- guid: 160310
   name_id: 2709
   description_id: 14
   icon_set_id: 673
@@ -3243,7 +3254,7 @@
   item_type: 1
   category: 61
 # wearable_head_clone_red_stripe
-- guid: 160310
+- guid: 160311
   name_id: 2707
   description_id: 14
   icon_set_id: 677
@@ -3253,7 +3264,7 @@
   item_type: 1
   category: 60
 # wearable_hands_clone_red_stripe
-- guid: 160311
+- guid: 160312
   name_id: 2708
   description_id: 14
   icon_set_id: 676
@@ -3263,7 +3274,7 @@
   item_type: 1
   category: 62
 # wearable_feet_clone_red_stripe
-- guid: 160312
+- guid: 160313
   name_id: 2710
   description_id: 14
   icon_set_id: 680
@@ -3273,7 +3284,7 @@
   item_type: 1
   category: 63
 # wearable_body_clone_blue_squares
-- guid: 160313
+- guid: 160314
   name_id: 2705
   description_id: 14
   icon_set_id: 673
@@ -3283,7 +3294,7 @@
   item_type: 1
   category: 61
 # wearable_head_clone_blue_squares
-- guid: 160314
+- guid: 160315
   name_id: 2703
   description_id: 14
   icon_set_id: 677
@@ -3293,7 +3304,7 @@
   item_type: 1
   category: 60
 # wearable_hands_clone_blue_squares
-- guid: 160315
+- guid: 160316
   name_id: 2704
   description_id: 14
   icon_set_id: 676
@@ -3303,7 +3314,7 @@
   item_type: 1
   category: 62
 # wearable_feet_clone_blue_squares
-- guid: 160316
+- guid: 160317
   name_id: 2706
   description_id: 14
   icon_set_id: 680
@@ -3313,7 +3324,7 @@
   item_type: 1
   category: 63
 # Barrage's Armor
-- guid: 160317
+- guid: 160318
   name_id: 43695
   description_id: 14
   icon_set_id: 1872
@@ -3324,7 +3335,7 @@
   category: 61
   members: true
 # Barrage's Helmet
-- guid: 160318
+- guid: 160319
   name_id: 43693
   description_id: 14
   icon_set_id: 1875
@@ -3335,7 +3346,7 @@
   category: 60
   members: true
 # Barrage's Gloves
-- guid: 160319
+- guid: 160320
   name_id: 43694
   description_id: 14
   icon_set_id: 1874
@@ -3346,7 +3357,7 @@
   category: 62
   members: true
 # Barrage's Boots
-- guid: 160320
+- guid: 160321
   name_id: 43696
   description_id: 14
   icon_set_id: 1873
@@ -3357,7 +3368,7 @@
   category: 63
   members: true
 # C-3PO Backpack
-- guid: 160321
+- guid: 160322
   name_id: 3074
   description_id: 14
   icon_set_id: 673
@@ -3367,7 +3378,7 @@
   item_type: 1
   category: 61
 # Hevy's Training Armor
-- guid: 160322
+- guid: 160323
   name_id: 1460
   description_id: 14
   icon_set_id: 1092
@@ -3377,7 +3388,7 @@
   item_type: 1
   category: 61
 # Hevy's Training Helmet
-- guid: 160323
+- guid: 160324
   name_id: 1488
   description_id: 14
   icon_set_id: 1095
@@ -3387,7 +3398,7 @@
   item_type: 1
   category: 60
 # Hevy's Training Gloves
-- guid: 160324
+- guid: 160325
   name_id: 1482
   description_id: 14
   icon_set_id: 1094
@@ -3397,7 +3408,7 @@
   item_type: 1
   category: 62
 # Hevy's Training Boots
-- guid: 160325
+- guid: 160326
   name_id: 1470
   description_id: 14
   icon_set_id: 1093
