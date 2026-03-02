@@ -59,3 +59,13 @@
   texture_alias: KyleKatarn
   item_type: 1
   category: 62
+# Kyle Katarn's Boots
+- guid: 210006
+  name_id: 206
+  description_id: 14
+  icon_set_id: 142
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
+  texture_alias: KyleKatarn
+  item_type: 1
+  category: 63
