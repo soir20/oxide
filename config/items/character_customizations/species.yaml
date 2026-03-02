@@ -1,0 +1,159 @@
+---
+# Start of male species
+# Clone
+- guid: 70000
+  name_id: 436
+  description_id: 14
+  icon_set_id: 1171
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180000
+# Human
+- guid: 70001
+  name_id: 4
+  description_id: 14
+  icon_set_id: 1173
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180001
+# Pantoran
+- guid: 70002
+  name_id: 1677
+  description_id: 14
+  icon_set_id: 1318
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180002
+# Togruta
+- guid: 70003
+  name_id: 439
+  description_id: 14
+  icon_set_id: 1175
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180003
+# Trandoshan
+- guid: 70004
+  name_id: 2174
+  description_id: 14
+  icon_set_id: 1849
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180004
+# Twi'lek
+- guid: 70005
+  name_id: 437
+  description_id: 14
+  icon_set_id: 1177
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180005
+# Zabrak
+- guid: 70006
+  name_id: 438
+  description_id: 14
+  icon_set_id: 1179
+  cost: 600
+  slot: !Customization None
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180006
+# Start of female species
+# Human
+- guid: 70007
+  name_id: 4
+  description_id: 14
+  icon_set_id: 1172
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180007
+# Pantoran
+- guid: 70008
+  name_id: 1677
+  description_id: 14
+  icon_set_id: 1317
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180008
+# Togruta
+- guid: 70009
+  name_id: 439
+  description_id: 14
+  icon_set_id: 1174
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180009
+# Trandoshan
+- guid: 70010
+  name_id: 2174
+  description_id: 14
+  icon_set_id: 1850
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180010
+# Twi'lek
+- guid: 70011
+  name_id: 437
+  description_id: 14
+  icon_set_id: 1176
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180011
+# Zabrak
+- guid: 70012
+  name_id: 438
+  description_id: 14
+  icon_set_id: 1178
+  cost: 600
+  slot: !Customization None
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  customization_slot: BodyModel
+  customization_id: 180012

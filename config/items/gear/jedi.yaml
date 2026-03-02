@@ -1,0 +1,1717 @@
+---
+# Adi Gallia's Tunic
+- guid: 180000
+  name_id: 914
+  description_id: 14
+  icon_set_id: 432
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AdiGalliaTunic.adr
+  texture_alias: AdiGallia
+  item_type: 1
+  category: 61
+  members: true
+# Adi Gallia's Headdress
+- guid: 180001
+  name_id: 962
+  description_id: 14
+  icon_set_id: 435
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_AdiGalliaHelm.adr
+  texture_alias: AdiGallia
+  item_type: 1
+  category: 60
+  members: true
+# Adi Gallia's Gloves
+- guid: 180002
+  name_id: 912
+  description_id: 14
+  icon_set_id: 434
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_MaceWinduGloves.adr
+  texture_alias: AdiGallia
+  item_type: 1
+  category: 62
+  members: true
+# Adi Gallia's Boots
+- guid: 180003
+  name_id: 916
+  description_id: 14
+  icon_set_id: 433
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: AdiGallia
+  item_type: 1
+  category: 63
+  members: true
+# Anakin Skywalker's Original Robes
+- guid: 180004
+  name_id: 2514
+  description_id: 14
+  icon_set_id: 80
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinTunic.adr
+  texture_alias: Anakin
+  item_type: 1
+  category: 61
+# Anakin Skywalker's Original Gloves
+- guid: 180005
+  name_id: 2516
+  description_id: 14
+  icon_set_id: 154
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinGloves.adr
+  texture_alias: Anakin
+  item_type: 1
+  category: 62
+# Anakin Skywalker's Original Boots
+- guid: 180006
+  name_id: 2515
+  description_id: 14
+  icon_set_id: 117
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: Anakin
+  item_type: 1
+  category: 63
+# Anakin Skywalker's Robes
+- guid: 180007
+  name_id: 1903
+  description_id: 14
+  icon_set_id: 1445
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
+  texture_alias: AnakinV2
+  item_type: 1
+  category: 61
+# Anakin Skywalker's Gloves
+- guid: 180008
+  name_id: 1901
+  description_id: 14
+  icon_set_id: 1447
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
+  texture_alias: AnakinV2
+  item_type: 1
+  category: 62
+# Anakin Skywalker's Boots
+- guid: 180009
+  name_id: 1905
+  description_id: 14
+  icon_set_id: 1446
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: AnakinV2
+  item_type: 1
+  category: 63
+# Republic Diver Gloves
+- guid: 180010
+  name_id: 2346
+  description_id: 14
+  icon_set_id: 2325
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinScubaGloves.adr
+  texture_alias: AnakinScuba
+  item_type: 1
+  category: 62
+# Republic Diver Flippers
+- guid: 180011
+  name_id: 2350
+  description_id: 14
+  icon_set_id: 2324
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinScubaFlippers.adr
+  texture_alias: AnakinScuba
+  item_type: 1
+  category: 63
+# Republic Diver Wetsuit
+- guid: 180012
+  name_id: 2348
+  description_id: 14
+  icon_set_id: 2323
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinScubaSuit.adr
+  texture_alias: AnakinScuba
+  item_type: 1
+  category: 61
+# Diver Anakin Skywalker's Helmet
+- guid: 180013
+  name_id: 2344
+  description_id: 14
+  icon_set_id: 2326
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_AnakinScubaHelm.adr
+  texture_alias: AnakinScuba
+  item_type: 1
+  category: 60
+# Mace Windu's Robes
+- guid: 180014
+  name_id: 8896
+  description_id: 14
+  icon_set_id: 103
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MaceWinduTunic.adr
+  texture_alias: MaceWindu
+  item_type: 1
+  category: 61
+# Mace Windu's Gloves
+- guid: 180015
+  name_id: 8900
+  description_id: 14
+  icon_set_id: 173
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_MaceWinduGloves.adr
+  texture_alias: MaceWindu
+  item_type: 1
+  category: 62
+# Mace Windu's Boots
+- guid: 180016
+  name_id: 8898
+  description_id: 14
+  icon_set_id: 146
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MaceWinduBoots.adr
+  texture_alias: MaceWindu
+  item_type: 1
+  category: 63
+# Shotem Jedi Robes
+- guid: 180017
+  name_id: 1319
+  description_id: 14
+  icon_set_id: 1104
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PulsingCrystalSuit.adr
+  texture_alias: PulsingCrystal
+  item_type: 1
+  category: 61
+# Shotem Jedi Visor
+- guid: 180018
+  name_id: 1416
+  description_id: 14
+  icon_set_id: 1107
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PulsingCrystalVisor.adr
+  texture_alias: PulsingCrystal
+  item_type: 1
+  category: 60
+# Shotem Jedi Gloves
+- guid: 180019
+  name_id: 1386
+  description_id: 14
+  icon_set_id: 1106
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_PulsingCrystalGloves.adr
+  texture_alias: PulsingCrystal
+  item_type: 1
+  category: 62
+# Shotem Jedi Boots
+- guid: 180020
+  name_id: 1356
+  description_id: 14
+  icon_set_id: 1105
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PulsingCrystalBoots.adr
+  texture_alias: PulsingCrystal
+  item_type: 1
+  category: 63
+# Shotem Master Robes
+- guid: 180021
+  name_id: 60676
+  description_id: 14
+  icon_set_id: 3786
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PulsingCrystalSuit.adr
+  texture_alias: PulsingCrystalBlue
+  item_type: 1
+  category: 61
+# Shotem Master Visor
+- guid: 180022
+  name_id: 60674
+  description_id: 14
+  icon_set_id: 3784
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PulsingCrystalVisor.adr
+  texture_alias: PulsingCrystalBlue
+  item_type: 1
+  category: 60
+# Shotem Master Gloves
+- guid: 180023
+  name_id: 60675
+  description_id: 14
+  icon_set_id: 3785
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_PulsingCrystalGloves.adr
+  texture_alias: PulsingCrystalBlue
+  item_type: 1
+  category: 62
+# Shotem Master Boots
+- guid: 180024
+  name_id: 60677
+  description_id: 14
+  icon_set_id: 3787
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PulsingCrystalBoots.adr
+  texture_alias: PulsingCrystalBlue
+  item_type: 1
+  category: 63
+# Miko Jedi Tunic
+- guid: 180025
+  name_id: 842
+  description_id: 14
+  icon_set_id: 458
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CompressedCrystalTunic.adr
+  texture_alias: CompressedCrystalGreen
+  item_type: 1
+  category: 61
+# Miko Jedi Gloves
+- guid: 180026
+  name_id: 840
+  description_id: 14
+  icon_set_id: 460
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinGloves.adr
+  texture_alias: CompressedCrystalGreen
+  item_type: 1
+  category: 62
+# Miko Jedi Boots
+- guid: 180027
+  name_id: 844
+  description_id: 14
+  icon_set_id: 459
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: CompressedCrystalGreen
+  item_type: 1
+  category: 63
+# Quinlan Vos' Jedi Robes
+- guid: 180028
+  name_id: 1753
+  description_id: 14
+  icon_set_id: 1433
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_QuinlinVosBody.adr
+  texture_alias: QuinlinVos
+  item_type: 1
+  category: 61
+# Quinlan Vos' Wraps
+- guid: 180029
+  name_id: 1751
+  description_id: 14
+  icon_set_id: 1435
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_QuinlinVosWraps.adr
+  texture_alias: QuinlinVos
+  item_type: 1
+  category: 62
+# Quinlan Vos' Boots
+- guid: 180030
+  name_id: 1755
+  description_id: 14
+  icon_set_id: 1434
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_QuinlinVosBoots.adr
+  texture_alias: QuinlinVos
+  item_type: 1
+  category: 63
+# Ahsoka Tano's Original Tunic
+- guid: 180031
+  name_id: 920
+  description_id: 14
+  icon_set_id: 436
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaTunic.adr
+  texture_alias: Ahsoka
+  item_type: 1
+  category: 61
+  members: true
+# Ahsoka Tano's Original Gloves
+- guid: 180032
+  name_id: 918
+  description_id: 14
+  icon_set_id: 438
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaGloves.adr
+  texture_alias: Ahsoka
+  item_type: 1
+  category: 62
+  members: true
+# Ahsoka Tano's Original Boots
+- guid: 180033
+  name_id: 922
+  description_id: 14
+  icon_set_id: 437
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaBoots.adr
+  texture_alias: Ahsoka
+  item_type: 1
+  category: 63
+  members: true
+# Ahsoka Tano's Tunic
+- guid: 180034
+  name_id: 1897
+  description_id: 14
+  icon_set_id: 1444
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaV2Tunic.adr
+  texture_alias: AhsokaV2
+  item_type: 1
+  category: 61
+# Ahsoka Tano's Gloves
+- guid: 180035
+  name_id: 1893
+  description_id: 14
+  icon_set_id: 1443
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaGloves.adr
+  texture_alias: AhsokaV2
+  item_type: 1
+  category: 62
+# Ahsoka Tano's Boots
+- guid: 180036
+  name_id: 1899
+  description_id: 14
+  icon_set_id: 1442
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaBoots.adr
+  texture_alias: AhsokaV2
+  item_type: 1
+  category: 63
+# Ahsoka Tano's Zygerrian Suit
+- guid: 180037
+  name_id: 4450
+  description_id: 14
+  icon_set_id: 2508
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaZygerrianSuit.adr
+  texture_alias: AhsokaBlue
+  item_type: 1
+  category: 61
+# Ahsoka Tano's Zygerrian Shoes
+- guid: 180038
+  name_id: 4451
+  description_id: 14
+  icon_set_id: 2509
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaZygerrianShoes.adr
+  texture_alias: AhsokaBlue
+  item_type: 1
+  category: 63
+# Saesee Tiin's Flight Gear
+- guid: 180039
+  name_id: 44894
+  description_id: 14
+  icon_set_id: 2130
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SaeseeTiinFlightGear.adr
+  texture_alias: SaeseeTiinFlight
+  item_type: 1
+  category: 61
+# Saesee Tiin's Robes
+- guid: 180040
+  name_id: 43186
+  description_id: 14
+  icon_set_id: 1789
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SaeseeTiinTunic.adr
+  texture_alias: SaeseeTin
+  item_type: 1
+  category: 61
+# Saesee Tiin's Gloves
+- guid: 180041
+  name_id: 43185
+  description_id: 14
+  icon_set_id: 1791
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_GlovesNoCommunicator.adr
+  texture_alias: SaeseeTin
+  item_type: 1
+  category: 62
+# Saesee Tiin's Boots
+- guid: 180042
+  name_id: 43187
+  description_id: 14
+  icon_set_id: 1790
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
+  texture_alias: SaeseeTiin
+  item_type: 1
+  category: 63
+# Temple Guard Cloak
+- guid: 180043
+  name_id: 54476
+  description_id: 14
+  icon_set_id: 3710
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_JediGuardRobe.adr
+  texture_alias: JediGuard
+  item_type: 1
+  category: 61
+  members: true
+# Temple Guard Mask
+- guid: 180044
+  name_id: 54474
+  description_id: 14
+  icon_set_id: 3708
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_JediGuardHood.adr
+  texture_alias: JediGuard
+  item_type: 1
+  category: 60
+  members: true
+# Temple Guard Gloves
+- guid: 180045
+  name_id: 54475
+  description_id: 14
+  icon_set_id: 3709
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_JediGuardGloves.adr
+  texture_alias: JediGuard
+  item_type: 1
+  category: 62
+  members: true
+# Temple Guard Boots
+- guid: 180046
+  name_id: 54477
+  description_id: 14
+  icon_set_id: 3711
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_JediGuardBoots.adr
+  texture_alias: JediGuard
+  item_type: 1
+  category: 63
+  members: true
+# Covert Anakin Tunic
+- guid: 180047
+  name_id: 43963
+  description_id: 14
+  icon_set_id: 1947
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
+  texture_alias: Stealth
+  item_type: 1
+  category: 61
+# Covert Anakin Gloves
+- guid: 180048
+  name_id: 43962
+  description_id: 14
+  icon_set_id: 1949
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
+  texture_alias: Stealth
+  item_type: 1
+  category: 62
+# Covert Anakin Boots
+- guid: 180049
+  name_id: 43964
+  description_id: 14
+  icon_set_id: 1948
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: Stealth
+  item_type: 1
+  category: 63
+# Fiery Ahsoka Tunic
+- guid: 180050
+  name_id: 44191
+  description_id: 14
+  icon_set_id: 1957
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaV2TunicAlpha.adr
+  texture_alias: AhsokaRed
+  item_type: 1
+  category: 61
+# Fiery Ahsoka Gloves
+- guid: 180051
+  name_id: 44190
+  description_id: 14
+  icon_set_id: 1959
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaGloves.adr
+  texture_alias: AhsokaRed
+  item_type: 1
+  category: 62
+# Fiery Ahsoka Boots
+- guid: 180052
+  name_id: 44192
+  description_id: 14
+  icon_set_id: 1958
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaBoots.adr
+  texture_alias: AhsokaRed
+  item_type: 1
+  category: 63
+# Sassy Ahsoka Tunic
+- guid: 180053
+  name_id: 44378
+  description_id: 14
+  icon_set_id: 1978
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaAsymmetricalTunic.adr
+  texture_alias: AhsokaPink
+  item_type: 1
+  category: 61
+# Sassy Ahsoka Gloves
+- guid: 180054
+  name_id: 44377
+  description_id: 14
+  icon_set_id: 1980
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaAsymmetricalGloves.adr
+  texture_alias: AhsokaPink
+  item_type: 1
+  category: 62
+# Sassy Ahsoka Boots
+- guid: 180055
+  name_id: 44376
+  description_id: 14
+  icon_set_id: 1979
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaBoots.adr
+  texture_alias: AhsokaPink
+  item_type: 1
+  category: 63
+# Adept Ahsoka Tunic
+- guid: 180056
+  name_id: 44503
+  description_id: 14
+  icon_set_id: 1986
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaAsymmetricalTunic.adr
+  texture_alias: AhsokaBlack
+  item_type: 1
+  category: 61
+# Adept Ahsoka Gloves
+- guid: 180057
+  name_id: 44502
+  description_id: 14
+  icon_set_id: 1985
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaAsymmetricalGloves.adr
+  texture_alias: AhsokaBlack
+  item_type: 1
+  category: 62
+# Adept Ahsoka Boots
+- guid: 180058
+  name_id: 44504
+  description_id: 14
+  icon_set_id: 1987
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaAsymmetricalBoots.adr
+  texture_alias: AhsokaBlack
+  item_type: 1
+  category: 63
+# Icy Anakin Tunic
+- guid: 180059
+  name_id: 44669
+  description_id: 14
+  icon_set_id: 2008
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
+  texture_alias: IcyAnakin
+  item_type: 1
+  category: 61
+# Icy Anakin Gloves
+- guid: 180060
+  name_id: 44668
+  description_id: 14
+  icon_set_id: 2010
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
+  texture_alias: IcyAnakin
+  item_type: 1
+  category: 62
+# Icy Anakin Boots
+- guid: 180061
+  name_id: 44670
+  description_id: 14
+  icon_set_id: 2009
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: IcyAnakin
+  item_type: 1
+  category: 63
+# Ancient Cobal Robes
+- guid: 180062
+  name_id: 814
+  description_id: 14
+  icon_set_id: 439
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BuggyCrystalRobes.adr
+  texture_alias: BuggyCrystal
+  item_type: 1
+  category: 61
+# Ancient Cobal Gloves
+- guid: 180063
+  name_id: 812
+  description_id: 14
+  icon_set_id: 441
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
+  texture_alias: BuggyCrystal
+  item_type: 1
+  category: 62
+# Ancient Cobal Boots
+- guid: 180064
+  name_id: 816
+  description_id: 14
+  icon_set_id: 440
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
+  texture_alias: BuggyCrystal
+  item_type: 1
+  category: 63
+# Mestare Jedi Robes
+- guid: 180065
+  name_id: 44852
+  description_id: 14
+  icon_set_id: 1108
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SamuraiJediSuit.adr
+  texture_alias: Samurai
+  item_type: 1
+  category: 61
+# Mestare Jedi Gloves
+- guid: 180066
+  name_id: 44854
+  description_id: 14
+  icon_set_id: 1110
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_SamuraiJediGloves.adr
+  texture_alias: Samurai
+  item_type: 1
+  category: 62
+# Mestare Jedi Boots
+- guid: 180067
+  name_id: 44853
+  description_id: 14
+  icon_set_id: 1109
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SamuraiJediBoots.adr
+  texture_alias: Samurai
+  item_type: 1
+  category: 63
+# Mustafar Anakin's Tunic
+- guid: 180068
+  name_id: 44842
+  description_id: 14
+  icon_set_id: 2099
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 61
+# Mustafar Anakin's Gloves
+- guid: 180069
+  name_id: 44841
+  description_id: 14
+  icon_set_id: 2098
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 62
+# Mustafar Anakin's Boots
+- guid: 180070
+  name_id: 44843
+  description_id: 14
+  icon_set_id: 2100
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 63
+# Kashyyyk Obi-Wan's Robes
+- guid: 180071
+  name_id: 2661
+  description_id: 14
+  icon_set_id: 2161
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiwanKashyyyk
+  item_type: 1
+  category: 61
+# Kashyyyk Obi-Wan's Gloves
+- guid: 180072
+  name_id: 2660
+  description_id: 14
+  icon_set_id: 2163
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanV2Gloves.adr
+  texture_alias: ObiwanKashyyyk
+  item_type: 1
+  category: 62
+# Kashyyyk Obi-Wan's Boots
+- guid: 180073
+  name_id: 2659
+  description_id: 14
+  icon_set_id: 2162
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanV2Boots.adr
+  texture_alias: ObiwanKashyyyk
+  item_type: 1
+  category: 63
+# Tranquil Ahoska's Tunic
+- guid: 180074
+  name_id: 2667
+  description_id: 14
+  icon_set_id: 2298
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AhsokaAsymmetricalTunic.adr
+  texture_alias: AhsokaBlue
+  item_type: 1
+  category: 61
+# Tranquil Ahsoka's Gloves
+- guid: 180075
+  name_id: 2666
+  description_id: 14
+  icon_set_id: 2297
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_AhsokaAsymmetricalGloves.adr
+  texture_alias: AhsokaBlue
+  item_type: 1
+  category: 62
+# Tranquil Ahsoka's Boots
+- guid: 180076
+  name_id: 2668
+  description_id: 14
+  icon_set_id: 2299
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AhsokaBoots.adr
+  texture_alias: AhsokaBlue
+  item_type: 1
+  category: 63
+# Camo Obi-Wan's Robes
+- guid: 180077
+  name_id: 2670
+  description_id: 14
+  icon_set_id: 2295
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiwanCamo
+  item_type: 1
+  category: 61
+# Camo Obi-Wan's Gloves
+- guid: 180078
+  name_id: 2669
+  description_id: 14
+  icon_set_id: 2294
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanV2Gloves.adr
+  texture_alias: ObiwanCamo
+  item_type: 1
+  category: 62
+# Camo Obi-Wan's Boots
+- guid: 180079
+  name_id: 2671
+  description_id: 14
+  icon_set_id: 2296
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanV2Boots.adr
+  texture_alias: ObiwanCamo
+  item_type: 1
+  category: 63
+# Obi-Wan Kenobi's Original Uniform
+- guid: 180080
+  name_id: 8534
+  description_id: 14
+  icon_set_id: 105
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanTunic.adr
+  texture_alias: Obiwan
+  item_type: 1
+  category: 61
+  members: true
+# Obi-Wan Kenobi's Original Gloves
+- guid: 180081
+  name_id: 8538
+  description_id: 14
+  icon_set_id: 175
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanGloves.adr
+  texture_alias: Obiwan
+  item_type: 1
+  category: 62
+  members: true
+# Obi-Wan Kenobi's Original Boots
+- guid: 180082
+  name_id: 8536
+  description_id: 14
+  icon_set_id: 148
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanBoots.adr
+  texture_alias: Obiwan
+  item_type: 1
+  category: 63
+  members: true
+# Obi-Wan Kenobi's Robes
+- guid: 180083
+  name_id: 32936
+  description_id: 14
+  icon_set_id: 1602
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiwanV2
+  item_type: 1
+  category: 61
+  members: true
+# Obi-Wan Kenobi's Gloves
+- guid: 180084
+  name_id: 32935
+  description_id: 14
+  icon_set_id: 1604
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanV2Gloves.adr
+  texture_alias: ObiwanV2
+  item_type: 1
+  category: 62
+  members: true
+# Obi-Wan Kenobi's Boots
+- guid: 180085
+  name_id: 32937
+  description_id: 14
+  icon_set_id: 1603
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanV2Boots.adr
+  texture_alias: ObiwanV2
+  item_type: 1
+  category: 63
+  members: true
+# Plo Koon's Robes
+- guid: 180086
+  name_id: 232
+  description_id: 14
+  icon_set_id: 107
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PloKoonTunic.adr
+  texture_alias: PloKoon
+  item_type: 1
+  category: 61
+  members: true
+# Plo Koon's Mask
+- guid: 180087
+  name_id: 228
+  description_id: 14
+  icon_set_id: 204
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PloKoonMask.adr
+  texture_alias: PloKoon
+  item_type: 1
+  category: 60
+  members: true
+# Plo Koon's Gloves
+- guid: 180088
+  name_id: 230
+  description_id: 14
+  icon_set_id: 176
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_PloKoonGloves.adr
+  texture_alias: PloKoon
+  item_type: 1
+  category: 62
+  members: true
+# Plo Koon's Boots
+- guid: 180089
+  name_id: 234
+  description_id: 14
+  icon_set_id: 149
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PloKoonBoots.adr
+  texture_alias: PloKoon
+  item_type: 1
+  category: 63
+  members: true
+# Cold Weather Plo's Suit
+- guid: 180090
+  name_id: 44875
+  description_id: 14
+  icon_set_id: 2105
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PloKoonSnowSuit.adr
+  texture_alias: PloKoonSnow
+  item_type: 1
+  category: 61
+  members: true
+# Cold Weather Plo's Hood
+- guid: 180091
+  name_id: 44873
+  description_id: 14
+  icon_set_id: 2103
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PloKoonSnowHood.adr
+  texture_alias: PloKoonSnow
+  item_type: 1
+  category: 60
+  members: true
+# Cold Weather Plo's Gloves
+- guid: 180092
+  name_id: 44874
+  description_id: 14
+  icon_set_id: 2104
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_PloKoonGloves.adr
+  texture_alias: PloKoonSnow
+  item_type: 1
+  category: 62
+  members: true
+# Cold Weather Plo's Boots
+- guid: 180093
+  name_id: 44876
+  description_id: 14
+  icon_set_id: 2106
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PloKoonSnowBoots.adr
+  texture_alias: PloKoonSnow
+  item_type: 1
+  category: 63
+  members: true
+# Ermi Jedi Robe
+- guid: 180094
+  name_id: 1327
+  description_id: 14
+  icon_set_id: 1117
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SpiralingCrystalRobe.adr
+  texture_alias: SpiralingCrystal
+  item_type: 1
+  category: 61
+  members: true
+# Ermi Jedi Hood
+- guid: 180095
+  name_id: 1422
+  description_id: 14
+  icon_set_id: 1120
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SpiralingCrystalHood.adr
+  texture_alias: SpiralingCrystal
+  item_type: 1
+  category: 60
+  members: true
+# Ermi Jedi Gloves
+- guid: 180096
+  name_id: 1390
+  description_id: 14
+  icon_set_id: 1119
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_SpiralingCrystalGloves.adr
+  texture_alias: SpiralingCrystal
+  item_type: 1
+  category: 62
+  members: true
+# Ermi Jedi Boots
+- guid: 180097
+  name_id: 1362
+  description_id: 14
+  icon_set_id: 1118
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SpiralingCrystalBoots.adr
+  texture_alias: SpiralingCrystal
+  item_type: 1
+  category: 63
+  members: true
+# Shaak Ti's Robe
+- guid: 180098
+  name_id: 1464
+  description_id: 14
+  icon_set_id: 1111
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ShaakTiRobe.adr
+  texture_alias: ShaakTi
+  item_type: 1
+  category: 61
+  members: true
+# Shaak Ti's Boots
+- guid: 180099
+  name_id: 1474
+  description_id: 14
+  icon_set_id: 1112
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LuminaraBoots.adr
+  texture_alias: ShaakTi
+  item_type: 1
+  category: 63
+  members: true
+# Luminara Unduli's Robes
+- guid: 180100
+  name_id: 210
+  description_id: 14
+  icon_set_id: 102
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LuminaraRobe.adr
+  texture_alias: Brown
+  item_type: 1
+  category: 61
+  members: true
+# Luminara Unduli's Headdress
+- guid: 180101
+  name_id: 208
+  description_id: 14
+  icon_set_id: 202
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_LuminaraHat.adr
+  texture_alias: Luminara
+  item_type: 1
+  category: 60
+  members: true
+# Luminara Unduli's Boots
+- guid: 180102
+  name_id: 212
+  description_id: 14
+  icon_set_id: 145
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LuminaraBoots.adr
+  texture_alias: PurpleTaupe
+  item_type: 1
+  category: 63
+  members: true
+# Kalifa's Suit
+- guid: 180103
+  name_id: 43511
+  description_id: 14
+  icon_set_id: 1842
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KalifaOutfit.adr
+  texture_alias: Kalifa
+  item_type: 1
+  category: 61
+  members: true
+# Kalifa's Boots
+- guid: 180104
+  name_id: 43512
+  description_id: 14
+  icon_set_id: 1843
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PloKoonBoots.adr
+  texture_alias: Kalifa
+  item_type: 1
+  category: 63
+  members: true
+# Dahgee Jedi Robes
+- guid: 180105
+  name_id: 1506
+  description_id: 14
+  icon_set_id: 1141
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ZebraCrystalJediSuit.adr
+  texture_alias: ZebraStripes
+  item_type: 1
+  category: 61
+  members: true
+# Dahgee Jedi Gloves
+- guid: 180106
+  name_id: 1500
+  description_id: 14
+  icon_set_id: 1143
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_KyleKatarnGloves.adr
+  texture_alias: ZebraStripes
+  item_type: 1
+  category: 62
+  members: true
+# Dahgee Jedi Boots
+- guid: 180107
+  name_id: 1476
+  description_id: 14
+  icon_set_id: 1142
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ZebraCrystalJediBoots.adr
+  texture_alias: ZebraStripes
+  item_type: 1
+  category: 63
+  members: true
+# Aquatic Obi-Wan Tunic
+- guid: 180108
+  name_id: 44500
+  description_id: 14
+  icon_set_id: 1983
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiwanAqua
+  item_type: 1
+  category: 61
+  members: true
+# Aquatic Obi-Wan Gloves
+- guid: 180109
+  name_id: 44499
+  description_id: 14
+  icon_set_id: 1982
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanV2Gloves.adr
+  texture_alias: ObiwanAqua
+  item_type: 1
+  category: 62
+  members: true
+# Aquatic Obi-Wan Boots
+- guid: 180110
+  name_id: 44501
+  description_id: 14
+  icon_set_id: 1984
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanV2Boots.adr
+  texture_alias: ObiwanAqua
+  item_type: 1
+  category: 63
+  members: true
+# Fiery Obi-Wan's Tunic
+- guid: 180111
+  name_id: 44829
+  description_id: 14
+  icon_set_id: 2063
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiwanRed
+  item_type: 1
+  category: 61
+  members: true
+# Fiery Obi-Wan's Gloves
+- guid: 180112
+  name_id: 44828
+  description_id: 14
+  icon_set_id: 2062
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ObiwanV2Gloves.adr
+  texture_alias: ObiwanRed
+  item_type: 1
+  category: 62
+  members: true
+# Fiery Obi-Wan's Boots
+- guid: 180113
+  name_id: 44830
+  description_id: 14
+  icon_set_id: 2064
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ObiwanV2Boots.adr
+  texture_alias: ObiwanRed
+  item_type: 1
+  category: 63
+  members: true
+# Kit Fisto's Robes
+- guid: 180114
+  name_id: 8902
+  description_id: 14
+  icon_set_id: 99
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KitFistoTunic.adr
+  texture_alias: KitFisto
+  item_type: 1
+  category: 61
+# Kit Fisto's Gloves
+- guid: 180115
+  name_id: 8906
+  description_id: 14
+  icon_set_id: 170
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_KitFistoGloves.adr
+  texture_alias: KitFisto
+  item_type: 1
+  category: 62
+# Kit Fisto's Boots
+- guid: 180116
+  name_id: 8904
+  description_id: 14
+  icon_set_id: 141
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KitFistoBoots.adr
+  texture_alias: KitFisto
+  item_type: 1
+  category: 63
+# Cold Weather Kit Fisto's Suit
+- guid: 180117
+  name_id: 44879
+  description_id: 14
+  icon_set_id: 2110
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KitFistoSnowSuit.adr
+  texture_alias: KitFistoSnow
+  item_type: 1
+  category: 61
+  members: true
+# Cold Weather Kit Fisto's Hood
+- guid: 180118
+  name_id: 44877
+  description_id: 14
+  icon_set_id: 2108
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_KitFistoSnowHood.adr
+  texture_alias: KitFistoSnow
+  item_type: 1
+  category: 60
+  members: true
+# Cold Weather Kit Fisto's Gloves
+- guid: 180119
+  name_id: 44878
+  description_id: 14
+  icon_set_id: 2109
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGlovesFat.adr
+  texture_alias: KitFistoSnow
+  item_type: 1
+  category: 62
+  members: true
+# Cold Weather Kit Fisto's Boots
+- guid: 180120
+  name_id: 44880
+  description_id: 14
+  icon_set_id: 2111
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KitFistoSnowBoots.adr
+  texture_alias: KitFistoSnow
+  item_type: 1
+  category: 63
+  members: true
+# Flanneled Cold Weather Kit Fisto's Suit
+- guid: 180121
+  name_id: 2677
+  description_id: 14
+  icon_set_id: 3334
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KitFistoSnowSuit.adr
+  texture_alias: KitFistoSnowV2
+  item_type: 1
+  category: 61
+# Flanneled Cold Weather Kit Fisto's Hood
+- guid: 180122
+  name_id: 2675
+  description_id: 14
+  icon_set_id: 3332
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_KitFistoSnowHood.adr
+  texture_alias: KitFistoSnowV2
+  item_type: 1
+  category: 60
+# Flanneled Cold Weather Kit Fisto's Gloves
+- guid: 180123
+  name_id: 2676
+  description_id: 14
+  icon_set_id: 3333
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGlovesFat.adr
+  texture_alias: KitFistoSnowV2
+  item_type: 1
+  category: 62
+# Flanneled Cold Weather Kit Fisto's Boots
+- guid: 180124
+  name_id: 2678
+  description_id: 14
+  icon_set_id: 3335
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KitFistoSnowBoots.adr
+  texture_alias: KitFistoSnowV2
+  item_type: 1
+  category: 63
+# Simple Padawan Robes
+- guid: 180125
+  name_id: 8611
+  description_id: 14
+  icon_set_id: 112
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SimpleGi.adr
+  texture_alias: Padawan1
+  item_type: 1
+  category: 61
+# Light Padawan Helmet
+- guid: 180126
+  name_id: 8546
+  description_id: 14
+  icon_set_id: 211
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_YounglingHelmet.adr
+  texture_alias: Padawan1
+  item_type: 1
+  category: 60
+# Brown Padawan Boots
+- guid: 180127
+  name_id: 67
+  description_id: 14
+  icon_set_id: 123
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: Padawan1
+  item_type: 1
+  category: 63
+# Green Padawan Robes
+- guid: 180128
+  name_id: 8610
+  description_id: 14
+  icon_set_id: 111
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SimpleGi.adr
+  texture_alias: Padawan2
+  item_type: 1
+  category: 61
+# Tan Padawan Boots
+- guid: 180129
+  name_id: 8880
+  description_id: 14
+  icon_set_id: 121
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: Padawan2
+  item_type: 1
+  category: 63
+# Dark Padawan Helmet
+- guid: 180130
+  name_id: 8882
+  description_id: 14
+  icon_set_id: 210
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_YounglingHelmet.adr
+  texture_alias: Padawan2
+  item_type: 1
+  category: 60
+# Long Padawan Robes
+- guid: 180131
+  name_id: 8609
+  description_id: 14
+  icon_set_id: 113
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SimpleGiLong.adr
+  texture_alias: LightTan
+  item_type: 1
+  category: 61
+# Rusty Padawan Boots
+- guid: 180132
+  name_id: 8886
+  description_id: 14
+  icon_set_id: 144
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LooseBoots.adr
+  texture_alias: Cherry
+  item_type: 1
+  category: 63
+# Bariss' Cloak
+- guid: 180133
+  name_id: 54470
+  description_id: 14
+  icon_set_id: 3714
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BarissOffeeOutfit.adr
+  texture_alias: BarissOffee
+  item_type: 1
+  category: 61
+  members: true
+# Bariss' Hood
+- guid: 180134
+  name_id: 54468
+  description_id: 14
+  icon_set_id: 3712
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BarissOffeeHood.adr
+  texture_alias: BarissOffee
+  item_type: 1
+  category: 60
+  members: true
+# Bariss' Gloves
+- guid: 180135
+  name_id: 54469
+  description_id: 14
+  icon_set_id: 3713
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BarissOffeeGloves.adr
+  texture_alias: BarissOffee
+  item_type: 1
+  category: 62
+  members: true
+# Bariss' Shoes
+- guid: 180136
+  name_id: 54471
+  description_id: 14
+  icon_set_id: 3715
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CountDooku.adr
+  texture_alias: BarissOffee
+  item_type: 1
+  category: 63
+  members: true
+# Adept Jedi Cloak
+- guid: 180137
+  name_id: 4619
+  description_id: 14
+  icon_set_id: 2686
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SparkingCrystalSuit.adr
+  texture_alias: SparkingCrystalBlue
+  item_type: 1
+  category: 61
+# Adept Jedi Hood
+- guid: 180138
+  name_id: 4617
+  description_id: 14
+  icon_set_id: 2684
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SparkingCrystalHood.adr
+  texture_alias: SparkingCrystalBlue
+  item_type: 1
+  category: 60
+# Adept Jedi Vambrace
+- guid: 180139
+  name_id: 4618
+  description_id: 14
+  icon_set_id: 2685
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneSnowGloves.adr
+  texture_alias: SparkingCrystalBlue
+  item_type: 1
+  category: 62
+# Adept Jedi Greaves
+- guid: 180140
+  name_id: 4620
+  description_id: 14
+  icon_set_id: 2687
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SparkingCrystalBoots.adr
+  texture_alias: SparkingCrystalBlue
+  item_type: 1
+  category: 63
+# Kofun Jedi Armor
+- guid: 180141
+  name_id: 4818
+  description_id: 14
+  icon_set_id: 2848
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SamuraiJediV2Armor.adr
+  texture_alias: SamuraiJediV2
+  item_type: 1
+  category: 61
+# Kofun Jedi Helm
+- guid: 180142
+  name_id: 4816
+  description_id: 14
+  icon_set_id: 2846
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_SamuraiJediV2Mask.adr
+  texture_alias: SamuraiJediV2
+  item_type: 1
+  category: 60
+# Kofun Jedi Hand Wraps
+- guid: 180143
+  name_id: 4817
+  description_id: 14
+  icon_set_id: 2847
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_SamuraiJediV2Gloves.adr
+  texture_alias: SamuraiJediV2
+  item_type: 1
+  category: 62
+# Kofun Jedi Leg Wraps
+- guid: 180144
+  name_id: 4819
+  description_id: 14
+  icon_set_id: 2849
+  slot: !Equipment Feet
+  model_name: Wear_<race>_<gender>_Feet_SamuraiJediV2Wraps.adr
+  texture_alias: SamuraiJediV2
+  item_type: 1
+  category: 63
+# Forgotten Jedi Armor
+- guid: 180145
+  name_id: 60289
+  description_id: 14
+  icon_set_id: 3738
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_FeluciaUniform.adr
+  texture_alias: FeluciaCollection
+  item_type: 1
+  category: 61
+  members: true
+# Forgotten Jedi Breather
+- guid: 180146
+  name_id: 60287
+  description_id: 14
+  icon_set_id: 3736
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_FeluciaBreather.adr
+  texture_alias: FeluciaCollection
+  item_type: 1
+  category: 60
+  members: true
+# Forgotten Jedi Gloves
+- guid: 180147
+  name_id: 60288
+  description_id: 14
+  icon_set_id: 3737
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_EmboGloves.adr
+  texture_alias: FeluciaCollection
+  item_type: 1
+  category: 62
+  members: true
+# Forgotten Jedi Boots
+- guid: 180148
+  name_id: 60290
+  description_id: 14
+  icon_set_id: 3739
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_FeluciaBoots.adr
+  texture_alias: FeluciaCollection
+  item_type: 1
+  category: 63
+  members: true
+# Jedi Exile Tunic
+- guid: 180149
+  name_id: 54600
+  description_id: 14
+  icon_set_id: 3833
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ExileTunic.adr
+  texture_alias: Exile
+  item_type: 1
+  category: 61
+# Jedi Exile Cowl
+- guid: 180150
+  name_id: 54598
+  description_id: 14
+  icon_set_id: 3831
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ExileCowl.adr
+  texture_alias: Exile
+  item_type: 1
+  category: 60
+# Jedi Exile Gloves
+- guid: 180151
+  name_id: 54599
+  description_id: 14
+  icon_set_id: 3832
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ExileGloves.adr
+  texture_alias: Exile
+  item_type: 1
+  category: 62
+# Jedi Exile Boots
+- guid: 180152
+  name_id: 54601
+  description_id: 14
+  icon_set_id: 3834
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ExileBoots.adr
+  texture_alias: Exile
+  item_type: 1
+  category: 63
+# Jedi Champion Robe
+- guid: 180153
+  name_id: 52787
+  description_id: 14
+  icon_set_id: 3110
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LightsideAffiliationCloak.adr
+  texture_alias: Lightside
+  item_type: 1
+  category: 61
+  members: true
+# Jedi Champion Hood
+- guid: 180154
+  name_id: 52790
+  description_id: 14
+  icon_set_id: 3113
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_LightsideAffiliationHood.adr
+  texture_alias: Lightside
+  item_type: 1
+  category: 60
+  members: true
+# Jedi Champion Gauntlets
+- guid: 180155
+  name_id: 52788
+  description_id: 14
+  icon_set_id: 3112
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_LightsideAffiliationGloves.adr
+  texture_alias: Lightside
+  item_type: 1
+  category: 62
+  members: true
+# Jedi Champion Boots
+- guid: 180156
+  name_id: 52789
+  description_id: 14
+  icon_set_id: 3111
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LightsideAffiliationBoots.adr
+  texture_alias: Lightside
+  item_type: 1
+  category: 63
+  members: true
+# Even Piell's Climbing Suit
+- guid: 180157
+  name_id: 44891
+  description_id: 14
+  icon_set_id: 2125
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_EvenPiellClimbingSuit.adr
+  texture_alias: EvenPiell
+  item_type: 1
+  category: 61
+  members: true
+# Even Piell's Gloves
+- guid: 180158
+  name_id: 44890
+  description_id: 14
+  icon_set_id: 2124
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DashRendarGloves.adr
+  texture_alias: EvenPiell
+  item_type: 1
+  category: 62
+  members: true
+# Even Piell's Boots
+- guid: 180159
+  name_id: 44892
+  description_id: 14
+  icon_set_id: 2126
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_WideBoots.adr
+  texture_alias: EvenPiell
+  item_type: 1
+  category: 63
+  members: true
+# Jocasta Nu's Robes
+- guid: 180160
+  name_id: 198
+  description_id: 14
+  icon_set_id: 98
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_JocastaNuRobe.adr
+  texture_alias: JocastaNu
+  item_type: 1
+  category: 61
+  members: true
+# Jocasta Nu's Shoes
+- guid: 180161
+  name_id: 200
+  description_id: 14
+  icon_set_id: 140
+  slot: !Equipment Feet
+  model_name: Wear_<race>_<gender>_Feet_JocastaNuShoes.adr
+  texture_alias: JocastaNu
+  item_type: 1
+  category: 63
+  members: true
+# Sulon Jedi Suit
+- guid: 180162
+  name_id: 54605
+  description_id: 14
+  icon_set_id: 3837
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KyleKatarnSuit.adr
+  texture_alias: KyleKatarnBlue
+  item_type: 1
+  category: 61
+# Sulon Jedi Gloves
+- guid: 180163
+  name_id: 54604
+  description_id: 14
+  icon_set_id: 3836
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_KyleKatarnGloves.adr
+  texture_alias: KyleKatarnBlue
+  item_type: 1
+  category: 62
+# Sulon Jedi Boots
+- guid: 180164
+  name_id: 54606
+  description_id: 14
+  icon_set_id: 3838
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
+  texture_alias: KyleKatarnBlue
+  item_type: 1
+  category: 63

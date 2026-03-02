@@ -1,0 +1,885 @@
+---
+# Ion Blaster
+- guid: 80000
+  name_id: 4612
+  description_id: 14
+  icon_set_id: 2680
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_B1_IonBlaster.adr
+  texture_alias: IonBlaster
+  item_type: 1
+  category: 64
+# Bowcaster
+- guid: 80001
+  name_id: 14784
+  description_id: 14
+  icon_set_id: 506
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_BowCasterEmbo.adr
+  texture_alias: Embo
+  item_type: 1
+  category: 64
+  members: true
+# Cad Bane's Blaster Rifle
+- guid: 80002
+  name_id: 4543
+  description_id: 14
+  icon_set_id: 2654
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_CadBaneRifle.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 64
+# Clone Trooper Blaster
+- guid: 80003
+  name_id: 314
+  description_id: 14
+  icon_set_id: 213
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_DC15S.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 64
+# Mandalorian Blaster Rifle
+- guid: 80005
+  name_id: 14782
+  description_id: 14
+  icon_set_id: 507
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_DeathWatch_BlasterRifle.adr
+  texture_alias: BlasterRifle
+  item_type: 1
+  category: 64
+  members: true
+# Cold Warrior Rifle
+- guid: 80006
+  name_id: 52060
+  description_id: 14
+  icon_set_id: 2976
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_DeathWatch_BlasterRifle.adr
+  texture_alias: CarlacBlue
+  item_type: 1
+  category: 64
+  members: true
+# Boba Fett's Blaster Rifle
+- guid: 80008
+  name_id: 8789
+  description_id: 14
+  icon_set_id: 215
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_EE3.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 64
+# Ming Po Militia Rifle
+- guid: 80009
+  name_id: 52857
+  description_id: 14
+  icon_set_id: 3085
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_MingPoMilitia.adr
+  texture_alias: MingPoMilitia
+  item_type: 1
+  category: 64
+  members: true
+# Umbaran Blaster Rifle
+- guid: 80010
+  name_id: 4320
+  description_id: 14
+  icon_set_id: 2448
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_Umbaran.adr
+  texture_alias: Umbaran
+  item_type: 1
+  category: 64
+  members: true
+# Usk Bunker General Blaster Rifle
+- guid: 80011
+  name_id: 4778
+  description_id: 14
+  icon_set_id: 2819
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_Umbaran.adr
+  texture_alias: UmbaranPurple
+  item_type: 1
+  category: 64
+  members: true
+# Grek Bunker General Blaster Rifle
+- guid: 80012
+  name_id: 4774
+  description_id: 14
+  icon_set_id: 2815
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_Umbaran.adr
+  texture_alias: UmbaranRed
+  item_type: 1
+  category: 64
+  members: true
+# Zygerrian Blaster Rifle
+- guid: 80013
+  name_id: 4455
+  description_id: 14
+  icon_set_id: 2513
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_Zygerrian.adr
+  texture_alias: Zygerrian
+  item_type: 1
+  category: 64
+  members: true
+# Cupid Clone's Bow
+- guid: 80014
+  name_id: 33888
+  description_id: 14
+  icon_set_id: 1674
+  item_class: 21
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Bow_CupidTrooperBow.adr
+  texture_alias: Cupid
+  item_type: 1
+  category: 64
+# Nightsister's Bow
+- guid: 80015
+  name_id: 32965
+  description_id: 14
+  icon_set_id: 1624
+  item_class: 21
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Bow_NightSisterBow.adr
+  texture_alias: NightSister
+  item_type: 1
+  category: 64
+  members: true
+# Cryo-Cannon
+- guid: 80016
+  name_id: 4610
+  description_id: 14
+  icon_set_id: 2678
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_CryoThrower.adr
+  texture_alias: Cryo
+  item_type: 1
+  category: 64
+# Plasma Thrower
+- guid: 80017
+  name_id: 4611
+  description_id: 14
+  icon_set_id: 2679
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_CryoThrower_Plasma.adr
+  texture_alias: Plasma
+  item_type: 1
+  category: 64
+# Republic Grenade Launcher
+- guid: 80018
+  name_id: 4768
+  description_id: 14
+  icon_set_id: 2809
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_GrenadeLauncher.adr
+  texture_alias: GrenadeLauncher
+  item_type: 1
+  category: 64
+# Accelerated Thermal Carbine
+- guid: 80019
+  name_id: 4857
+  description_id: 14
+  icon_set_id: 2882
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_HeavyHipGun01.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+# Rail Cannon
+- guid: 80020
+  name_id: 54518
+  description_id: 14
+  icon_set_id: 3771
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_HeavyHipGun02.adr
+  item_type: 1
+  category: 64
+  members: true
+# Hip-Mounted Cannon
+- guid: 80021
+  name_id: 4769
+  description_id: 14
+  icon_set_id: 2810
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_HeavyHipGun03.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+# Mandalorian Repeater
+- guid: 80023
+  name_id: 54520
+  description_id: 14
+  icon_set_id: 3790
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_Mandalorian.adr
+  texture_alias: MandalorianBlue
+  item_type: 1
+  category: 64
+# Republic Flamethrower
+- guid: 80024
+  name_id: 8790
+  description_id: 14
+  icon_set_id: 216
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_RepublicFlamethrower.adr
+  texture_alias: CommanderJet
+  item_type: 1
+  category: 64
+# Spring Fever
+- guid: 80025
+  name_id: 43859
+  description_id: 14
+  icon_set_id: 1935
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_SpringFeverFlamethrower.adr
+  texture_alias: SpringFever
+  item_type: 1
+  category: 64
+# Rotary Blaster Cannon
+- guid: 80026
+  name_id: 8794
+  description_id: 14
+  icon_set_id: 217
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_Z6.adr
+  texture_alias: CloneGunner
+  item_type: 1
+  category: 64
+# Repeater Cannon
+- guid: 80027
+  name_id: 54594
+  description_id: 14
+  icon_set_id: 3827
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_Z6.adr
+  texture_alias: Silver
+  item_type: 1
+  category: 64
+# Republic Missile Launcher
+- guid: 80029
+  name_id: 2424
+  description_id: 14
+  icon_set_id: 218
+  item_class: 10002
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyShoulderGun_RocketLauncher.adr
+  texture_alias: CloneDesert
+  item_type: 1
+  category: 64
+  members: true
+# Turbolaser
+- guid: 80030
+  name_id: 4770
+  description_id: 14
+  icon_set_id: 2811
+  item_class: 10002
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyShoulderGun_Turbolaser01.adr
+  texture_alias: Turbolaser01
+  item_type: 1
+  category: 64
+# Balnab Hunter Rifle
+- guid: 80031
+  name_id: 3130
+  description_id: 14
+  icon_set_id: 2391
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_BalnabRifle.adr
+  texture_alias: Balnab
+  item_type: 1
+  category: 64
+  members: true
+# Bossk's Long Rifle
+- guid: 80032
+  name_id: 4749
+  description_id: 14
+  icon_set_id: 2789
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_BosskRifle.adr
+  texture_alias: Bossk
+  item_type: 1
+  category: 64
+# Grand Officer Rifle
+- guid: 80033
+  name_id: 52798
+  description_id: 14
+  icon_set_id: 3108
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_CloneGrandOfficer.adr
+  texture_alias: GrandOfficer
+  item_type: 1
+  category: 64
+# Aurra Sing's Hunting Rifle
+- guid: 80034
+  name_id: 2408
+  description_id: 14
+  icon_set_id: 238
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_CzerkaAdventurerSniper.adr
+  texture_alias: AurraSing
+  item_type: 1
+  category: 64
+  members: true
+# Clone Trooper Blaster Rifle
+- guid: 80035
+  name_id: 8781
+  description_id: 14
+  icon_set_id: 240
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_DC15A.adr
+  texture_alias: CommanderCody
+  item_type: 1
+  category: 64
+  members: true
+# Blinged-Out Trooper Rifle
+- guid: 80036
+  name_id: 8784
+  description_id: 14
+  icon_set_id: 239
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_DC15A.adr
+  texture_alias: CloneBling
+  item_type: 1
+  category: 64
+# Felucian Commando Rifle
+- guid: 80037
+  name_id: 60183
+  description_id: 14
+  icon_set_id: 3726
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_DC15A.adr
+  texture_alias: BlackTiger
+  item_type: 1
+  category: 64
+# Shadow Tech Rifle
+- guid: 80038
+  name_id: 4482
+  description_id: 14
+  icon_set_id: 2571
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_DC15AGlow.adr
+  texture_alias: ShadowTech
+  item_type: 1
+  category: 64
+  members: true
+# Rako Hardeen's Sniper Rifle
+- guid: 80040
+  name_id: 4542
+  description_id: 14
+  icon_set_id: 2659
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_RakoHardeenSniper.adr
+  texture_alias: RakoHardeen
+  item_type: 1
+  category: 64
+# Onderon Long Rifle
+- guid: 80041
+  name_id: 53491
+  description_id: 14
+  icon_set_id: 3158
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_SteelaSniperRifle.adr
+  texture_alias: Steela
+  item_type: 1
+  category: 64
+  members: true
+# Energized Disruptor
+- guid: 80042
+  name_id: 4882
+  description_id: 14
+  icon_set_id: 2924
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_B1.adr
+  texture_alias: Blaster1
+  item_type: 1
+  category: 64
+  members: true
+# Light Plasma Pistol
+- guid: 80043
+  name_id: 4883
+  description_id: 14
+  icon_set_id: 2925
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_B2.adr
+  texture_alias: Blaster2
+  item_type: 1
+  category: 64
+  members: true
+# Major Rigosso's Quarzite Pistol
+- guid: 80044
+  name_id: 4766
+  description_id: 14
+  icon_set_id: 2808
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_BeluganBlaster.adr
+  texture_alias: Rigosso
+  item_type: 1
+  category: 64
+  members: true
+# Major Rigosso's Offhand Quarzite Pistol
+- guid: 80045
+  name_id: 4767
+  description_id: 14
+  icon_set_id: 2808
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_BeluganBlaster_LEFT.adr
+  texture_alias: Rigosso
+  item_type: 1
+  category: 64
+  members: true
+# Black Sun Blaster Pistol
+- guid: 80046
+  name_id: 54263
+  description_id: 14
+  icon_set_id: 3637
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_BlackSun.adr
+  texture_alias: BlackSun
+  item_type: 1
+  category: 64
+# Quarzite Boba Fett's Blaster
+- guid: 80047
+  name_id: 4685
+  description_id: 14
+  icon_set_id: 2734
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_BobaFett.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 64
+# Subtram Hunter Blaster
+- guid: 80048
+  name_id: 60672
+  description_id: 14
+  icon_set_id: 3783
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_BobaFett.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 64
+# Quarzite Boba Fett's Offhand Blaster
+- guid: 80049
+  name_id: 4686
+  description_id: 14
+  icon_set_id: 2734
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_BobaFett_LEFT.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 64
+# Subtram Hunter Offhand Blaster
+- guid: 80050
+  name_id: 60673
+  description_id: 14
+  icon_set_id: 3783
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_BobaFett_LEFT.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 64
+# Captain Rex's Right Blaster
+- guid: 80051
+  name_id: 2410
+  description_id: 14
+  icon_set_id: 244
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_DC17.adr
+  texture_alias: CaptainRex
+  item_type: 1
+  category: 64
+  members: true
+# Vigilance
+- guid: 80052
+  name_id: 2896
+  description_id: 14
+  icon_set_id: 2312
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_DC17Chrome.adr
+  texture_alias: Vigilance
+  item_type: 1
+  category: 64
+# Negotiator
+- guid: 80053
+  name_id: 2897
+  description_id: 14
+  icon_set_id: 2312
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_DC17Chrome_LEFT.adr
+  texture_alias: Vigilance
+  item_type: 1
+  category: 64
+# Captain Rex's Left Blaster
+- guid: 80054
+  name_id: 65
+  description_id: 14
+  icon_set_id: 244
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_DC17_LEFT.adr
+  texture_alias: CaptainRex
+  item_type: 1
+  category: 64
+  members: true
+# Han Solo's Blaster Pistol
+- guid: 80056
+  name_id: 2414
+  description_id: 14
+  icon_set_id: 246
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_DL44.adr
+  texture_alias: HanSolo
+  item_type: 1
+  category: 64
+# Assassin Aurra Sing's Right Blaster
+- guid: 80057
+  name_id: 1803
+  description_id: 14
+  icon_set_id: 1409
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_DualTrigger.adr
+  texture_alias: AurraSingSniper
+  item_type: 1
+  category: 64
+  members: true
+# Assassin Aurra Sing's Left Blaster
+- guid: 80058
+  name_id: 1805
+  description_id: 14
+  icon_set_id: 1409
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_DualTrigger_LEFT.adr
+  texture_alias: AurraSingSniper
+  item_type: 1
+  category: 64
+  members: true
+# Royal Hold-out Blaster Pistol
+- guid: 80059
+  name_id: 8791
+  description_id: 14
+  icon_set_id: 247
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_ELG3A.adr
+  texture_alias: PadmeBodySuit
+  item_type: 1
+  category: 64
+  members: true
+# Cad Bane's Right Blaster
+- guid: 80060
+  name_id: 8779
+  description_id: 14
+  icon_set_id: 248
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_LL30.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 64
+# Cad Bane's Left Blaster
+- guid: 80061
+  name_id: 1293
+  description_id: 14
+  icon_set_id: 248
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_LL30_LEFT.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 64
+# Corrupt Warlord Right Pistol
+- guid: 80062
+  name_id: 52805
+  description_id: 14
+  icon_set_id: 3143
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_MercenaryAffiliation.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 64
+# Corrupt Warlord Left Pistol
+- guid: 80063
+  name_id: 52804
+  description_id: 14
+  icon_set_id: 3143
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_MercenaryAffiliation_LEFT.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 64
+# Papanoida Blaster
+- guid: 80064
+  name_id: 1713
+  description_id: 14
+  icon_set_id: 1327
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_PapanoidaBlaster.adr
+  texture_alias: IonPapanoida
+  item_type: 1
+  category: 64
+  members: true
+# Pyke Blaster Pistol
+- guid: 80065
+  name_id: 54264
+  description_id: 14
+  icon_set_id: 3638
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_Pyke.adr
+  texture_alias: Pyke
+  item_type: 1
+  category: 64
+# Onderon Blaster Pistol
+- guid: 80069
+  name_id: 53492
+  description_id: 14
+  icon_set_id: 3159
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_Steela.adr
+  texture_alias: Steela
+  item_type: 1
+  category: 64
+  members: true
+# Naboo Security Blaster Pistol
+- guid: 80070
+  name_id: 8793
+  description_id: 14
+  icon_set_id: 250
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_TheedSecurity.adr
+  texture_alias: Panaka
+  item_type: 1
+  category: 64
+  members: true
+# Gungan Double-headed Spear
+- guid: 80071
+  name_id: 3068
+  description_id: 14
+  icon_set_id: 2337
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_DoubleheadedSpear.adr
+  item_type: 1
+  category: 64
+  members: true
+# Captain Rex's Zygerrian Electrostaff
+- guid: 80072
+  name_id: 4463
+  description_id: 14
+  icon_set_id: 2518
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_ElectroStaff.adr
+  item_type: 1
+  category: 64
+# IG-113's Electrostaff
+- guid: 80074
+  name_id: 4959
+  description_id: 14
+  icon_set_id: 3002
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_MagnaGuardStaff.adr
+  texture_alias: MagnaGuard
+  item_type: 1
+  category: 64
+  members: true
+# Satine's Royal Guard Staff
+- guid: 80075
+  name_id: 1811
+  description_id: 14
+  icon_set_id: 1353
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_SatineRoyalGuardStaff.adr
+  texture_alias: SRG
+  item_type: 1
+  category: 64
+# Savage Opress' Pike
+- guid: 80076
+  name_id: 32983
+  description_id: 14
+  icon_set_id: 1632
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_SavageOpressPike.adr
+  texture_alias: Opress
+  item_type: 1
+  category: 64
+# Skeletal Clone Trooper Scythe
+- guid: 80077
+  name_id: 4280
+  description_id: 14
+  icon_set_id: 2399
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_Scythe.adr
+  texture_alias: Scythe
+  item_type: 1
+  category: 64
+  members: true
+# Gaffi Stick
+- guid: 80079
+  name_id: 300
+  description_id: 14
+  icon_set_id: 253
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_TuskenGaffiStick.adr
+  texture_alias: TuskenRaider
+  item_type: 1
+  category: 64
+  members: true
+# Pink Gaffi Stick
+- guid: 80080
+  name_id: 97
+  description_id: 14
+  icon_set_id: 518
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_TuskenGaffiStick.adr
+  texture_alias: TuskenRaiderPink
+  item_type: 1
+  category: 64
+  members: true
+# Blue Sparkler
+- guid: 80081
+  name_id: 44661
+  description_id: 14
+  icon_set_id: 2001
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Blue.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# Green Sparkler
+- guid: 80082
+  name_id: 44662
+  description_id: 14
+  icon_set_id: 2002
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Green.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# Orange Sparkler
+- guid: 80083
+  name_id: 44663
+  description_id: 14
+  icon_set_id: 2003
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Orange.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# Purple Sparkler
+- guid: 80084
+  name_id: 44664
+  description_id: 14
+  icon_set_id: 2004
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Purple.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# Red Sparkler
+- guid: 80085
+  name_id: 44665
+  description_id: 14
+  icon_set_id: 2005
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Red.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# White Sparkler
+- guid: 80086
+  name_id: 44666
+  description_id: 14
+  icon_set_id: 2006
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_White.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true
+# Yellow Sparkler
+- guid: 80087
+  name_id: 44667
+  description_id: 14
+  icon_set_id: 2007
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Sparkler_Basic_Yellow.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+  members: true

@@ -17,131 +17,131 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 70010
+    - guid: 110010
       unknown: 0
-    - guid: 70011
+    - guid: 110011
       unknown: 0
-    - guid: 70012
+    - guid: 110012
       unknown: 0
-    - guid: 70005
+    - guid: 110005
       unknown: 0
-    - guid: 70015
+    - guid: 110015
       unknown: 0
-    - guid: 70058
+    - guid: 110058
       unknown: 0
-    - guid: 70060
+    - guid: 110060
       unknown: 0
-    - guid: 70017
+    - guid: 110017
       unknown: 0
-    - guid: 70053
+    - guid: 110053
       unknown: 0
-    - guid: 70018
+    - guid: 110018
       unknown: 0
-    - guid: 70025
+    - guid: 110025
       unknown: 0
-    - guid: 70054
+    - guid: 110054
       unknown: 0
-    - guid: 70064
+    - guid: 110064
       unknown: 0
-    - guid: 70024
+    - guid: 110024
       unknown: 0
-    - guid: 70052
+    - guid: 110052
       unknown: 0
-    - guid: 70022
+    - guid: 110022
       unknown: 0
-    - guid: 70026
+    - guid: 110026
       unknown: 0
-    - guid: 70055
+    - guid: 110055
       unknown: 0
-    - guid: 70007
+    - guid: 110007
       unknown: 0
-    - guid: 70028
+    - guid: 110028
       unknown: 0
-    - guid: 70029
+    - guid: 110029
       unknown: 0
-    - guid: 70031
+    - guid: 110031
       unknown: 0
-    - guid: 70008
+    - guid: 110008
       unknown: 0
-    - guid: 70027
+    - guid: 110027
       unknown: 0
-    - guid: 70032
+    - guid: 110032
       unknown: 0
-    - guid: 70033
+    - guid: 110033
       unknown: 0
-    - guid: 70035
+    - guid: 110035
       unknown: 0
-    - guid: 70036
+    - guid: 110036
       unknown: 0
-    - guid: 70037
+    - guid: 110037
       unknown: 0
-    - guid: 70009
+    - guid: 110009
       unknown: 0
-    - guid: 70038
+    - guid: 110038
       unknown: 0
-    - guid: 70040
+    - guid: 110040
       unknown: 0
-    - guid: 70041
+    - guid: 110041
       unknown: 0
-    - guid: 70043
+    - guid: 110043
       unknown: 0
-    - guid: 70034
+    - guid: 110034
       unknown: 0
-    - guid: 70019
+    - guid: 110019
       unknown: 0
-    - guid: 70002
+    - guid: 110002
       unknown: 0
-    - guid: 70045
+    - guid: 110045
       unknown: 0
-    - guid: 70046
+    - guid: 110046
       unknown: 0
-    - guid: 70023
+    - guid: 110023
       unknown: 0
-    - guid: 70042
+    - guid: 110042
       unknown: 0
-    - guid: 70021
+    - guid: 110021
       unknown: 0
-    - guid: 70049
+    - guid: 110049
       unknown: 0
-    - guid: 70050
+    - guid: 110050
       unknown: 0
-    - guid: 70003
+    - guid: 110003
       unknown: 0
-    - guid: 70059
+    - guid: 110059
       unknown: 0
-    - guid: 70051
+    - guid: 110051
       unknown: 0
-    - guid: 70047
+    - guid: 110047
       unknown: 0
-    - guid: 70048
+    - guid: 110048
       unknown: 0
-    - guid: 70020
+    - guid: 110020
       unknown: 0
-    - guid: 70006
+    - guid: 110006
       unknown: 0
-    - guid: 70000
+    - guid: 110000
       unknown: 0
-    - guid: 70004
+    - guid: 110004
       unknown: 0
-    - guid: 70039
+    - guid: 110039
       unknown: 0
-    - guid: 70056
+    - guid: 110056
       unknown: 0
-    - guid: 70057
+    - guid: 110057
       unknown: 0
-    - guid: 70030
+    - guid: 110030
       unknown: 0
-    - guid: 70013
+    - guid: 230099
       unknown: 0
-    - guid: 70016
+    - guid: 230100
       unknown: 0
-    - guid: 70044
+    - guid: 230101
       unknown: 0
-    - guid: 70062
+    - guid: 110062
       unknown: 0
-    - guid: 70001
+    - guid: 110001
       unknown: 0
-    - guid: 70063
+    - guid: 110063
       unknown: 0
 # Secondary Hilts
 - guid: 8
@@ -161,158 +161,114 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 80010
+    - guid: 140010
       unknown: 0
-    - guid: 80011
+    - guid: 140011
       unknown: 0
-    - guid: 80014
+    - guid: 140014
       unknown: 0
-    - guid: 80015
+    - guid: 140015
       unknown: 0
-    - guid: 80058
+    - guid: 140058
       unknown: 0
-    - guid: 80061
+    - guid: 140061
       unknown: 0
-    - guid: 80017
+    - guid: 140017
       unknown: 0
-    - guid: 80053
+    - guid: 140053
       unknown: 0
-    - guid: 80018
+    - guid: 140018
       unknown: 0
-    - guid: 80025
+    - guid: 140025
       unknown: 0
-    - guid: 80054
+    - guid: 140054
       unknown: 0
-    - guid: 80064
+    - guid: 140064
       unknown: 0
-    - guid: 80024
+    - guid: 140024
       unknown: 0
-    - guid: 80052
+    - guid: 140052
       unknown: 0
-    - guid: 80022
+    - guid: 140022
       unknown: 0
-    - guid: 80026
+    - guid: 140026
       unknown: 0
-    - guid: 80055
+    - guid: 140055
       unknown: 0
-    - guid: 80028
+    - guid: 140028
       unknown: 0
-    - guid: 80029
+    - guid: 140029
       unknown: 0
-    - guid: 80031
+    - guid: 140031
       unknown: 0
-    - guid: 80027
+    - guid: 140027
       unknown: 0
-    - guid: 80032
+    - guid: 140032
       unknown: 0
-    - guid: 80033
+    - guid: 140033
       unknown: 0
-    - guid: 80035
+    - guid: 140035
       unknown: 0
-    - guid: 80036
+    - guid: 140036
       unknown: 0
-    - guid: 80037
+    - guid: 140037
       unknown: 0
-    - guid: 80038
+    - guid: 140038
       unknown: 0
-    - guid: 80040
+    - guid: 140040
       unknown: 0
-    - guid: 80041
+    - guid: 140041
       unknown: 0
-    - guid: 80043
+    - guid: 140043
       unknown: 0
-    - guid: 80034
+    - guid: 140034
       unknown: 0
-    - guid: 80019
+    - guid: 140019
       unknown: 0
-    - guid: 80045
+    - guid: 140045
       unknown: 0
-    - guid: 80046
+    - guid: 140046
       unknown: 0
-    - guid: 80023
+    - guid: 140023
       unknown: 0
-    - guid: 80042
+    - guid: 140042
       unknown: 0
-    - guid: 80021
+    - guid: 140021
       unknown: 0
-    - guid: 80049
+    - guid: 140049
       unknown: 0
-    - guid: 80050
+    - guid: 140050
       unknown: 0
-    - guid: 80059
+    - guid: 140059
       unknown: 0
-    - guid: 80051
+    - guid: 140051
       unknown: 0
-    - guid: 80047
+    - guid: 140047
       unknown: 0
-    - guid: 80048
+    - guid: 140048
       unknown: 0
-    - guid: 80020
+    - guid: 140020
       unknown: 0
-    - guid: 80039
+    - guid: 140039
       unknown: 0
-    - guid: 80056
+    - guid: 140056
       unknown: 0
-    - guid: 80057
+    - guid: 140057
       unknown: 0
-    - guid: 80030
+    - guid: 140030
       unknown: 0
-    - guid: 80013
+    - guid: 230102
       unknown: 0
-    - guid: 80016
+    - guid: 230103
       unknown: 0
-    - guid: 80044
+    - guid: 230104
       unknown: 0
-    - guid: 80062
+    - guid: 140062
       unknown: 0
-    - guid: 80063
+    - guid: 140063
       unknown: 0
 # Primary Colors
 - guid: 4
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
-  items:
-    - guid: 60000
-      unknown: 0
-    - guid: 60001
-      unknown: 0
-    - guid: 60002
-      unknown: 0
-    - guid: 60003
-      unknown: 0
-    - guid: 60004
-      unknown: 0
-    - guid: 60005
-      unknown: 0
-    - guid: 60006
-      unknown: 0
-    - guid: 60007
-      unknown: 0
-    - guid: 60008
-      unknown: 0
-    - guid: 60009
-      unknown: 0
-    - guid: 60010
-      unknown: 0
-    - guid: 60011
-      unknown: 0
-    - guid: 60012
-      unknown: 0
-# Secondary Colors
-- guid: 149
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -355,8 +311,8 @@
       unknown: 0
     - guid: 100012
       unknown: 0
-# Primary Shapes
-- guid: 5
+# Secondary Colors
+- guid: 149
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -373,48 +329,34 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 50000
+    - guid: 130000
       unknown: 0
-    - guid: 50001
+    - guid: 130001
       unknown: 0
-    - guid: 50002
+    - guid: 130002
       unknown: 0
-    - guid: 50003
+    - guid: 130003
       unknown: 0
-    - guid: 50004
+    - guid: 130004
       unknown: 0
-    - guid: 50005
+    - guid: 130005
       unknown: 0
-    - guid: 50006
+    - guid: 130006
       unknown: 0
-    - guid: 50007
+    - guid: 130007
       unknown: 0
-    - guid: 50008
+    - guid: 130008
       unknown: 0
-    - guid: 50009
+    - guid: 130009
       unknown: 0
-    - guid: 50010
+    - guid: 130010
       unknown: 0
-    - guid: 50011
+    - guid: 130011
       unknown: 0
-    - guid: 50012
+    - guid: 130012
       unknown: 0
-    - guid: 50013
-      unknown: 0
-    - guid: 50014
-      unknown: 0
-    - guid: 50015
-      unknown: 0
-    - guid: 50016
-      unknown: 0
-    - guid: 50017
-      unknown: 0
-    - guid: 50018
-      unknown: 0
-    - guid: 50019
-      unknown: 0
-# Secondary Shapes
-- guid: 9
+# Primary Shapes
+- guid: 5
   unknown2: 0
   name_id: 0
   description_id: 0
@@ -471,6 +413,64 @@
       unknown: 0
     - guid: 90019
       unknown: 0
+# Secondary Shapes
+- guid: 9
+  unknown2: 0
+  name_id: 0
+  description_id: 0
+  sort_order: 0
+  icon_set_id: 0
+  category: 0
+  page: 0
+  unknown9: 0
+  unknown10: 0
+  unknown11: false
+  unknown12: 0
+  unknown13: 0
+  unknown14: 0
+  unknown16: ''
+  unknown17: false
+  items:
+    - guid: 120000
+      unknown: 0
+    - guid: 120001
+      unknown: 0
+    - guid: 120002
+      unknown: 0
+    - guid: 120003
+      unknown: 0
+    - guid: 120004
+      unknown: 0
+    - guid: 120005
+      unknown: 0
+    - guid: 120006
+      unknown: 0
+    - guid: 120007
+      unknown: 0
+    - guid: 120008
+      unknown: 0
+    - guid: 120009
+      unknown: 0
+    - guid: 120010
+      unknown: 0
+    - guid: 120011
+      unknown: 0
+    - guid: 120012
+      unknown: 0
+    - guid: 120013
+      unknown: 0
+    - guid: 120014
+      unknown: 0
+    - guid: 120015
+      unknown: 0
+    - guid: 120016
+      unknown: 0
+    - guid: 120017
+      unknown: 0
+    - guid: 120018
+      unknown: 0
+    - guid: 120019
+      unknown: 0
 # Hair Style
 - guid: 122
   unknown2: 0
@@ -489,243 +489,243 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 130118
+    - guid: 40118
       unknown: 0
-    - guid: 130117
+    - guid: 40117
       unknown: 0
-    - guid: 130116
+    - guid: 40116
       unknown: 0
-    - guid: 130115
+    - guid: 40115
       unknown: 0
-    - guid: 130114
+    - guid: 40114
       unknown: 0
-    - guid: 130113
+    - guid: 40113
       unknown: 0
-    - guid: 130112
+    - guid: 40112
       unknown: 0
-    - guid: 130111
+    - guid: 40111
       unknown: 0
-    - guid: 130110
+    - guid: 40110
       unknown: 0
-    - guid: 130109
+    - guid: 40109
       unknown: 0
-    - guid: 130108
+    - guid: 40108
       unknown: 0
-    - guid: 130107
+    - guid: 40107
       unknown: 0
-    - guid: 130106
+    - guid: 40106
       unknown: 0
-    - guid: 130105
+    - guid: 40105
       unknown: 0
-    - guid: 130104
+    - guid: 40104
       unknown: 0
-    - guid: 130103
+    - guid: 40103
       unknown: 0
-    - guid: 130102
+    - guid: 40102
       unknown: 0
-    - guid: 130101
+    - guid: 40101
       unknown: 0
-    - guid: 130100
+    - guid: 40100
       unknown: 0
-    - guid: 130099
+    - guid: 40099
       unknown: 0
-    - guid: 130098
+    - guid: 40098
       unknown: 0
-    - guid: 130097
+    - guid: 40097
       unknown: 0
-    - guid: 130096
+    - guid: 40096
       unknown: 0
-    - guid: 130095
+    - guid: 40095
       unknown: 0
-    - guid: 130094
+    - guid: 40094
       unknown: 0
-    - guid: 130093
+    - guid: 40093
       unknown: 0
-    - guid: 130092
+    - guid: 40092
       unknown: 0
-    - guid: 130091
+    - guid: 40091
       unknown: 0
-    - guid: 130090
+    - guid: 40090
       unknown: 0
-    - guid: 130089
+    - guid: 40089
       unknown: 0
-    - guid: 130088
+    - guid: 40088
       unknown: 0
-    - guid: 130087
+    - guid: 40087
       unknown: 0
-    - guid: 130086
+    - guid: 40086
       unknown: 0
-    - guid: 130085
+    - guid: 40085
       unknown: 0
-    - guid: 130084
+    - guid: 40084
       unknown: 0
-    - guid: 130083
+    - guid: 40083
       unknown: 0
-    - guid: 130082
+    - guid: 40082
       unknown: 0
-    - guid: 130081
+    - guid: 40081
       unknown: 0
-    - guid: 130080
+    - guid: 40080
       unknown: 0
-    - guid: 130079
+    - guid: 40079
       unknown: 0
-    - guid: 130078
+    - guid: 40078
       unknown: 0
-    - guid: 130077
+    - guid: 40077
       unknown: 0
-    - guid: 130076
+    - guid: 40076
       unknown: 0
-    - guid: 130075
+    - guid: 40075
       unknown: 0
-    - guid: 130074
+    - guid: 40074
       unknown: 0
-    - guid: 130073
+    - guid: 40073
       unknown: 0
-    - guid: 130072
+    - guid: 40072
       unknown: 0
-    - guid: 130071
+    - guid: 40071
       unknown: 0
-    - guid: 130070
+    - guid: 40070
       unknown: 0
-    - guid: 130069
+    - guid: 40069
       unknown: 0
-    - guid: 130068
+    - guid: 40068
       unknown: 0
-    - guid: 130067
+    - guid: 40067
       unknown: 0
-    - guid: 130066
+    - guid: 40066
       unknown: 0
-    - guid: 130065
+    - guid: 40065
       unknown: 0
-    - guid: 130064
+    - guid: 40064
       unknown: 0
-    - guid: 130063
+    - guid: 40063
       unknown: 0
-    - guid: 130062
+    - guid: 40062
       unknown: 0
-    - guid: 130061
+    - guid: 40061
       unknown: 0
-    - guid: 130060
+    - guid: 40060
       unknown: 0
-    - guid: 130059
+    - guid: 40059
       unknown: 0
-    - guid: 130058
+    - guid: 40058
       unknown: 0
-    - guid: 130057
+    - guid: 40057
       unknown: 0
-    - guid: 130056
+    - guid: 40056
       unknown: 0
-    - guid: 130055
+    - guid: 40055
       unknown: 0
-    - guid: 130054
+    - guid: 40054
       unknown: 0
-    - guid: 130053
+    - guid: 40053
       unknown: 0
-    - guid: 130052
+    - guid: 40052
       unknown: 0
-    - guid: 130051
+    - guid: 40051
       unknown: 0
-    - guid: 130050
+    - guid: 40050
       unknown: 0
-    - guid: 130049
+    - guid: 40049
       unknown: 0
-    - guid: 130048
+    - guid: 40048
       unknown: 0
-    - guid: 130047
+    - guid: 40047
       unknown: 0
-    - guid: 130046
+    - guid: 40046
       unknown: 0
-    - guid: 130045
+    - guid: 40045
       unknown: 0
-    - guid: 130044
+    - guid: 40044
       unknown: 0
-    - guid: 130043
+    - guid: 40043
       unknown: 0
-    - guid: 130042
+    - guid: 40042
       unknown: 0
-    - guid: 130041
+    - guid: 40041
       unknown: 0
-    - guid: 130040
+    - guid: 40040
       unknown: 0
-    - guid: 130039
+    - guid: 40039
       unknown: 0
-    - guid: 130038
+    - guid: 40038
       unknown: 0
-    - guid: 130037
+    - guid: 40037
       unknown: 0
-    - guid: 130036
+    - guid: 40036
       unknown: 0
-    - guid: 130035
+    - guid: 40035
       unknown: 0
-    - guid: 130034
+    - guid: 40034
       unknown: 0
-    - guid: 130033
+    - guid: 40033
       unknown: 0
-    - guid: 130032
+    - guid: 40032
       unknown: 0
-    - guid: 130031
+    - guid: 40031
       unknown: 0
-    - guid: 130030
+    - guid: 40030
       unknown: 0
-    - guid: 130029
+    - guid: 40029
       unknown: 0
-    - guid: 130028
+    - guid: 40028
       unknown: 0
-    - guid: 130027
+    - guid: 40027
       unknown: 0
-    - guid: 130026
+    - guid: 40026
       unknown: 0
-    - guid: 130025
+    - guid: 40025
       unknown: 0
-    - guid: 130024
+    - guid: 40024
       unknown: 0
-    - guid: 130023
+    - guid: 40023
       unknown: 0
-    - guid: 130022
+    - guid: 40022
       unknown: 0
-    - guid: 130021
+    - guid: 40021
       unknown: 0
-    - guid: 130020
+    - guid: 40020
       unknown: 0
-    - guid: 130019
+    - guid: 40019
       unknown: 0
-    - guid: 130018
+    - guid: 40018
       unknown: 0
-    - guid: 130017
+    - guid: 40017
       unknown: 0
-    - guid: 130016
+    - guid: 40016
       unknown: 0
-    - guid: 130015
+    - guid: 40015
       unknown: 0
-    - guid: 130014
+    - guid: 40014
       unknown: 0
-    - guid: 130013
+    - guid: 40013
       unknown: 0
-    - guid: 130012
+    - guid: 40012
       unknown: 0
-    - guid: 130011
+    - guid: 40011
       unknown: 0
-    - guid: 130010
+    - guid: 40010
       unknown: 0
-    - guid: 130009
+    - guid: 40009
       unknown: 0
-    - guid: 130008
+    - guid: 40008
       unknown: 0
-    - guid: 130007
+    - guid: 40007
       unknown: 0
-    - guid: 130006
+    - guid: 40006
       unknown: 0
-    - guid: 130005
+    - guid: 40005
       unknown: 0
-    - guid: 130004
+    - guid: 40004
       unknown: 0
-    - guid: 130003
+    - guid: 40003
       unknown: 0
-    - guid: 130002
+    - guid: 40002
       unknown: 0
-    - guid: 130001
+    - guid: 40001
       unknown: 0
-    - guid: 130000
+    - guid: 40000
       unknown: 0
 # Hair Color
 - guid: 123
@@ -745,49 +745,49 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 140021
+    - guid: 30021
       unknown: 0
-    - guid: 140020
+    - guid: 30020
       unknown: 0
-    - guid: 140019
+    - guid: 30019
       unknown: 0
-    - guid: 140018
+    - guid: 30018
       unknown: 0
-    - guid: 140017
+    - guid: 30017
       unknown: 0
-    - guid: 140016
+    - guid: 30016
       unknown: 0
-    - guid: 140015
+    - guid: 30015
       unknown: 0
-    - guid: 140014
+    - guid: 30014
       unknown: 0
-    - guid: 140013
+    - guid: 30013
       unknown: 0
-    - guid: 140012
+    - guid: 30012
       unknown: 0
-    - guid: 140011
+    - guid: 30011
       unknown: 0
-    - guid: 140010
+    - guid: 30010
       unknown: 0
-    - guid: 140009
+    - guid: 30009
       unknown: 0
-    - guid: 140008
+    - guid: 30008
       unknown: 0
-    - guid: 140007
+    - guid: 30007
       unknown: 0
-    - guid: 140006
+    - guid: 30006
       unknown: 0
-    - guid: 140005
+    - guid: 30005
       unknown: 0
-    - guid: 140004
+    - guid: 30004
       unknown: 0
-    - guid: 140003
+    - guid: 30003
       unknown: 0
-    - guid: 140002
+    - guid: 30002
       unknown: 0
-    - guid: 140001
+    - guid: 30001
       unknown: 0
-    - guid: 140000
+    - guid: 30000
       unknown: 0
 # Eye Color
 - guid: 124
@@ -807,31 +807,31 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 150012
+    - guid: 10012
       unknown: 0
-    - guid: 150011
+    - guid: 10011
       unknown: 0
-    - guid: 150010
+    - guid: 10010
       unknown: 0
-    - guid: 150009
+    - guid: 10009
       unknown: 0
-    - guid: 150008
+    - guid: 10008
       unknown: 0
-    - guid: 150007
+    - guid: 10007
       unknown: 0
-    - guid: 150006
+    - guid: 10006
       unknown: 0
-    - guid: 150005
+    - guid: 10005
       unknown: 0
-    - guid: 150004
+    - guid: 10004
       unknown: 0
-    - guid: 150003
+    - guid: 10003
       unknown: 0
-    - guid: 150002
+    - guid: 10002
       unknown: 0
-    - guid: 150001
+    - guid: 10001
       unknown: 0
-    - guid: 150000
+    - guid: 10000
       unknown: 0
 # Skin Tone
 - guid: 125
@@ -851,65 +851,65 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 120029
+    - guid: 60029
       unknown: 0
-    - guid: 120028
+    - guid: 60028
       unknown: 0
-    - guid: 120027
+    - guid: 60027
       unknown: 0
-    - guid: 120026
+    - guid: 60026
       unknown: 0
-    - guid: 120025
+    - guid: 60025
       unknown: 0
-    - guid: 120024
+    - guid: 60024
       unknown: 0
-    - guid: 120023
+    - guid: 60023
       unknown: 0
-    - guid: 120022
+    - guid: 60022
       unknown: 0
-    - guid: 120021
+    - guid: 60021
       unknown: 0
-    - guid: 120020
+    - guid: 60020
       unknown: 0
-    - guid: 120019
+    - guid: 60019
       unknown: 0
-    - guid: 120018
+    - guid: 60018
       unknown: 0
-    - guid: 120017
+    - guid: 60017
       unknown: 0
-    - guid: 120016
+    - guid: 60016
       unknown: 0
-    - guid: 120015
+    - guid: 60015
       unknown: 0
-    - guid: 120014
+    - guid: 60014
       unknown: 0
-    - guid: 120013
+    - guid: 60013
       unknown: 0
-    - guid: 120012
+    - guid: 60012
       unknown: 0
-    - guid: 120011
+    - guid: 60011
       unknown: 0
-    - guid: 120010
+    - guid: 60010
       unknown: 0
-    - guid: 120009
+    - guid: 60009
       unknown: 0
-    - guid: 120008
+    - guid: 60008
       unknown: 0
-    - guid: 120007
+    - guid: 60007
       unknown: 0
-    - guid: 120006
+    - guid: 60006
       unknown: 0
-    - guid: 120005
+    - guid: 60005
       unknown: 0
-    - guid: 120004
+    - guid: 60004
       unknown: 0
-    - guid: 120003
+    - guid: 60003
       unknown: 0
-    - guid: 120002
+    - guid: 60002
       unknown: 0
-    - guid: 120001
+    - guid: 60001
       unknown: 0
-    - guid: 120000
+    - guid: 60000
       unknown: 0
 # Face Design
 - guid: 126
@@ -929,131 +929,131 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 170062
+    - guid: 50062
       unknown: 0
-    - guid: 170061
+    - guid: 50061
       unknown: 0
-    - guid: 170060
+    - guid: 50060
       unknown: 0
-    - guid: 170059
+    - guid: 50059
       unknown: 0
-    - guid: 170058
+    - guid: 50058
       unknown: 0
-    - guid: 170057
+    - guid: 50057
       unknown: 0
-    - guid: 170056
+    - guid: 50056
       unknown: 0
-    - guid: 170055
+    - guid: 50055
       unknown: 0
-    - guid: 170054
+    - guid: 50054
       unknown: 0
-    - guid: 170053
+    - guid: 50053
       unknown: 0
-    - guid: 170052
+    - guid: 50052
       unknown: 0
-    - guid: 170051
+    - guid: 50051
       unknown: 0
-    - guid: 170050
+    - guid: 50050
       unknown: 0
-    - guid: 170049
+    - guid: 50049
       unknown: 0
-    - guid: 170048
+    - guid: 50048
       unknown: 0
-    - guid: 170047
+    - guid: 50047
       unknown: 0
-    - guid: 170046
+    - guid: 50046
       unknown: 0
-    - guid: 170045
+    - guid: 50045
       unknown: 0
-    - guid: 170044
+    - guid: 50044
       unknown: 0
-    - guid: 170043
+    - guid: 50043
       unknown: 0
-    - guid: 170042
+    - guid: 50042
       unknown: 0
-    - guid: 170041
+    - guid: 50041
       unknown: 0
-    - guid: 170040
+    - guid: 50040
       unknown: 0
-    - guid: 170039
+    - guid: 50039
       unknown: 0
-    - guid: 170038
+    - guid: 50038
       unknown: 0
-    - guid: 170037
+    - guid: 50037
       unknown: 0
-    - guid: 170036
+    - guid: 50036
       unknown: 0
-    - guid: 170035
+    - guid: 50035
       unknown: 0
-    - guid: 170034
+    - guid: 50034
       unknown: 0
-    - guid: 170033
+    - guid: 50033
       unknown: 0
-    - guid: 170032
+    - guid: 50032
       unknown: 0
-    - guid: 170031
+    - guid: 50031
       unknown: 0
-    - guid: 170030
+    - guid: 50030
       unknown: 0
-    - guid: 170029
+    - guid: 50029
       unknown: 0
-    - guid: 170028
+    - guid: 50028
       unknown: 0
-    - guid: 170027
+    - guid: 50027
       unknown: 0
-    - guid: 170026
+    - guid: 50026
       unknown: 0
-    - guid: 170025
+    - guid: 50025
       unknown: 0
-    - guid: 170024
+    - guid: 50024
       unknown: 0
-    - guid: 170023
+    - guid: 50023
       unknown: 0
-    - guid: 170022
+    - guid: 50022
       unknown: 0
-    - guid: 170021
+    - guid: 50021
       unknown: 0
-    - guid: 170020
+    - guid: 50020
       unknown: 0
-    - guid: 170019
+    - guid: 50019
       unknown: 0
-    - guid: 170018
+    - guid: 50018
       unknown: 0
-    - guid: 170017
+    - guid: 50017
       unknown: 0
-    - guid: 170016
+    - guid: 50016
       unknown: 0
-    - guid: 170015
+    - guid: 50015
       unknown: 0
-    - guid: 170014
+    - guid: 50014
       unknown: 0
-    - guid: 170013
+    - guid: 50013
       unknown: 0
-    - guid: 170012
+    - guid: 50012
       unknown: 0
-    - guid: 170011
+    - guid: 50011
       unknown: 0
-    - guid: 170010
+    - guid: 50010
       unknown: 0
-    - guid: 170009
+    - guid: 50009
       unknown: 0
-    - guid: 170008
+    - guid: 50008
       unknown: 0
-    - guid: 170007
+    - guid: 50007
       unknown: 0
-    - guid: 170006
+    - guid: 50006
       unknown: 0
-    - guid: 170005
+    - guid: 50005
       unknown: 0
-    - guid: 170004
+    - guid: 50004
       unknown: 0
-    - guid: 170003
+    - guid: 50003
       unknown: 0
-    - guid: 170002
+    - guid: 50002
       unknown: 0
-    - guid: 170001
+    - guid: 50001
       unknown: 0
-    - guid: 170000
+    - guid: 50000
       unknown: 0
 # Facial Hair
 - guid: 139
@@ -1073,35 +1073,35 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 160014
+    - guid: 20014
       unknown: 0
-    - guid: 160013
+    - guid: 20013
       unknown: 0
-    - guid: 160012
+    - guid: 20012
       unknown: 0
-    - guid: 160011
+    - guid: 20011
       unknown: 0
-    - guid: 160010
+    - guid: 20010
       unknown: 0
-    - guid: 160009
+    - guid: 20009
       unknown: 0
-    - guid: 160008
+    - guid: 20008
       unknown: 0
-    - guid: 160007
+    - guid: 20007
       unknown: 0
-    - guid: 160006
+    - guid: 20006
       unknown: 0
-    - guid: 160005
+    - guid: 20005
       unknown: 0
-    - guid: 160004
+    - guid: 20004
       unknown: 0
-    - guid: 160003
+    - guid: 20003
       unknown: 0
-    - guid: 160002
+    - guid: 20002
       unknown: 0
-    - guid: 160001
+    - guid: 20001
       unknown: 0
-    - guid: 160000
+    - guid: 20000
       unknown: 0
 # Species
 - guid: 127
@@ -1121,31 +1121,31 @@
   unknown16: ''
   unknown17: false
   items:
-    - guid: 180012
+    - guid: 70012
       unknown: 0
-    - guid: 180011
+    - guid: 70011
       unknown: 0
-    - guid: 180010
+    - guid: 70010
       unknown: 0
-    - guid: 180009
+    - guid: 70009
       unknown: 0
-    - guid: 180008
+    - guid: 70008
       unknown: 0
-    - guid: 180007
+    - guid: 70007
       unknown: 0
-    - guid: 180006
+    - guid: 70006
       unknown: 0
-    - guid: 180005
+    - guid: 70005
       unknown: 0
-    - guid: 180004
+    - guid: 70004
       unknown: 0
-    - guid: 180003
+    - guid: 70003
       unknown: 0
-    - guid: 180002
+    - guid: 70002
       unknown: 0
-    - guid: 180001
+    - guid: 70001
       unknown: 0
-    - guid: 180000
+    - guid: 70000
       unknown: 0
 # Boosts
 - guid: 10000

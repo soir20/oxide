@@ -1,0 +1,30 @@
+---
+# Boost Points
+- guid: 1337
+  slot: !Equipment None
+  item_type: 1
+  max_stack_size: -1
+# Spin Boost
+- guid: 2240
+  name_id: 33536
+  description_id: 33537
+  icon_set_id: 1691
+  cost: 15
+  slot: !Equipment None
+  item_type: 1
+# Holocron Boost
+- guid: 2384
+  name_id: 33818
+  description_id: 33819
+  icon_set_id: 1687
+  cost: 15
+  slot: !Equipment None
+  item_type: 1
+# Trivia Boost
+- guid: 2385
+  name_id: 33820
+  description_id: 33821
+  icon_set_id: 1693
+  cost: 15
+  slot: !Equipment None
+  item_type: 1

@@ -1,0 +1,673 @@
+---
+# Embo's Suit
+- guid: 150000
+  name_id: 1313
+  description_id: 14
+  icon_set_id: 1088
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_EmboSuit.adr
+  texture_alias: Embo
+  item_type: 1
+  category: 61
+  members: true
+# Embo's Helmet
+- guid: 150001
+  name_id: 1410
+  description_id: 14
+  icon_set_id: 1091
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_EmboHelmet.adr
+  texture_alias: Embo
+  item_type: 1
+  category: 60
+  members: true
+# Embo's Gloves
+- guid: 150002
+  name_id: 1382
+  description_id: 14
+  icon_set_id: 1090
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_EmboGloves.adr
+  texture_alias: Embo
+  item_type: 1
+  category: 62
+  members: true
+# Embo's Boots
+- guid: 150003
+  name_id: 1348
+  description_id: 14
+  icon_set_id: 1089
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_EmboBoots.adr
+  texture_alias: Embo
+  item_type: 1
+  category: 63
+  members: true
+# Aurra Sing's Body Suit
+- guid: 150004
+  name_id: 146
+  description_id: 14
+  icon_set_id: 82
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AurraSingJumpsuit.adr
+  texture_alias: AurraSing
+  item_type: 1
+  category: 61
+  members: true
+# Aurra Sing's Antenna
+- guid: 150005
+  name_id: 142
+  description_id: 14
+  icon_set_id: 187
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_AurraSingAntenna.adr
+  texture_alias: AurraSing
+  item_type: 1
+  category: 60
+  members: true
+# Aurra Sing's Wrist Wraps
+- guid: 150006
+  name_id: 144
+  description_id: 14
+  icon_set_id: 155
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AurraSingWraps.adr
+  texture_alias: AurraSing
+  item_type: 1
+  category: 62
+  members: true
+# Aurra Sing's Boots
+- guid: 150007
+  name_id: 148
+  description_id: 14
+  icon_set_id: 119
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AurraSingBoots.adr
+  texture_alias: AurraSing
+  item_type: 1
+  category: 63
+  members: true
+# Assassin Aurra Sing's Suit
+- guid: 150008
+  name_id: 1727
+  description_id: 14
+  icon_set_id: 1406
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AurraSingSniperSuit.adr
+  texture_alias: AurraSingSniper
+  item_type: 1
+  category: 61
+# Assassin Aurra Sing's Mask
+- guid: 150009
+  name_id: 1725
+  description_id: 14
+  icon_set_id: 1408
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_AurraSingSniperMask.adr
+  texture_alias: AurraSingSniper
+  item_type: 1
+  category: 60
+# Assassin Aurra Sing's Boots
+- guid: 150010
+  name_id: 1881
+  description_id: 14
+  icon_set_id: 1407
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AurraSingBoots.adr
+  texture_alias: AurraSingSniper
+  item_type: 1
+  category: 63
+# Robonino's Suit
+- guid: 150011
+  name_id: 20055
+  description_id: 14
+  icon_set_id: 1472
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_RoboninoSuit.adr
+  texture_alias: Robonino
+  item_type: 1
+  category: 61
+# Robonino's Eyepatch
+- guid: 150012
+  name_id: 20054
+  description_id: 14
+  icon_set_id: 1471
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_RoboninoEyepiece.adr
+  texture_alias: Robonino
+  item_type: 1
+  category: 60
+# Robonino's Boots
+- guid: 150013
+  name_id: 20056
+  description_id: 14
+  icon_set_id: 1473
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_RoboninoBoots.adr
+  texture_alias: Robonino
+  item_type: 1
+  category: 63
+# Chata Hyoki's Suit
+- guid: 150014
+  name_id: 20052
+  description_id: 14
+  icon_set_id: 1469
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ChataHyokiSuit.adr
+  texture_alias: ChataHyoki
+  item_type: 1
+  category: 61
+# Chata Hyoki's Helmet
+- guid: 150015
+  name_id: 20050
+  description_id: 14
+  icon_set_id: 1467
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ChataHyokiHeadgear.adr
+  texture_alias: ChataHyoki
+  item_type: 1
+  category: 60
+# Chata Hyoki's Gloves
+- guid: 150016
+  name_id: 20051
+  description_id: 14
+  icon_set_id: 1468
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ChataHyokiGuantlets.adr
+  texture_alias: ChataHyoki
+  item_type: 1
+  category: 62
+# Chata Hyoki's Boots
+- guid: 150017
+  name_id: 20053
+  description_id: 14
+  icon_set_id: 1470
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ChataHyokiBoots.adr
+  texture_alias: ChataHyoki
+  item_type: 1
+  category: 63
+# Cad Bane's Jacket
+- guid: 150018
+  name_id: 8510
+  description_id: 14
+  icon_set_id: 84
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CadBaneJacket.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 61
+# Cad Bane's Hat
+- guid: 150019
+  name_id: 8513
+  description_id: 14
+  icon_set_id: 189
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_CadBaneHat.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 60
+# Cad Bane's Gloves
+- guid: 150020
+  name_id: 8512
+  description_id: 14
+  icon_set_id: 157
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_CadBaneGauntlets.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 62
+# Cad Bane's Boots
+- guid: 150021
+  name_id: 8511
+  description_id: 14
+  icon_set_id: 124
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CadBaneBoots.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 63
+# Cad Bane's Fugitive Vest
+- guid: 150022
+  name_id: 4586
+  description_id: 14
+  icon_set_id: 2652
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CadBaneSeason4Vest.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 61
+# Cad Bane's Fugitive Hat
+- guid: 150023
+  name_id: 4584
+  description_id: 14
+  icon_set_id: 2650
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_CadBaneSeason4Hat.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 60
+# Cad Bane's Fugitive Gloves
+- guid: 150024
+  name_id: 4585
+  description_id: 14
+  icon_set_id: 2651
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_CadBaneSeason4Gloves.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 62
+# Cad Bane's Fugitive Boots
+- guid: 150025
+  name_id: 4587
+  description_id: 14
+  icon_set_id: 2653
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CadBaneSeason4Boots.adr
+  texture_alias: CadBane
+  item_type: 1
+  category: 63
+# Quarzite Boba Fett's Suit
+- guid: 150026
+  name_id: 4703
+  description_id: 14
+  icon_set_id: 2751
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BobaFettYoungSuit.adr
+  texture_alias: BobaFettYoung
+  item_type: 1
+  category: 61
+# Quarzite Boba Fett's Helmet
+- guid: 150027
+  name_id: 4701
+  description_id: 14
+  icon_set_id: 2749
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BobaFettYoungHelmet.adr
+  texture_alias: BobaFettYoung
+  item_type: 1
+  category: 60
+# Quarzite Boba Fett's Gauntlets
+- guid: 150028
+  name_id: 4702
+  description_id: 14
+  icon_set_id: 2750
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BobaFettYoungGloves.adr
+  texture_alias: BobaFettYoung
+  item_type: 1
+  category: 62
+# Quarzite Boba Fett's Boots
+- guid: 150029
+  name_id: 4704
+  description_id: 14
+  icon_set_id: 2752
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BobaFettYoungBoots.adr
+  texture_alias: BobaFettYoung
+  item_type: 1
+  category: 63
+# Subtram Hunter Suit
+- guid: 150030
+  name_id: 60670
+  description_id: 14
+  icon_set_id: 3781
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BobaFettYoungSuit.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 61
+# Subtram Hunter Helmet
+- guid: 150031
+  name_id: 60668
+  description_id: 14
+  icon_set_id: 3779
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BobaFettYoungHelmet.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 60
+# Subtram Hunter Gauntlets
+- guid: 150032
+  name_id: 60669
+  description_id: 14
+  icon_set_id: 3780
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BobaFettYoungGloves.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 62
+# Subtram Hunter Boots
+- guid: 150033
+  name_id: 60671
+  description_id: 14
+  icon_set_id: 3782
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BobaFettYoungBoots.adr
+  texture_alias: BobaGreen
+  item_type: 1
+  category: 63
+# Dengar's Armor
+- guid: 150034
+  name_id: 4683
+  description_id: 14
+  icon_set_id: 2737
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DengarSuit.adr
+  texture_alias: Dengar
+  item_type: 1
+  category: 61
+  members: true
+# Dengar's Headwrap
+- guid: 150035
+  name_id: 4681
+  description_id: 14
+  icon_set_id: 2735
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_DengarHood.adr
+  texture_alias: Dengar
+  item_type: 1
+  category: 60
+  members: true
+# Dengar's Gloves
+- guid: 150036
+  name_id: 4682
+  description_id: 14
+  icon_set_id: 2736
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DengarGloves.adr
+  texture_alias: Dengar
+  item_type: 1
+  category: 62
+  members: true
+# Dengar's Boots
+- guid: 150037
+  name_id: 4684
+  description_id: 14
+  icon_set_id: 2738
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DengarBoots.adr
+  texture_alias: Dengar
+  item_type: 1
+  category: 63
+  members: true
+# Asajj Ventress' Bounty Hunter Suit
+- guid: 150038
+  name_id: 4671
+  description_id: 14
+  icon_set_id: 2731
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AsajjVentressSeason4Suit.adr
+  texture_alias: AsajjSeason4
+  item_type: 1
+  category: 61
+# Asajj Ventress' Bounty Hunter Helmet
+- guid: 150039
+  name_id: 54413
+  description_id: 14
+  icon_set_id: 3684
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_VentressMask.adr
+  texture_alias: VentressMask
+  item_type: 1
+  category: 60
+# Asajj Ventress' Bounty Hunter Gloves
+- guid: 150040
+  name_id: 4670
+  description_id: 14
+  icon_set_id: 2730
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AsajjVentressSeason4Gloves.adr
+  texture_alias: AsajjSeason4
+  item_type: 1
+  category: 62
+# Asajj Ventress' Bounty Hunter Boots
+- guid: 150041
+  name_id: 4672
+  description_id: 14
+  icon_set_id: 2732
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AsajjVentressSeason4Boots.adr
+  texture_alias: AsajjSeason4
+  item_type: 1
+  category: 63
+# Derrown's Bounty Suit
+- guid: 150042
+  name_id: 4625
+  description_id: 14
+  icon_set_id: 2690
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DerrownSuit.adr
+  texture_alias: Derrown
+  item_type: 1
+  category: 61
+  members: true
+# Derrown's Bounty Helm
+- guid: 150043
+  name_id: 4623
+  description_id: 14
+  icon_set_id: 2688
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_DerrownHelm.adr
+  texture_alias: Derrown
+  item_type: 1
+  category: 60
+  members: true
+# Derrown's Bounty Gloves
+- guid: 150044
+  name_id: 4624
+  description_id: 14
+  icon_set_id: 2689
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_DerrownGloves.adr
+  texture_alias: Derrown
+  item_type: 1
+  category: 62
+  members: true
+# Derrown's Bounty Boots
+- guid: 150045
+  name_id: 4626
+  description_id: 14
+  icon_set_id: 2691
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_EmboBoots.adr
+  texture_alias: Derrown
+  item_type: 1
+  category: 63
+  members: true
+# Twazzi's Bounty Suit
+- guid: 150046
+  name_id: 4614
+  description_id: 14
+  icon_set_id: 2682
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_TwazziSuit.adr
+  texture_alias: Twazzi
+  item_type: 1
+  category: 61
+  members: true
+# Twazzi's Bounty Gloves
+- guid: 150047
+  name_id: 4613
+  description_id: 14
+  icon_set_id: 2681
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_TwazziGloves.adr
+  texture_alias: Twazzi
+  item_type: 1
+  category: 62
+  members: true
+# Twazzi's Bounty Boots
+- guid: 150048
+  name_id: 4615
+  description_id: 14
+  icon_set_id: 2683
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_TwazziBoots.adr
+  texture_alias: Twazzi
+  item_type: 1
+  category: 63
+  members: true
+# Rako Hardeen's Fugitive Vest
+- guid: 150049
+  name_id: 4593
+  description_id: 14
+  icon_set_id: 2657
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_RakoHardeenUniform.adr
+  texture_alias: RakoHardeen
+  item_type: 1
+  category: 61
+# Rako Hardeen's Fugitive Helmet
+- guid: 150050
+  name_id: 4591
+  description_id: 14
+  icon_set_id: 2655
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_RakoHardeenHelm.adr
+  texture_alias: RakoHardeen
+  item_type: 1
+  category: 60
+# Rako Hardeen's Fugitive Gloves
+- guid: 150051
+  name_id: 4592
+  description_id: 14
+  icon_set_id: 2656
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_GeneralSnowGauntlets.adr
+  texture_alias: RakoHardeen
+  item_type: 1
+  category: 62
+# Rako Hardeen's Fugitive Boots
+- guid: 150052
+  name_id: 4594
+  description_id: 14
+  icon_set_id: 2658
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_RakoHardeenBoots.adr
+  texture_alias: RakoHardeen
+  item_type: 1
+  category: 63
+# Corrupt Warlord Duster
+- guid: 150053
+  name_id: 52806
+  description_id: 14
+  icon_set_id: 3139
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MercenaryAffiliationSuit.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 61
+# Corrupt Warlord Visor
+- guid: 150054
+  name_id: 52809
+  description_id: 14
+  icon_set_id: 3142
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_MercenaryAffiliationGoggles.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 60
+# Corrupt Warlord Gloves
+- guid: 150055
+  name_id: 52807
+  description_id: 14
+  icon_set_id: 3141
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MercenaryAffiliationGloves.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 62
+# Corrupt Warlord Boots
+- guid: 150056
+  name_id: 52808
+  description_id: 14
+  icon_set_id: 3140
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MercenaryAffiliationBoots.adr
+  texture_alias: Mercenary
+  item_type: 1
+  category: 63
+# Latts Razzi Suit
+- guid: 150057
+  name_id: 4821
+  description_id: 14
+  icon_set_id: 2855
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LattsRazziSuit.adr
+  texture_alias: LattsRazzi
+  item_type: 1
+  category: 61
+  members: true
+# Latts Razzi Gloves
+- guid: 150058
+  name_id: 4820
+  description_id: 14
+  icon_set_id: 2854
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_LattsRazziGloves.adr
+  texture_alias: LattsRazzi
+  item_type: 1
+  category: 62
+  members: true
+# Latts Razzi Boots
+- guid: 150059
+  name_id: 4822
+  description_id: 14
+  icon_set_id: 2856
+  slot: !Equipment Feet
+  model_name: Wear_<race>_<gender>_Feet_LattsRazziBoots.adr
+  texture_alias: LattsRazzi
+  item_type: 1
+  category: 63
+  members: true
+# Bossk's Jumpsuit
+- guid: 150060
+  name_id: 4739
+  description_id: 14
+  icon_set_id: 2779
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BosskSuit.adr
+  texture_alias: Bossk
+  item_type: 1
+  category: 61
+# Boba Fett's Armor
+- guid: 150061
+  name_id: 154
+  description_id: 14
+  icon_set_id: 83
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BobaSuit.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 61
+# Boba Fett's Helmet
+- guid: 150062
+  name_id: 150
+  description_id: 14
+  icon_set_id: 188
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BobaHelmet.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 60
+# Boba Fett's Gloves
+- guid: 150063
+  name_id: 152
+  description_id: 14
+  icon_set_id: 156
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BobaGloves.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 62
+# Boba Fett's Boots
+- guid: 150064
+  name_id: 156
+  description_id: 14
+  icon_set_id: 120
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BobaSneakers.adr
+  texture_alias: BobaFett
+  item_type: 1
+  category: 63

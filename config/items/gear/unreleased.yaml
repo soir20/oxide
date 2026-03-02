@@ -1,0 +1,1126 @@
+---
+# Luke Skywalker's Robes
+- guid: 230000
+  name_id: 924
+  description_id: 14
+  icon_set_id: 480
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SimpleGiPouches.adr
+  texture_alias: LukeTatooine
+  item_type: 1
+  category: 61
+# Luke Skywalker's Boots
+- guid: 230001
+  name_id: 365
+  description_id: 14
+  icon_set_id: 122
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: LukeTatooine
+  item_type: 1
+  category: 63
+# Kyle Katarn's Uniform
+- guid: 230002
+  name_id: 204
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KyleKatarnSuit.adr
+  texture_alias: KyleKatarnDark
+  item_type: 1
+  category: 61
+# Kyle Katarn's Gloves
+- guid: 230003
+  name_id: 202
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_KyleKatarnGloves.adr
+  texture_alias: KyleKatarnDark
+  item_type: 1
+  category: 62
+# Kyle Katarn's Boots
+- guid: 230004
+  name_id: 206
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
+  texture_alias: KyleKatarnDark
+  item_type: 1
+  category: 63
+# Lando Calrissian's Suit
+- guid: 230005
+  name_id: 1462
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LandoSuit.adr
+  texture_alias: LandoArmor
+  item_type: 1
+  category: 61
+# Lando Calrissian's Shoes
+- guid: 230006
+  name_id: 1472
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LandoShoes.adr
+  texture_alias: LandoArmor
+  item_type: 1
+  category: 63
+# Tamtel Skreej's Armor
+- guid: 230007
+  name_id: 930
+  description_id: 14
+  icon_set_id: 495
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SkiffGuardArmor.adr
+  texture_alias: TamtelSkreej
+  item_type: 1
+  category: 61
+# Tamtel Skreej's Helm
+- guid: 230008
+  name_id: 928
+  description_id: 14
+  icon_set_id: 497
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_TuskHelm.adr
+  texture_alias: TamtelSkreej
+  item_type: 1
+  category: 60
+# Tamtel Skreej's Boots
+- guid: 230009
+  name_id: 932
+  description_id: 14
+  icon_set_id: 496
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LooseBoots.adr
+  texture_alias: TamtelSkreej
+  item_type: 1
+  category: 63
+# Mara Jade's Battle Suit
+- guid: 230010
+  name_id: 216
+  description_id: 14
+  icon_set_id: 104
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MaraJadeSuit.adr
+  texture_alias: MaraJade
+  item_type: 1
+  category: 61
+# Mara Jade's Gloves
+- guid: 230011
+  name_id: 214
+  description_id: 14
+  icon_set_id: 174
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MaraJadeGloves.adr
+  texture_alias: MaraJade
+  item_type: 1
+  category: 62
+# Mara Jade's Boots
+- guid: 230012
+  name_id: 218
+  description_id: 14
+  icon_set_id: 147
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MaraJadeBoots.adr
+  texture_alias: MaraJade
+  item_type: 1
+  category: 63
+# Imperial Royal Guard Armor
+- guid: 230013
+  name_id: 1650
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ImperialRoyalGuardSuit.adr
+  texture_alias: RoyalGuard
+  item_type: 1
+  category: 61
+# Imperial Royal Guard Helmet
+- guid: 230014
+  name_id: 1646
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ImperialRoyalGuardHelmWrap.adr
+  texture_alias: RoyalGuard
+  item_type: 1
+  category: 60
+# Imperial Royal Guard Gloves
+- guid: 230015
+  name_id: 1648
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
+  texture_alias: RoyalGuard
+  item_type: 1
+  category: 62
+# Imperial Royal Guard Boots
+- guid: 230016
+  name_id: 1652
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
+  texture_alias: RoyalGuard
+  item_type: 1
+  category: 63
+# Dash Rendar's Suit
+- guid: 230017
+  name_id: 1565
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DashRendarSuit.adr
+  texture_alias: DashRendar
+  item_type: 1
+  category: 61
+# Dash Rendar's Gloves
+- guid: 230018
+  name_id: 1563
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DashRendarGloves.adr
+  texture_alias: DashRendar
+  item_type: 1
+  category: 62
+# Dash Rendar's Boots
+- guid: 230019
+  name_id: 1567
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: DashRendar
+  item_type: 1
+  category: 63
+# Han Solo's Outfit
+- guid: 230020
+  name_id: 302
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_HanSoloSuit.adr
+  texture_alias: HanSoloJacket
+  item_type: 1
+  category: 61
+# Han Solo's Boots
+- guid: 230021
+  name_id: 304
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HanSoloBoots.adr
+  texture_alias: HanSoloJacket
+  item_type: 1
+  category: 63
+# Rebel Pilot Jumpsuit
+- guid: 230022
+  name_id: 240
+  description_id: 14
+  icon_set_id: 108
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
+  texture_alias: RebelPilot
+  item_type: 1
+  category: 61
+# Rebel Pilot Helmet
+- guid: 230023
+  name_id: 236
+  description_id: 14
+  icon_set_id: 205
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
+  texture_alias: RebelPilot
+  item_type: 1
+  category: 60
+# Rebel Pilot Gloves
+- guid: 230024
+  name_id: 238
+  description_id: 14
+  icon_set_id: 177
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_RebelPilotGloves.adr
+  texture_alias: Black
+  item_type: 1
+  category: 62
+# Rebel Pilot Boots
+- guid: 230025
+  name_id: 242
+  description_id: 14
+  icon_set_id: 150
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_RebelPilotBoots.adr
+  texture_alias: Black
+  item_type: 1
+  category: 63
+# Rebel Pilot Jumpsuit
+- guid: 230026
+  name_id: 240
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
+  texture_alias: Green
+  item_type: 1
+  category: 61
+# Rebel Pilot Helmet
+- guid: 230027
+  name_id: 236
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
+  texture_alias: Green
+  item_type: 1
+  category: 60
+# Rebel Pilot Jumpsuit
+- guid: 230028
+  name_id: 240
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_RebelPilotSuit.adr
+  texture_alias: Red
+  item_type: 1
+  category: 61
+# Rebel Pilot Helmet
+- guid: 230029
+  name_id: 236
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_RebelPilotHelm.adr
+  texture_alias: Red
+  item_type: 1
+  category: 60
+# Unknown boots
+- guid: 230030
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_FrontAngledBoots.adr
+  texture_alias: BrownIndigo
+  item_type: 1
+  category: 63
+# C-3PO Backpack
+- guid: 230031
+  name_id: 3074
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneDroidBackpackSet.adr
+  texture_alias: C3POPack
+  item_type: 1
+  category: 61
+# wearable_body_mandalorian_mustafar
+- guid: 230032
+  name_id: 2701
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuit.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 61
+# wearable_head_mandalorian_mustafar
+- guid: 230033
+  name_id: 2699
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 60
+# wearable_hands_mandalorian_mustafar
+- guid: 230034
+  name_id: 2700
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGloves.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 62
+# wearable_feet_mandalorian_mustafar
+- guid: 230035
+  name_id: 2702
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: Mustafar
+  item_type: 1
+  category: 63
+# Clone Trooper Diver Suit
+- guid: 230036
+  name_id: 828
+  description_id: 14
+  icon_set_id: 450
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneDiverSuit.adr
+  texture_alias: CloneDiver
+  item_type: 1
+  category: 61
+# Clone Trooper Diver Helmet
+- guid: 230037
+  name_id: 824
+  description_id: 14
+  icon_set_id: 453
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneDiverHelmet.adr
+  texture_alias: CloneDiver
+  item_type: 1
+  category: 60
+# Clone Trooper Diver Gloves
+- guid: 230038
+  name_id: 826
+  description_id: 14
+  icon_set_id: 452
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneDiverGloves.adr
+  texture_alias: CloneDiver
+  item_type: 1
+  category: 62
+# Clone Trooper Diver Fins
+- guid: 230039
+  name_id: 830
+  description_id: 14
+  icon_set_id: 451
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneDiverFins.adr
+  texture_alias: CloneDiver
+  item_type: 1
+  category: 63
+# Commander Stone's Armor
+- guid: 230040
+  name_id: 1178
+  description_id: 14
+  icon_set_id: 372
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
+  texture_alias: CommanderStone
+  item_type: 1
+  category: 61
+# Commander Stone's Helmet
+- guid: 230041
+  name_id: 1184
+  description_id: 14
+  icon_set_id: 390
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
+  texture_alias: CommanderStone
+  item_type: 1
+  category: 60
+# Commander Stone's Gloves
+- guid: 230042
+  name_id: 1182
+  description_id: 14
+  icon_set_id: 384
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: CommanderStone
+  item_type: 1
+  category: 62
+# Commander Stone's Boots
+- guid: 230043
+  name_id: 1180
+  description_id: 14
+  icon_set_id: 378
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
+  texture_alias: CommanderStone
+  item_type: 1
+  category: 63
+# wearable_body_clone_blue_squares
+- guid: 230044
+  name_id: 2705
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
+  texture_alias: BlueSquares
+  item_type: 1
+  category: 61
+# wearable_head_clone_blue_squares
+- guid: 230045
+  name_id: 2703
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
+  texture_alias: BlueSquares
+  item_type: 1
+  category: 60
+# wearable_hands_clone_blue_squares
+- guid: 230046
+  name_id: 2704
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: BlueSquares
+  item_type: 1
+  category: 62
+# wearable_feet_clone_blue_squares
+- guid: 230047
+  name_id: 2706
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
+  texture_alias: BlueSquares
+  item_type: 1
+  category: 63
+# wearable_body_clone_red_stripe
+- guid: 230048
+  name_id: 2709
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
+  texture_alias: RedStripe
+  item_type: 1
+  category: 61
+# wearable_head_clone_red_stripe
+- guid: 230049
+  name_id: 2707
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
+  texture_alias: RedStripe
+  item_type: 1
+  category: 60
+# wearable_hands_clone_red_stripe
+- guid: 230050
+  name_id: 2708
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: RedStripe
+  item_type: 1
+  category: 62
+# wearable_feet_clone_red_stripe
+- guid: 230051
+  name_id: 2710
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
+  texture_alias: RedStripe
+  item_type: 1
+  category: 63
+# Captain Keeli's Armor
+- guid: 230052
+  name_id: 1458
+  description_id: 14
+  icon_set_id: 1076
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneShoulderGuardSkirt.adr
+  texture_alias: CaptainKeeli
+  item_type: 1
+  category: 61
+# Captain Keeli's Helmet
+- guid: 230053
+  name_id: 1486
+  description_id: 14
+  icon_set_id: 1079
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelmEyepiece.adr
+  texture_alias: CaptainKeeli
+  item_type: 1
+  category: 60
+# Captain Keeli's Gloves
+- guid: 230054
+  name_id: 1480
+  description_id: 14
+  icon_set_id: 1078
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: CaptainKeeli
+  item_type: 1
+  category: 62
+# Captain Keeli's Boots
+- guid: 230055
+  name_id: 1468
+  description_id: 14
+  icon_set_id: 1077
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBootsAsymmetrical.adr
+  texture_alias: CaptainKeeli
+  item_type: 1
+  category: 63
+# wearable_body_commander_wolffe
+- guid: 230056
+  name_id: 2681
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneCommanderWolffe.adr
+  texture_alias: CommanderWolffe
+  item_type: 1
+  category: 61
+# wearable_head_commander_wolffe
+- guid: 230057
+  name_id: 2679
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelmEyepiece.adr
+  texture_alias: CommanderWolffe
+  item_type: 1
+  category: 60
+# wearable_hands_commander_wolffe
+- guid: 230058
+  name_id: 2680
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: CommanderWolffe
+  item_type: 1
+  category: 62
+# wearable_feet_commander_wolffe
+- guid: 230059
+  name_id: 2682
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
+  texture_alias: CommanderWolffe
+  item_type: 1
+  category: 63
+# Phase II Armor
+- guid: 230060
+  name_id: 43699
+  description_id: 14
+  icon_set_id: 89
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneSeason4Armor.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 61
+# Phase II Helmet
+- guid: 230061
+  name_id: 1216
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneSeason4Helm.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 60
+# Phase II Gloves
+- guid: 230062
+  name_id: 43698
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneSeason4Gloves.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 62
+# Phase II Boots
+- guid: 230063
+  name_id: 1212
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 63
+# Azure Death Watch Commander Suit
+- guid: 230064
+  name_id: 53721
+  description_id: 14
+  icon_set_id: 3238
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
+  texture_alias: CommanderAqua
+  item_type: 1
+  category: 61
+# Azure Death Watch Commander Helmet
+- guid: 230065
+  name_id: 53719
+  description_id: 14
+  icon_set_id: 3236
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
+  texture_alias: CommanderAqua
+  item_type: 1
+  category: 60
+# Azure Death Watch Commander Gloves
+- guid: 230066
+  name_id: 53720
+  description_id: 14
+  icon_set_id: 3237
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: CommanderAqua
+  item_type: 1
+  category: 62
+# Azure Death Watch Commander Boots
+- guid: 230067
+  name_id: 53722
+  description_id: 14
+  icon_set_id: 3239
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
+  texture_alias: CommanderAqua
+  item_type: 1
+  category: 63
+# Byzantium Death Watch Commander Suit
+- guid: 230068
+  name_id: 53713
+  description_id: 14
+  icon_set_id: 3230
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
+  texture_alias: CommanderPlum
+  item_type: 1
+  category: 61
+# Byzantium Death Watch Commander Helmet
+- guid: 230069
+  name_id: 53711
+  description_id: 14
+  icon_set_id: 3228
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
+  texture_alias: CommanderPlum
+  item_type: 1
+  category: 60
+# Byzantium Death Watch Commander Gloves
+- guid: 230070
+  name_id: 53712
+  description_id: 14
+  icon_set_id: 3229
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: CommanderPlum
+  item_type: 1
+  category: 62
+# Byzantium Death Watch Commander Boots
+- guid: 230071
+  name_id: 53714
+  description_id: 14
+  icon_set_id: 3231
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
+  texture_alias: CommanderPlum
+  item_type: 1
+  category: 63
+# Cobalt Death Watch Commander Suit
+- guid: 230072
+  name_id: 53717
+  description_id: 14
+  icon_set_id: 3234
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
+  texture_alias: CommanderBlue
+  item_type: 1
+  category: 61
+# Cobalt Death Watch Commander Helmet
+- guid: 230073
+  name_id: 53715
+  description_id: 14
+  icon_set_id: 3232
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
+  texture_alias: CommanderBlue
+  item_type: 1
+  category: 60
+# Cobalt Death Watch Commander Gloves
+- guid: 230074
+  name_id: 53716
+  description_id: 14
+  icon_set_id: 3233
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: CommanderBlue
+  item_type: 1
+  category: 62
+# Cobalt Death Watch Commander Boots
+- guid: 230075
+  name_id: 53718
+  description_id: 14
+  icon_set_id: 3235
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
+  texture_alias: CommanderBlue
+  item_type: 1
+  category: 63
+# Republic General's Snow Hat - Do Not Use
+- guid: 230076
+  name_id: 1490
+  description_id: 14
+  icon_set_id: 474
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_GeneralSnowHoodieDown.adr
+  texture_alias: GeneralSnowHoodieDown
+  item_type: 1
+  category: 60
+# Lurmen Suit
+- guid: 230077
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LurmenOutfit.adr
+  texture_alias: WagToo
+  item_type: 1
+  category: 61
+# Lurmen Beanie
+- guid: 230078
+  description_id: 14
+  icon_set_id: 677
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_LurmenBeanie.adr
+  texture_alias: WagToo
+  item_type: 1
+  category: 60
+# Lurmen Gloves
+- guid: 230079
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_LurmenGloves.adr
+  texture_alias: WagToo
+  item_type: 1
+  category: 62
+# Lurmen Boots
+- guid: 230080
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LurmenBoots.adr
+  texture_alias: WagToo
+  item_type: 1
+  category: 63
+# Republic Fleet Officer Uniform
+- guid: 230081
+  name_id: 8540
+  description_id: 14
+  icon_set_id: 106
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_OfficerUniform.adr
+  texture_alias: OfficerGrey
+  item_type: 1
+  category: 61
+  members: true
+# Republic Fleet Officer Hat
+- guid: 230082
+  name_id: 8542
+  description_id: 14
+  icon_set_id: 203
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_OfficerCap.adr
+  texture_alias: OfficerGrey
+  item_type: 1
+  category: 60
+  members: true
+# Senatorial Naboo Bodysuit
+- guid: 230083
+  name_id: 248
+  description_id: 14
+  icon_set_id: 110
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SenatorialNabooBodySuit.adr
+  texture_alias: PadmeBodySuit
+  item_type: 1
+  category: 61
+# Senatorial Naboo Headwrap
+- guid: 230084
+  name_id: 246
+  description_id: 14
+  icon_set_id: 207
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_SenatorialNabooHat.adr
+  texture_alias: PadmePurple
+  item_type: 1
+  category: 60
+# Senatorial Naboo Boots
+- guid: 230085
+  name_id: 250
+  description_id: 14
+  icon_set_id: 151
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SenatorialNabooBoots.adr
+  texture_alias: PadmeBodySuit
+  item_type: 1
+  category: 63
+# wearable_body_anakin_tatooine
+- guid: 230086
+  name_id: 2673
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_AnakinV2Tunic.adr
+  texture_alias: Tatooine
+  item_type: 1
+  category: 61
+# wearable_hands_anakin_tatooine
+- guid: 230087
+  name_id: 2672
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_AnakinV2Gloves.adr
+  texture_alias: Tatooine
+  item_type: 1
+  category: 62
+# wearable_feet_anakin_tatooine
+- guid: 230088
+  name_id: 2674
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AnakinBoots.adr
+  texture_alias: Tatooine
+  item_type: 1
+  category: 63
+# Boba Phat's Suit
+- guid: 230089
+  name_id: 1454
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BobaPhatSuit.adr
+  texture_alias: BobaPhat
+  item_type: 1
+  category: 61
+# Boba Phat's Gloves
+- guid: 230090
+  name_id: 1478
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BobaPhatGloves.adr
+  texture_alias: BobaPhat
+  item_type: 1
+  category: 62
+# Ming Po Robe
+- guid: 230091
+  name_id: 52835
+  description_id: 14
+  icon_set_id: 673
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MingPoOutfit.adr
+  texture_alias: Plain
+  item_type: 1
+  category: 61
+# Ming Po Gloves
+- guid: 230092
+  name_id: 52834
+  description_id: 14
+  icon_set_id: 676
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MingPoGloves.adr
+  texture_alias: Plain
+  item_type: 1
+  category: 62
+# Ming Po Boots
+- guid: 230093
+  name_id: 52836
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MingPoShoes.adr
+  texture_alias: Plain
+  item_type: 1
+  category: 63
+# DC-17m Interchangable Weapons System
+- guid: 230094
+  description_id: 14
+  icon_set_id: 681
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_DC17M.adr
+  texture_alias: CloneCommando
+  item_type: 1
+  category: 64
+# Blaster Test E11
+- guid: 230095
+  name_id: 2561
+  description_id: 14
+  icon_set_id: 214
+  item_class: 10000
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_BlasterRifle_E11.adr
+  texture_alias: Stormtrooper
+  item_type: 1
+  category: 64
+- guid: 230096
+  description_id: 14
+  icon_set_id: 681
+  item_class: 10008
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyHipGun_HeavyHipGun04.adr
+  texture_alias: Basic
+  item_type: 1
+  category: 64
+- guid: 230097
+  description_id: 14
+  icon_set_id: 681
+  item_class: 10002
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_HeavyShoulderGun_QuadCannon.adr
+  texture_alias: Metallic
+  item_type: 1
+  category: 64
+# 'Umbara Academy: Ghost Attack 1'
+- guid: 230098
+  name_id: 51036
+  description_id: 14
+  icon_set_id: 425
+  item_class: 7
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
+  texture_alias: Ahsoka
+  item_type: 25
+  category: 64
+# 'Umbara Academy: Ghost Attack 2'
+- guid: 230099
+  name_id: 51037
+  description_id: 14
+  icon_set_id: 425
+  item_class: 10
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
+  texture_alias: Anakin
+  item_type: 25
+  category: 64
+# 'Umbara Academy: Ghost Attack 3'
+- guid: 230100
+  name_id: 51038
+  description_id: 14
+  icon_set_id: 425
+  item_class: 10
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
+  texture_alias: MaceWindu
+  item_type: 25
+  category: 64
+# 'Umbara Academy: Ghost Attack 1'
+- guid: 230101
+  name_id: 51036
+  description_id: 14
+  icon_set_id: 425
+  item_class: 10
+  slot: !Equipment None
+  model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
+  texture_alias: Ahsoka
+  item_type: 25
+# 'Umbara Academy: Ghost Attack 2'
+- guid: 230102
+  name_id: 51037
+  description_id: 14
+  icon_set_id: 425
+  item_class: 10
+  slot: !Equipment None
+  model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
+  texture_alias: Anakin
+  item_type: 25
+# 'Umbara Academy: Ghost Attack 3'
+- guid: 230103
+  name_id: 51038
+  description_id: 14
+  icon_set_id: 425
+  item_class: 10
+  slot: !Equipment None
+  model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
+  texture_alias: MaceWindu
+  item_type: 25
+# Mandalorian Shatterer Battle Rifle
+- guid: 230104
+  name_id: 8780
+  description_id: 14
+  icon_set_id: 241
+  item_class: 10001
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_LongRifle_MandalorianSniper.adr
+  texture_alias: Deathwatch
+  item_type: 1
+  category: 64
+# Rebel Pilot Blaster
+- guid: 230105
+  name_id: 2412
+  description_id: 14
+  icon_set_id: 245
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_DL18.adr
+  texture_alias: RebelPilot
+  item_type: 1
+  category: 64
+# Covert Diplomat Blaster Pistol
+- guid: 230106
+  name_id: 8792
+  description_id: 14
+  icon_set_id: 249
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_Q2.adr
+  texture_alias: QueenJamilla
+  item_type: 1
+  category: 64
+# Imperial Royal Guard Force Pike
+- guid: 230107
+  name_id: 8799
+  description_id: 14
+  icon_set_id: 251
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_ForcePike.adr
+  texture_alias: RoyalGuard
+  item_type: 1
+  category: 64
+# Tamtel Skreej's Pike
+- guid: 230108
+  name_id: 8798
+  description_id: 14
+  icon_set_id: 252
+  item_class: 10004
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_PoleArm_SkreejPike.adr
+  texture_alias: TamtelSkreej
+  item_type: 1
+  category: 64
+# His cane
+- guid: 230109
+  name_id: 10423
+  description_id: 14
+  icon_set_id: 681
+  item_class: 10007
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_YodaCane.adr
+  item_type: 1
+  category: 64
+# Renegade Heavy Blaster Pistol (Right)
+- guid: 230110
+  name_id: 54522
+  description_id: 14
+  icon_set_id: 3792
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_RenegadeHeavyBlaster.adr
+  texture_alias: RenegadeHeavyBlaster
+  item_type: 1
+  category: 64
+# Renegade Heavy Blaster Pistol (Left)
+- guid: 230111
+  description_id: 14
+  icon_set_id: 3792
+  item_class: 9
+  slot: !Equipment SecondaryWeapon
+  model_name: Wield_Pistol_RenegadeHeavyBlaster_LEFT.adr
+  texture_alias: RenegadeHeavyBlaster
+  item_type: 1
+  category: 64

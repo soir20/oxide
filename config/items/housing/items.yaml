@@ -1,0 +1,37 @@
+---
+- guid: 6
+  description_id: 14
+  icon_set_id: 1756
+  slot: !Equipment None
+  model_name: Furniture_BuildingSetGeneric_Door01.adr
+  item_type: 29
+  category: 1000
+  max_stack_size: -1
+- guid: 7
+  description_id: 14
+  slot: !Equipment None
+  model_name: Furniture_BuildingSetGeneric_Wall01.adr
+  item_type: 29
+  category: 1000
+  max_stack_size: 1000
+- guid: 8
+  description_id: 14
+  slot: !Equipment None
+  model_name: Furniture_BuildingSetGeneric_Window01.adr
+  item_type: 29
+  category: 1000
+  max_stack_size: -1
+- guid: 9
+  description_id: 14
+  slot: !Equipment None
+  model_name: Furniture_BuildingSetGeneric_Floor01.adr
+  item_type: 29
+  category: 1000
+  max_stack_size: 1000
+- guid: 10
+  description_id: 14
+  slot: !Equipment None
+  model_name: Furniture_BuildingSetGeneric_Ceiling01.adr
+  item_type: 29
+  category: 1000
+  max_stack_size: 1000
