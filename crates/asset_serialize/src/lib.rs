@@ -67,6 +67,13 @@ pub trait DeserializeAsset: Sized {
     ) -> impl std::future::Future<Output = Result<Self, Error>> + Send;
 }
 
+pub trait SerializeAsset: Sized {
+    fn serialize<W: AsyncWriter + Send>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<(), Error>> + Send;
+}
+
 pub trait AsyncReader: AsyncSeekExt + AsyncBufReadExt + Unpin + Send {}
 impl<R: AsyncSeekExt + AsyncBufReadExt + Unpin + Send> AsyncReader for R {}
 pub trait AsyncWriter: AsyncSeekExt + AsyncWriteExt + Unpin {}
@@ -112,6 +119,11 @@ async fn deserialize_exact<R: AsyncReader>(
     }
 }
 
+async fn serialize_exact<W: AsyncWriter>(file: &mut W, data: &[u8]) -> Result<usize, Error> {
+    serialize(file, W::write_all, data).await?;
+    Ok(data.len())
+}
+
 async fn deserialize_string<R: AsyncReader>(
     file: &mut R,
     len: usize,
@@ -130,24 +142,27 @@ async fn deserialize_string<R: AsyncReader>(
         })
 }
 
-async fn serialize<
-    'a,
-    W: AsyncSeekExt + Unpin + 'a,
-    T,
-    Fut: Future<Output = Result<(), tokio::io::Error>>,
->(
-    file: &'a mut W,
-    mut fun: impl FnMut(&'a mut W, T) -> Fut,
-    value: T,
-) -> Result<(), Error> {
-    let offset = tell(file).await;
-    match fun(file, value).await {
-        Ok(value) => Ok(value),
-        Err(err) => {
-            let kind = err.into();
-            Err(Error { kind, offset })
+async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usize, Error> {
+    let mut bytes_written = serialize_exact(file, str.as_bytes()).await?;
+
+    if !str.ends_with('\0') {
+        serialize(file, W::write_u8, 0).await?;
+        match bytes_written.checked_add(1) {
+            Some(new_bytes_written) => bytes_written = new_bytes_written,
+            None => {
+                let expected_bytes = (usize::BITS / 8) as usize;
+                return Err(Error {
+                    kind: ErrorKind::IntegerOverflow {
+                        expected_bytes,
+                        actual_bytes: expected_bytes + 1,
+                    },
+                    offset: tell(file).await,
+                });
+            }
         }
     }
+
+    Ok(bytes_written)
 }
 
 async fn deserialize<
@@ -161,6 +176,26 @@ async fn deserialize<
 ) -> Result<T, Error> {
     let offset = tell(file).await;
     match fun(file).await {
+        Ok(value) => Ok(value),
+        Err(err) => {
+            let kind = err.into();
+            Err(Error { kind, offset })
+        }
+    }
+}
+
+async fn serialize<
+    'a,
+    W: AsyncSeekExt + Unpin + 'a,
+    T,
+    Fut: Future<Output = Result<(), tokio::io::Error>>,
+>(
+    file: &'a mut W,
+    mut fun: impl FnMut(&'a mut W, T) -> Fut,
+    value: T,
+) -> Result<(), Error> {
+    let offset = tell(file).await;
+    match fun(file, value).await {
         Ok(value) => Ok(value),
         Err(err) => {
             let kind = err.into();

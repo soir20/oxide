@@ -1,35 +1,13 @@
-use num_enum::TryFromPrimitive;
+use std::io::Cursor;
+
+use num_enum::{IntoPrimitive, TryFromPrimitive};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize, tell,
-    usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error, ErrorKind,
+    deserialize, deserialize_exact, deserialize_string, i32_to_usize, is_eof, serialize,
+    serialize_string, tell, usize_to_i32, AsyncReader, AsyncWriter, DeserializeAsset, Error,
+    ErrorKind, SerializeAsset,
 };
-
-async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<(), Error> {
-    if len < 0 {
-        return Err(Error {
-            kind: ErrorKind::NegativeLen(len),
-            offset: tell(file).await,
-        });
-    }
-
-    if len >= 0x80 {
-        let upper_byte = ((len & 0x7f00) >> 8) as u8 | 0x80;
-        if upper_byte == 0xff {
-            serialize(file, W::write_u8, 0xff).await?;
-            serialize(file, W::write_i32, len).await?;
-        } else {
-            let lower_byte = (len & 0xff) as u8;
-            serialize(file, W::write_u8, upper_byte).await?;
-            serialize(file, W::write_u8, lower_byte).await?;
-        }
-    } else {
-        serialize(file, W::write_u8, (len & 0xff) as u8).await?;
-    }
-
-    Ok(())
-}
 
 async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>(
     file: &mut W,
@@ -60,6 +38,32 @@ async fn deserialize_len_with_bytes_read<W: AsyncSeekExt + AsyncReadExt + Unpin>
     Ok((len, bytes_read))
 }
 
+async fn serialize_len<W: AsyncWriter>(file: &mut W, len: i32) -> Result<i32, Error> {
+    if len < 0 {
+        return Err(Error {
+            kind: ErrorKind::NegativeLen(len),
+            offset: tell(file).await,
+        });
+    }
+
+    if len >= 0b1000_0000 {
+        if len >= 0b0111_1111_0000_0000 {
+            serialize(file, W::write_u8, 0xff).await?;
+            serialize(file, W::write_i32, len).await?;
+            Ok(5)
+        } else {
+            let upper_byte = ((len & 0b0111_1111_0000_0000) >> 8) as u8 | 0b1000_0000;
+            let lower_byte = (len & 0xff) as u8;
+            serialize(file, W::write_u8, upper_byte).await?;
+            serialize(file, W::write_u8, lower_byte).await?;
+            Ok(2)
+        }
+    } else {
+        serialize(file, W::write_u8, (len & 0xff) as u8).await?;
+        Ok(1)
+    }
+}
+
 trait DeserializeEntryType: Sized {
     fn deserialize<R: AsyncReader>(
         file: &mut R,
@@ -79,6 +83,20 @@ impl<T: TryFromPrimitive<Primitive = u8>> DeserializeEntryType for T {
     }
 }
 
+trait SerializeEntryType: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
+
+impl<T: Copy + Into<u8> + Sync> SerializeEntryType for T {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        serialize(file, W::write_u8, (*self).into()).await?;
+        Ok(1)
+    }
+}
+
 trait DeserializeEntryData<T>: Sized {
     fn deserialize<R: AsyncReader>(
         entry_type: &T,
@@ -87,18 +105,53 @@ trait DeserializeEntryData<T>: Sized {
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
-trait DeserializeEntry<T, D>: Sized {
+trait SerializeEntryData: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
+
+trait DeserializeEntry: Sized {
     fn deserialize<R: AsyncReader>(
         file: &mut R,
     ) -> impl std::future::Future<Output = Result<(Self, i32), Error>> + Send;
 }
 
+trait SerializeEntry: Sized {
+    fn serialize<W: AsyncWriter>(
+        &self,
+        file: &mut W,
+    ) -> impl std::future::Future<Output = Result<i32, Error>>;
+}
+
+#[derive(Debug, PartialEq)]
 pub struct Entry<T, D> {
     pub entry_type: T,
     pub data: D,
 }
 
-impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry<T, D>
+fn checked_add_i32(values: &[i32], offset: Option<u64>) -> Result<i32, Error> {
+    let mut sum: i32 = 0;
+    for value in values.iter() {
+        match sum.checked_add(*value) {
+            Some(new_sum) => sum = new_sum,
+            None => {
+                return Err(Error {
+                    kind: ErrorKind::IntegerOverflow {
+                        expected_bytes: 4,
+                        actual_bytes: 5,
+                    },
+                    offset,
+                })
+            }
+        }
+    }
+
+    Ok(sum)
+}
+
+impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> DeserializeEntry
     for Entry<T, D>
 {
     async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<(Self, i32), Error> {
@@ -106,15 +159,48 @@ impl<T: DeserializeEntryType + Send, D: DeserializeEntryData<T> + Send> Deserial
         let (len, len_bytes_read) = deserialize_len_with_bytes_read(file).await?;
         let (data, data_bytes_read) = D::deserialize(&entry_type, len, file).await?;
 
-        let total_bytes_read = type_bytes_read
-            .saturating_add(len_bytes_read)
-            .saturating_add(data_bytes_read);
+        let total_bytes_read = checked_add_i32(
+            &[type_bytes_read, len_bytes_read, data_bytes_read],
+            tell(file).await,
+        )?;
 
         Ok((Entry { entry_type, data }, total_bytes_read))
     }
 }
 
-async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
+impl<T: SerializeEntryType, D: SerializeEntryData> SerializeEntry for Entry<T, D> {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        let mut bytes_written = self.entry_type.serialize(file).await?;
+
+        let mut entry_data = Vec::new();
+        let data_len = self
+            .data
+            .serialize(&mut Cursor::new(&mut entry_data))
+            .await?;
+
+        match bytes_written
+            .checked_add(serialize_len(file, data_len).await?)
+            .and_then(|bytes_written| bytes_written.checked_add(data_len))
+        {
+            Some(new_bytes_written) => bytes_written = new_bytes_written,
+            None => {
+                return Err(Error {
+                    kind: ErrorKind::IntegerOverflow {
+                        expected_bytes: 4,
+                        actual_bytes: 5,
+                    },
+                    offset: tell(file).await,
+                })
+            }
+        }
+
+        serialize(file, W::write_all, &entry_data).await?;
+
+        Ok(bytes_written)
+    }
+}
+
+async fn deserialize_entries<R: AsyncReader, E: DeserializeEntry>(
     file: &mut R,
     len: i32,
 ) -> Result<(Vec<E>, i32), Error> {
@@ -122,11 +208,26 @@ async fn deserialize_entries<R: AsyncReader, T, D, E: DeserializeEntry<T, D>>(
     let mut bytes_read = 0;
     while bytes_read < len {
         let (entry, entry_bytes_read) = E::deserialize(file).await?;
-        bytes_read = bytes_read.saturating_add(entry_bytes_read);
+        bytes_read = checked_add_i32(&[bytes_read, entry_bytes_read], tell(file).await)?;
         entries.push(entry);
     }
 
     Ok((entries, bytes_read))
+}
+
+async fn serialize_entries<W: AsyncWriter, E: SerializeEntry>(
+    file: &mut W,
+    entries: &[E],
+) -> Result<i32, Error> {
+    let mut bytes_written = 0;
+    for entry in entries.iter() {
+        bytes_written = checked_add_i32(
+            &[bytes_written, entry.serialize(file).await?],
+            tell(file).await,
+        )?;
+    }
+
+    Ok(bytes_written)
 }
 
 async fn deserialize_f32_be<R: AsyncReader>(file: &mut R, len: i32) -> Result<(f32, i32), Error> {
@@ -136,6 +237,16 @@ async fn deserialize_f32_be<R: AsyncReader>(file: &mut R, len: i32) -> Result<(f
         f32::from_be_bytes(data.try_into().expect("data should contain 4 bytes")),
         usize_to_i32(bytes_read)?,
     ))
+}
+
+async fn serialize_f32_be<W: AsyncWriter>(file: &mut W, value: f32) -> Result<i32, Error> {
+    if value == 0.0 {
+        serialize(file, W::write_u8, 0).await?;
+        Ok(1)
+    } else {
+        serialize(file, W::write_f32, value).await?;
+        Ok(4)
+    }
 }
 
 async fn check_int_overflow<R: AsyncReader>(
@@ -165,6 +276,11 @@ async fn deserialize_u8<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u8, i
     Ok((data[0], usize_to_i32(bytes_read)?))
 }
 
+async fn serialize_u8<W: AsyncWriter>(file: &mut W, value: u8) -> Result<i32, Error> {
+    serialize(file, W::write_u8, value).await?;
+    Ok(1)
+}
+
 async fn deserialize_u32_le<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u32, i32), Error> {
     let (mut data, bytes_read) = deserialize_exact(file, i32_to_usize(len)?).await?;
     check_int_overflow(file, 4, bytes_read).await?;
@@ -175,7 +291,28 @@ async fn deserialize_u32_le<R: AsyncReader>(file: &mut R, len: i32) -> Result<(u
     ))
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+async fn serialize_u32_le<W: AsyncWriter>(file: &mut W, value: u32) -> Result<i32, Error> {
+    let bytes = value.to_le_bytes();
+    let bytes_to_write = if value > 0xffffff {
+        4
+    } else if value > 0xffff {
+        3
+    } else if value > 0xff {
+        2
+    } else {
+        1
+    };
+
+    serialize(file, W::write_all, &bytes[0..bytes_to_write]).await?;
+
+    Ok(bytes_to_write as i32)
+}
+
+async fn serialize_string_i32<W: AsyncWriter>(file: &mut W, value: &str) -> Result<i32, Error> {
+    usize_to_i32(serialize_string(file, value).await?)
+}
+
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EntryCountEntryType {
     EntryCount = 0x1,
@@ -183,6 +320,7 @@ pub enum EntryCountEntryType {
     EntryCount4 = 0x4,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum EntryCountEntryData {
     EntryCount { entry_count: u32 },
     EntryCount3 { entry_count: u32 },
@@ -212,15 +350,32 @@ impl DeserializeEntryData<EntryCountEntryType> for EntryCountEntryData {
     }
 }
 
+impl SerializeEntryData for EntryCountEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EntryCountEntryData::EntryCount { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+            EntryCountEntryData::EntryCount3 { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+            EntryCountEntryData::EntryCount4 { entry_count } => {
+                serialize_u32_le(file, *entry_count).await
+            }
+        }
+    }
+}
+
 pub type EntryCountEntry = Entry<EntryCountEntryType, EntryCountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SkeletonEntryType {
     AssetName = 0x1,
     Scale = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum SkeletonData {
     AssetName { name: String },
     Scale { scale: f32 },
@@ -245,9 +400,18 @@ impl DeserializeEntryData<SkeletonEntryType> for SkeletonData {
     }
 }
 
+impl SerializeEntryData for SkeletonData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SkeletonData::AssetName { name } => serialize_string_i32(file, name).await,
+            SkeletonData::Scale { scale } => serialize_f32_be(file, *scale).await,
+        }
+    }
+}
+
 pub type SkeletonEntry = Entry<SkeletonEntryType, SkeletonData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ModelEntryType {
     ModelAssetName = 0x1,
@@ -257,6 +421,7 @@ pub enum ModelEntryType {
     ObjectTerrainData = 0x5,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ModelData {
     ModelAssetName { name: String },
     MaterialAssetName { name: String },
@@ -307,9 +472,23 @@ impl DeserializeEntryData<ModelEntryType> for ModelData {
     }
 }
 
+impl SerializeEntryData for ModelData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ModelData::ModelAssetName { name } => serialize_string_i32(file, name).await,
+            ModelData::MaterialAssetName { name } => serialize_string_i32(file, name).await,
+            ModelData::UpdateRadius { radius } => serialize_f32_be(file, *radius).await,
+            ModelData::WaterDisplacementHeight { height } => serialize_f32_be(file, *height).await,
+            ModelData::ObjectTerrainData {
+                object_terrain_data_id,
+            } => serialize_u32_le(file, *object_terrain_data_id).await,
+        }
+    }
+}
+
 pub type ModelEntry = Entry<ModelEntryType, ModelData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterAssetEntryType {
     AssetName = 0x1,
@@ -317,6 +496,7 @@ pub enum SoundEmitterAssetEntryType {
     Weight = 0x3,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterAssetEntryData {
     AssetName { asset_name: String },
     TimeOffset { time_offset_millis: f32 },
@@ -352,9 +532,23 @@ impl DeserializeEntryData<SoundEmitterAssetEntryType> for SoundEmitterAssetEntry
     }
 }
 
+impl SerializeEntryData for SoundEmitterAssetEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterAssetEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            SoundEmitterAssetEntryData::TimeOffset { time_offset_millis } => {
+                serialize_f32_be(file, *time_offset_millis).await
+            }
+            SoundEmitterAssetEntryData::Weight { weight } => serialize_f32_be(file, *weight).await,
+        }
+    }
+}
+
 pub type SoundEmitterAssetEntry = Entry<SoundEmitterAssetEntryType, SoundEmitterAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterEntryType {
     Asset = 0x1,
@@ -389,6 +583,7 @@ pub enum SoundEmitterEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterEntryData {
     Asset {
         entries: Vec<SoundEmitterAssetEntry>,
@@ -681,15 +876,91 @@ impl DeserializeEntryData<SoundEmitterEntryType> for SoundEmitterEntryData {
     }
 }
 
+impl SerializeEntryData for SoundEmitterEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterEntryData::Asset { entries } => serialize_entries(file, entries).await,
+            SoundEmitterEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            SoundEmitterEntryData::EmitterName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            SoundEmitterEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            SoundEmitterEntryData::Heading { heading } => serialize_f32_be(file, *heading).await,
+            SoundEmitterEntryData::Pitch { pitch } => serialize_f32_be(file, *pitch).await,
+            SoundEmitterEntryData::Scale { scale } => serialize_f32_be(file, *scale).await,
+            SoundEmitterEntryData::OffsetX { offset_x } => serialize_f32_be(file, *offset_x).await,
+            SoundEmitterEntryData::OffsetY { offset_y } => serialize_f32_be(file, *offset_y).await,
+            SoundEmitterEntryData::OffsetZ { offset_z } => serialize_f32_be(file, *offset_z).await,
+            SoundEmitterEntryData::ControlType { control_type } => {
+                serialize_u8(file, *control_type).await
+            }
+            SoundEmitterEntryData::PlayListType { play_list_type } => {
+                serialize_u8(file, *play_list_type).await
+            }
+            SoundEmitterEntryData::PlayBackType { play_back_type } => {
+                serialize_u8(file, *play_back_type).await
+            }
+            SoundEmitterEntryData::Category { category } => serialize_u32_le(file, *category).await,
+            SoundEmitterEntryData::SubCategory { sub_category } => {
+                serialize_u32_le(file, *sub_category).await
+            }
+            SoundEmitterEntryData::FadeTime { fade_time_millis } => {
+                serialize_f32_be(file, *fade_time_millis).await
+            }
+            SoundEmitterEntryData::FadeOutTime {
+                fade_out_time_millis,
+            } => serialize_f32_be(file, *fade_out_time_millis).await,
+            SoundEmitterEntryData::LoadType { load_type } => {
+                serialize_u32_le(file, *load_type).await
+            }
+            SoundEmitterEntryData::Volume { volume } => serialize_f32_be(file, *volume).await,
+            SoundEmitterEntryData::VolumeOffset { volume_offset } => {
+                serialize_f32_be(file, *volume_offset).await
+            }
+            SoundEmitterEntryData::RateMultiplier { rate_multiplier } => {
+                serialize_f32_be(file, *rate_multiplier).await
+            }
+            SoundEmitterEntryData::RateMultiplierOffset {
+                rate_multiplier_offset,
+            } => serialize_f32_be(file, *rate_multiplier_offset).await,
+            SoundEmitterEntryData::RoomTypeScalar { room_type_scalar } => {
+                serialize_f32_be(file, *room_type_scalar).await
+            }
+            SoundEmitterEntryData::AttenuateReverbWithDistance { should_attenuate } => {
+                serialize_u8(file, (*should_attenuate).into()).await
+            }
+            SoundEmitterEntryData::MaxConcurrentSounds {
+                max_concurrent_sounds,
+            } => serialize_u32_le(file, *max_concurrent_sounds).await,
+            SoundEmitterEntryData::AttenuationDistance { distance } => {
+                serialize_f32_be(file, *distance).await
+            }
+            SoundEmitterEntryData::ClipDistance { clip_distance } => {
+                serialize_f32_be(file, *clip_distance).await
+            }
+            SoundEmitterEntryData::DelayBetweenSounds {
+                delay_between_sounds_millis,
+            } => serialize_f32_be(file, *delay_between_sounds_millis).await,
+            SoundEmitterEntryData::DelayBetweenSoundsOffset {
+                delay_between_sounds_offset_millis,
+            } => serialize_f32_be(file, *delay_between_sounds_offset_millis).await,
+            SoundEmitterEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type SoundEmitterEntry = Entry<SoundEmitterEntryType, SoundEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum SoundEmitterType {
     SoundEmitter = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum SoundEmitterData {
     SoundEmitter { entries: Vec<SoundEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -714,9 +985,18 @@ impl DeserializeEntryData<SoundEmitterType> for SoundEmitterData {
     }
 }
 
+impl SerializeEntryData for SoundEmitterData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            SoundEmitterData::SoundEmitter { entries } => serialize_entries(file, entries).await,
+            SoundEmitterData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type SoundEmitter = Entry<SoundEmitterType, SoundEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterEntryType {
     Id = 0x1,
@@ -735,6 +1015,7 @@ pub enum ParticleEmitterEntryType {
     HardStop = 0xe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ParticleEmitterEntryData {
     Id { id: u32 },
     EmitterName { emitter_name: String },
@@ -847,15 +1128,57 @@ impl DeserializeEntryData<ParticleEmitterEntryType> for ParticleEmitterEntryData
     }
 }
 
+impl SerializeEntryData for ParticleEmitterEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ParticleEmitterEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            ParticleEmitterEntryData::EmitterName { emitter_name } => {
+                serialize_string_i32(file, emitter_name).await
+            }
+            ParticleEmitterEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            ParticleEmitterEntryData::Heading { heading } => serialize_f32_be(file, *heading).await,
+            ParticleEmitterEntryData::Pitch { pitch } => serialize_f32_be(file, *pitch).await,
+            ParticleEmitterEntryData::Scale { scale } => serialize_f32_be(file, *scale).await,
+            ParticleEmitterEntryData::OffsetX { offset_x } => {
+                serialize_f32_be(file, *offset_x).await
+            }
+            ParticleEmitterEntryData::OffsetY { offset_y } => {
+                serialize_f32_be(file, *offset_y).await
+            }
+            ParticleEmitterEntryData::OffsetZ { offset_z } => {
+                serialize_f32_be(file, *offset_z).await
+            }
+            ParticleEmitterEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            ParticleEmitterEntryData::SourceBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            ParticleEmitterEntryData::LocalSpaceDerived {
+                is_local_space_derived,
+            } => serialize_u8(file, (*is_local_space_derived).into()).await,
+            ParticleEmitterEntryData::WorldOrientation {
+                use_world_orientation,
+            } => serialize_u8(file, (*use_world_orientation).into()).await,
+            ParticleEmitterEntryData::HardStop { is_hard_stop } => {
+                serialize_u8(file, (*is_hard_stop).into()).await
+            }
+        }
+    }
+}
+
 pub type ParticleEmitterEntry = Entry<ParticleEmitterEntryType, ParticleEmitterEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ParticleEmitterType {
     ParticleEmitter = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ParticleEmitterData {
     ParticleEmitter { entries: Vec<ParticleEmitterEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -880,15 +1203,27 @@ impl DeserializeEntryData<ParticleEmitterType> for ParticleEmitterData {
     }
 }
 
+impl SerializeEntryData for ParticleEmitterData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ParticleEmitterData::ParticleEmitter { entries } => {
+                serialize_entries(file, entries).await
+            }
+            ParticleEmitterData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type ParticleEmitter = Entry<ParticleEmitterType, ParticleEmitterData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectDefinitionArrayType {
     SoundEmitterArray = 0x1,
     ParticleEmitterArray = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum EffectDefinitionArrayData {
     SoundEmitterArray {
         sound_emitters: Vec<SoundEmitter>,
@@ -923,9 +1258,22 @@ impl DeserializeEntryData<EffectDefinitionArrayType> for EffectDefinitionArrayDa
     }
 }
 
+impl SerializeEntryData for EffectDefinitionArrayData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectDefinitionArrayData::SoundEmitterArray { sound_emitters } => {
+                serialize_entries(file, sound_emitters).await
+            }
+            EffectDefinitionArrayData::ParticleEmitterArray { particle_emitters } => {
+                serialize_entries(file, particle_emitters).await
+            }
+        }
+    }
+}
+
 pub type EffectDefinitionArray = Entry<EffectDefinitionArrayType, EffectDefinitionArrayData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagEntryType {
     Name = 0x1,
@@ -935,6 +1283,7 @@ pub enum MaterialTagEntryType {
     DefaultTintId = 0x5,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MaterialTagEntryData {
     Name { name: String },
     MaterialIndex { material_index: u32 },
@@ -980,15 +1329,34 @@ impl DeserializeEntryData<MaterialTagEntryType> for MaterialTagEntryData {
     }
 }
 
+impl SerializeEntryData for MaterialTagEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MaterialTagEntryData::Name { name } => serialize_string_i32(file, name).await,
+            MaterialTagEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            MaterialTagEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            MaterialTagEntryData::TintSetId { tint_set_id } => {
+                serialize_u32_le(file, *tint_set_id).await
+            }
+            MaterialTagEntryData::DefaultTintId { tint_id } => {
+                serialize_u32_le(file, *tint_id).await
+            }
+        }
+    }
+}
+
 pub type MaterialTagEntry = Entry<MaterialTagEntryType, MaterialTagEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MaterialTagType {
     MaterialTag = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MaterialTagData {
     Material { entries: Vec<MaterialTagEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1013,9 +1381,18 @@ impl DeserializeEntryData<MaterialTagType> for MaterialTagData {
     }
 }
 
+impl SerializeEntryData for MaterialTagData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MaterialTagData::Material { entries } => serialize_entries(file, entries).await,
+            MaterialTagData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type MaterialTag = Entry<MaterialTagType, MaterialTagData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasEntryType {
     ModelType = 0x1,
@@ -1027,6 +1404,7 @@ pub enum TextureAliasEntryType {
     IsDefault = 0x7,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum TextureAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1093,15 +1471,40 @@ impl DeserializeEntryData<TextureAliasEntryType> for TextureAliasEntryData {
     }
 }
 
+impl SerializeEntryData for TextureAliasEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TextureAliasEntryData::ModelType { model_type } => {
+                serialize_u32_le(file, *model_type).await
+            }
+            TextureAliasEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            TextureAliasEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            TextureAliasEntryData::Name { name } => serialize_string_i32(file, name).await,
+            TextureAliasEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            TextureAliasEntryData::OcclusionBitMask { bit_mask } => {
+                serialize_u32_le(file, *bit_mask).await
+            }
+            TextureAliasEntryData::IsDefault { is_default } => {
+                serialize_u8(file, (*is_default).into()).await
+            }
+        }
+    }
+}
+
 pub type TextureAliasEntry = Entry<TextureAliasEntryType, TextureAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TextureAliasType {
     TextureAlias = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum TextureAliasData {
     TextureAlias { entries: Vec<TextureAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1126,8 +1529,17 @@ impl DeserializeEntryData<TextureAliasType> for TextureAliasData {
     }
 }
 
+impl SerializeEntryData for TextureAliasData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TextureAliasData::TextureAlias { entries } => serialize_entries(file, entries).await,
+            TextureAliasData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type TextureAlias = Entry<TextureAliasType, TextureAliasData>;
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasEntryType {
     ModelType = 0x1,
@@ -1140,6 +1552,7 @@ pub enum TintAliasEntryType {
     IsDefault = 0x8,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum TintAliasEntryData {
     ModelType { model_type: u32 },
     MaterialIndex { material_index: u32 },
@@ -1202,15 +1615,37 @@ impl DeserializeEntryData<TintAliasEntryType> for TintAliasEntryData {
     }
 }
 
+impl SerializeEntryData for TintAliasEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TintAliasEntryData::ModelType { model_type } => {
+                serialize_u32_le(file, *model_type).await
+            }
+            TintAliasEntryData::MaterialIndex { material_index } => {
+                serialize_u32_le(file, *material_index).await
+            }
+            TintAliasEntryData::SemanticHash { hash } => serialize_u32_le(file, *hash).await,
+            TintAliasEntryData::Name { name } => serialize_string_i32(file, name).await,
+            TintAliasEntryData::Red { red } => serialize_f32_be(file, *red).await,
+            TintAliasEntryData::Green { green } => serialize_f32_be(file, *green).await,
+            TintAliasEntryData::Blue { blue } => serialize_f32_be(file, *blue).await,
+            TintAliasEntryData::IsDefault { is_default } => {
+                serialize_u8(file, (*is_default).into()).await
+            }
+        }
+    }
+}
+
 pub type TintAliasEntry = Entry<TintAliasEntryType, TintAliasEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum TintAliasType {
     TintAlias = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum TintAliasData {
     TintAlias { entries: Vec<TintAliasEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1235,9 +1670,18 @@ impl DeserializeEntryData<TintAliasType> for TintAliasData {
     }
 }
 
+impl SerializeEntryData for TintAliasData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            TintAliasData::TintAlias { entries } => serialize_entries(file, entries).await,
+            TintAliasData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type TintAlias = Entry<TintAliasType, TintAliasData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectEntryType {
     Type = 0x2,
@@ -1246,6 +1690,7 @@ pub enum EffectEntryType {
     Id = 0x5,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum EffectEntryData {
     Type { effect_type: u8 },
     Name { name: String },
@@ -1283,15 +1728,27 @@ impl DeserializeEntryData<EffectEntryType> for EffectEntryData {
     }
 }
 
+impl SerializeEntryData for EffectEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectEntryData::Type { effect_type } => serialize_u8(file, *effect_type).await,
+            EffectEntryData::Name { name } => serialize_string_i32(file, name).await,
+            EffectEntryData::ToolName { tool_name } => serialize_string_i32(file, tool_name).await,
+            EffectEntryData::Id { id } => serialize_u32_le(file, *id).await,
+        }
+    }
+}
+
 pub type EffectEntry = Entry<EffectEntryType, EffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EffectType {
     Effect = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum EffectData {
     Effect { entries: Vec<EffectEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1316,15 +1773,25 @@ impl DeserializeEntryData<EffectType> for EffectData {
     }
 }
 
+impl SerializeEntryData for EffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EffectData::Effect { entries } => serialize_entries(file, entries).await,
+            EffectData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type Effect = Entry<EffectType, EffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailAssetEntryType {
     AssetName = 0x1,
     Distance = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailAssetEntryData {
     AssetName { asset_name: String },
     Distance { distance: f32 },
@@ -1355,15 +1822,29 @@ impl DeserializeEntryData<LevelOfDetailAssetEntryType> for LevelOfDetailAssetEnt
     }
 }
 
+impl SerializeEntryData for LevelOfDetailAssetEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailAssetEntryData::AssetName { asset_name } => {
+                serialize_string_i32(file, asset_name).await
+            }
+            LevelOfDetailAssetEntryData::Distance { distance } => {
+                serialize_f32_be(file, *distance).await
+            }
+        }
+    }
+}
+
 pub type LevelOfDetailAssetEntry = Entry<LevelOfDetailAssetEntryType, LevelOfDetailAssetEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailEntryType {
     Asset = 0x1,
     Lod0aMaxDistanceFromCamera = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailEntryData {
     Asset {
         entries: Vec<LevelOfDetailAssetEntry>,
@@ -1395,15 +1876,27 @@ impl DeserializeEntryData<LevelOfDetailEntryType> for LevelOfDetailEntryData {
     }
 }
 
+impl SerializeEntryData for LevelOfDetailEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailEntryData::Asset { entries } => serialize_entries(file, entries).await,
+            LevelOfDetailEntryData::Lod0aMaxDistanceFromCamera { distance } => {
+                serialize_f32_be(file, *distance).await
+            }
+        }
+    }
+}
+
 pub type LevelOfDetailEntry = Entry<LevelOfDetailEntryType, LevelOfDetailEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LevelOfDetailType {
     LevelOfDetail = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LevelOfDetailData {
     LevelOfDetail { entries: Vec<LevelOfDetailEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1428,9 +1921,18 @@ impl DeserializeEntryData<LevelOfDetailType> for LevelOfDetailData {
     }
 }
 
+impl SerializeEntryData for LevelOfDetailData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LevelOfDetailData::LevelOfDetail { entries } => serialize_entries(file, entries).await,
+            LevelOfDetailData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type LevelOfDetail = Entry<LevelOfDetailType, LevelOfDetailData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationLoadType {
     Required = 0x0,
@@ -1440,7 +1942,7 @@ pub enum AnimationLoadType {
     RequiredFirst = 0x4,
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEntryType {
     Name = 0x1,
@@ -1452,6 +1954,7 @@ pub enum AnimationEntryType {
     EffectsPersist = 0x7,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationEntryData {
     Name { name: String },
     AssetName { name: String },
@@ -1517,15 +2020,36 @@ impl DeserializeEntryData<AnimationEntryType> for AnimationEntryData {
     }
 }
 
+impl SerializeEntryData for AnimationEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEntryData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEntryData::AssetName { name } => serialize_string_i32(file, name).await,
+            AnimationEntryData::PlayBackScale { scale } => serialize_f32_be(file, *scale).await,
+            AnimationEntryData::Duration { duration_seconds } => {
+                serialize_f32_be(file, *duration_seconds).await
+            }
+            AnimationEntryData::LoadType { load_type } => load_type.serialize(file).await,
+            AnimationEntryData::Required { required } => {
+                serialize_u8(file, (*required).into()).await
+            }
+            AnimationEntryData::EffectsPersist { do_effects_persist } => {
+                serialize_u8(file, (*do_effects_persist).into()).await
+            }
+        }
+    }
+}
+
 pub type AnimationEntry = Entry<AnimationEntryType, AnimationEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationType {
     Animation = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationData {
     Animation { entries: Vec<AnimationEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1550,15 +2074,25 @@ impl DeserializeEntryData<AnimationType> for AnimationData {
     }
 }
 
+impl SerializeEntryData for AnimationData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationData::Animation { entries } => serialize_entries(file, entries).await,
+            AnimationData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type Animation = Entry<AnimationType, AnimationData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectTriggerEventType {
     Start = 0x1,
     End = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectTriggerEventData {
     Start { start_seconds: f32 },
     End { end_seconds: f32 },
@@ -1589,10 +2123,23 @@ impl DeserializeEntryData<AnimationEffectTriggerEventType> for AnimationEffectTr
     }
 }
 
+impl SerializeEntryData for AnimationEffectTriggerEventData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectTriggerEventData::Start { start_seconds } => {
+                serialize_f32_be(file, *start_seconds).await
+            }
+            AnimationEffectTriggerEventData::End { end_seconds } => {
+                serialize_f32_be(file, *end_seconds).await
+            }
+        }
+    }
+}
+
 pub type AnimationEffectTriggerEvent =
     Entry<AnimationEffectTriggerEventType, AnimationEffectTriggerEventData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectEntryType {
     TriggerEventArray = 0x1,
@@ -1605,6 +2152,7 @@ pub enum AnimationEffectEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectEntryData {
     TriggerEventArray {
         trigger_events: Vec<AnimationEffectTriggerEvent>,
@@ -1689,9 +2237,34 @@ impl DeserializeEntryData<AnimationEffectEntryType> for AnimationEffectEntryData
     }
 }
 
+impl SerializeEntryData for AnimationEffectEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectEntryData::TriggerEventArray { trigger_events } => {
+                serialize_entries(file, trigger_events).await
+            }
+            AnimationEffectEntryData::Type { effect_type } => {
+                serialize_u8(file, *effect_type).await
+            }
+            AnimationEffectEntryData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEffectEntryData::ToolName { tool_name } => {
+                serialize_string_i32(file, tool_name).await
+            }
+            AnimationEffectEntryData::Id { id } => serialize_u32_le(file, *id).await,
+            AnimationEffectEntryData::PlayOnce { should_play_once } => {
+                serialize_u8(file, (*should_play_once).into()).await
+            }
+            AnimationEffectEntryData::LoadType { load_type } => load_type.serialize(file).await,
+            AnimationEffectEntryData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationEffectEntry = Entry<AnimationEffectEntryType, AnimationEffectEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationEffectType {
     Effect = 0x1,
@@ -1699,6 +2272,7 @@ pub enum AnimationEffectType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationEffectData {
     Effect { entries: Vec<AnimationEffectEntry> },
     Name { name: String },
@@ -1731,15 +2305,26 @@ impl DeserializeEntryData<AnimationEffectType> for AnimationEffectData {
     }
 }
 
+impl SerializeEntryData for AnimationEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationEffectData::Effect { entries } => serialize_entries(file, entries).await,
+            AnimationEffectData::Name { name } => serialize_string_i32(file, name).await,
+            AnimationEffectData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type AnimationEffect = Entry<AnimationEffectType, AnimationEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationSoundEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationSoundEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1767,15 +2352,29 @@ impl DeserializeEntryData<AnimationSoundEffectType> for AnimationSoundEffectData
     }
 }
 
+impl SerializeEntryData for AnimationSoundEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationSoundEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationSoundEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationSoundEffect = Entry<AnimationSoundEffectType, AnimationSoundEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationParticleEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationParticleEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1806,15 +2405,29 @@ impl DeserializeEntryData<AnimationParticleEffectType> for AnimationParticleEffe
     }
 }
 
+impl SerializeEntryData for AnimationParticleEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationParticleEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationParticleEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationParticleEffect = Entry<AnimationParticleEffectType, AnimationParticleEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointEntryType {
     Name = 0x1,
     Time = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ActionPointEntryData {
     Name { name: String },
     Time { time_seconds: f32 },
@@ -1842,15 +2455,27 @@ impl DeserializeEntryData<ActionPointEntryType> for ActionPointEntryData {
     }
 }
 
+impl SerializeEntryData for ActionPointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ActionPointEntryData::Name { name } => serialize_string_i32(file, name).await,
+            ActionPointEntryData::Time { time_seconds } => {
+                serialize_f32_be(file, *time_seconds).await
+            }
+        }
+    }
+}
+
 pub type ActionPointEntry = Entry<ActionPointEntryType, ActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ActionPointType {
     ActionPoint = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ActionPointData {
     ActionPoint { entries: Vec<ActionPointEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -1875,15 +2500,25 @@ impl DeserializeEntryData<ActionPointType> for ActionPointData {
     }
 }
 
+impl SerializeEntryData for ActionPointData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ActionPointData::ActionPoint { entries } => serialize_entries(file, entries).await,
+            ActionPointData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type ActionPoint = Entry<ActionPointType, ActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointEntryType {
     ActionPointArray = 0x1,
     Name = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationActionPointEntryData {
     ActionPointArray { action_points: Vec<ActionPoint> },
     Name { name: String },
@@ -1914,16 +2549,28 @@ impl DeserializeEntryData<AnimationActionPointEntryType> for AnimationActionPoin
     }
 }
 
+impl SerializeEntryData for AnimationActionPointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationActionPointEntryData::ActionPointArray { action_points } => {
+                serialize_entries(file, action_points).await
+            }
+            AnimationActionPointEntryData::Name { name } => serialize_string_i32(file, name).await,
+        }
+    }
+}
+
 pub type AnimationActionPointEntry =
     Entry<AnimationActionPointEntryType, AnimationActionPointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationActionPointType {
     AnimationActionPoint = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationActionPointData {
     AnimationActionPoint {
         entries: Vec<AnimationActionPointEntry>,
@@ -1955,14 +2602,28 @@ impl DeserializeEntryData<AnimationActionPointType> for AnimationActionPointData
     }
 }
 
+impl SerializeEntryData for AnimationActionPointData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationActionPointData::AnimationActionPoint { entries } => {
+                serialize_entries(file, entries).await
+            }
+            AnimationActionPointData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationActionPoint = Entry<AnimationActionPointType, AnimationActionPointData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CollisionEntryType {
     AssetName = 0x1,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum CollisionData {
     AssetName { name: String },
 }
@@ -1982,14 +2643,23 @@ impl DeserializeEntryData<CollisionEntryType> for CollisionData {
     }
 }
 
+impl SerializeEntryData for CollisionData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            CollisionData::AssetName { name } => serialize_string_i32(file, name).await,
+        }
+    }
+}
+
 pub type CollisionEntry = Entry<CollisionEntryType, CollisionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum CoveredSlotEntryType {
     SlotId = 0x1,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum CoveredSlotEntryData {
     SlotId { slot_id: u32 },
 }
@@ -2012,9 +2682,17 @@ impl DeserializeEntryData<CoveredSlotEntryType> for CoveredSlotEntryData {
     }
 }
 
+impl SerializeEntryData for CoveredSlotEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            CoveredSlotEntryData::SlotId { slot_id } => serialize_u32_le(file, *slot_id).await,
+        }
+    }
+}
+
 pub type CoveredSlotEntry = Entry<CoveredSlotEntryType, CoveredSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum OcclusionEntryType {
     SlotBitMask = 0x1,
@@ -2023,6 +2701,7 @@ pub enum OcclusionEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum OcclusionData {
     SlotBitMask { bit_mask: u32 },
     BitMask { bit_mask: u32 },
@@ -2057,9 +2736,20 @@ impl DeserializeEntryData<OcclusionEntryType> for OcclusionData {
     }
 }
 
+impl SerializeEntryData for OcclusionData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            OcclusionData::SlotBitMask { bit_mask } => serialize_u32_le(file, *bit_mask).await,
+            OcclusionData::BitMask { bit_mask } => serialize_u32_le(file, *bit_mask).await,
+            OcclusionData::CoveredSlot { entries } => serialize_entries(file, entries).await,
+            OcclusionData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type OcclusionEntry = Entry<OcclusionEntryType, OcclusionData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum UsageEntryType {
     Usage = 0x1,
@@ -2069,6 +2759,7 @@ pub enum UsageEntryType {
     ReplicationBoneName = 0x5,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum UsageEntryData {
     Usage { usage: u8 },
     AttachmentBoneName { bone_name: String },
@@ -2124,15 +2815,36 @@ impl DeserializeEntryData<UsageEntryType> for UsageEntryData {
     }
 }
 
+impl SerializeEntryData for UsageEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            UsageEntryData::Usage { usage } => serialize_u8(file, *usage).await,
+            UsageEntryData::AttachmentBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            UsageEntryData::ValidatePcNpc { validate } => {
+                serialize_u8(file, (*validate).into()).await
+            }
+            UsageEntryData::InheritAnimations {
+                should_inherit_animations,
+            } => serialize_u8(file, (*should_inherit_animations).into()).await,
+            UsageEntryData::ReplicationBoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+        }
+    }
+}
+
 pub type UsageEntry = Entry<UsageEntryType, UsageEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum HatHairEntryType {
     CoverFacialHair = 0x1,
     Type = 0x2,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum HatHairEntryData {
     CoverFacialHair { should_cover_facial_hair: bool },
     Type { hat_hair_type: u8 },
@@ -2162,14 +2874,26 @@ impl DeserializeEntryData<HatHairEntryType> for HatHairEntryData {
     }
 }
 
+impl SerializeEntryData for HatHairEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            HatHairEntryData::CoverFacialHair {
+                should_cover_facial_hair,
+            } => serialize_u8(file, (*should_cover_facial_hair).into()).await,
+            HatHairEntryData::Type { hat_hair_type } => serialize_u8(file, *hat_hair_type).await,
+        }
+    }
+}
+
 pub type HatHairEntry = Entry<HatHairEntryType, HatHairEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum ShadowEntryType {
     CheckShadowVisibility = 0x1,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum ShadowEntryData {
     CheckShadowVisibility {
         should_check_shadow_visibility: bool,
@@ -2197,9 +2921,19 @@ impl DeserializeEntryData<ShadowEntryType> for ShadowEntryData {
     }
 }
 
+impl SerializeEntryData for ShadowEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            ShadowEntryData::CheckShadowVisibility {
+                should_check_shadow_visibility,
+            } => serialize_u8(file, (*should_check_shadow_visibility).into()).await,
+        }
+    }
+}
+
 pub type ShadowEntry = Entry<ShadowEntryType, ShadowEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum EquippedSlotEntryType {
     Type = 0x1,
@@ -2209,6 +2943,7 @@ pub enum EquippedSlotEntryType {
     SlotName = 0x5,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum EquippedSlotEntryData {
     Type { equipped_slot_type: u8 },
     SlotId { slot_id: u32 },
@@ -2260,9 +2995,29 @@ impl DeserializeEntryData<EquippedSlotEntryType> for EquippedSlotEntryData {
     }
 }
 
+impl SerializeEntryData for EquippedSlotEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            EquippedSlotEntryData::Type { equipped_slot_type } => {
+                serialize_u8(file, *equipped_slot_type).await
+            }
+            EquippedSlotEntryData::SlotId { slot_id } => serialize_u32_le(file, *slot_id).await,
+            EquippedSlotEntryData::ParentAttachSlot { slot_name } => {
+                serialize_string_i32(file, slot_name).await
+            }
+            EquippedSlotEntryData::ChildAttachSlot { slot_name } => {
+                serialize_string_i32(file, slot_name).await
+            }
+            EquippedSlotEntryData::SlotName { slot_name } => {
+                serialize_string_i32(file, slot_name).await
+            }
+        }
+    }
+}
+
 pub type EquippedSlotEntry = Entry<EquippedSlotEntryType, EquippedSlotEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataEntryType {
     BoneName = 0x1,
@@ -2273,6 +3028,7 @@ pub enum BoneMetadataEntryType {
     Weight2 = 0x6,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum BoneMetadataEntryData {
     BoneName { bone_name: String },
     CollisionType { collision_type: u32 },
@@ -2329,15 +3085,37 @@ impl DeserializeEntryData<BoneMetadataEntryType> for BoneMetadataEntryData {
     }
 }
 
+impl SerializeEntryData for BoneMetadataEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            BoneMetadataEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            BoneMetadataEntryData::CollisionType { collision_type } => {
+                serialize_u32_le(file, *collision_type).await
+            }
+            BoneMetadataEntryData::Joint1 { joint_name } => {
+                serialize_string_i32(file, joint_name).await
+            }
+            BoneMetadataEntryData::Weight1 { weight } => serialize_f32_be(file, *weight).await,
+            BoneMetadataEntryData::Joint2 { joint_name } => {
+                serialize_string_i32(file, joint_name).await
+            }
+            BoneMetadataEntryData::Weight2 { weight } => serialize_f32_be(file, *weight).await,
+        }
+    }
+}
+
 pub type BoneMetadataEntry = Entry<BoneMetadataEntryType, BoneMetadataEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum BoneMetadataType {
     BoneMetadata = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum BoneMetadataData {
     BoneMetadata { entries: Vec<BoneMetadataEntry> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2362,9 +3140,18 @@ impl DeserializeEntryData<BoneMetadataType> for BoneMetadataData {
     }
 }
 
+impl SerializeEntryData for BoneMetadataData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            BoneMetadataData::BoneMetadata { entries } => serialize_entries(file, entries).await,
+            BoneMetadataData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type BoneMetadata = Entry<BoneMetadataType, BoneMetadataData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntranceExitEntryType {
     BoneName = 0x1,
@@ -2372,6 +3159,7 @@ pub enum MountSeatEntranceExitEntryType {
     Location = 0x3,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MountSeatEntranceExitEntryData {
     BoneName { bone_name: String },
     Animation { animation_name: String },
@@ -2411,10 +3199,26 @@ impl DeserializeEntryData<MountSeatEntranceExitEntryType> for MountSeatEntranceE
     }
 }
 
+impl SerializeEntryData for MountSeatEntranceExitEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountSeatEntranceExitEntryData::BoneName { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            MountSeatEntranceExitEntryData::Animation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountSeatEntranceExitEntryData::Location { location } => {
+                serialize_string_i32(file, location).await
+            }
+        }
+    }
+}
+
 pub type MountSeatEntranceExitEntry =
     Entry<MountSeatEntranceExitEntryType, MountSeatEntranceExitEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountSeatEntryType {
     Entrance = 0x1,
@@ -2423,6 +3227,7 @@ pub enum MountSeatEntryType {
     Animation = 0x4,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MountSeatEntryData {
     Entrance {
         entries: Vec<MountSeatEntranceExitEntry>,
@@ -2472,9 +3277,22 @@ impl DeserializeEntryData<MountSeatEntryType> for MountSeatEntryData {
     }
 }
 
+impl SerializeEntryData for MountSeatEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountSeatEntryData::Entrance { entries } => serialize_entries(file, entries).await,
+            MountSeatEntryData::Exit { entries } => serialize_entries(file, entries).await,
+            MountSeatEntryData::Bone { bone_name } => serialize_string_i32(file, bone_name).await,
+            MountSeatEntryData::Animation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+        }
+    }
+}
+
 pub type MountSeatEntry = Entry<MountSeatEntryType, MountSeatEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum MountEntryType {
     Seat = 0x1,
@@ -2487,6 +3305,7 @@ pub enum MountEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum MountEntryData {
     Seat { entries: Vec<MountSeatEntry> },
     MinOccupancy { min_occupancy: u32 },
@@ -2561,15 +3380,43 @@ impl DeserializeEntryData<MountEntryType> for MountEntryData {
     }
 }
 
+impl SerializeEntryData for MountEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            MountEntryData::Seat { entries } => serialize_entries(file, entries).await,
+            MountEntryData::MinOccupancy { min_occupancy } => {
+                serialize_u32_le(file, *min_occupancy).await
+            }
+            MountEntryData::StandAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::StandToSprintAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::SprintAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::SprintToStandAnimation { animation_name } => {
+                serialize_string_i32(file, animation_name).await
+            }
+            MountEntryData::AnimationPrefix { animation_prefix } => {
+                serialize_string_i32(file, animation_prefix).await
+            }
+            MountEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type MountEntry = Entry<MountEntryType, MountEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AnimationCompositeEffectType {
     EffectArray = 0x1,
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AnimationCompositeEffectData {
     EffectArray { effects: Vec<AnimationEffect> },
     EntryCount { entries: Vec<EntryCountEntry> },
@@ -2600,10 +3447,23 @@ impl DeserializeEntryData<AnimationCompositeEffectType> for AnimationCompositeEf
     }
 }
 
+impl SerializeEntryData for AnimationCompositeEffectData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AnimationCompositeEffectData::EffectArray { effects } => {
+                serialize_entries(file, effects).await
+            }
+            AnimationCompositeEffectData::EntryCount { entries } => {
+                serialize_entries(file, entries).await
+            }
+        }
+    }
+}
+
 pub type AnimationCompositeEffect =
     Entry<AnimationCompositeEffectType, AnimationCompositeEffectData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum JointEntryType {
     BoneName = 0x1,
@@ -2612,6 +3472,7 @@ pub enum JointEntryType {
     TurnRate = 0x4,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum JointEntryData {
     BoneName { bone_name: String },
     PitchLimit { pitch_limit: f32 },
@@ -2649,9 +3510,22 @@ impl DeserializeEntryData<JointEntryType> for JointEntryData {
     }
 }
 
+impl SerializeEntryData for JointEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            JointEntryData::BoneName { bone_name } => serialize_string_i32(file, bone_name).await,
+            JointEntryData::PitchLimit { pitch_limit } => {
+                serialize_f32_be(file, *pitch_limit).await
+            }
+            JointEntryData::YawLimit { yaw_limit } => serialize_f32_be(file, *yaw_limit).await,
+            JointEntryData::TurnRate { turn_rate } => serialize_f32_be(file, *turn_rate).await,
+        }
+    }
+}
+
 pub type JointEntry = Entry<JointEntryType, JointEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlEntryType {
     Name = 0x1,
@@ -2661,6 +3535,7 @@ pub enum LookControlEntryType {
     EntryCount = 0xfe,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LookControlEntryData {
     Name { name: String },
     Type { look_control_type: u8 },
@@ -2706,14 +3581,31 @@ impl DeserializeEntryData<LookControlEntryType> for LookControlEntryData {
     }
 }
 
+impl SerializeEntryData for LookControlEntryData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LookControlEntryData::Name { name } => serialize_string_i32(file, name).await,
+            LookControlEntryData::Type { look_control_type } => {
+                serialize_u8(file, *look_control_type).await
+            }
+            LookControlEntryData::Joint { entries } => serialize_entries(file, entries).await,
+            LookControlEntryData::EffectorBone { bone_name } => {
+                serialize_string_i32(file, bone_name).await
+            }
+            LookControlEntryData::EntryCount { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type LookControlEntry = Entry<LookControlEntryType, LookControlEntryData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum LookControlType {
     LookControl = 0x1,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum LookControlData {
     LookControl { entries: Vec<LookControlEntry> },
 }
@@ -2733,9 +3625,17 @@ impl DeserializeEntryData<LookControlType> for LookControlData {
     }
 }
 
+impl SerializeEntryData for LookControlData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            LookControlData::LookControl { entries } => serialize_entries(file, entries).await,
+        }
+    }
+}
+
 pub type LookControl = Entry<LookControlType, LookControlData>;
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, PartialEq, TryFromPrimitive, IntoPrimitive)]
 #[repr(u8)]
 pub enum AdrEntryType {
     Skeleton = 0x1,
@@ -2762,6 +3662,7 @@ pub enum AdrEntryType {
     LookControlArray = 0x16,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum AdrData {
     Skeleton {
         entries: Vec<SkeletonEntry>,
@@ -2944,8 +3845,54 @@ impl DeserializeEntryData<AdrEntryType> for AdrData {
     }
 }
 
+impl SerializeEntryData for AdrData {
+    async fn serialize<W: AsyncWriter>(&self, file: &mut W) -> Result<i32, Error> {
+        match self {
+            AdrData::Skeleton { entries } => serialize_entries(file, entries).await,
+            AdrData::Model { entries } => serialize_entries(file, entries).await,
+            AdrData::EffectDefinitionArrayArray { arrays } => serialize_entries(file, arrays).await,
+            AdrData::MaterialTagArray { material_tags } => {
+                serialize_entries(file, material_tags).await
+            }
+            AdrData::TextureAliasArray { texture_aliases } => {
+                serialize_entries(file, texture_aliases).await
+            }
+            AdrData::TintAliasArray { tint_aliases } => serialize_entries(file, tint_aliases).await,
+            AdrData::EffectArray { effects } => serialize_entries(file, effects).await,
+            AdrData::LevelOfDetailArray { levels_of_detail } => {
+                serialize_entries(file, levels_of_detail).await
+            }
+            AdrData::AnimationArray { animations } => serialize_entries(file, animations).await,
+            AdrData::AnimationSoundEffectArray { sounds } => serialize_entries(file, sounds).await,
+            AdrData::AnimationParticleEffectArray { particles } => {
+                serialize_entries(file, particles).await
+            }
+            AdrData::AnimationActionPointArray { action_points } => {
+                serialize_entries(file, action_points).await
+            }
+            AdrData::Collision { entries } => serialize_entries(file, entries).await,
+            AdrData::Occlusion { entries } => serialize_entries(file, entries).await,
+            AdrData::Usage { entries } => serialize_entries(file, entries).await,
+            AdrData::HatHair { entries } => serialize_entries(file, entries).await,
+            AdrData::Shadow { entries } => serialize_entries(file, entries).await,
+            AdrData::EquippedSlot { entries } => serialize_entries(file, entries).await,
+            AdrData::BoneMetadataArray { bone_metadata } => {
+                serialize_entries(file, bone_metadata).await
+            }
+            AdrData::Mount { entries } => serialize_entries(file, entries).await,
+            AdrData::AnimationCompositeEffectArray { composites } => {
+                serialize_entries(file, composites).await
+            }
+            AdrData::LookControlArray { look_controls } => {
+                serialize_entries(file, look_controls).await
+            }
+        }
+    }
+}
+
 pub type AdrEntry = Entry<AdrEntryType, AdrData>;
 
+#[derive(Debug, PartialEq)]
 pub struct Adr {
     pub entries: Vec<AdrEntry>,
 }
@@ -2965,14 +3912,25 @@ impl DeserializeAsset for Adr {
     }
 }
 
+impl SerializeAsset for Adr {
+    async fn serialize<W: AsyncWriter + Send>(&self, file: &mut W) -> Result<(), Error> {
+        for entry in self.entries.iter() {
+            entry.serialize(file).await?;
+        }
+
+        Ok(())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use std::env;
     use std::io::Cursor;
+    use std::path::PathBuf;
 
     use super::*;
     use tokio::fs::File;
-    use tokio::io::BufReader;
+    use tokio::io::{AsyncWriteExt, BufReader};
     use walkdir::WalkDir;
 
     #[tokio::test]
@@ -3060,6 +4018,18 @@ mod tests {
                 .await
                 .unwrap()
         );
+
+        let mut buffer = Vec::new();
+        serialize_len(&mut Cursor::new(&mut buffer), 0xd370)
+            .await
+            .unwrap();
+        assert_eq!(vec![0xff, 0x0, 0x0, 0xd3, 0x70], buffer);
+        assert_eq!(
+            (0xd370, 5),
+            deserialize_len_with_bytes_read(&mut Cursor::new(buffer))
+                .await
+                .unwrap()
+        );
     }
 
     #[tokio::test]
@@ -3083,6 +4053,58 @@ mod tests {
             Adr::deserialize(entry.path(), &mut BufReader::new(file))
                 .await
                 .expect(&format!("Failed to deserialize {}", entry.path().display()));
+        }
+    }
+
+    #[tokio::test]
+    #[ignore]
+    async fn test_serialize_adr() {
+        let target_extension = "adr";
+        let search_path = env::var("ADR_ROOT").unwrap();
+
+        for entry in WalkDir::new(search_path)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.path()
+                    .extension()
+                    .map_or(false, |ext| ext == target_extension)
+            })
+        {
+            let file = File::open(entry.path())
+                .await
+                .expect(&format!("Failed to open {}", entry.path().display()));
+            let adr = Adr::deserialize(entry.path(), &mut BufReader::new(file))
+                .await
+                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+
+            let mut buffer = Vec::new();
+            Adr::serialize(&adr, &mut Cursor::new(&mut buffer))
+                .await
+                .expect(&format!("Failed to serialize {}", entry.path().display()));
+
+            let deserialize_result =
+                Adr::deserialize(entry.path(), &mut Cursor::new(&mut buffer)).await;
+
+            // Optionally write to file for debugging
+            if deserialize_result.is_err() {
+                if let Ok(out_path) = env::var("ADR_OUT_DIR") {
+                    let mut file = File::create(
+                        PathBuf::from(out_path.clone()).join(entry.path().file_name().unwrap()),
+                    )
+                    .await
+                    .unwrap();
+                    file.write_all(&buffer).await.unwrap();
+                    file.flush().await.unwrap();
+                }
+            }
+
+            let new_adr = deserialize_result.expect(&format!(
+                "Failed to re-deserialize {}",
+                entry.path().display()
+            ));
+
+            assert_eq!(adr, new_adr);
         }
     }
 }
