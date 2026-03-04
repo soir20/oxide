@@ -883,3 +883,14 @@
   item_type: 1
   category: 64
   members: true
+# Renegade Heavy Blaster Pistol (Right)
+- guid: 80087
+  name_id: 54522
+  description_id: 14
+  icon_set_id: 3792
+  item_class: 9
+  slot: !Equipment PrimaryWeapon
+  model_name: Wield_Pistol_RenegadeHeavyBlaster.adr
+  texture_alias: RenegadeHeavyBlaster
+  item_type: 1
+  category: 64
