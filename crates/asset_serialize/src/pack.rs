@@ -4,6 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
@@ -11,12 +12,14 @@ use crate::{
     Error,
 };
 
+#[derive(Serialize, Deserialize)]
 pub struct PackAsset {
     pub offset: u64,
     pub size: u32,
     pub crc: u32,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Pack {
     path: PathBuf,
     assets: HashMap<String, PackAsset>,

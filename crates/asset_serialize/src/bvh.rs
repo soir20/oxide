@@ -1,4 +1,5 @@
 use num_enum::TryFromPrimitive;
+use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{deserialize, skip, tell, AsyncReader, Error, ErrorKind};
@@ -28,11 +29,13 @@ async fn deserialize_f32_le_vec4<R: AsyncReader>(file: &mut R) -> Result<[f32; 4
     ])
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum OriginalNodeIndex {
     Escape { escape_index: i32 },
     Triangle { triangle_index: i32, sub_part: i32 },
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct OriginalNode {
     pub aabb_min: [f32; 3],
     pub aabb_max: [f32; 3],
@@ -65,6 +68,7 @@ impl OriginalNode {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum QuantizedNodeIndex {
     Escape { escape_index: i32 },
     Triangle { triangle_index: i32 },
@@ -86,6 +90,7 @@ impl From<i32> for QuantizedNodeIndex {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct QuantizedNode {
     pub aabb_min: [u16; 3],
     pub aabb_max: [u16; 3],
@@ -117,6 +122,7 @@ impl QuantizedNode {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct SubtreeHeader {
     pub quantized_aabb_min: [u16; 3],
     pub quantized_aabb_max: [u16; 3],
@@ -142,7 +148,7 @@ impl SubtreeHeader {
     }
 }
 
-#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[derive(Copy, Clone, Debug, Serialize, Deserialize, TryFromPrimitive)]
 #[repr(u32)]
 pub enum TraversalMode {
     Stackless = 0,
@@ -163,11 +169,13 @@ impl TraversalMode {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub enum NodeVec {
     Original { original_nodes: Vec<OriginalNode> },
     Quantized { quantized_nodes: Vec<QuantizedNode> },
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct BoundingVolumeHierarchy {
     pub aabb_min: [f32; 4],
     pub aabb_max: [f32; 4],

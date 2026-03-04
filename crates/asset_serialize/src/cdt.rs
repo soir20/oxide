@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
@@ -5,6 +6,7 @@ use crate::{
     skip, AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
+#[derive(Serialize, Deserialize)]
 pub struct CollisionEntry {
     pub vertices: Vec<[f32; 3]>,
     pub triangles: Vec<[u16; 3]>,
@@ -60,6 +62,7 @@ impl CollisionEntry {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Cdt {
     pub version: i32,
     pub collision_type: u32,
