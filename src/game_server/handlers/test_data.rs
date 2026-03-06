@@ -152,7 +152,7 @@ pub fn make_test_player(
                             EquipmentSlot::Hands,
                             EquippedItem {
                                 slot: EquipmentSlot::Hands,
-                                guid: 190035,
+                                guid: 190036,
                                 category: 0,
                             },
                         ),
