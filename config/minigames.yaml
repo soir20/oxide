@@ -121,9 +121,9 @@ categories:
                       name_id: 1132
                       model_id: 158
                       primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110045
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6211
                       entrance_sound_id: 1834
                       round_won_sound_id: 1836
@@ -143,9 +143,9 @@ categories:
                     game_win_bonus_score: &saber_duel_game_win_bonus_score 5000
                     no_bouts_lost_bonus_score: &saber_duel_no_bouts_lost_bonus_score 5000
                     default_primary_saber: &saber_duel_default_primary_saber
-                      hilt_item_guid: 70057
-                      shape_item_guid: 50000
-                      color_item_guid: 60001
+                      hilt_item_guid: 110057
+                      shape_item_guid: 90000
+                      color_item_guid: 100001
                   zone_template_guid: 202
                   score_to_credits_expression: x / 168
                   challenges:
@@ -301,9 +301,9 @@ categories:
                       name_id: 1137
                       model_id: 182
                       primary_saber:
-                        hilt_item_guid: 70005
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
+                        hilt_item_guid: 110005
+                        shape_item_guid: 90000
+                        color_item_guid: 100001
                       entrance_animation_id: 6203
                       entrance_sound_id: 1815
                       round_won_sound_id: 1817
@@ -478,9 +478,9 @@ categories:
                       name_id: 9522
                       model_id: 388
                       primary_saber:
-                        hilt_item_guid: 70017
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110017
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6205
                       entrance_sound_id: 2260
                       round_won_sound_id: 2262
@@ -655,9 +655,9 @@ categories:
                       name_id: 9540
                       model_id: 387
                       primary_saber:
-                        hilt_item_guid: 70036
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110036
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6207
                       entrance_sound_id: 2269
                       round_won_sound_id: 2271
@@ -832,9 +832,9 @@ categories:
                       name_id: 6350
                       model_id: 184
                       primary_saber:
-                        hilt_item_guid: 70037
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
+                        hilt_item_guid: 110037
+                        shape_item_guid: 90000
+                        color_item_guid: 100001
                       entrance_animation_id: 6208
                       entrance_sound_id: 2280
                       round_won_sound_id: 2282
@@ -1009,13 +1009,13 @@ categories:
                       name_id: 9630
                       model_id: 400
                       primary_saber:
-                        hilt_item_guid: 70057
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
-                      secondary_saber:
-                        hilt_item_guid: 80010
+                        hilt_item_guid: 110057
                         shape_item_guid: 90000
-                        color_item_guid: 100000
+                        color_item_guid: 100001
+                      secondary_saber:
+                        hilt_item_guid: 140010
+                        shape_item_guid: 120000
+                        color_item_guid: 130000
                       entrance_animation_id: 6201
                       entrance_sound_id: 2250
                       round_won_sound_id: 2252
@@ -1190,9 +1190,9 @@ categories:
                       name_id: 6345
                       model_id: 185
                       primary_saber:
-                        hilt_item_guid: 70041
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
+                        hilt_item_guid: 110041
+                        shape_item_guid: 90000
+                        color_item_guid: 100001
                       entrance_animation_id: 6209
                       entrance_sound_id: 2290
                       round_won_sound_id: 2292
@@ -1367,9 +1367,9 @@ categories:
                       name_id: 6978
                       model_id: 401
                       primary_saber:
-                        hilt_item_guid: 70011
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110011
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6202
                       entrance_sound_id: 2409
                       round_won_sound_id: 2411
@@ -1544,9 +1544,9 @@ categories:
                       name_id: 1132
                       model_id: 158
                       primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110045
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6211
                       entrance_sound_id: 1841
                       round_won_sound_id: 1836
@@ -1721,9 +1721,9 @@ categories:
                       name_id: 9628
                       model_id: 402
                       primary_saber:
-                        hilt_item_guid: 70001
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
+                        hilt_item_guid: 110001
+                        shape_item_guid: 90000
+                        color_item_guid: 100001
                       entrance_animation_id: 6206
                       entrance_sound_id: 2342
                       round_won_sound_id: 2344
@@ -1898,9 +1898,9 @@ categories:
                       name_id: 9631
                       model_id: 403
                       primary_saber:
-                        hilt_item_guid: 70042
-                        shape_item_guid: 50000
-                        color_item_guid: 60003
+                        hilt_item_guid: 110042
+                        shape_item_guid: 90000
+                        color_item_guid: 100003
                       entrance_animation_id: 6212
                       entrance_sound_id: 1742
                       round_won_sound_id: 1963
@@ -2075,9 +2075,9 @@ categories:
                       name_id: 1130
                       model_id: 349
                       primary_saber:
-                        hilt_item_guid: 70043
-                        shape_item_guid: 50000
-                        color_item_guid: 60005
+                        hilt_item_guid: 110043
+                        shape_item_guid: 90000
+                        color_item_guid: 100005
                       entrance_animation_id: 6210
                       entrance_sound_id: 2397
                       round_won_sound_id: 2399
@@ -2252,9 +2252,9 @@ categories:
                       name_id: 17231
                       model_id: 972
                       primary_saber:
-                        hilt_item_guid: 70051
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110051
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6213
                       entrance_sound_id: 3556
                       round_won_sound_id: 3558
@@ -2429,9 +2429,9 @@ categories:
                       name_id: 1134
                       model_id: 183
                       primary_saber:
-                        hilt_item_guid: 70015
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110015
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6204
                       entrance_sound_id: 2142
                       round_won_sound_id: 2144
@@ -2607,9 +2607,9 @@ categories:
                       name_id: 50263
                       model_id: 1313
                       primary_saber:
-                        hilt_item_guid: 70049
-                        shape_item_guid: 50000
-                        color_item_guid: 60001
+                        hilt_item_guid: 110049
+                        shape_item_guid: 90000
+                        color_item_guid: 100001
                       entrance_animation_id: 6220
                       entrance_sound_id: 4842
                       round_won_sound_id: 4846
@@ -2793,9 +2793,9 @@ categories:
                       name_id: 5150
                       model_id: 2566
                       primary_saber:
-                        hilt_item_guid: 70065
-                        shape_item_guid: 50014
-                        color_item_guid: 60001
+                        hilt_item_guid: 110065
+                        shape_item_guid: 90014
+                        color_item_guid: 100001
                       entrance_animation_id: 6214
                       entrance_sound_id: 2300
                       round_won_sound_id: 2302
@@ -2980,9 +2980,9 @@ categories:
                       name_id: 17931
                       model_id: 106
                       primary_saber:
-                        hilt_item_guid: 70015
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110015
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 1000
@@ -3033,9 +3033,9 @@ categories:
                       name_id: 5623
                       model_id: 107
                       primary_saber:
-                        hilt_item_guid: 70015
-                        shape_item_guid: 50000
-                        color_item_guid: 60007
+                        hilt_item_guid: 110015
+                        shape_item_guid: 90000
+                        color_item_guid: 100007
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 800
@@ -3086,9 +3086,9 @@ categories:
                       name_id: 17930
                       model_id: 223
                       primary_saber:
-                        hilt_item_guid: 70015
-                        shape_item_guid: 50000
-                        color_item_guid: 60003
+                        hilt_item_guid: 110015
+                        shape_item_guid: 90000
+                        color_item_guid: 100003
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 600
@@ -3184,9 +3184,9 @@ categories:
                       name_id: 1132
                       model_id: 158
                       primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110045
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6211
                       entrance_sound_id: 5503
                       round_won_sound_id: 1836
@@ -3263,9 +3263,9 @@ categories:
                       name_id: 1132
                       model_id: 158
                       primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110045
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6211
                       entrance_sound_id: 5504
                       round_won_sound_id: 1836
@@ -3343,9 +3343,9 @@ categories:
                       name_id: 1132
                       model_id: 158
                       primary_saber:
-                        hilt_item_guid: 70045
-                        shape_item_guid: 50000
-                        color_item_guid: 60000
+                        hilt_item_guid: 110045
+                        shape_item_guid: 90000
+                        color_item_guid: 100000
                       entrance_animation_id: 6211
                       entrance_sound_id: 5505
                       round_won_sound_id: 1836
@@ -3505,13 +3505,13 @@ categories:
                       name_id: 8620
                       model_id: 1468
                       primary_saber:
-                        hilt_item_guid: 70060
-                        shape_item_guid: 50000
-                        color_item_guid: 60004
-                      secondary_saber:
-                        hilt_item_guid: 80061
+                        hilt_item_guid: 110060
                         shape_item_guid: 90000
                         color_item_guid: 100004
+                      secondary_saber:
+                        hilt_item_guid: 140061
+                        shape_item_guid: 120000
+                        color_item_guid: 130004
                       entrance_animation_id: 6216
                       entrance_sound_id: 5013
                       round_won_sound_id: 5017
@@ -3579,9 +3579,9 @@ categories:
                       name_id: 32942
                       model_id: 1308
                       primary_saber:
-                        hilt_item_guid: 70025
-                        shape_item_guid: 50000
-                        color_item_guid: 60004
+                        hilt_item_guid: 110025
+                        shape_item_guid: 90000
+                        color_item_guid: 100004
                       entrance_animation_id: 6217
                       entrance_sound_id: 4702
                       round_won_sound_id: 4707
@@ -3657,9 +3657,9 @@ categories:
                       name_id: 4125
                       model_id: 1469
                       primary_saber:
-                        hilt_item_guid: 70003
-                        shape_item_guid: 50000
-                        color_item_guid: 60004
+                        hilt_item_guid: 110003
+                        shape_item_guid: 90000
+                        color_item_guid: 100004
                       entrance_animation_id: 6218
                       entrance_sound_id: 4911
                       round_won_sound_id: 4915
@@ -3736,9 +3736,9 @@ categories:
                       name_id: 10380
                       model_id: 2313
                       primary_saber:
-                        hilt_item_guid: 70024
-                        shape_item_guid: 50000
-                        color_item_guid: 60004
+                        hilt_item_guid: 110024
+                        shape_item_guid: 90000
+                        color_item_guid: 100004
                       entrance_animation_id: 6219
                       entrance_sound_id: 5919
                       round_won_sound_id: 5923
@@ -3816,9 +3816,9 @@ categories:
                       name_id: 33017
                       model_id: 1332
                       primary_saber:
-                        hilt_item_guid: 70005
-                        shape_item_guid: 50007
-                        color_item_guid: 60004
+                        hilt_item_guid: 110005
+                        shape_item_guid: 90007
+                        color_item_guid: 100004
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 1200
@@ -3880,13 +3880,13 @@ categories:
                       name_id: 33018
                       model_id: 1333
                       primary_saber:
-                        hilt_item_guid: 70047
-                        shape_item_guid: 50000
-                        color_item_guid: 60002
-                      secondary_saber:
-                        hilt_item_guid: 80019
+                        hilt_item_guid: 110047
                         shape_item_guid: 90000
-                        color_item_guid: 100004
+                        color_item_guid: 100002
+                      secondary_saber:
+                        hilt_item_guid: 140019
+                        shape_item_guid: 120000
+                        color_item_guid: 130004
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 1000
@@ -3948,9 +3948,9 @@ categories:
                       name_id: 33019
                       model_id: 1334
                       primary_saber:
-                        hilt_item_guid: 70001
-                        shape_item_guid: 50007
-                        color_item_guid: 60005
+                        hilt_item_guid: 110001
+                        shape_item_guid: 90007
+                        color_item_guid: 100005
                       entrance_animation_id: 5004
                       min_millis_per_key: 400
                       max_millis_per_key: 800

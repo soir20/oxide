@@ -1,0 +1,721 @@
+---
+# Blinged-Out Trooper Armor
+- guid: 170000
+  name_id: 14164
+  description_id: 14
+  icon_set_id: 446
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneBlingArmor.adr
+  texture_alias: CloneBling
+  item_type: 1
+  category: 61
+# Blinged-Out Trooper Helmet
+- guid: 170001
+  name_id: 14170
+  description_id: 14
+  icon_set_id: 449
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneBlingHelm.adr
+  texture_alias: CloneBling
+  item_type: 1
+  category: 60
+# Blinged-Out Trooper Gloves
+- guid: 170002
+  name_id: 14168
+  description_id: 14
+  icon_set_id: 448
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneBlingGloves.adr
+  texture_alias: CloneBling
+  item_type: 1
+  category: 62
+# Blinged-Out Trooper Boots
+- guid: 170003
+  name_id: 14166
+  description_id: 14
+  icon_set_id: 447
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBlingBoots.adr
+  texture_alias: CloneBling
+  item_type: 1
+  category: 63
+# Skeletal Clone Trooper Armor
+- guid: 170004
+  name_id: 4278
+  description_id: 14
+  icon_set_id: 2397
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneSeason4ArmorGlow.adr
+  texture_alias: Skeleton
+  item_type: 1
+  category: 61
+  members: true
+# Skeletal Clone Trooper Helmet
+- guid: 170005
+  name_id: 4276
+  description_id: 14
+  icon_set_id: 2395
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneSeason4HelmGlow.adr
+  texture_alias: Skeleton
+  item_type: 1
+  category: 60
+  members: true
+# Skeletal Clone Trooper Gloves
+- guid: 170006
+  name_id: 4277
+  description_id: 14
+  icon_set_id: 2396
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneSeason4GlovesGlow.adr
+  texture_alias: Skeleton
+  item_type: 1
+  category: 62
+  members: true
+# Skeletal Clone Trooper Boots
+- guid: 170007
+  name_id: 4279
+  description_id: 14
+  icon_set_id: 2398
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4BootsGlow.adr
+  texture_alias: Skeleton
+  item_type: 1
+  category: 63
+  members: true
+# Spiked Trooper Armor
+- guid: 170008
+  name_id: 894
+  description_id: 14
+  icon_set_id: 498
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_FeralCloneArmor.adr
+  texture_alias: TribalMarkings
+  item_type: 1
+  category: 61
+# Spiked Trooper Helmet
+- guid: 170009
+  name_id: 890
+  description_id: 14
+  icon_set_id: 501
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_FeralCloneHelm.adr
+  texture_alias: TribalMarkings
+  item_type: 1
+  category: 60
+# Spiked Trooper Gloves
+- guid: 170010
+  name_id: 892
+  description_id: 14
+  icon_set_id: 500
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_FeralCloneGloves.adr
+  texture_alias: TribalMarkings
+  item_type: 1
+  category: 62
+# Spiked Trooper Boots
+- guid: 170011
+  name_id: 896
+  description_id: 14
+  icon_set_id: 499
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_FeralCloneBoots.adr
+  texture_alias: TribalMarkings
+  item_type: 1
+  category: 63
+# Pirate Jedi Coat
+- guid: 170012
+  name_id: 2973
+  description_id: 14
+  icon_set_id: 2384
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PirateJediCoat.adr
+  texture_alias: PiratePurple
+  item_type: 1
+  category: 61
+  members: true
+# Pirate Jedi Hat
+- guid: 170013
+  name_id: 2969
+  description_id: 14
+  icon_set_id: 2382
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PirateJediHat.adr
+  texture_alias: PiratePurple
+  item_type: 1
+  category: 60
+  members: true
+# Pirate Jedi Gloves
+- guid: 170014
+  name_id: 2971
+  description_id: 14
+  icon_set_id: 2383
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_PirateJediGloves.adr
+  texture_alias: PiratePurple
+  item_type: 1
+  category: 62
+  members: true
+# Pirate Jedi Pegleg
+- guid: 170015
+  name_id: 2975
+  description_id: 14
+  icon_set_id: 2385
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PirateJediPegleg.adr
+  texture_alias: PiratePurple
+  item_type: 1
+  category: 63
+  members: true
+# Purple Wampa Suit
+- guid: 170016
+  name_id: 938
+  description_id: 14
+  icon_set_id: 483
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_WampaSuit.adr
+  texture_alias: PurpleFur
+  item_type: 1
+  category: 61
+  members: true
+# Purple Wampa Mask
+- guid: 170017
+  name_id: 968
+  description_id: 14
+  icon_set_id: 486
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_WampaHead.adr
+  texture_alias: PurpleFur
+  item_type: 1
+  category: 60
+  members: true
+# Purple Wampa Claws
+- guid: 170018
+  name_id: 958
+  description_id: 14
+  icon_set_id: 485
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_WampaClaws.adr
+  texture_alias: PurpleFur
+  item_type: 1
+  category: 62
+  members: true
+# Purple Wampa Feet
+- guid: 170019
+  name_id: 946
+  description_id: 14
+  icon_set_id: 484
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_WampaFeet.adr
+  texture_alias: PurpleFur
+  item_type: 1
+  category: 63
+  members: true
+# Zillo Beast Suit
+- guid: 170020
+  name_id: 1331
+  description_id: 14
+  icon_set_id: 1144
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ZilloBeastSuit.adr
+  texture_alias: ZilloBeast
+  item_type: 1
+  category: 61
+# Zillo Beast Head
+- guid: 170021
+  name_id: 1426
+  description_id: 14
+  icon_set_id: 1147
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_ZilloBeastHelmet.adr
+  texture_alias: ZilloBeast
+  item_type: 1
+  category: 60
+# Zillo Beast Gloves
+- guid: 170022
+  name_id: 1394
+  description_id: 14
+  icon_set_id: 1146
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ZilloBeastGloves.adr
+  texture_alias: ZilloBeast
+  item_type: 1
+  category: 62
+# Zillo Beast Shoes
+- guid: 170023
+  name_id: 1364
+  description_id: 14
+  icon_set_id: 1145
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ZilloBeastShoes.adr
+  texture_alias: ZilloBeast
+  item_type: 1
+  category: 63
+# Pink Tusken Raider Robes
+- guid: 170024
+  name_id: 224
+  description_id: 14
+  icon_set_id: 114
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_TuskenRaiderRobe.adr
+  texture_alias: TuskenRaiderPink
+  item_type: 1
+  category: 61
+  members: true
+# Pink Tusken Raider Helmet
+- guid: 170025
+  name_id: 220
+  description_id: 14
+  icon_set_id: 208
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_TuskenRaiderHelmet.adr
+  texture_alias: TuskenRaiderPink
+  item_type: 1
+  category: 60
+  members: true
+# Pink Tusken Raider Gloves
+- guid: 170026
+  name_id: 222
+  description_id: 14
+  icon_set_id: 182
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_TuskenRaiderGloves.adr
+  texture_alias: TuskenRaiderPink
+  item_type: 1
+  category: 62
+  members: true
+# Pink Tusken Raider Boots
+- guid: 170027
+  name_id: 226
+  description_id: 14
+  icon_set_id: 152
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_TuskenRaiderBoots.adr
+  texture_alias: TuskenRaiderPink
+  item_type: 1
+  category: 63
+  members: true
+# Count Dooku Pumpkinhead
+- guid: 170028
+  name_id: 53065
+  description_id: 14
+  icon_set_id: 3144
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_HalloweenPumpkinDooku.adr
+  texture_alias: PumpkinDooku
+  item_type: 1
+  category: 60
+  members: true
+# General Grievous Pumpkinhead
+- guid: 170029
+  name_id: 53066
+  description_id: 14
+  icon_set_id: 3145
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_HalloweenPumpkinGrievous.adr
+  texture_alias: PumpkinGrievous
+  item_type: 1
+  category: 60
+# Asajj Ventress Pumpkinhead
+- guid: 170030
+  name_id: 53067
+  description_id: 14
+  icon_set_id: 3146
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_HalloweenPumpkinVentress.adr
+  texture_alias: Default0
+  item_type: 1
+  category: 60
+# Grievous Mask
+- guid: 170031
+  name_id: 1624
+  description_id: 14
+  icon_set_id: 1386
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_GrievousMask.adr
+  texture_alias: Grievous
+  item_type: 1
+  category: 60
+  members: true
+# Gungan Mask
+- guid: 170032
+  name_id: 1626
+  description_id: 14
+  icon_set_id: 1387
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_GunganMask.adr
+  texture_alias: Gungan
+  item_type: 1
+  category: 60
+# Jabba Mask
+- guid: 170033
+  name_id: 1842
+  description_id: 14
+  icon_set_id: 1388
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_JabbaMask.adr
+  texture_alias: Jabba
+  item_type: 1
+  category: 60
+  members: true
+# Ortolan Mask
+- guid: 170034
+  name_id: 1630
+  description_id: 14
+  icon_set_id: 1389
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_MaxReboMask.adr
+  texture_alias: MaxRebo
+  item_type: 1
+  category: 60
+# Padme Amidala Mask
+- guid: 170035
+  name_id: 1856
+  description_id: 14
+  icon_set_id: 1390
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_PadmeMask.adr
+  texture_alias: Padme
+  item_type: 1
+  category: 60
+  members: true
+# Chancellor Palpatine Mask
+- guid: 170036
+  name_id: 1858
+  description_id: 14
+  icon_set_id: 1391
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_PalpatineMask.adr
+  texture_alias: Palpatine
+  item_type: 1
+  category: 60
+  members: true
+# Protocol Droid Mask
+- guid: 170037
+  name_id: 1860
+  description_id: 14
+  icon_set_id: 1392
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ProtocolDroidMask.adr
+  texture_alias: ProtocolDroid
+  item_type: 1
+  category: 60
+# Yoda Mask
+- guid: 170038
+  name_id: 1666
+  description_id: 14
+  icon_set_id: 1393
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_YodaMask.adr
+  texture_alias: Yoda
+  item_type: 1
+  category: 60
+  members: true
+# Life Day Robe
+- guid: 170039
+  name_id: 20305
+  description_id: 14
+  icon_set_id: 1480
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LifeDayRobe.adr
+  texture_alias: LifeDayRobe
+  item_type: 1
+  category: 61
+# Life Day Boots
+- guid: 170040
+  name_id: 20307
+  description_id: 14
+  icon_set_id: 1481
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
+  texture_alias: LifeDayRobe
+  item_type: 1
+  category: 63
+# Life Day Clone Trooper Armor
+- guid: 170041
+  name_id: 20321
+  description_id: 14
+  icon_set_id: 1488
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneLifeDayArmor.adr
+  texture_alias: RedRibbon
+  item_type: 1
+  category: 61
+# Life Day Clone Trooper Helm
+- guid: 170042
+  name_id: 20317
+  description_id: 14
+  icon_set_id: 1486
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneLifeDayHelmet.adr
+  texture_alias: RedRibbon
+  item_type: 1
+  category: 60
+# Life Day Clone Trooper Gloves
+- guid: 170043
+  name_id: 20319
+  description_id: 14
+  icon_set_id: 1487
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneLifeDayGloves.adr
+  texture_alias: RedRibbon
+  item_type: 1
+  category: 62
+# Life Day Clone Trooper Boots
+- guid: 170044
+  name_id: 20323
+  description_id: 14
+  icon_set_id: 1489
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneLifeDayBoots.adr
+  texture_alias: RedRibbon
+  item_type: 1
+  category: 63
+# Nutcracker Clone Trooper Armor
+- guid: 170045
+  name_id: 20313
+  description_id: 14
+  icon_set_id: 1484
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
+  texture_alias: Nutcracker
+  item_type: 1
+  category: 61
+# Nutcracker Clone Trooper Helm
+- guid: 170046
+  name_id: 20309
+  description_id: 14
+  icon_set_id: 1482
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneHelm.adr
+  texture_alias: Nutcracker
+  item_type: 1
+  category: 60
+# Nutcracker Clone Trooper Gloves
+- guid: 170047
+  name_id: 20311
+  description_id: 14
+  icon_set_id: 1483
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
+  texture_alias: Nutcracker
+  item_type: 1
+  category: 62
+# Nutcracker Clone Trooper Boots
+- guid: 170048
+  name_id: 20315
+  description_id: 14
+  icon_set_id: 1485
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
+  texture_alias: Nutcracker
+  item_type: 1
+  category: 63
+# Obi-Wan's Festive Robe
+- guid: 170049
+  name_id: 4510
+  description_id: 14
+  icon_set_id: 2580
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ObiwanV2Tunic.adr
+  texture_alias: ObiClaus
+  item_type: 1
+  category: 61
+  members: true
+# Obi-Wan's Festive Hat
+- guid: 170050
+  name_id: 4508
+  description_id: 14
+  icon_set_id: 2578
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SantaHat.adr
+  texture_alias: ObiClaus
+  item_type: 1
+  category: 60
+  members: true
+# Obi-Wan's Festive Gloves
+- guid: 170051
+  name_id: 4509
+  description_id: 14
+  icon_set_id: 2579
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGlovesFat.adr
+  texture_alias: ObiClaus
+  item_type: 1
+  category: 62
+  members: true
+# Obi-Wan's Festive Boots
+- guid: 170052
+  name_id: 4511
+  description_id: 14
+  icon_set_id: 2581
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_WideBoots.adr
+  texture_alias: ObiClaus
+  item_type: 1
+  category: 63
+  members: true
+# Wampa Suit
+- guid: 170053
+  name_id: 940
+  description_id: 14
+  icon_set_id: 502
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_WampaSuit.adr
+  texture_alias: WhiteFur
+  item_type: 1
+  category: 61
+  members: true
+# Wampa Mask
+- guid: 170054
+  name_id: 970
+  description_id: 14
+  icon_set_id: 505
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_WampaHead.adr
+  texture_alias: WhiteFur
+  item_type: 1
+  category: 60
+  members: true
+# Wampa Claws
+- guid: 170055
+  name_id: 960
+  description_id: 14
+  icon_set_id: 504
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_WampaClaws.adr
+  texture_alias: WhiteFur
+  item_type: 1
+  category: 62
+  members: true
+# Wampa Feet
+- guid: 170056
+  name_id: 948
+  description_id: 14
+  icon_set_id: 503
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_WampaFeet.adr
+  texture_alias: WhiteFur
+  item_type: 1
+  category: 63
+  members: true
+# St. Patrick's Clone Armor
+- guid: 170057
+  name_id: 54411
+  description_id: 14
+  icon_set_id: 3681
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CloneSeason4Armor.adr
+  texture_alias: CloneStPatrick
+  item_type: 1
+  category: 61
+# St. Patrick's Clone Helmet
+- guid: 170058
+  name_id: 54409
+  description_id: 14
+  icon_set_id: 3679
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneSeason4Helm.adr
+  texture_alias: CloneStPatrick
+  item_type: 1
+  category: 60
+# St. Patrick's Clone Gloves
+- guid: 170059
+  name_id: 54410
+  description_id: 14
+  icon_set_id: 3680
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneSeason4Gloves.adr
+  texture_alias: CloneStPatrick
+  item_type: 1
+  category: 62
+# St. Patrick's Clone Boots
+- guid: 170060
+  name_id: 54412
+  description_id: 14
+  icon_set_id: 3682
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
+  texture_alias: CloneStPatrick
+  item_type: 1
+  category: 63
+# Cupid Clone's Armor
+- guid: 170061
+  name_id: 33885
+  description_id: 14
+  icon_set_id: 1669
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CupidCloneCommandoArmor.adr
+  texture_alias: Cupid
+  item_type: 1
+  category: 61
+# Cupid Clone's Helmet
+- guid: 170062
+  name_id: 33884
+  description_id: 14
+  icon_set_id: 1672
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_CloneCommandoHelm.adr
+  texture_alias: Cupid
+  item_type: 1
+  category: 60
+# Cupid Clone's Gloves
+- guid: 170063
+  name_id: 33886
+  description_id: 14
+  icon_set_id: 1671
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CloneCommandoGloves.adr
+  texture_alias: Cupid
+  item_type: 1
+  category: 62
+# Cupid Clone's Boots
+- guid: 170064
+  name_id: 33887
+  description_id: 14
+  icon_set_id: 1670
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneCommandoBoots.adr
+  texture_alias: Cupid
+  item_type: 1
+  category: 63
+# Petro's Gypsy Suit
+- guid: 170065
+  name_id: 53605
+  description_id: 14
+  icon_set_id: 3204
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PetroDisguiseSuit.adr
+  texture_alias: Petro
+  item_type: 1
+  category: 61
+# Petro's Gypsy Helmet
+- guid: 170066
+  name_id: 53603
+  description_id: 14
+  icon_set_id: 3202
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_PetroDisguiseMask.adr
+  texture_alias: Petro
+  item_type: 1
+  category: 60
+# Petro's Gypsy Gloves
+- guid: 170067
+  name_id: 53604
+  description_id: 14
+  icon_set_id: 3203
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_PetroDisguiseGloves.adr
+  texture_alias: Petro
+  item_type: 1
+  category: 62
+# Petro's Gypsy Boots
+- guid: 170068
+  name_id: 53606
+  description_id: 14
+  icon_set_id: 3205
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PetroDisguiseBoots.adr
+  texture_alias: Petro
+  item_type: 1
+  category: 63

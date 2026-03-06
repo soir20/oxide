@@ -1,0 +1,265 @@
+---
+# Orange Hair
+- guid: 30000
+  name_id: 452
+  description_id: 14
+  icon_set_id: 755
+  cost: 200
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140000
+# Red Hair
+- guid: 30001
+  name_id: 454
+  description_id: 14
+  icon_set_id: 757
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140001
+# Blonde Hair
+- guid: 30002
+  name_id: 440
+  description_id: 14
+  icon_set_id: 749
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140002
+# Dirty Blonde Hair
+- guid: 30003
+  name_id: 442
+  description_id: 14
+  icon_set_id: 750
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140003
+# Light Brown Hair
+- guid: 30004
+  name_id: 444
+  description_id: 14
+  icon_set_id: 753
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140004
+# Brown Hair
+- guid: 30005
+  name_id: 446
+  description_id: 14
+  icon_set_id: 751
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140005
+# Dark Green Hair
+- guid: 30006
+  name_id: 450
+  description_id: 14
+  icon_set_id: 754
+  cost: 100
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140006
+# Dark Blue Hair
+- guid: 30007
+  name_id: 18047
+  description_id: 14
+  icon_set_id: 3598
+  cost: 200
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140007
+# Dark Purple Hair
+- guid: 30008
+  name_id: 448
+  description_id: 14
+  icon_set_id: 756
+  cost: 100
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140008
+# White Hair
+- guid: 30009
+  name_id: 93
+  description_id: 14
+  icon_set_id: 758
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140009
+# Grey Hair
+- guid: 30010
+  name_id: 91
+  description_id: 14
+  icon_set_id: 752
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140010
+# Black Hair
+- guid: 30011
+  name_id: 95
+  description_id: 14
+  icon_set_id: 748
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 6
+  customization_slot: HairColor
+  customization_id: 140011
+# Red
+- guid: 30012
+  name_id: 2634
+  description_id: 14
+  icon_set_id: 724
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairColor
+  customization_id: 140012
+# Blue
+- guid: 30013
+  name_id: 2630
+  description_id: 14
+  icon_set_id: 722
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairColor
+  customization_id: 140013
+# Purple
+- guid: 30014
+  name_id: 2632
+  description_id: 14
+  icon_set_id: 723
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairColor
+  customization_id: 140014
+# Dark Red Hair
+- guid: 30015
+  name_id: 18049
+  description_id: 14
+  icon_set_id: 1313
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140015
+# Yellow-Green Hair
+- guid: 30016
+  name_id: 18050
+  description_id: 14
+  icon_set_id: 1309
+  cost: 100
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140016
+# Teal Hair
+- guid: 30017
+  name_id: 18046
+  description_id: 14
+  icon_set_id: 1310
+  cost: 100
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140017
+# Dark Blue Hair
+- guid: 30018
+  name_id: 18047
+  description_id: 14
+  icon_set_id: 1315
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140018
+# Purple Hair
+- guid: 30019
+  name_id: 18044
+  description_id: 14
+  icon_set_id: 1311
+  cost: 100
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140019
+# Dark Purple Hair
+- guid: 30020
+  name_id: 18048
+  description_id: 14
+  icon_set_id: 1314
+  cost: 50
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140020
+# Pink Hair
+- guid: 30021
+  name_id: 18045
+  description_id: 14
+  icon_set_id: 1312
+  cost: 200
+  slot: !Customization HairColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairColor
+  customization_id: 140021

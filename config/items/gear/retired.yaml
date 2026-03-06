@@ -1,0 +1,71 @@
+---
+# Han Solo's Outfit
+- guid: 210000
+  name_id: 302
+  description_id: 14
+  icon_set_id: 96
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_HanSoloSuit.adr
+  texture_alias: HanSolo
+  item_type: 1
+  category: 61
+# Han Solo's Boots
+- guid: 210001
+  name_id: 304
+  description_id: 14
+  icon_set_id: 138
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HanSoloBoots.adr
+  texture_alias: HanSolo
+  item_type: 1
+  category: 63
+# Lando Calrissian's Suit
+- guid: 210002
+  name_id: 1462
+  description_id: 14
+  icon_set_id: 1100
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LandoSuit.adr
+  texture_alias: Lando
+  item_type: 1
+  category: 61
+# Lando Calrissian's Shoes
+- guid: 210003
+  name_id: 1472
+  description_id: 14
+  icon_set_id: 1101
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LandoShoes.adr
+  texture_alias: Lando
+  item_type: 1
+  category: 63
+# Kyle Katarn's Uniform
+- guid: 210004
+  name_id: 204
+  description_id: 14
+  icon_set_id: 100
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KyleKatarnSuit.adr
+  texture_alias: KyleKatarn
+  item_type: 1
+  category: 61
+# Kyle Katarn's Gloves
+- guid: 210005
+  name_id: 202
+  description_id: 14
+  icon_set_id: 171
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_KyleKatarnGloves.adr
+  texture_alias: KyleKatarn
+  item_type: 1
+  category: 62
+# Kyle Katarn's Boots
+- guid: 210006
+  name_id: 206
+  description_id: 14
+  icon_set_id: 142
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KyleKatarnBoots.adr
+  texture_alias: KyleKatarn
+  item_type: 1
+  category: 63

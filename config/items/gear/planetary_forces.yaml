@@ -1,0 +1,2569 @@
+---
+# Zygerrian Guard Uniform
+- guid: 190000
+  name_id: 4453
+  description_id: 14
+  icon_set_id: 2511
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ZygerrianGuardUniform.adr
+  texture_alias: Zygerrian
+  item_type: 1
+  category: 61
+  members: true
+# Zygerrian Guard Helmet
+- guid: 190001
+  name_id: 4452
+  description_id: 14
+  icon_set_id: 2510
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_ZygerrianGuardHelm.adr
+  texture_alias: Zygerrian
+  item_type: 1
+  category: 60
+  members: true
+# Zygerrian Guard Boots
+- guid: 190002
+  name_id: 4454
+  description_id: 14
+  icon_set_id: 2512
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_ZygerrianGuardBoots.adr
+  texture_alias: Zygerrian
+  item_type: 1
+  category: 63
+  members: true
+# Bo Katan's Death Watch Suit
+- guid: 190003
+  name_id: 4552
+  description_id: 14
+  icon_set_id: 2634
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BoKatanSuit.adr
+  texture_alias: BoKatan
+  item_type: 1
+  category: 61
+# Bo Katan's Death Watch Helmet
+- guid: 190004
+  name_id: 4550
+  description_id: 14
+  icon_set_id: 2632
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BoKatanHelm.adr
+  texture_alias: BoKatan
+  item_type: 1
+  category: 60
+# Bo Katan's Death Watch Gloves
+- guid: 190005
+  name_id: 4551
+  description_id: 14
+  icon_set_id: 2633
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: BoKatan
+  item_type: 1
+  category: 62
+# Bo Katan's Death Watch Boots
+- guid: 190006
+  name_id: 4553
+  description_id: 14
+  icon_set_id: 2635
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BoKatanBoots.adr
+  texture_alias: BoKatan
+  item_type: 1
+  category: 63
+# Krismo Sodi's Kage Uniform
+- guid: 190007
+  name_id: 4715
+  description_id: 14
+  icon_set_id: 2762
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KrismoSodiUniform.adr
+  texture_alias: KrismoSodi
+  item_type: 1
+  category: 61
+# Krismo Sodi's Hooded Mask
+- guid: 190008
+  name_id: 4713
+  description_id: 14
+  icon_set_id: 2760
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_KrismoSodiHood.adr
+  texture_alias: KrismoSodi
+  item_type: 1
+  category: 60
+# Krismo Sodi's Gloves
+- guid: 190009
+  name_id: 4714
+  description_id: 14
+  icon_set_id: 2761
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_KrismoSodiGloves.adr
+  texture_alias: KrismoSodi
+  item_type: 1
+  category: 62
+# Krismo Sodi's Boots
+- guid: 190010
+  name_id: 4716
+  description_id: 14
+  icon_set_id: 2763
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KrismoSodiBoots.adr
+  texture_alias: KrismoSodi
+  item_type: 1
+  category: 63
+# Pre Vizsla's Armor
+- guid: 190011
+  name_id: 1194
+  description_id: 14
+  icon_set_id: 376
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuit.adr
+  texture_alias: PreVizsla
+  item_type: 1
+  category: 61
+# Pre Vizsla's Helmet
+- guid: 190012
+  name_id: 1200
+  description_id: 14
+  icon_set_id: 394
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
+  texture_alias: PreVizsla
+  item_type: 1
+  category: 60
+# Pre Vizsla's Gloves
+- guid: 190013
+  name_id: 1198
+  description_id: 14
+  icon_set_id: 388
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGloves.adr
+  texture_alias: PreVizsla
+  item_type: 1
+  category: 62
+# Pre Vizsla's Boots
+- guid: 190014
+  name_id: 1196
+  description_id: 14
+  icon_set_id: 382
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: PreVizsla
+  item_type: 1
+  category: 63
+# Pre Vizsla's Death Watch Armor
+- guid: 190015
+  name_id: 54427
+  description_id: 14
+  icon_set_id: 3697
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PreVizslaSuit.adr
+  texture_alias: PreViz
+  item_type: 1
+  category: 61
+# Pre Vizsla's Death Watch Helmet
+- guid: 190016
+  name_id: 54425
+  description_id: 14
+  icon_set_id: 3695
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_PreVizslaHelmet.adr
+  texture_alias: PreViz
+  item_type: 1
+  category: 60
+# Pre Vizsla's Death Watch Gloves
+- guid: 190017
+  name_id: 54426
+  description_id: 14
+  icon_set_id: 3696
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_PreVizslaGloves.adr
+  texture_alias: PreViz
+  item_type: 1
+  category: 62
+# Pre Vizsla's Death Watch Boots
+- guid: 190018
+  name_id: 54428
+  description_id: 14
+  icon_set_id: 3698
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PreVizslaBoots.adr
+  texture_alias: PreViz
+  item_type: 1
+  category: 63
+# King Katuunko's Suit
+- guid: 190019
+  name_id: 1620
+  description_id: 14
+  icon_set_id: 1246
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_KatuunkoBody.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 61
+# King Katuunko's Visor
+- guid: 190020
+  name_id: 1616
+  description_id: 14
+  icon_set_id: 1249
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_KatuunkoHead.adr
+  texture_alias: KingKatuunko
+  item_type: 1
+  category: 60
+# King Katuunko's Handguards
+- guid: 190021
+  name_id: 1618
+  description_id: 14
+  icon_set_id: 1248
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_KatuunkoHand.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 62
+# King Katuunko's Boots
+- guid: 190022
+  name_id: 1622
+  description_id: 14
+  icon_set_id: 1247
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_KatuunkoFeet.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 63
+# Baron Papanoida's Suit
+- guid: 190023
+  name_id: 1642
+  description_id: 14
+  icon_set_id: 1323
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ChairmanPapanoidaTunic.adr
+  texture_alias: Papanoida
+  item_type: 1
+  category: 61
+# Baron Papanoida's Hat
+- guid: 190024
+  name_id: 1638
+  description_id: 14
+  icon_set_id: 1326
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ChairmanPapanoidaHat.adr
+  texture_alias: Papanoida
+  item_type: 1
+  category: 60
+# Baron Papanoida's Gloves
+- guid: 190025
+  name_id: 1640
+  description_id: 14
+  icon_set_id: 1325
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
+  texture_alias: Papanoida
+  item_type: 1
+  category: 62
+# Baron Papanoida's Boots
+- guid: 190026
+  name_id: 1644
+  description_id: 14
+  icon_set_id: 1324
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_AurraSingBoots.adr
+  texture_alias: Papanoida
+  item_type: 1
+  category: 63
+# Satine's Royal Guard Armor
+- guid: 190027
+  name_id: 1761
+  description_id: 14
+  icon_set_id: 1349
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SatineRoyalGuardArmor.adr
+  texture_alias: SRG
+  item_type: 1
+  category: 61
+# Satine's Royal Guard Helm
+- guid: 190028
+  name_id: 1757
+  description_id: 14
+  icon_set_id: 1352
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SatineRoyalGuardHelm.adr
+  texture_alias: SRG
+  item_type: 1
+  category: 60
+# Satine's Royal Guard Gloves
+- guid: 190029
+  name_id: 1759
+  description_id: 14
+  icon_set_id: 1351
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_SatineRoyalGuardGloves.adr
+  texture_alias: SRG
+  item_type: 1
+  category: 62
+# Satine's Royal Guard Boots
+- guid: 190030
+  name_id: 1763
+  description_id: 14
+  icon_set_id: 1350
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SatineRoyalGuardBoots.adr
+  texture_alias: SRG
+  item_type: 1
+  category: 63
+# Duchess Satine's Robes
+- guid: 190031
+  name_id: 1845
+  description_id: 14
+  icon_set_id: 1378
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DuchessSatine.adr
+  texture_alias: DuchessSatine
+  item_type: 1
+  category: 61
+# Duchess Satine's Headdress
+- guid: 190032
+  name_id: 1837
+  description_id: 14
+  icon_set_id: 1380
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_DuchessSatine.adr
+  texture_alias: DuchessSatine
+  item_type: 1
+  category: 60
+# Duchess Satine's Boots
+- guid: 190033
+  name_id: 1840
+  description_id: 14
+  icon_set_id: 1379
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LokDurdBoots.adr
+  texture_alias: DuchessSatine
+  item_type: 1
+  category: 63
+# Mandalorian Secret Service Armor
+- guid: 190034
+  name_id: 1769
+  description_id: 14
+  icon_set_id: 1374
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianSecretServiceSuit.adr
+  texture_alias: SecretService
+  item_type: 1
+  category: 61
+# Mandalorian Secret Service Helmet
+- guid: 190035
+  name_id: 1765
+  description_id: 14
+  icon_set_id: 1377
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MandalorianSecretServiceHelmet.adr
+  texture_alias: SecretService
+  item_type: 1
+  category: 60
+# Mandalorian Secret Service Gloves
+- guid: 190036
+  name_id: 1767
+  description_id: 14
+  icon_set_id: 1376
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr
+  texture_alias: SecretService
+  item_type: 1
+  category: 62
+# Mandalorian Secret Service Boots
+- guid: 190037
+  name_id: 1771
+  description_id: 14
+  icon_set_id: 1375
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MandalorianSecretServiceBoots.adr
+  texture_alias: SecretService
+  item_type: 1
+  category: 63
+# Mother Talzin's Robes
+- guid: 190038
+  name_id: 32931
+  description_id: 14
+  icon_set_id: 1595
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MotherTalzinRobe.adr
+  texture_alias: MotherTalzin
+  item_type: 1
+  category: 61
+# Mother Talzin's Hood
+- guid: 190039
+  name_id: 32932
+  description_id: 14
+  icon_set_id: 1597
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MotherTalzinHood.adr
+  texture_alias: MotherTalzin
+  item_type: 1
+  category: 60
+# Mother Talzin's Boots
+- guid: 190040
+  name_id: 32934
+  description_id: 14
+  icon_set_id: 1596
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MotherTalzinBoots.adr
+  texture_alias: MotherTalzin
+  item_type: 1
+  category: 63
+# Nightsister Ventress' Outfit
+- guid: 190041
+  name_id: 32981
+  description_id: 14
+  icon_set_id: 1612
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_VentressNightsisterOutfit.adr
+  texture_alias: VentressNightsister
+  item_type: 1
+  category: 61
+# Nightsister Ventress' Hood
+- guid: 190042
+  name_id: 32979
+  description_id: 14
+  icon_set_id: 1615
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_VentressNightsisterHood.adr
+  texture_alias: VentressNightsister
+  item_type: 1
+  category: 60
+# Nightsister Ventress' Gloves
+- guid: 190043
+  name_id: 32980
+  description_id: 14
+  icon_set_id: 1614
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_VentressNightsisterGloves.adr
+  texture_alias: VentressNightsister
+  item_type: 1
+  category: 62
+# Nightsister Ventress' Boots
+- guid: 190044
+  name_id: 32982
+  description_id: 14
+  icon_set_id: 1613
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_VentressNightsisterBoots.adr
+  texture_alias: VentressNightsister
+  item_type: 1
+  category: 63
+# Mortis Son's Suit
+- guid: 190045
+  name_id: 33559
+  description_id: 14
+  icon_set_id: 1659
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MortisSonSuit.adr
+  texture_alias: MortisSon
+  item_type: 1
+  category: 61
+# Mortis Son's Collar
+- guid: 190046
+  name_id: 33557
+  description_id: 14
+  icon_set_id: 1657
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MortisSonCollar.adr
+  texture_alias: MortisSon
+  item_type: 1
+  category: 60
+# Mortis Son's Gloves
+- guid: 190047
+  name_id: 33558
+  description_id: 14
+  icon_set_id: 1658
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MortisSonShortGloves.adr
+  texture_alias: MortisSon
+  item_type: 1
+  category: 62
+# Mortis Son's Boots
+- guid: 190048
+  name_id: 33560
+  description_id: 14
+  icon_set_id: 1660
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MortisSonBoots.adr
+  texture_alias: MortisSon
+  item_type: 1
+  category: 63
+# Garnac's Suit
+- guid: 190049
+  name_id: 43515
+  description_id: 14
+  icon_set_id: 1838
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_GarnacHuntingSuit.adr
+  texture_alias: Garnac
+  item_type: 1
+  category: 61
+# Mandalorian Deathwatch Suit
+- guid: 190050
+  name_id: 4303
+  description_id: 14
+  icon_set_id: 2423
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuitShiny.adr
+  texture_alias: BlackSilver
+  item_type: 1
+  category: 61
+# Mandalorian Deathwatch Helmet
+- guid: 190051
+  name_id: 4301
+  description_id: 14
+  icon_set_id: 2426
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmetShiny.adr
+  texture_alias: BlackSilver
+  item_type: 1
+  category: 60
+# Mandalorian Deathwatch Gloves
+- guid: 190052
+  name_id: 4302
+  description_id: 14
+  icon_set_id: 2425
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGlovesShiny.adr
+  texture_alias: BlackSilver
+  item_type: 1
+  category: 62
+# Mandalorian Deathwatch Boots
+- guid: 190053
+  name_id: 4304
+  description_id: 14
+  icon_set_id: 2424
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoesShiny.adr
+  texture_alias: BlackSilver
+  item_type: 1
+  category: 63
+# Mandalorian Mercenary Armor
+- guid: 190054
+  name_id: 2664
+  description_id: 14
+  icon_set_id: 2164
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuitShiny.adr
+  texture_alias: RedSilver
+  item_type: 1
+  category: 61
+# Mandalorian Mercenary Helmet
+- guid: 190055
+  name_id: 2662
+  description_id: 14
+  icon_set_id: 2167
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmetShiny.adr
+  texture_alias: RedSilver
+  item_type: 1
+  category: 60
+# Mandalorian Mercenary Gloves
+- guid: 190056
+  name_id: 2663
+  description_id: 14
+  icon_set_id: 2166
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGlovesShiny.adr
+  texture_alias: RedSilver
+  item_type: 1
+  category: 62
+# Mandalorian Mercenary Boots
+- guid: 190057
+  name_id: 2665
+  description_id: 14
+  icon_set_id: 2165
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoesShiny.adr
+  texture_alias: RedSilver
+  item_type: 1
+  category: 63
+# Death Watch Armor
+- guid: 190058
+  name_id: 178
+  description_id: 14
+  icon_set_id: 95
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuit.adr
+  texture_alias: DeathWatch
+  item_type: 1
+  category: 61
+  members: true
+# Death Watch Helmet
+- guid: 190059
+  name_id: 174
+  description_id: 14
+  icon_set_id: 200
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
+  texture_alias: Deathwatch
+  item_type: 1
+  category: 60
+  members: true
+# Death Watch Gloves
+- guid: 190060
+  name_id: 176
+  description_id: 14
+  icon_set_id: 169
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGloves.adr
+  texture_alias: Deathwatch
+  item_type: 1
+  category: 62
+  members: true
+# Death Watch Boots
+- guid: 190061
+  name_id: 180
+  description_id: 14
+  icon_set_id: 137
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: Deathwatch
+  item_type: 1
+  category: 63
+  members: true
+# Tusken Raider Robes
+- guid: 190062
+  name_id: 256
+  description_id: 14
+  icon_set_id: 115
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_TuskenRaiderRobe.adr
+  texture_alias: TuskenRaider
+  item_type: 1
+  category: 61
+  members: true
+# Tusken Raider Helmet
+- guid: 190063
+  name_id: 252
+  description_id: 14
+  icon_set_id: 209
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_TuskenRaiderHelmet.adr
+  texture_alias: TuskenRaider
+  item_type: 1
+  category: 60
+  members: true
+# Tusken Raider Gloves
+- guid: 190064
+  name_id: 254
+  description_id: 14
+  icon_set_id: 183
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_TuskenRaiderGloves.adr
+  texture_alias: TuskenRaider
+  item_type: 1
+  category: 62
+  members: true
+# Tusken Raider Boots
+- guid: 190065
+  name_id: 258
+  description_id: 14
+  icon_set_id: 153
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_TuskenRaiderBoots.adr
+  texture_alias: TuskenRaider
+  item_type: 1
+  category: 63
+  members: true
+# Captain Typho's Armor
+- guid: 190066
+  name_id: 1329
+  description_id: 14
+  icon_set_id: 1197
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_TyphoBody.adr
+  texture_alias: Typho
+  item_type: 1
+  category: 61
+  members: true
+# Captain Typho's Eyepatch
+- guid: 190067
+  name_id: 1424
+  description_id: 14
+  icon_set_id: 1200
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_TyphoEyepatch.adr
+  texture_alias: Typho
+  item_type: 1
+  category: 60
+  members: true
+# Captain Typho's Gloves
+- guid: 190068
+  name_id: 1392
+  description_id: 14
+  icon_set_id: 1199
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_TyphoGloves.adr
+  texture_alias: Typho
+  item_type: 1
+  category: 62
+  members: true
+# Captain Typho's Boots
+- guid: 190069
+  name_id: 1350
+  description_id: 14
+  icon_set_id: 1198
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
+  texture_alias: Typho
+  item_type: 1
+  category: 63
+  members: true
+# Lama Su's Armor
+- guid: 190070
+  name_id: 1577
+  description_id: 14
+  icon_set_id: 1237
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LamaSuRobe.adr
+  texture_alias: LamaSu
+  item_type: 1
+  category: 61
+  members: true
+# Lama Su's Boots
+- guid: 190071
+  name_id: 1579
+  description_id: 14
+  icon_set_id: 1239
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_EmboBoots.adr
+  texture_alias: LamaSu
+  item_type: 1
+  category: 63
+  members: true
+# Toydarian Royal Guard Uniform
+- guid: 190072
+  name_id: 1662
+  description_id: 14
+  icon_set_id: 1250
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_ToydarianRoyalGuardSuit.adr
+  texture_alias: ToyDarianRoyalGuard
+  item_type: 1
+  category: 61
+  members: true
+# Toydarian Royal Guard Helmet
+- guid: 190073
+  name_id: 1658
+  description_id: 14
+  icon_set_id: 1253
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_ToydarianRoyalGuardHelmet.adr
+  texture_alias: ToydarianRoyalGuard
+  item_type: 1
+  category: 60
+  members: true
+# Toydarian Royal Guard Gloves
+- guid: 190074
+  name_id: 1660
+  description_id: 14
+  icon_set_id: 1252
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_ToydarianRoyalGuardGloves.adr
+  texture_alias: ToydarianRoyalGuard
+  item_type: 1
+  category: 62
+  members: true
+# Toydarian Royal Guard Boots
+- guid: 190075
+  name_id: 1664
+  description_id: 14
+  icon_set_id: 1251
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
+  texture_alias: ToydarianRoyalGuard
+  item_type: 1
+  category: 63
+  members: true
+# Ion Papanoida's Uniform
+- guid: 190076
+  name_id: 1573
+  description_id: 14
+  icon_set_id: 1319
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_IonPapanoidaSuit.adr
+  texture_alias: IonPapanoida
+  item_type: 1
+  category: 61
+  members: true
+# Ion Papanoida's Hat
+- guid: 190077
+  name_id: 1569
+  description_id: 14
+  icon_set_id: 1322
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_IonPapanoidaHat.adr
+  texture_alias: IonPapanoida
+  item_type: 1
+  category: 60
+  members: true
+# Ion Papanoida's Gloves
+- guid: 190078
+  name_id: 1571
+  description_id: 14
+  icon_set_id: 1321
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_IonPapanoidaGloves.adr
+  texture_alias: IonPapanoida
+  item_type: 1
+  category: 62
+  members: true
+# Ion Papanoida's Boots
+- guid: 190079
+  name_id: 1575
+  description_id: 14
+  icon_set_id: 1320
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HanSoloBoots.adr
+  texture_alias: IonPapanoida
+  item_type: 1
+  category: 63
+  members: true
+# Mandalorian Police Captain Armor
+- guid: 190080
+  name_id: 1743
+  description_id: 14
+  icon_set_id: 1342
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianSecretServiceSuit.adr
+  texture_alias: MandalorianCaptain
+  item_type: 1
+  category: 61
+  members: true
+# Mandalorian Police Captain Helmet
+- guid: 190081
+  name_id: 1739
+  description_id: 14
+  icon_set_id: 1345
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_MandalorianCaptainHelmet.adr
+  texture_alias: MandalorianCaptain
+  item_type: 1
+  category: 60
+  members: true
+# Mandalorian Police Captain Gloves
+- guid: 190082
+  name_id: 1741
+  description_id: 14
+  icon_set_id: 1344
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr
+  texture_alias: MandalorianCaptain
+  item_type: 1
+  category: 62
+  members: true
+# Mandalorian Police Captain Boots
+- guid: 190083
+  name_id: 1745
+  description_id: 14
+  icon_set_id: 1343
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MandalorianSecretServiceBoots.adr
+  texture_alias: MandalorianCaptain
+  item_type: 1
+  category: 63
+  members: true
+# Tee Va's Robe
+- guid: 190084
+  name_id: 1773
+  description_id: 14
+  icon_set_id: 1346
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_TeeVaRobe.adr
+  texture_alias: TeeVa
+  item_type: 1
+  category: 61
+  members: true
+# Tee Va's Headdress
+- guid: 190085
+  name_id: 1813
+  description_id: 14
+  icon_set_id: 1348
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_TeeVaHat.adr
+  texture_alias: TeeVa
+  item_type: 1
+  category: 60
+  members: true
+# Tee Va's Sandals
+- guid: 190086
+  name_id: 1775
+  description_id: 14
+  icon_set_id: 1347
+  slot: !Equipment Feet
+  model_name: Wear_<race>_<gender>_Feet_TeeVaSandals.adr
+  texture_alias: TeeVa
+  item_type: 1
+  category: 63
+  members: true
+# Mandalorian Cadet Uniform
+- guid: 190087
+  name_id: 1848
+  description_id: 14
+  icon_set_id: 1383
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianCadetUniform.adr
+  texture_alias: MandalorianCadet
+  item_type: 1
+  category: 61
+  members: true
+# Mandalorian Cadet Visor
+- guid: 190088
+  name_id: 1846
+  description_id: 14
+  icon_set_id: 1381
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MandalorianCadetVisor.adr
+  texture_alias: MandalorianCadet
+  item_type: 1
+  category: 60
+  members: true
+# Mandalorian Cadet Boots
+- guid: 190089
+  name_id: 1850
+  description_id: 14
+  icon_set_id: 1382
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HeeledRidgeBoots.adr
+  texture_alias: MandalorianCadet
+  item_type: 1
+  category: 63
+  members: true
+# Coruscant Engineer Uniform
+- guid: 190090
+  name_id: 1911
+  description_id: 14
+  icon_set_id: 1448
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CoruscantEngineerUniform.adr
+  texture_alias: Engineer
+  item_type: 1
+  category: 61
+  members: true
+# Coruscant Engineer Hat
+- guid: 190091
+  name_id: 1907
+  description_id: 14
+  icon_set_id: 1451
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_CoruscantEngineerHat.adr
+  texture_alias: Engineer
+  item_type: 1
+  category: 60
+  members: true
+# Coruscant Engineer Gloves
+- guid: 190092
+  name_id: 1909
+  description_id: 14
+  icon_set_id: 1450
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CoruscantEngineerGloves.adr
+  texture_alias: Engineer
+  item_type: 1
+  category: 62
+  members: true
+# Coruscant Engineer Boots
+- guid: 190093
+  name_id: 1913
+  description_id: 14
+  icon_set_id: 1449
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CoruscantEngineerBoots.adr
+  texture_alias: Engineer
+  item_type: 1
+  category: 63
+  members: true
+# Sochek's Suit
+- guid: 190094
+  name_id: 43514
+  description_id: 14
+  icon_set_id: 1844
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SochekOutfit.adr
+  texture_alias: Sochek
+  item_type: 1
+  category: 61
+  members: true
+# Sochek's Goggles
+- guid: 190095
+  name_id: 43513
+  description_id: 14
+  icon_set_id: 1845
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SochekGoggles.adr
+  texture_alias: Sochek
+  item_type: 1
+  category: 60
+  members: true
+# Captain Ackbar's Uniform
+- guid: 190096
+  name_id: 2340
+  description_id: 14
+  icon_set_id: 2328
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CaptainAckbarUniform.adr
+  texture_alias: Ackbar
+  item_type: 1
+  category: 61
+  members: true
+# Captain Ackbar's Helmet
+- guid: 190097
+  name_id: 2338
+  description_id: 14
+  icon_set_id: 2330
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_CaptainAckbarHelmet.adr
+  texture_alias: Ackbar
+  item_type: 1
+  category: 60
+  members: true
+# Captain Ackbar's Boots
+- guid: 190098
+  name_id: 2342
+  description_id: 14
+  icon_set_id: 2329
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CaptainAckbarBoots.adr
+  texture_alias: Ackbar
+  item_type: 1
+  category: 63
+  members: true
+# Gungan Warrior Armor
+- guid: 190099
+  name_id: 2356
+  description_id: 14
+  icon_set_id: 2331
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_GunganWarriorArmor.adr
+  texture_alias: GunganGreen
+  item_type: 1
+  category: 61
+  members: true
+# Gungan Warrior Mask
+- guid: 190100
+  name_id: 2352
+  description_id: 14
+  icon_set_id: 2333
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_GunganWarriorMask.adr
+  texture_alias: GunganGreen
+  item_type: 1
+  category: 60
+  members: true
+# Gungan Warrior Gloves
+- guid: 190101
+  name_id: 2354
+  description_id: 14
+  icon_set_id: 2332
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_GunganWarriorGloves.adr
+  texture_alias: GunganGreen
+  item_type: 1
+  category: 62
+  members: true
+# Lee-Char's Suit
+- guid: 190102
+  name_id: 2362
+  description_id: 14
+  icon_set_id: 2334
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_PrinceLeeCharSuit.adr
+  texture_alias: PrinceLeeChar
+  item_type: 1
+  category: 61
+  members: true
+# Lee-Char's Crown
+- guid: 190103
+  name_id: 2360
+  description_id: 14
+  icon_set_id: 2336
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_PrinceLeeCharCrown.adr
+  texture_alias: PrinceLeeChar
+  item_type: 1
+  category: 60
+  members: true
+# Lee-Char's Boots
+- guid: 190104
+  name_id: 2364
+  description_id: 14
+  icon_set_id: 2335
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_PrinceLeeCharBoots.adr
+  texture_alias: PrinceLeeChar
+  item_type: 1
+  category: 63
+  members: true
+# Boss Lyonie's Robes
+- guid: 190105
+  name_id: 2390
+  description_id: 14
+  icon_set_id: 2366
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BossLyonieRobe.adr
+  texture_alias: Lyonie
+  item_type: 1
+  category: 61
+  members: true
+# Boss Lyonie's Headdress
+- guid: 190106
+  name_id: 2389
+  description_id: 14
+  icon_set_id: 2365
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_BossLyonieHat.adr
+  texture_alias: Lyonie
+  item_type: 1
+  category: 60
+  members: true
+# Balnab Hunter Suit
+- guid: 190107
+  name_id: 2949
+  description_id: 14
+  icon_set_id: 2388
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BalnabSuit.adr
+  texture_alias: Balnab
+  item_type: 1
+  category: 61
+  members: true
+# Balnab Hunter Helmet
+- guid: 190108
+  name_id: 2947
+  description_id: 14
+  icon_set_id: 2390
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_BalnabHelmet.adr
+  texture_alias: Balnab
+  item_type: 1
+  category: 60
+  members: true
+# Balnab Hunter Boots
+- guid: 190109
+  name_id: 2951
+  description_id: 14
+  icon_set_id: 2389
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BalnabBoots.adr
+  texture_alias: Balnab
+  item_type: 1
+  category: 63
+  members: true
+# Umbaran Suit
+- guid: 190110
+  name_id: 4299
+  description_id: 14
+  icon_set_id: 2408
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_UmbaranSuit.adr
+  texture_alias: Umbaran
+  item_type: 1
+  category: 61
+  members: true
+# Umbaran Gloves
+- guid: 190111
+  name_id: 4298
+  description_id: 14
+  icon_set_id: 2410
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_UmbaranGloves.adr
+  texture_alias: Umbaran
+  item_type: 1
+  category: 62
+  members: true
+# Umbaran Boots
+- guid: 190112
+  name_id: 4300
+  description_id: 14
+  icon_set_id: 2409
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_UmbaranBoots.adr
+  texture_alias: Umbaran
+  item_type: 1
+  category: 63
+  members: true
+# Hondo Ohnaka's Tunic
+- guid: 190113
+  name_id: 1315
+  description_id: 14
+  icon_set_id: 1096
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_HondoOhnakaTunic.adr
+  texture_alias: Hondo
+  item_type: 1
+  category: 61
+# Hondo Ohnaka's Cap
+- guid: 190114
+  name_id: 1414
+  description_id: 14
+  icon_set_id: 1099
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_HondoOhnakaCap.adr
+  texture_alias: Hondo
+  item_type: 1
+  category: 60
+# Hondo Ohnaka's Wraps
+- guid: 190115
+  name_id: 1384
+  description_id: 14
+  icon_set_id: 1098
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_HondoOhnakaWraps.adr
+  texture_alias: Hondo
+  item_type: 1
+  category: 62
+# Hondo Ohnaka's Boots
+- guid: 190116
+  name_id: 1352
+  description_id: 14
+  icon_set_id: 1097
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HondoOhnakaBoots.adr
+  texture_alias: Hondo
+  item_type: 1
+  category: 63
+# Nightsister's Robes
+- guid: 190117
+  name_id: 32940
+  description_id: 14
+  icon_set_id: 1598
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_NaalethOutfit.adr
+  texture_alias: Naaleth
+  item_type: 1
+  category: 61
+  members: true
+# Nightsister's Hood
+- guid: 190118
+  name_id: 32938
+  description_id: 14
+  icon_set_id: 1601
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_NaalethHat.adr
+  texture_alias: Naaleth
+  item_type: 1
+  category: 60
+  members: true
+# Nightsister's Wrist Wraps
+- guid: 190119
+  name_id: 32939
+  description_id: 14
+  icon_set_id: 1600
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_QuinlinVosWraps.adr
+  texture_alias: Naaleth
+  item_type: 1
+  category: 62
+  members: true
+# Nightsister's Boots
+- guid: 190120
+  name_id: 32941
+  description_id: 14
+  icon_set_id: 1599
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_Boots.adr
+  texture_alias: Naaleth
+  item_type: 1
+  category: 63
+  members: true
+# Nightbrother Tunic
+- guid: 190121
+  name_id: 32985
+  description_id: 14
+  icon_set_id: 1625
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_NightbrotherTunic.adr
+  texture_alias: Nightbrother
+  item_type: 1
+  category: 61
+  members: true
+# Nightbrother Bracers
+- guid: 190122
+  name_id: 32984
+  description_id: 14
+  icon_set_id: 1627
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_NightbrotherBracers.adr
+  texture_alias: Nightbrother
+  item_type: 1
+  category: 62
+  members: true
+# Nightbrother Boots
+- guid: 190123
+  name_id: 32986
+  description_id: 14
+  icon_set_id: 1626
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_NightbrotherBoots.adr
+  texture_alias: Nightbrother
+  item_type: 1
+  category: 63
+  members: true
+# Mortis Father's Suit
+- guid: 190124
+  name_id: 33784
+  description_id: 14
+  icon_set_id: 1665
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MortisFatherSuit.adr
+  texture_alias: Father
+  item_type: 1
+  category: 61
+  members: true
+# Mortis Father's Hat
+- guid: 190125
+  name_id: 33783
+  description_id: 14
+  icon_set_id: 1667
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MortisFatherHat.adr
+  texture_alias: Father
+  item_type: 1
+  category: 60
+  members: true
+# Mortis Father's Boots
+- guid: 190126
+  name_id: 33785
+  description_id: 14
+  icon_set_id: 1666
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MortisFatherBoots.adr
+  texture_alias: Father
+  item_type: 1
+  category: 63
+  members: true
+# Cassie Cryar's Suit
+- guid: 190127
+  name_id: 820
+  description_id: 14
+  icon_set_id: 442
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CassieCryarSuit.adr
+  texture_alias: CassieCryar
+  item_type: 1
+  category: 61
+  members: true
+# Cassie Cryar's Gloves
+- guid: 190128
+  name_id: 818
+  description_id: 14
+  icon_set_id: 444
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_CassieCryarGloves.adr
+  texture_alias: CassyCryar
+  item_type: 1
+  category: 62
+  members: true
+# Cassie Cryar's Shoes
+- guid: 190129
+  name_id: 822
+  description_id: 14
+  icon_set_id: 443
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CassieCryarShoes.adr
+  texture_alias: CassyCrayar
+  item_type: 1
+  category: 63
+  members: true
+# Coruscant Underworld Garb
+- guid: 190130
+  name_id: 1202
+  description_id: 14
+  icon_set_id: 375
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CoruscantUnderworldBody.adr
+  texture_alias: BlackArmor
+  item_type: 1
+  category: 61
+  members: true
+# Coruscant Underworld Headgear
+- guid: 190131
+  name_id: 1208
+  description_id: 14
+  icon_set_id: 393
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_CoruscantUnderworldScarf.adr
+  texture_alias: BlackArmor
+  item_type: 1
+  category: 60
+  members: true
+# Coruscant Underworld Gloves
+- guid: 190132
+  name_id: 1206
+  description_id: 14
+  icon_set_id: 387
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CoruscantUnderworldGloves.adr
+  texture_alias: BlackArmor
+  item_type: 1
+  category: 62
+  members: true
+# Coruscant Underworld Boots
+- guid: 190133
+  name_id: 1204
+  description_id: 14
+  icon_set_id: 381
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CoruscantUnderworldBoots.adr
+  texture_alias: BlackArmor
+  item_type: 1
+  category: 63
+  members: true
+# Major Rigosso's Suit
+- guid: 190134
+  name_id: 4764
+  description_id: 14
+  icon_set_id: 2806
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MajorRigossoOutfit.adr
+  texture_alias: Rigosso
+  item_type: 1
+  category: 61
+  members: true
+# Major Rigosso's Gloves
+- guid: 190135
+  name_id: 4763
+  description_id: 14
+  icon_set_id: 2805
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MajorRigossoGloves.adr
+  texture_alias: Rigosso
+  item_type: 1
+  category: 62
+  members: true
+# Major Rigosso's Boots
+- guid: 190136
+  name_id: 4765
+  description_id: 14
+  icon_set_id: 2807
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MajorRigossoBoots.adr
+  texture_alias: Rigosso
+  item_type: 1
+  category: 63
+  members: true
+# Usk Bunker General Suit
+- guid: 190137
+  name_id: 4776
+  description_id: 14
+  icon_set_id: 2817
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_UmbaranGeneralSuit.adr
+  texture_alias: UmbaranPurple
+  item_type: 1
+  category: 61
+  members: true
+# Usk Bunker General Gloves
+- guid: 190138
+  name_id: 4775
+  description_id: 14
+  icon_set_id: 2816
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_UmbaranGeneralGloves.adr
+  texture_alias: UmbaranPurple
+  item_type: 1
+  category: 62
+  members: true
+# Usk Bunker General Boots
+- guid: 190139
+  name_id: 4777
+  description_id: 14
+  icon_set_id: 2818
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_UmbaranGeneralBoots.adr
+  texture_alias: UmbaranPurple
+  item_type: 1
+  category: 63
+  members: true
+# Grek Bunker General Suit
+- guid: 190140
+  name_id: 4772
+  description_id: 14
+  icon_set_id: 2813
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_UmbaranGeneralSuit.adr
+  texture_alias: UmbaranRed
+  item_type: 1
+  category: 61
+  members: true
+# Grek Bunker General Gloves
+- guid: 190141
+  name_id: 4771
+  description_id: 14
+  icon_set_id: 2812
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_UmbaranGeneralGloves.adr
+  texture_alias: UmbaranRed
+  item_type: 1
+  category: 62
+  members: true
+# Grek Bunker General Boots
+- guid: 190142
+  name_id: 4773
+  description_id: 14
+  icon_set_id: 2814
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_UmbaranGeneralBoots.adr
+  texture_alias: UmbaranRed
+  item_type: 1
+  category: 63
+  members: true
+# Umbaran General Suit
+- guid: 190143
+  name_id: 4780
+  description_id: 14
+  icon_set_id: 2821
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_UmbaranGeneralSuit.adr
+  texture_alias: UmbaranBlue
+  item_type: 1
+  category: 61
+  members: true
+# Umbaran General Gloves
+- guid: 190144
+  name_id: 4779
+  description_id: 14
+  icon_set_id: 2820
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_UmbaranGeneralGloves.adr
+  texture_alias: UmbaranBlue
+  item_type: 1
+  category: 62
+  members: true
+# Umbaran General Boots
+- guid: 190145
+  name_id: 4781
+  description_id: 14
+  icon_set_id: 2822
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_UmbaranGeneralBoots.adr
+  texture_alias: UmbaranBlue
+  item_type: 1
+  category: 63
+  members: true
+# Gerrera's Suit
+- guid: 190146
+  name_id: 52906
+  description_id: 14
+  icon_set_id: 3149
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SteelaSuit.adr
+  texture_alias: Steela
+  item_type: 1
+  category: 61
+  members: true
+# Gerrera's Gloves
+- guid: 190147
+  name_id: 52905
+  description_id: 14
+  icon_set_id: 3148
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_SteelaGloves.adr
+  texture_alias: Steela
+  item_type: 1
+  category: 62
+  members: true
+# Gerrera's Boots
+- guid: 190148
+  name_id: 52907
+  description_id: 14
+  icon_set_id: 3150
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SteelaBoots.adr
+  texture_alias: Steela
+  item_type: 1
+  category: 63
+  members: true
+# Onderon Guard Suit
+- guid: 190149
+  name_id: 53542
+  description_id: 14
+  icon_set_id: 3182
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_OnderonGuardArmor.adr
+  texture_alias: OnderonGuard
+  item_type: 1
+  category: 61
+  members: true
+# Onderon Guard Helmet
+- guid: 190150
+  name_id: 53540
+  description_id: 14
+  icon_set_id: 3180
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_OnderonGuardHelm.adr
+  texture_alias: OnderonGuard
+  item_type: 1
+  category: 60
+  members: true
+# Onderon Guard Gloves
+- guid: 190151
+  name_id: 53541
+  description_id: 14
+  icon_set_id: 3181
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_OnderonGuardGloves.adr
+  texture_alias: OnderonGuard
+  item_type: 1
+  category: 62
+  members: true
+# Onderon Guard Boots
+- guid: 190152
+  name_id: 53543
+  description_id: 14
+  icon_set_id: 3183
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_OnderonGuardBoots.adr
+  texture_alias: OnderonGuard
+  item_type: 1
+  category: 63
+  members: true
+# Police Guard Armor
+- guid: 190153
+  name_id: 43707
+  description_id: 14
+  icon_set_id: 1884
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianSecretServiceSuit.adr
+  texture_alias: PoliceGuard
+  item_type: 1
+  category: 61
+  members: true
+# Police Guard Helmet
+- guid: 190154
+  name_id: 43705
+  description_id: 14
+  icon_set_id: 1887
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MandalorianSecretServiceHelmet.adr
+  texture_alias: PoliceGuard
+  item_type: 1
+  category: 60
+  members: true
+# Police Guard Gloves
+- guid: 190155
+  name_id: 43706
+  description_id: 14
+  icon_set_id: 1886
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MandalorianSecretServiceGloves.adr
+  texture_alias: PoliceGuard
+  item_type: 1
+  category: 62
+  members: true
+# Police Guard Boots
+- guid: 190156
+  name_id: 43708
+  description_id: 14
+  icon_set_id: 1885
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MandalorianSecretServiceBoots.adr
+  texture_alias: PoliceGuard
+  item_type: 1
+  category: 63
+  members: true
+# Jiro's Suit
+- guid: 190157
+  name_id: 52886
+  description_id: 14
+  icon_set_id: 3813
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_JiroSuit.adr
+  texture_alias: Jiro
+  item_type: 1
+  category: 61
+# Jiro's Gloves
+- guid: 190158
+  name_id: 54547
+  description_id: 14
+  icon_set_id: 3812
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_JiroGloves.adr
+  texture_alias: Jiro
+  item_type: 1
+  category: 62
+# Jiro's Boots
+- guid: 190159
+  name_id: 52887
+  description_id: 14
+  icon_set_id: 3814
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_JiroBoots.adr
+  texture_alias: Jiro
+  item_type: 1
+  category: 63
+# Craggy Pirate Suit
+- guid: 190160
+  name_id: 54495
+  description_id: 14
+  icon_set_id: 3748
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CraggyPirateSuit.adr
+  texture_alias: CraggyPirate
+  item_type: 1
+  category: 61
+  members: true
+# Craggy Pirate Gloves
+- guid: 190161
+  name_id: 54494
+  description_id: 14
+  icon_set_id: 3747
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CraggyPirateCuffs.adr
+  texture_alias: CraggyPirate
+  item_type: 1
+  category: 62
+  members: true
+# Craggy Pirate Boots
+- guid: 190162
+  name_id: 54496
+  description_id: 14
+  icon_set_id: 3749
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CraggyPirateBoots.adr
+  texture_alias: CraggyPirate
+  item_type: 1
+  category: 63
+  members: true
+# Weequay Pirate Suit
+- guid: 190163
+  name_id: 53546
+  description_id: 14
+  icon_set_id: 3187
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_WeequayPirateSuit.adr
+  texture_alias: Weequay
+  item_type: 1
+  category: 61
+  members: true
+# Weequay Pirate Bandana
+- guid: 190164
+  name_id: 53544
+  description_id: 14
+  icon_set_id: 3185
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_WeequayPirateBandana.adr
+  texture_alias: Weequay
+  item_type: 1
+  category: 60
+  members: true
+# Weequay Pirate Gloves
+- guid: 190165
+  name_id: 53545
+  description_id: 14
+  icon_set_id: 3186
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_WeequayPirateGloves.adr
+  texture_alias: Weequay
+  item_type: 1
+  category: 62
+  members: true
+# Weequay Pirate Boots
+- guid: 190166
+  name_id: 53547
+  description_id: 14
+  icon_set_id: 3188
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
+  texture_alias: Weequay
+  item_type: 1
+  category: 63
+  members: true
+# Black Sun Armor
+- guid: 190167
+  name_id: 54508
+  description_id: 14
+  icon_set_id: 3763
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BlackSunSoldierArmor.adr
+  texture_alias: BlackSunSoldier
+  item_type: 1
+  category: 61
+# Black Sun Helmet
+- guid: 190168
+  name_id: 54506
+  description_id: 14
+  icon_set_id: 3762
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_BlackSunSoldierHelm.adr
+  texture_alias: BlackSunSoldier
+  item_type: 1
+  category: 60
+# Black Sun Foot Soldier Boots
+- guid: 190169
+  name_id: 54203
+  description_id: 14
+  icon_set_id: 3764
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BlackSunSoldierBoots.adr
+  texture_alias: BlackSunSoldier
+  item_type: 1
+  category: 63
+# Nikto Spacesuit
+- guid: 190170
+  name_id: 60771
+  description_id: 14
+  icon_set_id: 3855
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_NiktoSuit.adr
+  texture_alias: Nikto
+  item_type: 1
+  category: 61
+# Nikto Helmet
+- guid: 190171
+  name_id: 60774
+  description_id: 14
+  icon_set_id: 3858
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_NiktoHelmet.adr
+  texture_alias: Nikto
+  item_type: 1
+  category: 60
+# Nikto Gloves
+- guid: 190172
+  name_id: 60772
+  description_id: 14
+  icon_set_id: 3857
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_ShortGloves.adr
+  texture_alias: Nikto
+  item_type: 1
+  category: 62
+# Nikto Boots
+- guid: 190173
+  name_id: 60773
+  description_id: 14
+  icon_set_id: 3856
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_NiktoBoots.adr
+  texture_alias: Nikto
+  item_type: 1
+  category: 63
+# Ming Po Robe
+- guid: 190174
+  name_id: 52835
+  description_id: 14
+  icon_set_id: 3061
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MingPoOutfit.adr
+  texture_alias: Patterned
+  item_type: 1
+  category: 61
+  members: true
+# Ming Po Gloves
+- guid: 190175
+  name_id: 52834
+  description_id: 14
+  icon_set_id: 3060
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MingPoGloves.adr
+  texture_alias: Patterned
+  item_type: 1
+  category: 62
+  members: true
+# Ming Po Boots
+- guid: 190176
+  name_id: 52836
+  description_id: 14
+  icon_set_id: 3062
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MingPoShoes.adr
+  texture_alias: Patterned
+  item_type: 1
+  category: 63
+  members: true
+# Ming Po Militia Suit
+- guid: 190177
+  name_id: 52855
+  description_id: 14
+  icon_set_id: 3083
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MingPoMilitiaUniform.adr
+  texture_alias: MingPoMilitia
+  item_type: 1
+  category: 61
+  members: true
+# Ming Po Militia Helmet
+- guid: 190178
+  name_id: 52853
+  description_id: 14
+  icon_set_id: 3081
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_MingPoMilitiaHelm.adr
+  texture_alias: MingPoMilitia
+  item_type: 1
+  category: 60
+  members: true
+# Ming Po Militia Gloves
+- guid: 190179
+  name_id: 52854
+  description_id: 14
+  icon_set_id: 3082
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MingPoMilitiaGloves.adr
+  texture_alias: MingPoMilitia
+  item_type: 1
+  category: 62
+  members: true
+# Ming Po Militia Boots
+- guid: 190180
+  name_id: 52856
+  description_id: 14
+  icon_set_id: 3084
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_MingPoMilitiaBoots.adr
+  texture_alias: MingPoMilitia
+  item_type: 1
+  category: 63
+  members: true
+# Cold Warrior Armor
+- guid: 190181
+  name_id: 52062
+  description_id: 14
+  icon_set_id: 2971
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_CarlacUniform.adr
+  texture_alias: CarlacBlue
+  item_type: 1
+  category: 61
+  members: true
+# Cold Warrior Helmet
+- guid: 190182
+  name_id: 52061
+  description_id: 14
+  icon_set_id: 2974
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
+  texture_alias: CarlacBlue
+  item_type: 1
+  category: 60
+  members: true
+# Cold Warrior Gloves
+- guid: 190183
+  name_id: 52063
+  description_id: 14
+  icon_set_id: 2973
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_CarlacGloves.adr
+  texture_alias: CarlacBlue
+  item_type: 1
+  category: 62
+  members: true
+# Cold Warrior Boots
+- guid: 190184
+  name_id: 52064
+  description_id: 14
+  icon_set_id: 2972
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CarlacBoots.adr
+  texture_alias: CarlacBlue
+  item_type: 1
+  category: 63
+  members: true
+# Carlac Death Watch Elite Suit
+- guid: 190185
+  name_id: 4905
+  description_id: 14
+  icon_set_id: 2936
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathWatchEliteSuit.adr
+  texture_alias: DeathWatchElite
+  item_type: 1
+  category: 61
+# Carlac Death Watch Elite Helmet
+- guid: 190186
+  name_id: 4903
+  description_id: 14
+  icon_set_id: 2934
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
+  texture_alias: DeathWatchElite
+  item_type: 1
+  category: 60
+# Carlac Death Watch Elite Gloves
+- guid: 190187
+  name_id: 4904
+  description_id: 14
+  icon_set_id: 2935
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: DeathwatchElite
+  item_type: 1
+  category: 62
+# Carlac Death Watch Elite Boots
+- guid: 190188
+  name_id: 4906
+  description_id: 14
+  icon_set_id: 2937
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BoKatanBoots.adr
+  texture_alias: DeathWatchElite
+  item_type: 1
+  category: 63
+# Orange Death Watch Commander Suit
+- guid: 190189
+  name_id: 53709
+  description_id: 14
+  icon_set_id: 3226
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathWatchCommanderSuit.adr
+  texture_alias: CommanderOrange
+  item_type: 1
+  category: 61
+# Orange Death Watch Commander Helmet
+- guid: 190190
+  name_id: 53707
+  description_id: 14
+  icon_set_id: 3224
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathWatchEliteHelm.adr
+  texture_alias: CommanderOrange
+  item_type: 1
+  category: 60
+# Orange Death Watch Commander Gloves
+- guid: 190191
+  name_id: 53708
+  description_id: 14
+  icon_set_id: 3225
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: CommanderOrange
+  item_type: 1
+  category: 62
+# Orange Death Watch Commander Boots
+- guid: 190192
+  name_id: 53710
+  description_id: 14
+  icon_set_id: 3227
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathWatchCommanderBoots.adr
+  texture_alias: CommanderOrange
+  item_type: 1
+  category: 63
+# Death Watch Night Owl Armor
+- guid: 190193
+  name_id: 54255
+  description_id: 14
+  icon_set_id: 3634
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_BoKatanSuit.adr
+  texture_alias: NightOwl
+  item_type: 1
+  category: 61
+  members: true
+# Death Watch Night Owl Helmet
+- guid: 190194
+  name_id: 54253
+  description_id: 14
+  icon_set_id: 3632
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_BoKatanHelm.adr
+  texture_alias: NightOwl
+  item_type: 1
+  category: 60
+  members: true
+# Death Watch Night Owl Gloves
+- guid: 190195
+  name_id: 54254
+  description_id: 14
+  icon_set_id: 3633
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_BoKatanGloves.adr
+  texture_alias: NightOwl
+  item_type: 1
+  category: 62
+  members: true
+# Death Watch Night Owl Boots
+- guid: 190196
+  name_id: 54256
+  description_id: 14
+  icon_set_id: 3635
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_BoKatanBoots.adr
+  texture_alias: NightOwl
+  item_type: 1
+  category: 63
+  members: true
+# Death Watch Lieutenant Armor
+- guid: 190197
+  name_id: 54249
+  description_id: 14
+  icon_set_id: 3629
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchLieutenantSuit.adr
+  texture_alias: DeathWatchLieutenant
+  item_type: 1
+  category: 61
+  members: true
+# Death Watch Lieutenant Helmet
+- guid: 190198
+  name_id: 54247
+  description_id: 14
+  icon_set_id: 3627
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchLieutenantHelm.adr
+  texture_alias: DeathwatchLieutenant
+  item_type: 1
+  category: 60
+  members: true
+# Death Watch Lieutenant Gloves
+- guid: 190199
+  name_id: 54248
+  description_id: 14
+  icon_set_id: 3628
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchLieutenantGloves.adr
+  texture_alias: DeathwatchLieutenant
+  item_type: 1
+  category: 62
+  members: true
+# Death Watch Lieutenant Boots
+- guid: 190200
+  name_id: 54250
+  description_id: 14
+  icon_set_id: 3630
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: DeathWatchLieutenant
+  item_type: 1
+  category: 63
+  members: true
+# Super Commando Captain Armor
+- guid: 190201
+  name_id: 54416
+  description_id: 14
+  icon_set_id: 3687
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianSuperCommandoCaptainArmor.adr
+  texture_alias: MandalorianSuperCommandoCaptain
+  item_type: 1
+  category: 61
+  members: true
+# Super Commando Captain Helmet
+- guid: 190202
+  name_id: 54414
+  description_id: 14
+  icon_set_id: 3685
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_MandalorianSuperCommandoCaptainHelm.adr
+  texture_alias: MandalorianSuperCommandoCaptain
+  item_type: 1
+  category: 60
+  members: true
+# Super Commando Captain Gloves
+- guid: 190203
+  name_id: 54415
+  description_id: 14
+  icon_set_id: 3686
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_MandalorianSuperCommandoCaptainGloves.adr
+  texture_alias: MandalorianSuperCommandoCaptain
+  item_type: 1
+  category: 62
+  members: true
+# Super Commando Captain Boots
+- guid: 190204
+  name_id: 54417
+  description_id: 14
+  icon_set_id: 3688
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: MandalorianSuperCommandoCaptain
+  item_type: 1
+  category: 63
+  members: true
+# Mandalorian Super Commando Armor
+- guid: 190205
+  name_id: 54435
+  description_id: 14
+  icon_set_id: 3699
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_MandalorianSuperCommandoCaptainArmor.adr
+  texture_alias: MandalorianSuperCommando
+  item_type: 1
+  category: 61
+  members: true
+# Mandalorian Super Commando Helmet
+- guid: 190206
+  name_id: 54433
+  description_id: 14
+  icon_set_id: 3700
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_MandalorianSuperCommandoHelm.adr
+  texture_alias: MandalorianSuperCommando
+  item_type: 1
+  category: 60
+  members: true
+# Camouflaged Death Watch Armor
+- guid: 190207
+  name_id: 2697
+  description_id: 14
+  icon_set_id: 2591
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuit.adr
+  texture_alias: GreenCamo
+  item_type: 1
+  category: 61
+# Camouflaged Death Watch Helmet
+- guid: 190208
+  name_id: 2695
+  description_id: 14
+  icon_set_id: 2589
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmet.adr
+  texture_alias: GreenCamo
+  item_type: 1
+  category: 60
+# Camouflaged Death Watch Gloves
+- guid: 190209
+  name_id: 2696
+  description_id: 14
+  icon_set_id: 2590
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGloves.adr
+  texture_alias: GreenCamo
+  item_type: 1
+  category: 62
+# Camouflaged Death Watch Boots
+- guid: 190210
+  name_id: 2698
+  description_id: 14
+  icon_set_id: 2592
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoes.adr
+  texture_alias: GreenCamo
+  item_type: 1
+  category: 63
+# Gold Death Watch Armor
+- guid: 190211
+  name_id: 2693
+  description_id: 14
+  icon_set_id: 2741
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DeathwatchSuitShiny.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 61
+# Gold Death Watch Helmet
+- guid: 190212
+  name_id: 2691
+  description_id: 14
+  icon_set_id: 2739
+  slot: !Equipment Head
+  model_name: Wear_Human_<gender>_Head_DeathwatchHelmetShiny.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 60
+# Gold Death Watch Gloves
+- guid: 190213
+  name_id: 2692
+  description_id: 14
+  icon_set_id: 2740
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DeathwatchGlovesShiny.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 62
+# Gold Death Watch Boots
+- guid: 190214
+  name_id: 2694
+  description_id: 14
+  icon_set_id: 2742
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DeathwatchShoesShiny.adr
+  texture_alias: Gold
+  item_type: 1
+  category: 63
+# Vicious Savage's Pants
+- guid: 190215
+  name_id: 44885
+  description_id: 14
+  icon_set_id: 2118
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SavageOpressV2.adr
+  texture_alias: OpressDark
+  item_type: 1
+  category: 61
+# Dark Side Acolyte Suit
+- guid: 190216
+  name_id: 4747
+  description_id: 14
+  icon_set_id: 2787
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DarkAcolyteSuit.adr
+  texture_alias: DarkAcolyteBlack
+  item_type: 1
+  category: 61
+  members: true
+# Dark Side Acolyte Cloak
+- guid: 190217
+  name_id: 4745
+  description_id: 14
+  icon_set_id: 2785
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_DarkAcolyteHood.adr
+  texture_alias: DarkAcolyteBlack
+  item_type: 1
+  category: 60
+  members: true
+# Dark Side Acolyte Gloves
+- guid: 190218
+  name_id: 4746
+  description_id: 14
+  icon_set_id: 2786
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DarkAcolyteGloves.adr
+  texture_alias: DarkAcolyteBlack
+  item_type: 1
+  category: 62
+  members: true
+# Dark Side Acolyte Boots
+- guid: 190219
+  name_id: 4748
+  description_id: 14
+  icon_set_id: 2788
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DarkAcolyteBoots.adr
+  texture_alias: DarkAcolyteBlack
+  item_type: 1
+  category: 63
+  members: true
+# Dark Side Adept Suit
+- guid: 190220
+  name_id: 4743
+  description_id: 14
+  icon_set_id: 2783
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DarkAcolyteSuit.adr
+  texture_alias: DarkAcolytePurple
+  item_type: 1
+  category: 61
+  members: true
+# Dark Side Adept Cloak
+- guid: 190221
+  name_id: 4741
+  description_id: 14
+  icon_set_id: 2781
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_DarkAcolyteHood.adr
+  texture_alias: DarkAcolytePurple
+  item_type: 1
+  category: 60
+  members: true
+# Dark Side Adept Gloves
+- guid: 190222
+  name_id: 4742
+  description_id: 14
+  icon_set_id: 2782
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DarkAcolyteGloves.adr
+  texture_alias: DarkAcolytePurple
+  item_type: 1
+  category: 62
+  members: true
+# Dark Side Adept Boots
+- guid: 190223
+  name_id: 4744
+  description_id: 14
+  icon_set_id: 2784
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DarkAcolyteBoots.adr
+  texture_alias: DarkAcolytePurple
+  item_type: 1
+  category: 63
+  members: true
+# Byzantium Sith Agent Suit
+- guid: 190224
+  name_id: 4947
+  description_id: 14
+  icon_set_id: 3005
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SithAcolyteUniform.adr
+  texture_alias: PurpleSith
+  item_type: 1
+  category: 61
+# Byzantium Sith Agent Hood
+- guid: 190225
+  name_id: 4945
+  description_id: 14
+  icon_set_id: 3003
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SithAcolyteHood.adr
+  texture_alias: PurpleSith
+  item_type: 1
+  category: 60
+# Byzantium Sith Agent Gloves
+- guid: 190226
+  name_id: 4946
+  description_id: 14
+  icon_set_id: 3004
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_SithAcolyteGloves.adr
+  texture_alias: PurpleSith
+  item_type: 1
+  category: 62
+# Byzantium Sith Agent Boots
+- guid: 190227
+  name_id: 4948
+  description_id: 14
+  icon_set_id: 3006
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SithAcolyteBoots.adr
+  texture_alias: PurpleSith
+  item_type: 1
+  category: 63
+# Carmine Sith Agent Suit
+- guid: 190228
+  name_id: 4951
+  description_id: 14
+  icon_set_id: 3009
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SithAcolyteUniform.adr
+  texture_alias: RedSith
+  item_type: 1
+  category: 61
+# Carmine Sith Agent Hood
+- guid: 190229
+  name_id: 4949
+  description_id: 14
+  icon_set_id: 3007
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SithAcolyteHood.adr
+  texture_alias: RedSith
+  item_type: 1
+  category: 60
+# Carmine Sith Agent Gloves
+- guid: 190230
+  name_id: 4950
+  description_id: 14
+  icon_set_id: 3008
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_SithAcolyteGloves.adr
+  texture_alias: RedSith
+  item_type: 1
+  category: 62
+# Carmine Sith Agent Boots
+- guid: 190231
+  name_id: 4952
+  description_id: 14
+  icon_set_id: 3010
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SithAcolyteBoots.adr
+  texture_alias: RedSith
+  item_type: 1
+  category: 63
+# Gray Sith Agent Suit
+- guid: 190232
+  name_id: 4955
+  description_id: 14
+  icon_set_id: 3013
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_SithAcolyteUniform.adr
+  texture_alias: GreySith
+  item_type: 1
+  category: 61
+# Gray Sith Agent Hood
+- guid: 190233
+  name_id: 4953
+  description_id: 14
+  icon_set_id: 3011
+  slot: !Equipment Head
+  model_name: Wear_<race>_<gender>_Head_SithAcolyteHood.adr
+  texture_alias: GreySith
+  item_type: 1
+  category: 60
+# Gray Sith Agent Gloves
+- guid: 190234
+  name_id: 4954
+  description_id: 14
+  icon_set_id: 3012
+  slot: !Equipment Hands
+  model_name: Wear_<race>_<gender>_Hands_SithAcolyteGloves.adr
+  texture_alias: GreySith
+  item_type: 1
+  category: 62
+# Gray Sith Agent Boots
+- guid: 190235
+  name_id: 4956
+  description_id: 14
+  icon_set_id: 3014
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_SithAcolyteBoots.adr
+  texture_alias: GreySith
+  item_type: 1
+  category: 63
+# Darth Maul's Suit
+- guid: 190236
+  name_id: 54481
+  description_id: 14
+  icon_set_id: 3706
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_DarthMaulS5Tunic.adr
+  texture_alias: DarthMaulS5
+  item_type: 1
+  category: 61
+# Darth Maul's Gloves
+- guid: 190237
+  name_id: 54480
+  description_id: 14
+  icon_set_id: 3705
+  slot: !Equipment Hands
+  model_name: Wear_Human_<gender>_Hands_DarthMaulS5Cuffs.adr
+  texture_alias: DarthMaulS5
+  item_type: 1
+  category: 62
+# Darth Maul's Robotic Legs
+- guid: 190238
+  name_id: 54482
+  description_id: 14
+  icon_set_id: 3707
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_DarthMaulS5Boots.adr
+  texture_alias: DarthMaulS5
+  item_type: 1
+  category: 63
+# Scoundrel Suit
+- guid: 190239
+  name_id: 54609
+  description_id: 14
+  icon_set_id: 3841
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_LandoSuit.adr
+  texture_alias: LandoGreen
+  item_type: 1
+  category: 61
+# Scoundrel Shoes
+- guid: 190240
+  name_id: 54610
+  description_id: 14
+  icon_set_id: 3842
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_LandoShoes.adr
+  texture_alias: LandoGreen
+  item_type: 1
+  category: 63
+# Smuggler Vest
+- guid: 190241
+  name_id: 54608
+  description_id: 14
+  icon_set_id: 3839
+  slot: !Equipment Body
+  model_name: Wear_Human_<gender>_Body_HanSoloSuit.adr
+  texture_alias: HanSoloBiker
+  item_type: 1
+  category: 61
+# Smuggler Boots
+- guid: 190242
+  name_id: 54607
+  description_id: 14
+  icon_set_id: 3840
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_HanSoloBoots.adr
+  texture_alias: HanSoloBiker
+  item_type: 1
+  category: 63

@@ -193,13 +193,13 @@ pub struct ItemStat {}
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
 pub struct ItemAbility {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
+    pub ability_slot: u32,
+    pub ability_id: u32,
+    pub unknown3: u32,
+    pub ability_icon: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub ability_name: u32,
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
