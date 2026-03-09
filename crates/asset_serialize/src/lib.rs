@@ -4,6 +4,7 @@ pub mod cdt;
 pub mod gcnk;
 pub mod pack;
 
+use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
 
 use std::{
@@ -61,6 +62,25 @@ impl From<tokio::io::Error> for ErrorKind {
 pub struct Error {
     pub kind: ErrorKind,
     pub offset: Option<u64>,
+}
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct Vec4 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32,
+}
+
+impl Vec4 {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        Ok(Vec4 {
+            x: deserialize(file, R::read_f32_le).await?,
+            y: deserialize(file, R::read_f32_le).await?,
+            z: deserialize(file, R::read_f32_le).await?,
+            w: deserialize(file, R::read_f32_le).await?,
+        })
+    }
 }
 
 pub trait DeserializeAsset: Sized {
@@ -145,6 +165,27 @@ async fn deserialize_string<R: AsyncReader>(
         })
 }
 
+async fn deserialize_null_terminated_string<R: AsyncReader>(
+    file: &mut R,
+) -> Result<(String, usize), Error> {
+    let offset = tell(file).await;
+    deserialize(file, async |file| {
+        let mut buffer = Vec::new();
+        let bytes_read = file.read_until(b'\0', &mut buffer).await?;
+        Ok((buffer, bytes_read))
+    })
+    .await
+    .and_then(|(mut buffer, bytes_read)| {
+        buffer.pop_if(|last| *last == b'\0');
+        String::from_utf8(buffer)
+            .map(|string| (string, bytes_read))
+            .map_err(|err| Error {
+                kind: err.into(),
+                offset,
+            })
+    })
+}
+
 async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usize, Error> {
     let mut bytes_written = serialize_exact(file, str.as_bytes()).await?;
 
@@ -170,12 +211,12 @@ async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usi
 
 async fn deserialize<
     'a,
-    W: AsyncSeekExt + AsyncReadExt + Unpin + 'a,
+    R: AsyncSeekExt + AsyncReadExt + Unpin + 'a,
     T,
     Fut: Future<Output = Result<T, tokio::io::Error>>,
 >(
-    file: &'a mut W,
-    mut fun: impl FnMut(&'a mut W) -> Fut,
+    file: &'a mut R,
+    mut fun: impl FnMut(&'a mut R) -> Fut,
 ) -> Result<T, Error> {
     let offset = tell(file).await;
     match fun(file).await {
@@ -264,7 +305,8 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
-            let Ok(pack) = Pack::deserialize(path.clone(), &mut reader).await else {
+            let Ok(pack) = <Pack as DeserializeAsset>::deserialize(path.clone(), &mut reader).await
+            else {
                 return HashMap::new();
             };
 

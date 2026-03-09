@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    deserialize, deserialize_string, i32_to_u64, i32_to_usize, tell, AsyncReader, DeserializeAsset,
-    Error, ErrorKind,
+    deserialize, deserialize_null_terminated_string, deserialize_string, i32_to_u64, i32_to_usize,
+    skip, tell, AsyncReader, DeserializeAsset, Error, ErrorKind, Vec4,
 };
 
 #[derive(Default, Serialize, Deserialize)]
@@ -35,12 +35,114 @@ pub struct SubMeshBakedLighting {
 
 impl SubMeshBakedLighting {
     async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
-        let len = deserialize(file, R::read_i32_le).await?;
+        let vertices = deserialize(file, R::read_i32_le).await?;
         let mut vertex_colors = Vec::new();
-        for _ in 0..len {
+        for _ in 0..vertices {
             vertex_colors.push(Rgba8::deserialize(file).await?);
         }
         Ok(SubMeshBakedLighting { vertex_colors })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct RuntimeObjectTint {
+    pub tint_alias: String,
+    pub tint: Vec4,
+}
+
+impl RuntimeObjectTint {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Option<Self>, Error> {
+        let (tint_alias, _) = deserialize_null_terminated_string(file).await?;
+        if tint_alias.is_empty() {
+            return Ok(None);
+        }
+
+        let tint = Vec4::deserialize(file).await?;
+
+        Ok(Some(RuntimeObjectTint { tint_alias, tint }))
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum TerrainObjectIdentifier {
+    Id(u32),
+    Name(String),
+}
+
+impl TerrainObjectIdentifier {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        if version >= 5 {
+            Ok(TerrainObjectIdentifier::Id(
+                deserialize(file, R::read_u32_le).await?,
+            ))
+        } else {
+            Ok(TerrainObjectIdentifier::Name(
+                deserialize_null_terminated_string(file).await?.0,
+            ))
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct RuntimeObject {
+    pub guid: i32,
+    pub adr_name: String,
+    pub unknown: String,
+    pub pos: Vec4,
+    pub rot: Vec4,
+    pub scale: f32,
+    pub texture_alias: Option<String>,
+    pub tint: Option<RuntimeObjectTint>,
+    pub terrain_object_identifier: TerrainObjectIdentifier,
+    pub min_render_radius: f32,
+    pub baked_lighting: Vec<SubMeshBakedLighting>,
+}
+
+impl RuntimeObject {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        let guid = deserialize(file, R::read_i32_le).await?;
+        let (adr_name, _) = deserialize_null_terminated_string(file).await?;
+        let (unknown, _) = deserialize_null_terminated_string(file).await?;
+        let pos = Vec4::deserialize(file).await?;
+        let rot = Vec4::deserialize(file).await?;
+        let scale = deserialize(file, R::read_f32_le).await?;
+
+        let mut texture_alias = None;
+        let mut tint = None;
+        if version >= 6 {
+            let (alias, _) = deserialize_null_terminated_string(file).await?;
+            if !alias.is_empty() {
+                texture_alias = Some(alias);
+            }
+            tint = RuntimeObjectTint::deserialize(file).await?;
+        }
+
+        skip(file, 4).await?;
+
+        let terrain_object_identifier = TerrainObjectIdentifier::deserialize(file, version).await?;
+        let min_render_radius = deserialize(file, R::read_f32_le).await?;
+
+        let mut baked_lighting = Vec::new();
+        if version >= 3 {
+            let sub_meshes = deserialize(file, R::read_i32_le).await?;
+            for _ in 0..sub_meshes {
+                baked_lighting.push(SubMeshBakedLighting::deserialize(file).await?);
+            }
+        }
+
+        Ok(RuntimeObject {
+            guid,
+            adr_name,
+            unknown,
+            pos,
+            rot,
+            scale,
+            texture_alias,
+            tint,
+            terrain_object_identifier,
+            min_render_radius,
+            baked_lighting,
+        })
     }
 }
 
