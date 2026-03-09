@@ -9,7 +9,7 @@ use crate::{
     ErrorKind,
 };
 
-#[derive(Serialize, Deserialize)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct TerrainChunk {}
 
 impl TerrainChunk {
@@ -40,6 +40,15 @@ pub struct Gcnk {
     pub chunk: TerrainChunk,
 }
 
+impl Default for Gcnk {
+    fn default() -> Self {
+        Self {
+            version: 1,
+            chunk: Default::default(),
+        }
+    }
+}
+
 impl DeserializeAsset for Gcnk {
     async fn deserialize<R: AsyncReader, P: AsRef<std::path::Path> + Send>(
         _: P,
@@ -47,6 +56,11 @@ impl DeserializeAsset for Gcnk {
     ) -> Result<Self, Error> {
         let (magic, _) = deserialize_string(file, 4).await?;
         if magic != "GCNK" {
+            // Empty GCNK files only contain "hello"
+            if magic == "hello"[0..4] {
+                return Ok(Gcnk::default());
+            }
+
             return Err(Error {
                 kind: ErrorKind::UnknownMagic(magic),
                 offset: Some(0),
