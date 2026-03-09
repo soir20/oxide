@@ -5,8 +5,9 @@ use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    deserialize, deserialize_null_terminated_string, deserialize_string, i32_to_u64, i32_to_usize,
-    skip, tell, AsyncReader, DeserializeAsset, Error, ErrorKind, Vec4,
+    deserialize, deserialize_f32_le_vec3, deserialize_f32_le_vec4,
+    deserialize_null_terminated_string, deserialize_string, i32_to_u64, i32_to_usize, skip, tell,
+    AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
 #[derive(Default, Serialize, Deserialize)]
@@ -47,7 +48,7 @@ impl SubMeshBakedLighting {
 #[derive(Default, Serialize, Deserialize)]
 pub struct RuntimeObjectTint {
     pub tint_alias: String,
-    pub tint: Vec4,
+    pub tint: [f32; 4],
 }
 
 impl RuntimeObjectTint {
@@ -57,7 +58,7 @@ impl RuntimeObjectTint {
             return Ok(None);
         }
 
-        let tint = Vec4::deserialize(file).await?;
+        let tint = deserialize_f32_le_vec4(file).await?;
 
         Ok(Some(RuntimeObjectTint { tint_alias, tint }))
     }
@@ -88,8 +89,8 @@ pub struct RuntimeObject {
     pub guid: i32,
     pub adr_name: String,
     pub unknown: String,
-    pub pos: Vec4,
-    pub rot: Vec4,
+    pub pos: [f32; 4],
+    pub rot: [f32; 4],
     pub scale: f32,
     pub texture_alias: Option<String>,
     pub tint: Option<RuntimeObjectTint>,
@@ -103,8 +104,8 @@ impl RuntimeObject {
         let guid = deserialize(file, R::read_i32_le).await?;
         let (adr_name, _) = deserialize_null_terminated_string(file).await?;
         let (unknown, _) = deserialize_null_terminated_string(file).await?;
-        let pos = Vec4::deserialize(file).await?;
-        let rot = Vec4::deserialize(file).await?;
+        let pos = deserialize_f32_le_vec4(file).await?;
+        let rot = deserialize_f32_le_vec4(file).await?;
         let scale = deserialize(file, R::read_f32_le).await?;
 
         let mut texture_alias = None;
@@ -142,6 +143,72 @@ impl RuntimeObject {
             terrain_object_identifier,
             min_render_radius,
             baked_lighting,
+        })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct RawLight {
+    pub name: String,
+    pub color_name: String,
+    pub light_type: u8,
+    pub pos: [f32; 4],
+    pub range: f32,
+    pub intensity: f32,
+    pub color: Rgba8,
+}
+
+impl RawLight {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let (name, _) = deserialize_null_terminated_string(file).await?;
+        let (color_name, _) = deserialize_null_terminated_string(file).await?;
+        let light_type = deserialize(file, R::read_u8).await?;
+        let pos = deserialize_f32_le_vec4(file).await?;
+        let range = deserialize(file, R::read_f32_le).await?;
+        let intensity = deserialize(file, R::read_f32_le).await?;
+        let color = Rgba8::deserialize(file).await?;
+
+        Ok(RawLight {
+            name,
+            color_name,
+            light_type,
+            pos,
+            range,
+            intensity,
+            color,
+        })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct RawArea {
+    pub name: String,
+    pub unknown1: i32,
+    pub unknown2: String,
+    pub pos: [f32; 4],
+    pub rot: [f32; 4],
+    pub scale: f32,
+    pub dimensions: [f32; 3],
+}
+
+impl RawArea {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let (name, _) = deserialize_null_terminated_string(file).await?;
+        let unknown1 = deserialize(file, R::read_i32_le).await?;
+        let (unknown2, _) = deserialize_null_terminated_string(file).await?;
+        let pos = deserialize_f32_le_vec4(file).await?;
+        let rot = deserialize_f32_le_vec4(file).await?;
+        let scale = deserialize(file, R::read_f32_le).await?;
+        let dimensions = deserialize_f32_le_vec3(file).await?;
+
+        Ok(RawArea {
+            name,
+            unknown1,
+            unknown2,
+            pos,
+            rot,
+            scale,
+            dimensions,
         })
     }
 }

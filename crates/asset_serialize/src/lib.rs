@@ -4,7 +4,6 @@ pub mod cdt;
 pub mod gcnk;
 pub mod pack;
 
-use serde::{Deserialize, Serialize};
 use walkdir::WalkDir;
 
 use std::{
@@ -62,25 +61,6 @@ impl From<tokio::io::Error> for ErrorKind {
 pub struct Error {
     pub kind: ErrorKind,
     pub offset: Option<u64>,
-}
-
-#[derive(Default, Serialize, Deserialize)]
-pub struct Vec4 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-    pub w: f32,
-}
-
-impl Vec4 {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
-        Ok(Vec4 {
-            x: deserialize(file, R::read_f32_le).await?,
-            y: deserialize(file, R::read_f32_le).await?,
-            z: deserialize(file, R::read_f32_le).await?,
-            w: deserialize(file, R::read_f32_le).await?,
-        })
-    }
 }
 
 pub trait DeserializeAsset: Sized {
@@ -184,6 +164,23 @@ async fn deserialize_null_terminated_string<R: AsyncReader>(
                 offset,
             })
     })
+}
+
+async fn deserialize_f32_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[f32; 3], Error> {
+    Ok([
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+    ])
+}
+
+async fn deserialize_f32_le_vec4<R: AsyncReader>(file: &mut R) -> Result<[f32; 4], Error> {
+    Ok([
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+    ])
 }
 
 async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usize, Error> {

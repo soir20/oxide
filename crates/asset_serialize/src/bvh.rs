@@ -2,30 +2,16 @@ use num_enum::TryFromPrimitive;
 use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
-use crate::{deserialize, skip, tell, AsyncReader, Error, ErrorKind};
+use crate::{
+    deserialize, deserialize_f32_le_vec3, deserialize_f32_le_vec4, skip, tell, AsyncReader, Error,
+    ErrorKind,
+};
 
 async fn deserialize_u16_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[u16; 3], Error> {
     Ok([
         deserialize(file, R::read_u16_le).await?,
         deserialize(file, R::read_u16_le).await?,
         deserialize(file, R::read_u16_le).await?,
-    ])
-}
-
-async fn deserialize_f32_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[f32; 3], Error> {
-    Ok([
-        deserialize(file, R::read_f32_le).await?,
-        deserialize(file, R::read_f32_le).await?,
-        deserialize(file, R::read_f32_le).await?,
-    ])
-}
-
-async fn deserialize_f32_le_vec4<R: AsyncReader>(file: &mut R) -> Result<[f32; 4], Error> {
-    Ok([
-        deserialize(file, R::read_f32_le).await?,
-        deserialize(file, R::read_f32_le).await?,
-        deserialize(file, R::read_f32_le).await?,
-        deserialize(file, R::read_f32_le).await?,
     ])
 }
 
