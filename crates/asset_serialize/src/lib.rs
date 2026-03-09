@@ -37,6 +37,10 @@ pub enum ErrorKind {
         from_type: &'static str,
         to_type: &'static str,
     },
+    UnexpectedDecompressedLen {
+        expected_decompressed_len: usize,
+        actual_decompressed_len: usize,
+    },
     UnknownDiscriminant(u64, &'static str),
     UnknownMagic(String),
 }
@@ -209,6 +213,17 @@ fn i32_to_usize(value: i32) -> Result<usize, Error> {
             value: format!("{}", value),
             from_type: type_name::<i32>(),
             to_type: type_name::<usize>(),
+        },
+        offset: None,
+    })
+}
+
+fn i32_to_u64(value: i32) -> Result<u64, Error> {
+    value.try_into().map_err(|_| Error {
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<i32>(),
+            to_type: type_name::<u64>(),
         },
         offset: None,
     })

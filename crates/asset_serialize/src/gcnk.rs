@@ -5,8 +5,8 @@ use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    deserialize, deserialize_string, i32_to_usize, tell, AsyncReader, DeserializeAsset, Error,
-    ErrorKind,
+    deserialize, deserialize_string, i32_to_u64, i32_to_usize, tell, AsyncReader, DeserializeAsset,
+    Error, ErrorKind,
 };
 
 #[derive(Default, Serialize, Deserialize)]
@@ -19,17 +19,30 @@ impl TerrainChunk {
 }
 
 async fn decompress_section<R: AsyncReader>(file: &mut R) -> Result<Vec<u8>, Error> {
-    let decompressed_len = deserialize(file, R::read_i32_le).await?;
-    let _compressed_len = deserialize(file, R::read_i32_le).await?;
+    let expected_decompressed_len = i32_to_usize(deserialize(file, R::read_i32_le).await?)?;
+    let compressed_len = deserialize(file, R::read_i32_le).await?;
 
     let offset = tell(file).await;
-    let mut buffer = vec![0; i32_to_usize(decompressed_len)?];
-    let mut decoder = ZlibDecoder::new(file);
+    let mut buffer = Vec::with_capacity(expected_decompressed_len);
+    let mut decoder = ZlibDecoder::new(file.take(i32_to_u64(compressed_len)?));
 
-    decoder.read_exact(&mut buffer).await.map_err(|err| Error {
-        kind: err.into(),
-        offset,
-    })?;
+    let actual_decompressed_len = decoder
+        .read_to_end(&mut buffer)
+        .await
+        .map_err(|err| Error {
+            kind: err.into(),
+            offset,
+        })?;
+
+    if expected_decompressed_len != actual_decompressed_len {
+        return Err(Error {
+            kind: ErrorKind::UnexpectedDecompressedLen {
+                expected_decompressed_len,
+                actual_decompressed_len,
+            },
+            offset,
+        });
+    }
 
     Ok(buffer)
 }
