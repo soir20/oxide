@@ -20,11 +20,11 @@ impl TerrainChunk {
 
 async fn decompress_section<R: AsyncReader>(file: &mut R) -> Result<Vec<u8>, Error> {
     let decompressed_len = deserialize(file, R::read_i32_le).await?;
-    let compressed_len = deserialize(file, R::read_i32_le).await?;
+    let _compressed_len = deserialize(file, R::read_i32_le).await?;
 
     let offset = tell(file).await;
-    let mut buffer = Vec::with_capacity(i32_to_usize(compressed_len)?);
-    let mut decoder = ZlibDecoder::new(&mut *file);
+    let mut buffer = vec![0; i32_to_usize(decompressed_len)?];
+    let mut decoder = ZlibDecoder::new(file);
 
     decoder.read_exact(&mut buffer).await.map_err(|err| Error {
         kind: err.into(),
