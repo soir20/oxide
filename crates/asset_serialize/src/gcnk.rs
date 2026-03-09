@@ -10,6 +10,41 @@ use crate::{
 };
 
 #[derive(Default, Serialize, Deserialize)]
+pub struct Rgba8 {
+    pub red: u8,
+    pub green: u8,
+    pub blue: u8,
+    pub alpha: u8,
+}
+
+impl Rgba8 {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        Ok(Rgba8 {
+            red: deserialize(file, R::read_u8).await?,
+            green: deserialize(file, R::read_u8).await?,
+            blue: deserialize(file, R::read_u8).await?,
+            alpha: deserialize(file, R::read_u8).await?,
+        })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
+pub struct SubMeshBakedLighting {
+    pub vertex_colors: Vec<Rgba8>,
+}
+
+impl SubMeshBakedLighting {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let len = deserialize(file, R::read_i32_le).await?;
+        let mut vertex_colors = Vec::new();
+        for _ in 0..len {
+            vertex_colors.push(Rgba8::deserialize(file).await?);
+        }
+        Ok(SubMeshBakedLighting { vertex_colors })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
 pub struct TerrainChunk {}
 
 impl TerrainChunk {
@@ -118,7 +153,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    #[ignore]
+    //#[ignore]
     async fn test_deserialize_gcnk() {
         let target_extension = "gcnk";
         let search_path = env::var("GCNK_ROOT").unwrap();
