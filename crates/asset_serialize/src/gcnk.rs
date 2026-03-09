@@ -214,6 +214,30 @@ impl RawArea {
 }
 
 #[derive(Default, Serialize, Deserialize)]
+pub struct RawGroup {
+    pub name: String,
+    pub pos: [f32; 4],
+    pub rot: [f32; 4],
+    pub scale: f32,
+}
+
+impl RawGroup {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let (name, _) = deserialize_null_terminated_string(file).await?;
+        let pos = deserialize_f32_le_vec4(file).await?;
+        let rot = deserialize_f32_le_vec4(file).await?;
+        let scale = deserialize(file, R::read_f32_le).await?;
+
+        Ok(RawGroup {
+            name,
+            pos,
+            rot,
+            scale,
+        })
+    }
+}
+
+#[derive(Default, Serialize, Deserialize)]
 pub struct TerrainChunk {}
 
 impl TerrainChunk {
