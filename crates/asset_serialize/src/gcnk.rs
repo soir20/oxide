@@ -18,6 +18,22 @@ impl TerrainChunk {
     }
 }
 
+async fn decompress_section<R: AsyncReader>(file: &mut R) -> Result<Vec<u8>, Error> {
+    let decompressed_len = deserialize(file, R::read_i32_le).await?;
+    let compressed_len = deserialize(file, R::read_i32_le).await?;
+
+    let offset = tell(file).await;
+    let mut buffer = Vec::with_capacity(i32_to_usize(compressed_len)?);
+    let mut decoder = ZlibDecoder::new(&mut *file);
+
+    decoder.read_exact(&mut buffer).await.map_err(|err| Error {
+        kind: err.into(),
+        offset,
+    })?;
+
+    Ok(buffer)
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Gcnk {
     pub version: i32,
@@ -39,32 +55,10 @@ impl DeserializeAsset for Gcnk {
 
         let version = deserialize(file, R::read_i32_le).await?;
 
-        let decompressed_chunk_len = deserialize(file, R::read_i32_le).await?;
-        let compressed_chunk_len = deserialize(file, R::read_i32_le).await?;
-        let offset = tell(file).await;
-        let mut chunk_buffer = Vec::with_capacity(i32_to_usize(compressed_chunk_len)?);
-        let mut decoder = ZlibDecoder::new(&mut *file);
-        decoder
-            .read_exact(&mut chunk_buffer)
-            .await
-            .map_err(|err| Error {
-                kind: err.into(),
-                offset,
-            })?;
+        let chunk_buffer = decompress_section(file).await?;
         let chunk = TerrainChunk::deserialize(&mut Cursor::new(chunk_buffer)).await?;
 
-        let decompressed_collision_len = deserialize(file, R::read_i32_le).await?;
-        let compressed_collision_len = deserialize(file, R::read_i32_le).await?;
-        let offset = tell(file).await;
-        let mut collision_buffer = Vec::with_capacity(i32_to_usize(compressed_collision_len)?);
-        let mut decoder = ZlibDecoder::new(file);
-        decoder
-            .read_exact(&mut collision_buffer)
-            .await
-            .map_err(|err| Error {
-                kind: err.into(),
-                offset,
-            })?;
+        let collision_buffer = decompress_section(file).await?;
         //let chunk = TerrainChunk::deserialize(&mut Cursor::new(collision_buffer)).await?;
 
         Ok(Gcnk { version, chunk })
