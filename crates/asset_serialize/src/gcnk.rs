@@ -306,6 +306,7 @@ impl Tile {
         }
 
         let index = deserialize(file, R::read_i32).await?;
+        skip(file, 4).await?;
 
         Ok(Tile {
             x,
