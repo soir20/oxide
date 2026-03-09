@@ -140,7 +140,7 @@ mod tests {
                 let file = File::open(entry.path())
                     .await
                     .expect(&format!("Failed to open {}", entry.path().display()));
-                Cdt::deserialize(entry.path(), &mut BufReader::new(file))
+                <Cdt as DeserializeAsset>::deserialize(entry.path(), &mut BufReader::new(file))
                     .await
                     .expect(&format!("Failed to deserialize {}", entry.path().display()));
             });

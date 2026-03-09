@@ -101,7 +101,7 @@ mod tests {
                 let file = File::open(entry.path())
                     .await
                     .expect(&format!("Failed to open {}", entry.path().display()));
-                Gcnk::deserialize(entry.path(), &mut BufReader::new(file))
+                <Gcnk as DeserializeAsset>::deserialize(entry.path(), &mut BufReader::new(file))
                     .await
                     .expect(&format!("Failed to deserialize {}", entry.path().display()));
             });
