@@ -1,6 +1,7 @@
 pub mod adr;
 pub mod bvh;
 pub mod cdt;
+pub mod gcnk;
 pub mod pack;
 
 use walkdir::WalkDir;
