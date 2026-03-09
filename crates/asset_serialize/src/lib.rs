@@ -7,6 +7,7 @@ pub mod pack;
 use walkdir::WalkDir;
 
 use std::{
+    any::type_name,
     collections::HashMap,
     future::Future,
     io::SeekFrom,
@@ -31,7 +32,11 @@ pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
     NegativeLen(i32),
-    TryFromInt(String, &'static str),
+    TryFromInt {
+        value: String,
+        from_type: &'static str,
+        to_type: &'static str,
+    },
     UnknownDiscriminant(u64, &'static str),
     UnknownMagic(String),
 }
@@ -200,21 +205,33 @@ async fn serialize<
 
 fn i32_to_usize(value: i32) -> Result<usize, Error> {
     value.try_into().map_err(|_| Error {
-        kind: ErrorKind::TryFromInt(format!("{}", value), "i32 to usize"),
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<i32>(),
+            to_type: type_name::<usize>(),
+        },
         offset: None,
     })
 }
 
 fn u32_to_usize(value: u32) -> Result<usize, Error> {
     value.try_into().map_err(|_| Error {
-        kind: ErrorKind::TryFromInt(format!("{}", value), "u32 to usize"),
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<u32>(),
+            to_type: type_name::<usize>(),
+        },
         offset: None,
     })
 }
 
 fn usize_to_i32(value: usize) -> Result<i32, Error> {
     value.try_into().map_err(|_| Error {
-        kind: ErrorKind::TryFromInt(format!("{}", value), "usize to i32"),
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<usize>(),
+            to_type: type_name::<i32>(),
+        },
         offset: None,
     })
 }
