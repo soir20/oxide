@@ -10,7 +10,7 @@ use crate::{
     AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Rgba8 {
     pub red: u8,
     pub green: u8,
@@ -29,7 +29,7 @@ impl Rgba8 {
     }
 }
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct SubMeshBakedLighting {
     pub vertex_colors: Vec<Rgba8>,
 }
@@ -45,7 +45,7 @@ impl SubMeshBakedLighting {
     }
 }
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct RuntimeObjectTint {
     pub tint_alias: String,
     pub tint: [f32; 4],
@@ -147,7 +147,7 @@ impl RuntimeObject {
     }
 }
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct RawLight {
     pub name: String,
     pub color_name: String,
@@ -180,7 +180,7 @@ impl RawLight {
     }
 }
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct RawArea {
     pub name: String,
     pub unknown1: i32,
@@ -213,7 +213,7 @@ impl RawArea {
     }
 }
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize)]
 pub struct RawGroup {
     pub name: String,
     pub pos: [f32; 4],
@@ -233,6 +233,92 @@ impl RawGroup {
             pos,
             rot,
             scale,
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TileUnknown {
+    pub unknown1: i32,
+    pub unknown2: i32,
+    pub unknown3: i32,
+    pub unknown4: i32,
+    pub unknown5: i32,
+}
+
+impl TileUnknown {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let unknown1 = deserialize(file, R::read_i32_le).await?;
+        let unknown2 = deserialize(file, R::read_i32_le).await?;
+        let unknown3 = deserialize(file, R::read_i32_le).await?;
+        let unknown4 = deserialize(file, R::read_i32_le).await?;
+        let unknown5 = deserialize(file, R::read_i32_le).await?;
+
+        Ok(TileUnknown {
+            unknown1,
+            unknown2,
+            unknown3,
+            unknown4,
+            unknown5,
+        })
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Tile {
+    pub x: i32,
+    pub y: i32,
+    pub pos: [f32; 4],
+    pub unknown1: Option<TileUnknown>,
+    pub unknown2: f32,
+    pub eco_data: Vec<i32>,
+    pub runtime_objects: Vec<RuntimeObject>,
+    pub lights: Vec<RawLight>,
+    pub areas: Vec<RawArea>,
+    pub groups: Vec<RawGroup>,
+    pub index: i32,
+}
+
+impl Tile {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        let x = deserialize(file, R::read_i32).await?;
+        let y = deserialize(file, R::read_i32).await?;
+        let pos = deserialize_f32_le_vec4(file).await?;
+
+        let unknown1_exists = deserialize(file, R::read_i32).await?;
+        let mut unknown1 = None;
+        if unknown1_exists > 0 {
+            unknown1 = Some(TileUnknown {
+                unknown1: unknown1_exists,
+                unknown2: deserialize(file, R::read_i32).await?,
+                unknown3: deserialize(file, R::read_i32).await?,
+                unknown4: deserialize(file, R::read_i32).await?,
+                unknown5: deserialize(file, R::read_i32).await?,
+            });
+        }
+
+        let unknown2 = deserialize(file, R::read_f32_le).await?;
+
+        let eco_data_len = deserialize(file, R::read_i32).await?;
+        let mut eco_data = Vec::new();
+        for _ in 0..eco_data_len {
+            eco_data.push(deserialize(file, R::read_i32).await?);
+        }
+
+        let index = deserialize(file, R::read_i32).await?;
+
+        Ok(Tile {
+            x,
+            y,
+            pos,
+            unknown1,
+            unknown2,
+            eco_data,
+            runtime_objects: todo!(),
+            lights: todo!(),
+            areas: todo!(),
+            groups: todo!(),
+            index,
         })
     }
 }
