@@ -18,6 +18,15 @@ impl TerrainChunk {
     }
 }
 
+#[derive(Default, Serialize, Deserialize)]
+pub struct TerrainCollision {}
+
+impl TerrainCollision {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+        Ok(TerrainCollision {})
+    }
+}
+
 async fn decompress_section<R: AsyncReader>(file: &mut R) -> Result<Vec<u8>, Error> {
     let expected_decompressed_len = i32_to_usize(deserialize(file, R::read_i32_le).await?)?;
     let compressed_len = deserialize(file, R::read_i32_le).await?;
@@ -51,6 +60,7 @@ async fn decompress_section<R: AsyncReader>(file: &mut R) -> Result<Vec<u8>, Err
 pub struct Gcnk {
     pub version: i32,
     pub chunk: TerrainChunk,
+    pub collision: TerrainCollision,
 }
 
 impl Default for Gcnk {
@@ -58,6 +68,7 @@ impl Default for Gcnk {
         Self {
             version: 1,
             chunk: Default::default(),
+            collision: Default::default(),
         }
     }
 }
@@ -86,9 +97,13 @@ impl DeserializeAsset for Gcnk {
         let chunk = TerrainChunk::deserialize(&mut Cursor::new(chunk_buffer)).await?;
 
         let collision_buffer = decompress_section(file).await?;
-        //let chunk = TerrainChunk::deserialize(&mut Cursor::new(collision_buffer)).await?;
+        let collision = TerrainCollision::deserialize(&mut Cursor::new(collision_buffer)).await?;
 
-        Ok(Gcnk { version, chunk })
+        Ok(Gcnk {
+            version,
+            chunk,
+            collision,
+        })
     }
 }
 
