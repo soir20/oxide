@@ -24,6 +24,14 @@ async fn deserialize_vec<R: AsyncReader, T>(
     Ok(items)
 }
 
+async fn deserialize_u16<R: AsyncReader>(file: &mut R, _: i32) -> Result<u16, Error> {
+    deserialize(file, R::read_u16_le).await
+}
+
+async fn deserialize_i32<R: AsyncReader>(file: &mut R, _: i32) -> Result<i32, Error> {
+    deserialize(file, R::read_i32_le).await
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Rgba8 {
     pub red: u8,
@@ -300,12 +308,7 @@ impl Tile {
         let unknown1 = TileUnknown::deserialize(file).await?;
         let unknown2 = deserialize(file, R::read_f32_le).await?;
 
-        let eco_data_len = deserialize(file, R::read_i32_le).await?;
-        let mut eco_data = Vec::new();
-        for _ in 0..eco_data_len {
-            eco_data.push(deserialize(file, R::read_i32_le).await?);
-        }
-
+        let eco_data = deserialize_vec(file, version, deserialize_i32).await?;
         let runtime_objects = deserialize_vec(file, version, RuntimeObject::deserialize).await?;
         let lights = deserialize_vec(file, version, RawLight::deserialize).await?;
         let areas = deserialize_vec(file, version, RawArea::deserialize).await?;
@@ -410,10 +413,6 @@ impl DetailMask {
             pixels,
         })
     }
-}
-
-async fn deserialize_u16<R: AsyncReader>(file: &mut R, _: i32) -> Result<u16, Error> {
-    deserialize(file, R::read_u16_le).await
 }
 
 #[derive(Serialize, Deserialize)]
