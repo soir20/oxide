@@ -293,17 +293,17 @@ pub struct Tile {
 
 impl Tile {
     async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
-        let x = deserialize(file, R::read_i32).await?;
-        let y = deserialize(file, R::read_i32).await?;
+        let x = deserialize(file, R::read_i32_le).await?;
+        let y = deserialize(file, R::read_i32_le).await?;
         let pos = deserialize_f32_le_vec4(file).await?;
 
         let unknown1 = TileUnknown::deserialize(file).await?;
         let unknown2 = deserialize(file, R::read_f32_le).await?;
 
-        let eco_data_len = deserialize(file, R::read_i32).await?;
+        let eco_data_len = deserialize(file, R::read_i32_le).await?;
         let mut eco_data = Vec::new();
         for _ in 0..eco_data_len {
-            eco_data.push(deserialize(file, R::read_i32).await?);
+            eco_data.push(deserialize(file, R::read_i32_le).await?);
         }
 
         let runtime_objects = deserialize_vec(file, version, RuntimeObject::deserialize).await?;
@@ -311,7 +311,7 @@ impl Tile {
         let areas = deserialize_vec(file, version, RawArea::deserialize).await?;
         let groups = deserialize_vec(file, version, RawGroup::deserialize).await?;
 
-        let index = deserialize(file, R::read_i32).await?;
+        let index = deserialize(file, R::read_i32_le).await?;
         skip(file, 4).await?;
 
         Ok(Tile {
