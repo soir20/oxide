@@ -255,20 +255,24 @@ pub struct TileUnknown {
 }
 
 impl TileUnknown {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Option<Self>, Error> {
         let unknown1 = deserialize(file, R::read_i32_le).await?;
+        if unknown1 <= 0 {
+            return Ok(None);
+        }
+
         let unknown2 = deserialize(file, R::read_i32_le).await?;
         let unknown3 = deserialize(file, R::read_i32_le).await?;
         let unknown4 = deserialize(file, R::read_i32_le).await?;
         let unknown5 = deserialize(file, R::read_i32_le).await?;
 
-        Ok(TileUnknown {
+        Ok(Some(TileUnknown {
             unknown1,
             unknown2,
             unknown3,
             unknown4,
             unknown5,
-        })
+        }))
     }
 }
 
@@ -293,18 +297,7 @@ impl Tile {
         let y = deserialize(file, R::read_i32).await?;
         let pos = deserialize_f32_le_vec4(file).await?;
 
-        let unknown1_exists = deserialize(file, R::read_i32).await?;
-        let mut unknown1 = None;
-        if unknown1_exists > 0 {
-            unknown1 = Some(TileUnknown {
-                unknown1: unknown1_exists,
-                unknown2: deserialize(file, R::read_i32).await?,
-                unknown3: deserialize(file, R::read_i32).await?,
-                unknown4: deserialize(file, R::read_i32).await?,
-                unknown5: deserialize(file, R::read_i32).await?,
-            });
-        }
-
+        let unknown1 = TileUnknown::deserialize(file).await?;
         let unknown2 = deserialize(file, R::read_f32_le).await?;
 
         let eco_data_len = deserialize(file, R::read_i32).await?;
@@ -337,15 +330,95 @@ impl Tile {
     }
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct RenderBatch {
+    pub index_offset: i32,
+    pub index_count: i32,
+    pub vertex_offset: i32,
+    pub vertex_count: i32,
+}
+
+impl RenderBatch {
+    async fn deserialize<R: AsyncReader>(file: &mut R, _: i32) -> Result<Self, Error> {
+        let index_offset = deserialize(file, R::read_i32_le).await?;
+        let index_count = deserialize(file, R::read_i32_le).await?;
+        let vertex_offset = deserialize(file, R::read_i32_le).await?;
+        let vertex_count = deserialize(file, R::read_i32_le).await?;
+
+        Ok(RenderBatch {
+            index_offset,
+            index_count,
+            vertex_offset,
+            vertex_count,
+        })
+    }
+}
+
+async fn deserialize_u16<R: AsyncReader>(file: &mut R, _: i32) -> Result<u16, Error> {
+    deserialize(file, R::read_u16_le).await
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Vertex {
+    pub pos: [f32; 3],
+    pub normal: [u8; 4],
+    pub color1: Rgba8,
+    pub color2: Rgba8,
+    pub tex_coord1: [u16; 2],
+    pub tex_coord2: [u16; 2],
+}
+
+impl Vertex {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        let pos = deserialize_f32_le_vec3(file).await?;
+        let normal = [
+            deserialize(file, R::read_u8).await?,
+            deserialize(file, R::read_u8).await?,
+            deserialize(file, R::read_u8).await?,
+            deserialize(file, R::read_u8).await?,
+        ];
+        let color1 = Rgba8::deserialize(file, version).await?;
+        let color2 = Rgba8::deserialize(file, version).await?;
+        let tex_coord1 = [
+            deserialize(file, R::read_u16_le).await?,
+            deserialize(file, R::read_u16_le).await?,
+        ];
+        let tex_coord2 = [
+            deserialize(file, R::read_u16_le).await?,
+            deserialize(file, R::read_u16_le).await?,
+        ];
+
+        Ok(Vertex {
+            pos,
+            normal,
+            color1,
+            color2,
+            tex_coord1,
+            tex_coord2,
+        })
+    }
+}
+
 #[derive(Default, Serialize, Deserialize)]
 pub struct TerrainChunk {
     pub tiles: Vec<Tile>,
+    pub render_batches: Vec<RenderBatch>,
+    pub indices: Vec<u16>,
+    pub vertices: Vec<Vertex>,
 }
 
 impl TerrainChunk {
     async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
         let tiles = deserialize_vec(file, version, Tile::deserialize).await?;
-        Ok(TerrainChunk { tiles })
+        let render_batches = deserialize_vec(file, version, RenderBatch::deserialize).await?;
+        let indices = deserialize_vec(file, version, deserialize_u16).await?;
+        let vertices = deserialize_vec(file, version, Vertex::deserialize).await?;
+        Ok(TerrainChunk {
+            tiles,
+            render_batches,
+            indices,
+            vertices,
+        })
     }
 }
 
