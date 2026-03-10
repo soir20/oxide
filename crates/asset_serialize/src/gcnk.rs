@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    deserialize, deserialize_f32_le_vec3, deserialize_f32_le_vec4,
+    deserialize, deserialize_exact, deserialize_f32_le_vec3, deserialize_f32_le_vec4,
     deserialize_null_terminated_string, deserialize_string, i32_to_u64, i32_to_usize, skip, tell,
     AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
@@ -354,6 +354,64 @@ impl RenderBatch {
     }
 }
 
+#[derive(Default, Serialize, Deserialize)]
+pub struct DetailMask {
+    pub channel_count: i32,
+    pub bits_per_channel: i32,
+    pub pixels: Vec<u8>,
+}
+
+impl DetailMask {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        let channel_count = deserialize(file, R::read_i32_le).await?;
+        if channel_count <= 0 {
+            return Ok(DetailMask::default());
+        }
+
+        let offset = tell(file).await;
+        let side_len = deserialize(file, R::read_i32_le).await?;
+        if side_len <= 0 {
+            return Err(Error {
+                kind: ErrorKind::NegativeLen(side_len),
+                offset,
+            });
+        }
+
+        let Some(total_channels) = side_len
+            .checked_mul(side_len)
+            .map(|pixel_count| pixel_count.saturating_mul(channel_count))
+        else {
+            return Err(Error {
+                kind: ErrorKind::IntegerOverflow {
+                    expected_bytes: 8,
+                    actual_bytes: 4,
+                },
+                offset,
+            });
+        };
+
+        let (len, bits_per_channel) = match version >= 4 {
+            true => {
+                let mut compressed_len = total_channels / 2;
+                compressed_len = match total_channels % 2 == 0 {
+                    true => compressed_len,
+                    false => compressed_len + 1,
+                };
+                (compressed_len, 4)
+            }
+            false => (total_channels, 8),
+        };
+
+        let (pixels, _) = deserialize_exact(file, i32_to_usize(len)?).await?;
+
+        Ok(DetailMask {
+            channel_count,
+            bits_per_channel,
+            pixels,
+        })
+    }
+}
+
 async fn deserialize_u16<R: AsyncReader>(file: &mut R, _: i32) -> Result<u16, Error> {
     deserialize(file, R::read_u16_le).await
 }
@@ -403,6 +461,7 @@ impl Vertex {
 pub struct TerrainChunk {
     pub tiles: Vec<Tile>,
     pub render_batches: Vec<RenderBatch>,
+    pub detail_mask: DetailMask,
     pub indices: Vec<u16>,
     pub vertices: Vec<Vertex>,
 }
@@ -411,11 +470,13 @@ impl TerrainChunk {
     async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
         let tiles = deserialize_vec(file, version, Tile::deserialize).await?;
         let render_batches = deserialize_vec(file, version, RenderBatch::deserialize).await?;
+        let detail_mask = DetailMask::deserialize(file, version).await?;
         let indices = deserialize_vec(file, version, deserialize_u16).await?;
         let vertices = deserialize_vec(file, version, Vertex::deserialize).await?;
         Ok(TerrainChunk {
             tiles,
             render_batches,
+            detail_mask,
             indices,
             vertices,
         })
