@@ -10,6 +10,20 @@ use crate::{
     AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
+async fn deserialize_vec<R: AsyncReader, T>(
+    file: &mut R,
+    version: i32,
+    mut fun: impl AsyncFnMut(&mut R, i32) -> Result<T, Error>,
+) -> Result<Vec<T>, Error> {
+    let len: i32 = deserialize(file, R::read_i32_le).await?;
+    let mut items = Vec::new();
+    for _ in 0..len {
+        items.push(fun(file, version).await?);
+    }
+
+    Ok(items)
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct Rgba8 {
     pub red: u8,
@@ -19,7 +33,7 @@ pub struct Rgba8 {
 }
 
 impl Rgba8 {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R, _: i32) -> Result<Self, Error> {
         Ok(Rgba8 {
             red: deserialize(file, R::read_u8).await?,
             green: deserialize(file, R::read_u8).await?,
@@ -35,12 +49,8 @@ pub struct SubMeshBakedLighting {
 }
 
 impl SubMeshBakedLighting {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
-        let vertices = deserialize(file, R::read_i32_le).await?;
-        let mut vertex_colors = Vec::new();
-        for _ in 0..vertices {
-            vertex_colors.push(Rgba8::deserialize(file).await?);
-        }
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        let vertex_colors = deserialize_vec(file, version, Rgba8::deserialize).await?;
         Ok(SubMeshBakedLighting { vertex_colors })
     }
 }
@@ -125,10 +135,8 @@ impl RuntimeObject {
 
         let mut baked_lighting = Vec::new();
         if version >= 3 {
-            let sub_meshes = deserialize(file, R::read_i32_le).await?;
-            for _ in 0..sub_meshes {
-                baked_lighting.push(SubMeshBakedLighting::deserialize(file).await?);
-            }
+            baked_lighting =
+                deserialize_vec(file, version, SubMeshBakedLighting::deserialize).await?;
         }
 
         Ok(RuntimeObject {
@@ -159,14 +167,14 @@ pub struct RawLight {
 }
 
 impl RawLight {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
         let (name, _) = deserialize_null_terminated_string(file).await?;
         let (color_name, _) = deserialize_null_terminated_string(file).await?;
         let light_type = deserialize(file, R::read_u8).await?;
         let pos = deserialize_f32_le_vec4(file).await?;
         let range = deserialize(file, R::read_f32_le).await?;
         let intensity = deserialize(file, R::read_f32_le).await?;
-        let color = Rgba8::deserialize(file).await?;
+        let color = Rgba8::deserialize(file, version).await?;
 
         Ok(RawLight {
             name,
@@ -192,7 +200,7 @@ pub struct RawArea {
 }
 
 impl RawArea {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R, _: i32) -> Result<Self, Error> {
         let (name, _) = deserialize_null_terminated_string(file).await?;
         let unknown1 = deserialize(file, R::read_i32_le).await?;
         let (unknown2, _) = deserialize_null_terminated_string(file).await?;
@@ -222,7 +230,7 @@ pub struct RawGroup {
 }
 
 impl RawGroup {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R, _: i32) -> Result<Self, Error> {
         let (name, _) = deserialize_null_terminated_string(file).await?;
         let pos = deserialize_f32_le_vec4(file).await?;
         let rot = deserialize_f32_le_vec4(file).await?;
@@ -280,7 +288,7 @@ pub struct Tile {
 }
 
 impl Tile {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
         let x = deserialize(file, R::read_i32).await?;
         let y = deserialize(file, R::read_i32).await?;
         let pos = deserialize_f32_le_vec4(file).await?;
@@ -305,6 +313,11 @@ impl Tile {
             eco_data.push(deserialize(file, R::read_i32).await?);
         }
 
+        let runtime_objects = deserialize_vec(file, version, RuntimeObject::deserialize).await?;
+        let lights = deserialize_vec(file, version, RawLight::deserialize).await?;
+        let areas = deserialize_vec(file, version, RawArea::deserialize).await?;
+        let groups = deserialize_vec(file, version, RawGroup::deserialize).await?;
+
         let index = deserialize(file, R::read_i32).await?;
         skip(file, 4).await?;
 
@@ -315,21 +328,24 @@ impl Tile {
             unknown1,
             unknown2,
             eco_data,
-            runtime_objects: todo!(),
-            lights: todo!(),
-            areas: todo!(),
-            groups: todo!(),
+            runtime_objects,
+            lights,
+            areas,
+            groups,
             index,
         })
     }
 }
 
 #[derive(Default, Serialize, Deserialize)]
-pub struct TerrainChunk {}
+pub struct TerrainChunk {
+    pub tiles: Vec<Tile>,
+}
 
 impl TerrainChunk {
-    async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
-        Ok(TerrainChunk {})
+    async fn deserialize<R: AsyncReader>(file: &mut R, version: i32) -> Result<Self, Error> {
+        let tiles = deserialize_vec(file, version, Tile::deserialize).await?;
+        Ok(TerrainChunk { tiles })
     }
 }
 
@@ -409,7 +425,7 @@ impl DeserializeAsset for Gcnk {
         let version = deserialize(file, R::read_i32_le).await?;
 
         let chunk_buffer = decompress_section(file).await?;
-        let chunk = TerrainChunk::deserialize(&mut Cursor::new(chunk_buffer)).await?;
+        let chunk = TerrainChunk::deserialize(&mut Cursor::new(chunk_buffer), version).await?;
 
         let collision_buffer = decompress_section(file).await?;
         let collision = TerrainCollision::deserialize(&mut Cursor::new(collision_buffer)).await?;
@@ -433,7 +449,7 @@ mod tests {
     use walkdir::WalkDir;
 
     #[tokio::test]
-    //#[ignore]
+    #[ignore]
     async fn test_deserialize_gcnk() {
         let target_extension = "gcnk";
         let search_path = env::var("GCNK_ROOT").unwrap();
