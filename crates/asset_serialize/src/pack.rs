@@ -1,5 +1,5 @@
 use std::{
-    collections::{hash_map::IntoIter, HashMap},
+    collections::{btree_map::IntoIter, BTreeMap, HashMap},
     io::SeekFrom,
     path::{Path, PathBuf},
 };
@@ -22,7 +22,7 @@ pub struct PackAsset {
 #[derive(Serialize, Deserialize)]
 pub struct Pack {
     path: PathBuf,
-    assets: HashMap<String, PackAsset>,
+    assets: BTreeMap<String, PackAsset>,
 }
 
 impl DeserializeAsset for Pack {
@@ -30,7 +30,7 @@ impl DeserializeAsset for Pack {
         path: P,
         file: &mut R,
     ) -> Result<Self, Error> {
-        let mut assets = HashMap::new();
+        let mut assets = BTreeMap::new();
         loop {
             let next_group_offset = deserialize(file, R::read_u32).await? as u64;
             let files_in_group = deserialize(file, R::read_u32).await?;
@@ -94,5 +94,14 @@ impl Pack {
 
     pub fn iter(&self) -> impl Iterator<Item = (&String, &PackAsset)> + use<'_> {
         self.assets.iter()
+    }
+
+    pub fn iter_prefix<'a>(
+        &self,
+        prefix: &'a str,
+    ) -> impl Iterator<Item = (&String, &PackAsset)> + use<'a, '_> {
+        self.assets
+            .range(prefix.to_string()..)
+            .take_while(move |(name, _)| name.starts_with(prefix))
     }
 }
