@@ -5,9 +5,9 @@ use serde::{Deserialize, Serialize};
 use tokio::io::AsyncReadExt;
 
 use crate::{
-    deserialize, deserialize_exact, deserialize_f32_le_vec3, deserialize_f32_le_vec4,
-    deserialize_null_terminated_string, deserialize_string, i32_to_u64, i32_to_usize, skip, tell,
-    AsyncReader, DeserializeAsset, Error, ErrorKind,
+    bvh::BoundingVolumeHierarchy, deserialize, deserialize_exact, deserialize_f32_le_vec3,
+    deserialize_f32_le_vec4, deserialize_null_terminated_string, deserialize_string, i32_to_u64,
+    i32_to_usize, is_eof, skip, tell, AsyncReader, DeserializeAsset, Error, ErrorKind,
 };
 
 async fn deserialize_vec<R: AsyncReader, T>(
@@ -483,11 +483,22 @@ impl TerrainChunk {
 }
 
 #[derive(Default, Serialize, Deserialize)]
-pub struct TerrainCollision {}
+pub struct TerrainCollision {
+    pub bounding_volume_hierarchies: Vec<BoundingVolumeHierarchy>,
+}
 
 impl TerrainCollision {
     async fn deserialize<R: AsyncReader>(file: &mut R) -> Result<Self, Error> {
-        Ok(TerrainCollision {})
+        let mut bounding_volume_hierarchies = Vec::new();
+        while !is_eof(file).await? {
+            let _len = deserialize(file, R::read_i32_le).await?;
+            skip(file, 28).await?;
+            bounding_volume_hierarchies.push(BoundingVolumeHierarchy::deserialize(file).await?);
+        }
+
+        Ok(TerrainCollision {
+            bounding_volume_hierarchies,
+        })
     }
 }
 
