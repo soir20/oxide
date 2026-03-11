@@ -294,15 +294,35 @@ pub struct Asset {
     pub offset: u64,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AssetType {
+    Adr,
+    Cdt,
+    Gcnk,
+    Pack,
+    Unknown,
+}
+
+impl<P: AsRef<Path>> From<P> for AssetType {
+    fn from(path: P) -> Self {
+        let Some(extension) = path.as_ref().extension() else {
+            return AssetType::Unknown;
+        };
+        match extension.to_ascii_lowercase().to_str() {
+            Some("adr") => AssetType::Adr,
+            Some("cdt") => AssetType::Cdt,
+            Some("gcnk") => AssetType::Gcnk,
+            Some("pack") => AssetType::Pack,
+            _ => AssetType::Unknown,
+        }
+    }
+}
+
 async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
     path: P,
     mut file: File,
 ) -> HashMap<String, Asset> {
-    let is_pack = path
-        .as_ref()
-        .extension()
-        .map(|ext| ext.eq_ignore_ascii_case("pack"))
-        .unwrap_or(false);
+    let is_pack = AssetType::from(&path) == AssetType::Pack;
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
