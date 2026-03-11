@@ -294,8 +294,12 @@ pub struct Asset {
     pub offset: u64,
 }
 
-async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, Asset> {
+async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
+    path: P,
+    mut file: File,
+) -> HashMap<String, Asset> {
     let is_pack = path
+        .as_ref()
         .extension()
         .map(|ext| ext.eq_ignore_ascii_case("pack"))
         .unwrap_or(false);
@@ -311,6 +315,7 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
         }
         false => {
             let Some(Ok(name)) = path
+                .as_ref()
                 .file_name()
                 .map(|name| name.to_os_string().into_string())
             else {
@@ -321,7 +326,7 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
             results.insert(
                 name,
                 Asset {
-                    path: path.clone(),
+                    path: path.as_ref().to_path_buf(),
                     offset: 0,
                 },
             );
