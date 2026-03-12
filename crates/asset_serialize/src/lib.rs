@@ -1,15 +1,16 @@
 pub mod adr;
 pub mod bvh;
 pub mod cdt;
+pub mod gcnk;
 pub mod pack;
 
 use walkdir::WalkDir;
 
 use std::{
+    any::type_name,
     collections::HashMap,
     future::Future,
     io::SeekFrom,
-    num::TryFromIntError,
     path::{Path, PathBuf},
     string::FromUtf8Error,
 };
@@ -31,7 +32,15 @@ pub enum ErrorKind {
     InvalidUtf8(FromUtf8Error),
     Io(tokio::io::Error),
     NegativeLen(i32),
-    TryFromInt(TryFromIntError),
+    TryFromInt {
+        value: String,
+        from_type: &'static str,
+        to_type: &'static str,
+    },
+    UnexpectedDecompressedLen {
+        expected_decompressed_len: usize,
+        actual_decompressed_len: usize,
+    },
     UnknownDiscriminant(u64, &'static str),
     UnknownMagic(String),
 }
@@ -45,12 +54,6 @@ impl From<FromUtf8Error> for ErrorKind {
 impl From<tokio::io::Error> for ErrorKind {
     fn from(value: tokio::io::Error) -> Self {
         ErrorKind::Io(value)
-    }
-}
-
-impl From<TryFromIntError> for ErrorKind {
-    fn from(value: TryFromIntError) -> Self {
-        ErrorKind::TryFromInt(value)
     }
 }
 
@@ -142,6 +145,44 @@ async fn deserialize_string<R: AsyncReader>(
         })
 }
 
+async fn deserialize_null_terminated_string<R: AsyncReader>(
+    file: &mut R,
+) -> Result<(String, usize), Error> {
+    let offset = tell(file).await;
+    deserialize(file, async |file| {
+        let mut buffer = Vec::new();
+        let bytes_read = file.read_until(b'\0', &mut buffer).await?;
+        Ok((buffer, bytes_read))
+    })
+    .await
+    .and_then(|(mut buffer, bytes_read)| {
+        buffer.pop_if(|last| *last == b'\0');
+        String::from_utf8(buffer)
+            .map(|string| (string, bytes_read))
+            .map_err(|err| Error {
+                kind: err.into(),
+                offset,
+            })
+    })
+}
+
+async fn deserialize_f32_le_vec3<R: AsyncReader>(file: &mut R) -> Result<[f32; 3], Error> {
+    Ok([
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+    ])
+}
+
+async fn deserialize_f32_le_vec4<R: AsyncReader>(file: &mut R) -> Result<[f32; 4], Error> {
+    Ok([
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+        deserialize(file, R::read_f32_le).await?,
+    ])
+}
+
 async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usize, Error> {
     let mut bytes_written = serialize_exact(file, str.as_bytes()).await?;
 
@@ -167,12 +208,12 @@ async fn serialize_string<W: AsyncWriter>(file: &mut W, str: &str) -> Result<usi
 
 async fn deserialize<
     'a,
-    W: AsyncSeekExt + AsyncReadExt + Unpin + 'a,
+    R: AsyncSeekExt + AsyncReadExt + Unpin + 'a,
     T,
     Fut: Future<Output = Result<T, tokio::io::Error>>,
 >(
-    file: &'a mut W,
-    mut fun: impl FnMut(&'a mut W) -> Fut,
+    file: &'a mut R,
+    mut fun: impl FnMut(&'a mut R) -> Fut,
 ) -> Result<T, Error> {
     let offset = tell(file).await;
     match fun(file).await {
@@ -205,22 +246,45 @@ async fn serialize<
 }
 
 fn i32_to_usize(value: i32) -> Result<usize, Error> {
-    value.try_into().map_err(|err: TryFromIntError| Error {
-        kind: err.into(),
+    value.try_into().map_err(|_| Error {
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<i32>(),
+            to_type: type_name::<usize>(),
+        },
+        offset: None,
+    })
+}
+
+fn i32_to_u64(value: i32) -> Result<u64, Error> {
+    value.try_into().map_err(|_| Error {
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<i32>(),
+            to_type: type_name::<u64>(),
+        },
         offset: None,
     })
 }
 
 fn u32_to_usize(value: u32) -> Result<usize, Error> {
-    value.try_into().map_err(|err: TryFromIntError| Error {
-        kind: err.into(),
+    value.try_into().map_err(|_| Error {
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<u32>(),
+            to_type: type_name::<usize>(),
+        },
         offset: None,
     })
 }
 
 fn usize_to_i32(value: usize) -> Result<i32, Error> {
-    value.try_into().map_err(|err: TryFromIntError| Error {
-        kind: err.into(),
+    value.try_into().map_err(|_| Error {
+        kind: ErrorKind::TryFromInt {
+            value: format!("{}", value),
+            from_type: type_name::<usize>(),
+            to_type: type_name::<i32>(),
+        },
         offset: None,
     })
 }
@@ -230,15 +294,40 @@ pub struct Asset {
     pub offset: u64,
 }
 
-async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, Asset> {
-    let is_pack = path
-        .extension()
-        .map(|ext| ext.eq_ignore_ascii_case("pack"))
-        .unwrap_or(false);
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum AssetType {
+    Adr,
+    Cdt,
+    Gcnk,
+    Pack,
+    Unknown,
+}
+
+impl<P: AsRef<Path>> From<P> for AssetType {
+    fn from(path: P) -> Self {
+        let Some(extension) = path.as_ref().extension() else {
+            return AssetType::Unknown;
+        };
+        match extension.to_ascii_lowercase().to_str() {
+            Some("adr") => AssetType::Adr,
+            Some("cdt") => AssetType::Cdt,
+            Some("gcnk") => AssetType::Gcnk,
+            Some("pack") => AssetType::Pack,
+            _ => AssetType::Unknown,
+        }
+    }
+}
+
+async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
+    path: P,
+    mut file: File,
+) -> HashMap<String, Asset> {
+    let is_pack = AssetType::from(&path) == AssetType::Pack;
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
-            let Ok(pack) = Pack::deserialize(path.clone(), &mut reader).await else {
+            let Ok(pack) = <Pack as DeserializeAsset>::deserialize(path.clone(), &mut reader).await
+            else {
                 return HashMap::new();
             };
 
@@ -246,6 +335,7 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
         }
         false => {
             let Some(Ok(name)) = path
+                .as_ref()
                 .file_name()
                 .map(|name| name.to_os_string().into_string())
             else {
@@ -256,7 +346,7 @@ async fn list_assets_in_file(path: PathBuf, mut file: File) -> HashMap<String, A
             results.insert(
                 name,
                 Asset {
-                    path: path.clone(),
+                    path: path.as_ref().to_path_buf(),
                     offset: 0,
                 },
             );

@@ -4155,7 +4155,7 @@ mod tests {
             let file = File::open(entry.path())
                 .await
                 .expect(&format!("Failed to open {}", entry.path().display()));
-            Adr::deserialize(entry.path(), &mut BufReader::new(file))
+            <Adr as DeserializeAsset>::deserialize(entry.path(), &mut BufReader::new(file))
                 .await
                 .expect(&format!("Failed to deserialize {}", entry.path().display()));
         }
@@ -4179,17 +4179,19 @@ mod tests {
             let file = File::open(entry.path())
                 .await
                 .expect(&format!("Failed to open {}", entry.path().display()));
-            let adr = Adr::deserialize(entry.path(), &mut BufReader::new(file))
-                .await
-                .expect(&format!("Failed to deserialize {}", entry.path().display()));
+            let adr =
+                <Adr as DeserializeAsset>::deserialize(entry.path(), &mut BufReader::new(file))
+                    .await
+                    .expect(&format!("Failed to deserialize {}", entry.path().display()));
 
             let mut buffer = Vec::new();
-            Adr::serialize(&adr, &mut Cursor::new(&mut buffer))
+            <Adr as SerializeAsset>::serialize(&adr, &mut Cursor::new(&mut buffer))
                 .await
                 .expect(&format!("Failed to serialize {}", entry.path().display()));
 
             let deserialize_result =
-                Adr::deserialize(entry.path(), &mut Cursor::new(&mut buffer)).await;
+                <Adr as DeserializeAsset>::deserialize(entry.path(), &mut Cursor::new(&mut buffer))
+                    .await;
 
             // Optionally write to file for debugging
             if deserialize_result.is_err() {
