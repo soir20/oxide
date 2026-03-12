@@ -99,7 +99,7 @@ impl AssetCache {
         for result in results.into_iter() {
             match result {
                 Ok(deserialiazed_asset) => deserialized_assets.push(deserialiazed_asset),
-                Err(err) => errors.push(err.into()),
+                Err(err) => errors.push(err),
             }
         }
 
