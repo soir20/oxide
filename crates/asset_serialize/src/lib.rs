@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 
 use std::{
     any::type_name,
-    collections::HashMap,
+    collections::{BTreeMap, HashMap},
     future::Future,
     io::SeekFrom,
     path::{Path, PathBuf},
@@ -289,6 +289,7 @@ fn usize_to_i32(value: usize) -> Result<i32, Error> {
     })
 }
 
+#[derive(Clone, Debug)]
 pub struct Asset {
     pub path: PathBuf,
     pub offset: u64,
@@ -360,7 +361,7 @@ pub async fn list_assets<P: AsRef<Path>>(
     directory_path: P,
     follow_links: bool,
     mut predicate: impl FnMut(&Path) -> bool,
-) -> Result<HashMap<String, Asset>, tokio::io::Error> {
+) -> Result<BTreeMap<String, Asset>, tokio::io::Error> {
     let mut futures = JoinSet::new();
 
     let walker = WalkDir::new(&directory_path)
@@ -377,7 +378,7 @@ pub async fn list_assets<P: AsRef<Path>>(
         }
     }
 
-    let mut final_result = HashMap::new();
+    let mut final_result = BTreeMap::new();
     futures
         .join_all()
         .await
