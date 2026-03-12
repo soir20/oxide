@@ -1,11 +1,16 @@
 use std::{
     collections::{BTreeMap, HashSet},
     ffi::OsStr,
+    io::SeekFrom,
     path::Path,
 };
 
 use asset_serialize::{list_assets, Asset, DeserializeAsset};
-use tokio::{fs::OpenOptions, io::BufReader, task::JoinSet};
+use tokio::{
+    fs::OpenOptions,
+    io::{AsyncSeekExt, BufReader},
+    task::JoinSet,
+};
 
 use crate::ConfigError;
 
@@ -72,16 +77,18 @@ impl AssetCache {
                 }
             };
 
-            futures.spawn(async move {
-                match OpenOptions::new().read(true).open(&asset.path).await {
-                    Ok(file) => {
-                        let mut reader = BufReader::new(file);
-                        match T::deserialize(asset.path, &mut reader).await {
-                            Ok(deserialized_asset) => Ok((asset_name, deserialized_asset)),
-                            Err(err) => Err((asset_name, err.into())),
-                        }
-                    }
-                    Err(err) => Err((asset_name, err.into())),
+            let task = async move || {
+                let mut file = OpenOptions::new().read(true).open(&asset.path).await?;
+                file.seek(SeekFrom::Start(asset.offset)).await?;
+                let mut reader = BufReader::new(file);
+                let deserialized_asset = T::deserialize(asset.path, &mut reader).await?;
+                Ok(deserialized_asset)
+            };
+
+            futures.spawn(async {
+                match task().await {
+                    Ok(deserialized_asset) => Ok((asset_name, deserialized_asset)),
+                    Err(err) => Err((asset_name, err)),
                 }
             });
         }
@@ -92,7 +99,7 @@ impl AssetCache {
         for result in results.into_iter() {
             match result {
                 Ok(deserialiazed_asset) => deserialized_assets.push(deserialiazed_asset),
-                Err(err) => errors.push(err),
+                Err(err) => errors.push(err.into()),
             }
         }
 
