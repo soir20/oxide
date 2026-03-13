@@ -322,17 +322,17 @@ impl<P: AsRef<Path>> From<P> for AssetType {
 async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
     path: P,
     mut file: File,
-) -> HashMap<String, Asset> {
+) -> (HashMap<String, Asset>, bool) {
     let is_pack = AssetType::from(&path) == AssetType::Pack;
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
             let Ok(pack) = <Pack as DeserializeAsset>::deserialize(path.clone(), &mut reader).await
             else {
-                return HashMap::new();
+                return (HashMap::new(), is_pack);
             };
 
-            pack.flatten()
+            (pack.flatten(), is_pack)
         }
         false => {
             let Some(Ok(name)) = path
@@ -340,7 +340,7 @@ async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
                 .file_name()
                 .map(|name| name.to_os_string().into_string())
             else {
-                return HashMap::new();
+                return (HashMap::new(), is_pack);
             };
 
             let mut results: HashMap<_, _> = HashMap::new();
@@ -352,7 +352,7 @@ async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
                 },
             );
 
-            results
+            (results, is_pack)
         }
     }
 }
@@ -383,6 +383,14 @@ pub async fn list_assets<P: AsRef<Path>>(
         .join_all()
         .await
         .into_iter()
-        .for_each(|result| final_result.extend(result.into_iter()));
+        .for_each(|(result, is_pack)| match is_pack {
+            // Single files should override pack files
+            true => {
+                for (asset_name, asset) in result.into_iter() {
+                    final_result.entry(asset_name).or_insert(asset);
+                }
+            }
+            false => final_result.extend(result.into_iter()),
+        });
     Ok(final_result)
 }
