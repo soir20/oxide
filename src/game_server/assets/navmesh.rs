@@ -3,7 +3,7 @@ use std::num::TryFromIntError;
 use asset_serialize::gcnk::Gcnk;
 use rerecast::{AreaType, TriMesh};
 
-use crate::game_server::assets::AssetCache;
+use crate::{game_server::assets::AssetCache, warn};
 
 pub enum NavmeshBuildError {
     TooManyIndices,
@@ -28,6 +28,9 @@ pub async fn build_navmesh(
     let asset_names =
         asset_cache.filter(zone_asset_name, |asset_name| asset_name.ends_with(".gcnk"));
     let (assets, errors) = asset_cache.deserialize::<Gcnk>(asset_names).await;
+    for (asset_name, error) in errors.into_iter() {
+        warn!("Failed to deserialize {asset_name} when building navmesh for {zone_asset_name}: {error:?}");
+    }
 
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
@@ -37,7 +40,10 @@ pub async fn build_navmesh(
             vertices.push(vertex.pos.into());
         }
 
-        let base_index: u32 = indices.len().try_into()?;
+        let base_triangle: u32 = indices.len().try_into()?;
+        let base_index: u32 = base_triangle
+            .checked_mul(3)
+            .ok_or(NavmeshBuildError::TooManyIndices)?;
         for triangle_indices in asset.chunk.indices.chunks(3) {
             let triangle = [
                 global_index(base_index, triangle_indices[0])?,
@@ -49,7 +55,7 @@ pub async fn build_navmesh(
     }
 
     let triangle_count = indices.len();
-    TriMesh {
+    let mesh = TriMesh {
         vertices,
         indices,
         area_types: vec![AreaType::DEFAULT_WALKABLE; triangle_count],

@@ -58,6 +58,16 @@ pub fn log_debug(message: &str) {
 }
 
 #[macro_export]
+macro_rules! warn {
+    () => {
+        $crate::log_info("");
+    };
+    ($($arg:tt)*) => {{
+        $crate::log_info(&format!($($arg)*))
+    }};
+}
+
+#[macro_export]
 macro_rules! info {
     () => {
         $crate::log_info("");
