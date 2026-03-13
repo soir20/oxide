@@ -66,6 +66,7 @@ use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
+mod assets;
 mod handlers;
 mod packets;
 

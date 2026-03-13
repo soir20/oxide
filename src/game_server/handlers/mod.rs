@@ -20,7 +20,6 @@ pub mod lock_enforcer;
 pub mod login;
 pub mod minigame;
 pub mod mount;
-pub mod navmesh;
 pub mod reference_data;
 pub mod saber_duel;
 pub mod saber_strike;
