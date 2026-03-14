@@ -1,17 +1,33 @@
 use std::num::TryFromIntError;
 
 use asset_serialize::gcnk::Gcnk;
-use rerecast::{AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, TriMesh};
+use rerecast::{
+    AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, HeightfieldBuilderError,
+    TriMesh,
+};
 
 use crate::{game_server::assets::AssetCache, warn};
 
 pub enum NavmeshBuildError {
     TooManyIndices,
+    EmptyMesh,
+    Heightfield(HeightfieldBuilderError),
+    Rasterization(String),
+    CompactHeightfield(String),
+    Region(String),
+    PolygonNavmesh(String),
+    DetailNavmesh(String),
 }
 
 impl From<TryFromIntError> for NavmeshBuildError {
     fn from(_: TryFromIntError) -> Self {
         NavmeshBuildError::TooManyIndices
+    }
+}
+
+impl From<HeightfieldBuilderError> for NavmeshBuildError {
+    fn from(value: HeightfieldBuilderError) -> Self {
+        NavmeshBuildError::Heightfield(value)
     }
 }
 
@@ -64,25 +80,26 @@ pub async fn build_navmesh(
     };
 
     tri_mesh.mark_walkable_triangles(config.walkable_slope_angle);
-    let aabb = tri_mesh.compute_aabb().unwrap();
+    let aabb = tri_mesh
+        .compute_aabb()
+        .ok_or(NavmeshBuildError::EmptyMesh)?;
 
     let mut heightfield = HeightfieldBuilder {
         aabb,
         cell_size: config.cell_size,
         cell_height: config.cell_height,
     }
-    .build()
-    .unwrap();
+    .build()?;
     heightfield
         .rasterize_triangles(&tri_mesh, config.walkable_climb)
-        .unwrap();
+        .map_err(|err| NavmeshBuildError::Rasterization(format!("{:?}", err)))?;
     heightfield.filter_low_hanging_walkable_obstacles(config.walkable_climb);
     heightfield.filter_ledge_spans(config.walkable_height, config.walkable_climb);
     heightfield.filter_walkable_low_height_spans(config.walkable_height);
 
     let mut compact_heightfield = heightfield
         .into_compact(config.walkable_height, config.walkable_climb)
-        .unwrap();
+        .map_err(|err| NavmeshBuildError::CompactHeightfield(format!("{:?}", err)))?;
     compact_heightfield.erode_walkable_area(config.walkable_radius);
     compact_heightfield.build_distance_field();
     compact_heightfield
@@ -91,7 +108,7 @@ pub async fn build_navmesh(
             config.min_region_area,
             config.merge_region_area,
         )
-        .unwrap();
+        .map_err(|err| NavmeshBuildError::Region(format!("{:?}", err)))?;
 
     let contours = compact_heightfield.build_contours(
         config.max_simplification_error,
@@ -101,14 +118,14 @@ pub async fn build_navmesh(
 
     let poly_navmesh = contours
         .into_polygon_mesh(config.max_vertices_per_polygon)
-        .unwrap();
+        .map_err(|err| NavmeshBuildError::PolygonNavmesh(format!("{:?}", err)))?;
     let detail_navmesh = DetailNavmesh::new(
         &poly_navmesh,
         &compact_heightfield,
         config.detail_sample_dist,
         config.detail_sample_max_error,
     )
-    .unwrap();
+    .map_err(|err| NavmeshBuildError::DetailNavmesh(format!("{:?}", err)))?;
 
     Ok(polyanya::RecastFullMesh::new(poly_navmesh, detail_navmesh).into())
 }
