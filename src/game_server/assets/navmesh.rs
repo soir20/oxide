@@ -1,12 +1,39 @@
 use std::num::TryFromIntError;
 
 use asset_serialize::gcnk::Gcnk;
+use glam::Vec2;
 use rerecast::{
     AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, HeightfieldBuilderError,
     TriMesh,
 };
 
-use crate::{game_server::assets::AssetCache, warn};
+use crate::{
+    game_server::{assets::AssetCache, packets::Pos},
+    warn,
+};
+
+#[derive(Default)]
+pub enum Navmesh {
+    #[default]
+    Simple,
+    Recast(polyanya::Mesh),
+}
+
+impl Navmesh {
+    pub fn closest_point_towards(&self, start: Pos, end: Pos) -> Option<Pos> {
+        match self {
+            Navmesh::Simple => todo!(),
+            Navmesh::Recast(recast_full_mesh) => {
+                let closest_point = recast_full_mesh.get_closest_point_towards(
+                    Vec2::new(start.x, start.z),
+                    Vec2::new(end.x, end.z),
+                );
+            }
+        }
+
+        None
+    }
+}
 
 pub enum NavmeshBuildError {
     TooManyIndices,
