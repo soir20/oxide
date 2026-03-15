@@ -1,7 +1,7 @@
 use std::num::TryFromIntError;
 
 use asset_serialize::gcnk::Gcnk;
-use glam::Vec2;
+use glam::{Vec2, Vec3};
 use rerecast::{
     AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, HeightfieldBuilderError,
     TriMesh,
@@ -20,18 +20,41 @@ pub enum Navmesh {
 }
 
 impl Navmesh {
-    pub fn closest_point_towards(&self, start: Pos, end: Pos) -> Option<Pos> {
+    pub fn closest_point_towards(&self, start: Pos, end: Pos) -> Vec<Pos> {
         match self {
             Navmesh::Simple => todo!(),
-            Navmesh::Recast(recast_full_mesh) => {
-                let closest_point = recast_full_mesh.get_closest_point_towards(
-                    Vec2::new(start.x, start.z),
-                    Vec2::new(end.x, end.z),
-                );
+            Navmesh::Recast(navmesh) => {
+                let Some(start_polygon) =
+                    navmesh.get_closest_point_at_height(Vec2::new(start.x, start.z), start.y)
+                else {
+                    return Vec::new();
+                };
+                let Some(end_polygon) =
+                    navmesh.get_closest_point_at_height(Vec2::new(end.x, end.z), end.y)
+                else {
+                    return Vec::new();
+                };
+
+                navmesh
+                    .path(start_polygon, end_polygon)
+                    .map(|path| {
+                        path.path_with_height(
+                            Vec3::new(start.x, start.y, start.z),
+                            Vec3::new(end.x, end.y, end.z),
+                            navmesh,
+                        )
+                        .into_iter()
+                        .map(|coord| Pos {
+                            x: coord.x,
+                            y: coord.y,
+                            z: coord.z,
+                            w: start.w,
+                        })
+                        .collect()
+                    })
+                    .unwrap_or_default()
             }
         }
-
-        None
     }
 }
 
