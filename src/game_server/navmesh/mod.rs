@@ -242,7 +242,7 @@ pub enum Navmesh {
 impl Navmesh {
     pub fn path(&self, start: Pos, end: Pos) -> Vec<Pos> {
         match self {
-            Navmesh::Simple => todo!(),
+            Navmesh::Simple => vec![end],
             Navmesh::Recast(navmesh) => {
                 let Some(start_polygon) =
                     navmesh.get_closest_point_at_height(Vec2::new(start.x, start.z), start.y)
