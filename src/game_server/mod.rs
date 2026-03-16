@@ -68,6 +68,7 @@ use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod assets;
 mod handlers;
+mod navmesh;
 mod packets;
 
 #[derive(Debug)]

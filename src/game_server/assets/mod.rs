@@ -14,8 +14,6 @@ use tokio::{
 
 use crate::ConfigError;
 
-pub mod navmesh;
-
 #[derive(Debug)]
 pub enum AssetCacheError {
     Deserialize(asset_serialize::Error),
