@@ -7,6 +7,8 @@ use crate::game_server::{
     packets::{update_position::UpdatePlayerPos, CharacterState, CharacterStateFlags, Pos},
 };
 
+pub mod build;
+
 #[derive(Clone, Default, PartialEq)]
 pub struct NavmeshWaypoint {
     pub pos: Pos,

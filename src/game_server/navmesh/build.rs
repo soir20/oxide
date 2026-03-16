@@ -1,3 +1,13 @@
+use std::num::TryFromIntError;
+
+use asset_serialize::gcnk::Gcnk;
+use rerecast::{
+    AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, HeightfieldBuilderError,
+    TriMesh,
+};
+
+use crate::{game_server::assets::AssetCache, warn};
+
 pub enum NavmeshBuildError {
     TooManyIndices,
     EmptyMesh,
