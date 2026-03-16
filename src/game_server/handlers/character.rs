@@ -36,7 +36,7 @@ use crate::{
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
             update_position::UpdatePlayerPos,
-            GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+            CharacterStateFlags, GamePacket, GuidTarget, Name, Pos, Rgba, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
         TickableNpcSynchronization,
@@ -1483,7 +1483,11 @@ impl TickablePosUpdateProgress {
             rot_x: new_rot.x,
             rot_y: new_rot.y,
             rot_z: new_rot.z,
-            character_state: 1,
+            character_state: CharacterStateFlags {
+                moving: false,
+                jumping: false,
+            }
+            .into(),
             unknown: 0,
         })
     }

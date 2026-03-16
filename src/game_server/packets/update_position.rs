@@ -1,5 +1,7 @@
 use packet_serialize::{DeserializePacket, SerializePacket};
 
+use crate::game_server::packets::CharacterState;
+
 use super::{GamePacket, OpCode, Pos};
 
 #[derive(Copy, Clone, SerializePacket, DeserializePacket)]
@@ -11,7 +13,7 @@ pub struct UpdatePlayerPos {
     pub rot_x: f32,
     pub rot_y: f32,
     pub rot_z: f32,
-    pub character_state: u8,
+    pub character_state: CharacterState,
     pub unknown: u8,
 }
 

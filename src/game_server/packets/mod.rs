@@ -241,6 +241,35 @@ impl DivAssign for Pos {
     }
 }
 
+#[derive(Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CharacterStateFlags {
+    pub moving: bool,
+    pub jumping: bool,
+}
+
+#[derive(Clone, Copy, Default, PartialEq, Eq, SerializePacket, DeserializePacket)]
+pub struct CharacterState {
+    state: u8,
+}
+
+impl From<CharacterStateFlags> for CharacterState {
+    fn from(flags: CharacterStateFlags) -> Self {
+        let mut state = 0u8;
+        if flags.moving {
+            state |= 1 << 1;
+        } else {
+            state |= 1;
+        }
+
+        if flags.jumping {
+            state |= 1 << 2;
+        }
+
+        CharacterState { state }
+    }
+}
+
 #[derive(Clone, SerializePacket, DeserializePacket, Default)]
 pub struct Name {
     pub first_name_id: u32,
