@@ -6,7 +6,7 @@ use rerecast::{
     TriMesh,
 };
 
-use crate::{game_server::assets::AssetCache, warn};
+use crate::{asset_cache::AssetCache, warn};
 
 pub enum NavmeshBuildError {
     TooManyIndices,

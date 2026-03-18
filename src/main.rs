@@ -17,10 +17,12 @@ use std::time::{Duration, Instant};
 use std::{env, panic, process};
 use tokio::spawn;
 
+use crate::asset_cache::AssetCache;
 use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::game_server::GameServer;
 use crate::protocol::Channel;
 
+mod asset_cache;
 mod asset_server;
 mod channel_manager;
 mod game_server;
@@ -143,7 +145,10 @@ async fn main() {
     .expect("couldn't bind to socket");
 
     let channel_manager = RwLock::new(ChannelManager::new(server_options.max_sessions));
-    let game_server = GameServer::new(config_dir).unwrap();
+    let asset_cache = AssetCache::new(config_dir.join("base_assets"), &["adr", "cdt", "gcnk"])
+        .await
+        .unwrap();
+    let game_server = GameServer::new(config_dir, asset_cache).unwrap();
 
     if args.validate {
         return;

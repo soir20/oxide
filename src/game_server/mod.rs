@@ -61,12 +61,12 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::asset_cache::AssetCache;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
-mod assets;
 mod handlers;
 mod navmesh;
 mod packets;
@@ -183,6 +183,7 @@ pub enum TickableNpcSynchronization {
 }
 
 pub struct GameServer {
+    asset_cache: AssetCache,
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
     customizations: BTreeMap<u32, Customization>,
@@ -202,12 +203,13 @@ pub struct GameServer {
 }
 
 impl GameServer {
-    pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
+    pub fn new(config_dir: &Path, asset_cache: AssetCache) -> Result<Self, ConfigError> {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;
         let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {
+            asset_cache,
             categories: load_categories(config_dir)?,
             costs: load_cost_map(config_dir, &item_definitions, &item_groups)?,
             customizations: load_customizations(config_dir)?,
