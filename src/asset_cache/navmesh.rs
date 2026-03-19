@@ -1,12 +1,82 @@
-use std::num::TryFromIntError;
+use std::{collections::HashMap, num::TryFromIntError};
 
 use asset_serialize::gcnk::Gcnk;
 use rerecast::{
-    AreaType, BuildContoursFlags, DetailNavmesh, HeightfieldBuilder, HeightfieldBuilderError,
-    TriMesh,
+    Aabb3d, AreaType, BuildContoursFlags, ConvexVolume, DetailNavmesh, HeightfieldBuilder,
+    HeightfieldBuilderError, TriMesh,
 };
+use serde::Deserialize;
 
 use crate::{asset_cache::AssetCache, warn};
+
+#[derive(Deserialize)]
+pub struct RerecastConfigOverride {
+    pub cell_size_fraction: Option<f32>,
+    pub cell_height_fraction: Option<f32>,
+    pub agent_height: Option<f32>,
+    pub agent_radius: Option<f32>,
+    pub walkable_climb: Option<f32>,
+    pub walkable_slope_angle: Option<f32>,
+    pub min_region_size: Option<u16>,
+    pub merge_region_size: Option<u16>,
+    pub edge_max_len_factor: Option<u16>,
+    pub max_simplification_error: Option<f32>,
+    pub max_vertices_per_polygon: Option<u16>,
+    pub detail_sample_dist: Option<f32>,
+    pub detail_sample_max_error: Option<f32>,
+    pub tile_size: Option<u16>,
+    pub aabb: Option<Aabb3d>,
+    pub contour_flags: Option<BuildContoursFlags>,
+    pub tiling: Option<bool>,
+    pub area_volumes: Option<Vec<ConvexVolume>>,
+}
+
+impl RerecastConfigOverride {
+    pub fn merge(self, defaults: &rerecast::ConfigBuilder) -> rerecast::ConfigBuilder {
+        rerecast::ConfigBuilder {
+            cell_size_fraction: self
+                .cell_size_fraction
+                .unwrap_or(defaults.cell_size_fraction),
+            cell_height_fraction: self
+                .cell_height_fraction
+                .unwrap_or(defaults.cell_height_fraction),
+            agent_height: self.agent_height.unwrap_or(defaults.agent_height),
+            agent_radius: self.agent_radius.unwrap_or(defaults.agent_radius),
+            walkable_climb: self.walkable_climb.unwrap_or(defaults.walkable_climb),
+            walkable_slope_angle: self
+                .walkable_slope_angle
+                .unwrap_or(defaults.walkable_slope_angle),
+            min_region_size: self.min_region_size.unwrap_or(defaults.min_region_size),
+            merge_region_size: self.merge_region_size.unwrap_or(defaults.merge_region_size),
+            edge_max_len_factor: self
+                .edge_max_len_factor
+                .unwrap_or(defaults.edge_max_len_factor),
+            max_simplification_error: self
+                .max_simplification_error
+                .unwrap_or(defaults.max_simplification_error),
+            max_vertices_per_polygon: self
+                .max_vertices_per_polygon
+                .unwrap_or(defaults.max_vertices_per_polygon),
+            detail_sample_dist: self
+                .detail_sample_dist
+                .unwrap_or(defaults.detail_sample_dist),
+            detail_sample_max_error: self
+                .detail_sample_max_error
+                .unwrap_or(defaults.detail_sample_max_error),
+            tile_size: self.tile_size.unwrap_or(defaults.tile_size),
+            aabb: self.aabb.unwrap_or(defaults.aabb),
+            contour_flags: self.contour_flags.unwrap_or(defaults.contour_flags),
+            tiling: self.tiling.unwrap_or(defaults.tiling),
+            area_volumes: self.area_volumes.unwrap_or(defaults.area_volumes.clone()),
+        }
+    }
+}
+
+#[derive(Deserialize)]
+pub struct NavmeshConfig {
+    pub assets: HashMap<String, Option<RerecastConfigOverride>>,
+    pub default_settings: rerecast::ConfigBuilder,
+}
 
 pub enum NavmeshBuildError {
     TooManyIndices,
@@ -40,8 +110,9 @@ fn global_index(base_index: u32, index: u16) -> Result<u32, NavmeshBuildError> {
 pub async fn build_navmesh(
     asset_cache: &AssetCache,
     zone_asset_name: &str,
-    config: &rerecast::Config,
+    config: rerecast::ConfigBuilder,
 ) -> Result<polyanya::Mesh, NavmeshBuildError> {
+    let config = config.build();
     let asset_names =
         asset_cache.filter(zone_asset_name, |asset_name| asset_name.ends_with(".gcnk"));
     let (assets, errors) = asset_cache.deserialize::<Gcnk>(asset_names).await;
