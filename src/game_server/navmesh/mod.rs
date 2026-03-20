@@ -231,7 +231,7 @@ impl NonLinearPathState {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone, Debug, Default)]
 pub enum Navmesh {
     #[default]
     Simple,
