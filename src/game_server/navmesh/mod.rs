@@ -7,7 +7,7 @@ use crate::game_server::{
     packets::{update_position::UpdatePlayerPos, CharacterState, CharacterStateFlags, Pos},
 };
 
-#[derive(Clone, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct NavmeshWaypoint {
     pub pos: Pos,
     pub rot_x: Option<f32>,
@@ -191,6 +191,8 @@ impl NonLinearPathState {
                 )
             })
             .collect();
+
+        println!("waypoints: {:?}", waypoints);
 
         if let Some(last_waypoint) = waypoints.pop_back() {
             destination.pos = last_waypoint.pos;

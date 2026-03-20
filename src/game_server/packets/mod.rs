@@ -248,7 +248,7 @@ pub struct CharacterStateFlags {
     pub jumping: bool,
 }
 
-#[derive(Clone, Copy, Default, PartialEq, Eq, SerializePacket, DeserializePacket)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, SerializePacket, DeserializePacket)]
 pub struct CharacterState {
     state: u8,
 }
