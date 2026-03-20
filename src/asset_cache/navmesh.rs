@@ -78,6 +78,27 @@ pub struct NavmeshConfig {
     pub default_settings: rerecast::ConfigBuilder,
 }
 
+pub async fn load_navmeshes(
+    config: NavmeshConfig,
+    asset_cache: &AssetCache,
+) -> HashMap<String, polyanya::Mesh> {
+    let mut navmeshes = HashMap::with_capacity(config.assets.len());
+    for (zone_asset_name, config_override) in config.assets.into_iter() {
+        let config = config_override
+            .map(|overrides| overrides.merge(&config.default_settings))
+            .unwrap_or_else(|| config.default_settings.clone());
+        match build_navmesh(asset_cache, &zone_asset_name, config).await {
+            Ok(navmesh) => {
+                navmeshes.insert(zone_asset_name, navmesh);
+            }
+            Err(err) => warn!("Failed to build navmesh for {zone_asset_name}: {err:?}"),
+        };
+    }
+
+    navmeshes
+}
+
+#[derive(Debug)]
 pub enum NavmeshBuildError {
     TooManyIndices,
     EmptyMesh,
@@ -107,7 +128,7 @@ fn global_index(base_index: u32, index: u16) -> Result<u32, NavmeshBuildError> {
         .ok_or(NavmeshBuildError::TooManyIndices)
 }
 
-pub async fn build_navmesh(
+async fn build_navmesh(
     asset_cache: &AssetCache,
     zone_asset_name: &str,
     config: rerecast::ConfigBuilder,
