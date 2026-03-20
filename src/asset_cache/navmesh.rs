@@ -46,6 +46,7 @@ impl RerecastConfigOverride {
             walkable_climb: self.walkable_climb.unwrap_or(defaults.walkable_climb),
             walkable_slope_angle: self
                 .walkable_slope_angle
+                .map(|degrees| degrees.to_radians())
                 .unwrap_or(defaults.walkable_slope_angle),
             min_region_size: self.min_region_size.unwrap_or(defaults.min_region_size),
             merge_region_size: self.merge_region_size.unwrap_or(defaults.merge_region_size),
