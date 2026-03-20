@@ -149,14 +149,12 @@ async fn build_navmesh(
     let mut indices = Vec::new();
 
     for (_, asset) in assets.into_iter() {
+        let base_index: u32 = vertices.len().try_into()?;
+
         for vertex in asset.chunk.vertices.into_iter() {
             vertices.push(vertex.pos.into());
         }
 
-        let base_triangle: u32 = indices.len().try_into()?;
-        let base_index: u32 = base_triangle
-            .checked_mul(3)
-            .ok_or(NavmeshBuildError::TooManyIndices)?;
         for triangle_indices in asset.chunk.indices.chunks(3) {
             let triangle = [
                 global_index(base_index, triangle_indices[0])?,
