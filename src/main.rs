@@ -150,7 +150,7 @@ async fn main() {
         .await
         .unwrap();
     let navmeshes = load_navmeshes(config_dir, &asset_cache).await.unwrap();
-    let game_server = GameServer::new(config_dir).unwrap();
+    let game_server = GameServer::new(config_dir, navmeshes).unwrap();
 
     if args.validate {
         return;

@@ -169,15 +169,16 @@ impl LinearPathState {
     }
 }
 
+#[derive(Clone)]
 pub struct NonLinearPathState {
     waypoints: VecDeque<NavmeshWaypoint>,
     linear_path_state: LinearPathState,
 }
 
 impl NonLinearPathState {
-    pub fn new(current_pos: Pos, mut new_destination: NavmeshWaypoint, navmesh: &Navmesh) -> Self {
+    pub fn new(current_pos: Pos, mut destination: NavmeshWaypoint, navmesh: &Navmesh) -> Self {
         let mut waypoints: VecDeque<NavmeshWaypoint> = navmesh
-            .path(current_pos, new_destination.pos)
+            .path(current_pos, destination.pos)
             .into_iter()
             .map(|pos| {
                 NavmeshWaypoint::without_rot(
@@ -192,8 +193,8 @@ impl NonLinearPathState {
             .collect();
 
         if let Some(last_waypoint) = waypoints.pop_back() {
-            new_destination.pos = last_waypoint.pos;
-            waypoints.push_back(new_destination);
+            destination.pos = last_waypoint.pos;
+            waypoints.push_back(destination);
         }
 
         NonLinearPathState {
@@ -230,11 +231,19 @@ impl NonLinearPathState {
     }
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub enum Navmesh {
     #[default]
     Simple,
     Recast(polyanya::Mesh),
+}
+
+pub const DEFAULT_NAVMESH: Navmesh = Navmesh::Simple;
+
+impl From<polyanya::Mesh> for Navmesh {
+    fn from(value: polyanya::Mesh) -> Self {
+        Navmesh::Recast(value)
+    }
 }
 
 impl Navmesh {

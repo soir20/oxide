@@ -19,6 +19,7 @@ use crate::{
             offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
+        navmesh::{Navmesh, NavmeshWaypoint, NonLinearPathState},
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
@@ -36,7 +37,7 @@ use crate::{
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
             update_position::UpdatePlayerPos,
-            CharacterStateFlags, GamePacket, GuidTarget, Name, Pos, Rgba, Target,
+            GamePacket, GuidTarget, Name, Pos, Rgba, Target, STANDING,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
         TickableNpcSynchronization,
@@ -911,7 +912,7 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
-    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<TickPosUpdate> {
+    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<NavmeshWaypoint> {
         if character.possible_pos.is_empty() {
             return None;
         }
@@ -919,7 +920,7 @@ impl TickableStep {
         character
             .possible_pos
             .choose(&mut thread_rng())
-            .map(|pos| TickPosUpdate::without_destination_rot(*pos))
+            .map(|pos| NavmeshWaypoint::without_rot(*pos, STANDING))
     }
 
     pub fn new_pos(&self, current_pos: Pos) -> Pos {
@@ -939,9 +940,9 @@ impl TickableStep {
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
-    ) -> (Vec<Broadcast>, Option<TickPosUpdate>) {
+    ) -> (Vec<Broadcast>, Option<NavmeshWaypoint>) {
         let mut packets_for_all = Vec::new();
-        let mut pos_update: Option<TickPosUpdate> = None;
+        let mut pos_update: Option<NavmeshWaypoint> = None;
 
         match self.spawned_state {
             SpawnedState::Always => {
@@ -1028,7 +1029,7 @@ impl TickableStep {
         }
 
         let new_pos = self.new_pos(character.pos);
-        let potential_pos_update = TickPosUpdate {
+        let potential_pos_update = NavmeshWaypoint {
             pos: new_pos,
             rot_x: self.new_rot_x,
             rot_y: self.new_rot_y,
@@ -1036,8 +1037,9 @@ impl TickableStep {
             rot_x_offset: self.new_rot_offset_x,
             rot_y_offset: self.new_rot_offset_y,
             rot_z_offset: self.new_rot_offset_z,
+            character_state: STANDING,
         };
-        if potential_pos_update.differs_from(character.pos, character.rot) {
+        if potential_pos_update.differs_from(character.pos, character.rot, STANDING) {
             pos_update = Some(potential_pos_update);
         }
 
@@ -1061,7 +1063,7 @@ impl TickableStep {
                 w: character.pos.w,
             };
 
-            pos_update = Some(TickPosUpdate::without_destination_rot(new_pos));
+            pos_update = Some(NavmeshWaypoint::without_rot(new_pos, STANDING));
         }
 
         if let Some(animation_id) = self.animation_id {
@@ -1310,225 +1312,13 @@ pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPos>),
     MustChangeProcedure(String),
 }
-#[derive(Clone, PartialEq)]
-pub struct TickPosUpdate {
-    pub pos: Pos,
-    pub rot_x: Option<f32>,
-    pub rot_y: Option<f32>,
-    pub rot_z: Option<f32>,
-    pub rot_x_offset: f32,
-    pub rot_y_offset: f32,
-    pub rot_z_offset: f32,
-}
-
-impl TickPosUpdate {
-    pub fn without_destination_rot(pos: Pos) -> Self {
-        TickPosUpdate {
-            pos,
-            rot_x: None,
-            rot_y: None,
-            rot_z: None,
-            rot_x_offset: 0.0,
-            rot_y_offset: 0.0,
-            rot_z_offset: 0.0,
-        }
-    }
-
-    pub fn differs_from(&self, pos: Pos, rot: Pos) -> bool {
-        self.pos != pos
-            || self.rot_x.unwrap_or(rot.x) + self.rot_x_offset != rot.x
-            || self.rot_y.unwrap_or(rot.y) + self.rot_y_offset != rot.y
-            || self.rot_z.unwrap_or(rot.z) + self.rot_z_offset != rot.z
-    }
-}
-
-#[derive(Clone)]
-pub struct TickablePosUpdateProgress {
-    last_speed_update: Instant,
-    direction_unit_vector: Pos,
-    distance_traveled: f32,
-    distance_required: f32,
-    old_pos: Pos,
-    new_pos: Pos,
-    estimated_delta_since_last_tick: Pos,
-    destination: TickPosUpdate,
-    wait_for_deceleration: bool,
-}
-
-impl TickablePosUpdateProgress {
-    pub fn new(
-        now: Instant,
-        pos_update: TickPosUpdate,
-        start_pos: Pos,
-        wait_for_deceleration: bool,
-    ) -> Self {
-        let new_pos = pos_update.pos;
-        let distance_required = distance3_pos(start_pos, new_pos);
-        TickablePosUpdateProgress {
-            last_speed_update: now,
-            direction_unit_vector: (new_pos - start_pos) / distance_required.max(f32::MIN_POSITIVE),
-            distance_traveled: 0.0,
-            distance_required,
-            old_pos: start_pos,
-            new_pos: start_pos,
-            estimated_delta_since_last_tick: Pos::default(),
-            destination: pos_update,
-            wait_for_deceleration,
-        }
-    }
-
-    pub fn update_speed(&mut self, now: Instant, speed: f32) {
-        let seconds_since_last_speed_update = now
-            .saturating_duration_since(self.last_speed_update)
-            .as_secs_f32();
-        self.estimated_delta_since_last_tick +=
-            self.direction_unit_vector * speed * seconds_since_last_speed_update;
-        self.last_speed_update = now;
-    }
-
-    pub fn tick(
-        &mut self,
-        guid: u64,
-        now: Instant,
-        speed: f32,
-        tick_duration: Duration,
-        current_rot: Pos,
-    ) -> Option<UpdatePlayerPos> {
-        self.update_speed(now, speed);
-
-        if self.reached_destination() {
-            return None;
-        }
-
-        let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
-        let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
-        let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
-
-        self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
-
-        // Allow the next tickable step to start just as the NPC is almost reaching its
-        // destination on clients. Since we set the old_pos to destination.pos, the NPC's
-        // position will be set to the desired end position without drift.
-        let seconds_per_tick = tick_duration.as_secs_f32();
-        let estimated_distance_per_tick = speed * seconds_per_tick;
-        // NPCs decelerate near their destination client-side, so start the next tick
-        // slightly sooner to avoid deceleration if the NPC might continue moving.
-        let close_enough_factor = match self.wait_for_deceleration {
-            true => 1.0,
-            false => 1.5,
-        };
-        let close_enough_distance =
-            self.distance_required - estimated_distance_per_tick * close_enough_factor;
-
-        // The max distance traveled might be less than we expect if the NPC slowed down
-        // during the tick. If the tick was longer than we expected, then the NPC stopped
-        // at the new_pos and did not go any further.
-        self.old_pos = match self.distance_traveled >= close_enough_distance {
-            true => self.destination.pos,
-            false => match max_distance_traveled > distance_to_new_pos {
-                true => self.new_pos,
-                false => estimated_current_pos,
-            },
-        };
-
-        // Overestimate by 2x so that the NPC keeps moving if the tick lasts slightly
-        // longer than expected or the NPC speeds up
-        let next_estimated_distance = estimated_distance_per_tick * 2.0;
-
-        // We don't know for certain if the NPC will reach the destination in the next tick,
-        // because its speed could change
-        let should_reach_destination =
-            self.distance_traveled + next_estimated_distance >= self.distance_required;
-        self.new_pos = match should_reach_destination {
-            true => self.destination.pos,
-            false => self.old_pos + self.direction_unit_vector * next_estimated_distance,
-        };
-
-        let mut new_rot = Pos {
-            x: self.direction_unit_vector.x,
-            y: current_rot.y,
-            z: self.direction_unit_vector.z,
-            w: current_rot.w,
-        };
-
-        if should_reach_destination {
-            if let Some(new_rot_x) = self.destination.rot_x {
-                new_rot.x = new_rot_x;
-            }
-            new_rot.x += self.destination.rot_x_offset;
-
-            if let Some(new_rot_y) = self.destination.rot_y {
-                new_rot.y = new_rot_y;
-            }
-            new_rot.y += self.destination.rot_y_offset;
-
-            if let Some(new_rot_z) = self.destination.rot_z {
-                new_rot.z = new_rot_z;
-            }
-            new_rot.z += self.destination.rot_z_offset;
-        }
-
-        // The client doesn't rotate the character after it stops moving when rotation is (0, 0)
-        if new_rot.x == 0.0 && new_rot.z == 0.0 {
-            new_rot.x = self.direction_unit_vector.x;
-            new_rot.z = self.direction_unit_vector.z;
-        }
-
-        self.estimated_delta_since_last_tick = Pos::default();
-        Some(UpdatePlayerPos {
-            guid,
-            pos_x: self.new_pos.x,
-            pos_y: self.new_pos.y,
-            pos_z: self.new_pos.z,
-            rot_x: new_rot.x,
-            rot_y: new_rot.y,
-            rot_z: new_rot.z,
-            character_state: CharacterStateFlags {
-                moving: false,
-                jumping: false,
-            }
-            .into(),
-            unknown: 0,
-        })
-    }
-
-    pub fn update_destination_and_tick(
-        &mut self,
-        guid: u64,
-        now: Instant,
-        speed: f32,
-        tick_duration: Duration,
-        current_rot: Pos,
-        new_destination: TickPosUpdate,
-    ) -> Option<UpdatePlayerPos> {
-        let prev_pos_update = self.tick(guid, now, speed, tick_duration, current_rot);
-        if self.destination == new_destination {
-            return prev_pos_update;
-        }
-
-        let distance_required = distance3_pos(self.old_pos, new_destination.pos);
-        self.direction_unit_vector =
-            (new_destination.pos - self.old_pos) / distance_required.max(f32::MIN_POSITIVE);
-        self.distance_traveled = 0.0;
-        self.distance_required = distance_required;
-        self.new_pos = self.old_pos;
-        self.destination = new_destination;
-
-        self.tick(guid, now, speed, tick_duration, current_rot)
-    }
-
-    pub fn reached_destination(&self) -> bool {
-        // We can do an exact comparison because we set old_pos to the destination pos exactly
-        self.old_pos == self.destination.pos
-    }
-}
 
 #[derive(Clone)]
 pub struct TickableProcedure {
     steps: Vec<TickableStep>,
     current_step_index: Option<usize>,
     last_step_change: Instant,
-    pos_update_progress: Option<Box<TickablePosUpdateProgress>>,
+    pos_update_progress: Option<Box<NonLinearPathState>>,
     distribution: WeightedAliasIndex<u32>,
     next_possible_procedures: Vec<String>,
     is_interruptible: bool,
@@ -1594,6 +1384,7 @@ impl TickableProcedure {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
+        navmesh: &Navmesh,
     ) -> TickResult {
         self.panic_if_empty();
 
@@ -1609,7 +1400,6 @@ impl TickableProcedure {
                         .and_then(|pos_update_progress| {
                             pos_update_progress.tick(
                                 Guid::guid(character),
-                                now,
                                 character.speed.total(),
                                 tick_duration,
                                 character.rot,
@@ -1650,9 +1440,7 @@ impl TickableProcedure {
                 );
 
                 let mut pos_update_progress = pos_update.map(|pos_update| {
-                    Box::new(TickablePosUpdateProgress::new(
-                        now, pos_update, old_pos, false,
-                    ))
+                    Box::new(NonLinearPathState::new(old_pos, pos_update, navmesh))
                 });
                 let first_pos_update =
                     pos_update_progress
@@ -1660,7 +1448,6 @@ impl TickableProcedure {
                         .and_then(|pos_update_progress| {
                             pos_update_progress.tick(
                                 Guid::guid(character),
-                                now,
                                 character.speed.total(),
                                 tick_duration,
                                 character.rot,
@@ -1813,6 +1600,7 @@ impl TickableProcedureTracker {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
+        navmesh: &Navmesh,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         if self.procedures.is_empty() {
             return (Vec::new(), None);
@@ -1832,6 +1620,7 @@ impl TickableProcedureTracker {
                 item_definitions,
                 customizations,
                 tick_duration,
+                navmesh,
             );
             match tick_result {
                 TickResult::TickedCurrentProcedure(broadcasts, pos_update) => {
@@ -1846,14 +1635,6 @@ impl TickableProcedureTracker {
                         .expect("Missing procedure");
                     self.last_procedure_change = now;
                 }
-            }
-        }
-    }
-
-    pub fn update_progress(&mut self, now: Instant, speed: f32) {
-        if let Some(procedure) = self.procedures.get_mut(&self.current_procedure_key) {
-            if let Some(pos_update_progress) = &mut procedure.pos_update_progress {
-                pos_update_progress.update_speed(now, speed);
             }
         }
     }
@@ -2563,10 +2344,10 @@ pub enum TargetState {
         guid: u64,
         origin_pos: Pos,
         origin_rot: Pos,
-        pos_update_progress: Box<TickablePosUpdateProgress>,
+        pos_update_progress: Box<NonLinearPathState>,
     },
     ReturningToOrigin {
-        pos_update_progress: Box<TickablePosUpdateProgress>,
+        pos_update_progress: Box<NonLinearPathState>,
     },
 }
 
@@ -2962,8 +2743,9 @@ impl Character {
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
+        navmesh: &Navmesh,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
-        self.update_target(now, nearby_characters);
+        self.update_target(nearby_characters, navmesh);
 
         let speed = self.stats.speed.total();
 
@@ -2977,6 +2759,7 @@ impl Character {
                 item_definitions,
                 customizations,
                 tick_duration,
+                navmesh,
             ),
             TargetState::Targeting {
                 guid,
@@ -3006,13 +2789,16 @@ impl Character {
                                 self.stats.max_distance_from_target,
                             );
 
-                            pos_update = pos_update_progress.update_destination_and_tick(
+                            **pos_update_progress = NonLinearPathState::new(
+                                self.stats.pos,
+                                NavmeshWaypoint::without_rot(destination, STANDING),
+                                navmesh,
+                            );
+                            pos_update = pos_update_progress.tick(
                                 self.stats.guid,
-                                now,
                                 speed,
                                 tick_duration,
                                 self.stats.rot,
-                                TickPosUpdate::without_destination_rot(destination),
                             );
                         }
 
@@ -3020,13 +2806,9 @@ impl Character {
                     }
                 }
 
-                pos_update = pos_update_progress.update_destination_and_tick(
-                    self.stats.guid,
-                    now,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
-                    TickPosUpdate {
+                **pos_update_progress = NonLinearPathState::new(
+                    self.stats.pos,
+                    NavmeshWaypoint {
                         pos: *origin_pos,
                         rot_x: Some(origin_rot.x),
                         rot_y: Some(origin_rot.y),
@@ -3034,8 +2816,12 @@ impl Character {
                         rot_x_offset: 0.0,
                         rot_y_offset: 0.0,
                         rot_z_offset: 0.0,
+                        character_state: STANDING,
                     },
+                    navmesh,
                 );
+                pos_update =
+                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot);
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
                 };
@@ -3063,13 +2849,8 @@ impl Character {
             TargetState::ReturningToOrigin {
                 pos_update_progress,
             } => {
-                let pos_update = pos_update_progress.tick(
-                    self.stats.guid,
-                    now,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
-                );
+                let pos_update =
+                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot);
                 if !pos_update_progress.reached_destination() {
                     return (Vec::new(), pos_update);
                 }
@@ -3178,10 +2959,7 @@ impl Character {
     }
 
     pub fn update_speed(&mut self, mut f: impl FnMut(&mut CharacterStat)) {
-        let speed = self.stats.speed.total();
         f(&mut self.stats.speed);
-        self.tickable_procedure_tracker
-            .update_progress(Instant::now(), speed);
     }
 
     fn tickable(&self) -> bool {
@@ -3190,8 +2968,8 @@ impl Character {
 
     fn update_target(
         &mut self,
-        now: Instant,
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
+        navmesh: &Navmesh,
     ) {
         let (current_target, origin) = match self.stats.target_state {
             TargetState::Targeting {
@@ -3245,11 +3023,10 @@ impl Character {
                     guid: new_target.guid(),
                     origin_pos,
                     origin_rot,
-                    pos_update_progress: Box::new(TickablePosUpdateProgress::new(
-                        now,
-                        TickPosUpdate::without_destination_rot(self.stats.pos),
+                    pos_update_progress: Box::new(NonLinearPathState::new(
                         self.stats.pos,
-                        true,
+                        NavmeshWaypoint::without_rot(self.stats.pos, STANDING),
+                        navmesh,
                     )),
                 };
             }

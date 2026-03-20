@@ -4,7 +4,12 @@ use crossbeam_channel::Sender;
 
 use crate::{
     game_server::{
-        handlers::{character::CharacterType, guid::IndexedGuid},
+        handlers::{
+            character::CharacterType,
+            guid::IndexedGuid,
+            lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
+        },
+        navmesh::{Navmesh, DEFAULT_NAVMESH},
         packets::{
             minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
             tunnel::TunneledPacket,
@@ -86,9 +91,10 @@ pub fn tick_single_chunk(
             character_consumer: move |_,
             _,
             mut characters_write,
-            _| {
+            minigame_data_lock_enforcer| {
                 let mut broadcasts = Vec::new();
                 let mut pos_updates = Vec::new();
+                let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
 
                 for guid in tickable_characters.iter() {
                     let Some(mut tickable_character) = characters_write.remove(guid) else {
@@ -118,21 +124,34 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
-                        now,
-                        &nearby_player_guids,
-                        &characters_write,
-                        game_server.mounts(),
-                        game_server.items(),
-                        game_server.customizations(),
-                        tick_duration
-                    );
-                    broadcasts.append(&mut character_broadcasts);
-                    if let Some(pos_update) = character_pos_update {
-                        pos_updates.push((*guid, pos_update));
-                    }
+                    zones_lock_enforcer.read_zones(|_| {
+                        ZoneLockRequest {
+                            read_guids: vec![instance_guid],
+                            write_guids: Vec::new(),
+                            zone_consumer: |_, zones_read, _| {
+                                let navmesh: &Navmesh = zones_read.get(&instance_guid)
+                                    .and_then(|zone_instance: &parking_lot::lock_api::RwLockReadGuard<'_, parking_lot::RawRwLock, ZoneInstance>| game_server.navmeshes().get(&zone_instance.asset_name))
+                                    .unwrap_or(&DEFAULT_NAVMESH);
 
-                    characters_write.insert(*guid, tickable_character);
+                                let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
+                                    now,
+                                    &nearby_player_guids,
+                                    &characters_write,
+                                    game_server.mounts(),
+                                    game_server.items(),
+                                    game_server.customizations(),
+                                    tick_duration,
+                                    navmesh,
+                                );
+                                broadcasts.append(&mut character_broadcasts);
+                                if let Some(pos_update) = character_pos_update {
+                                    pos_updates.push((*guid, pos_update));
+                                }
+
+                                characters_write.insert(*guid, tickable_character);
+                            },
+                        }
+                    });
                 }
 
                 (broadcasts, pos_updates)

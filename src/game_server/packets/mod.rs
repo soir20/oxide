@@ -253,22 +253,31 @@ pub struct CharacterState {
     state: u8,
 }
 
+const fn flags_to_state(flags: CharacterStateFlags) -> CharacterState {
+    let mut state = 0u8;
+    if flags.moving {
+        state |= 1 << 1;
+    } else {
+        state |= 1;
+    }
+
+    if flags.jumping {
+        state |= 1 << 2;
+    }
+
+    CharacterState { state }
+}
+
 impl From<CharacterStateFlags> for CharacterState {
     fn from(flags: CharacterStateFlags) -> Self {
-        let mut state = 0u8;
-        if flags.moving {
-            state |= 1 << 1;
-        } else {
-            state |= 1;
-        }
-
-        if flags.jumping {
-            state |= 1 << 2;
-        }
-
-        CharacterState { state }
+        flags_to_state(flags)
     }
 }
+
+pub const STANDING: CharacterState = flags_to_state(CharacterStateFlags {
+    moving: false,
+    jumping: false,
+});
 
 #[derive(Clone, SerializePacket, DeserializePacket, Default)]
 pub struct Name {
