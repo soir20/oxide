@@ -17,3 +17,4 @@ Cargo.lock
 *.iml
 
 .asset_cache/
+config/base_assets/
