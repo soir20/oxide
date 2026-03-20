@@ -322,8 +322,8 @@ impl<P: AsRef<Path>> From<P> for AssetType {
 async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
     path: P,
     mut file: File,
+    is_pack: bool,
 ) -> (HashMap<String, Asset>, bool) {
-    let is_pack = AssetType::from(&path) == AssetType::Pack;
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
@@ -368,12 +368,13 @@ pub async fn list_assets<P: AsRef<Path>>(
         .follow_links(follow_links)
         .into_iter();
     for entry in walker.filter_map(|err| err.ok()) {
-        if predicate(entry.path()) {
+        let is_pack = AssetType::from(&entry.path()) == AssetType::Pack;
+        if predicate(entry.path()) || is_pack {
             // Per PathBuf#isFile():
             // When the goal is simply to read from (or write to) the source, the most reliable way
             // to test the source can be read (or written to) is to open it.
             if let Ok(file) = OpenOptions::new().read(true).open(entry.path()).await {
-                futures.spawn(list_assets_in_file(entry.into_path(), file));
+                futures.spawn(list_assets_in_file(entry.into_path(), file, is_pack));
             }
         }
     }
