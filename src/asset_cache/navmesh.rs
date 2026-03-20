@@ -2,14 +2,15 @@ use std::{collections::HashMap, fs::File, num::TryFromIntError, path::Path};
 
 use asset_serialize::gcnk::Gcnk;
 use rerecast::{
-    Aabb3d, AreaType, BuildContoursFlags, ConvexVolume, DetailNavmesh, HeightfieldBuilder,
-    HeightfieldBuilderError, TriMesh,
+    Aabb3d, AreaType, BuildContoursFlags, ConfigBuilder, ConvexVolume, DetailNavmesh,
+    HeightfieldBuilder, HeightfieldBuilderError, TriMesh,
 };
 use serde::Deserialize;
 
 use crate::{asset_cache::AssetCache, warn, ConfigError};
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct RerecastConfigOverride {
     pub cell_size_fraction: Option<f32>,
     pub cell_height_fraction: Option<f32>,
@@ -73,10 +74,10 @@ impl RerecastConfigOverride {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct NavmeshConfig {
     pub assets: HashMap<String, Option<RerecastConfigOverride>>,
-    #[serde(default)]
-    pub defaults: rerecast::ConfigBuilder,
+    pub defaults: RerecastConfigOverride,
 }
 
 pub async fn load_navmeshes(
@@ -86,11 +87,13 @@ pub async fn load_navmeshes(
     let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
     let config: NavmeshConfig = serde_yaml::from_reader(&mut file)?;
 
+    let defaults = config.defaults.merge(&ConfigBuilder::default());
+
     let mut navmeshes = HashMap::with_capacity(config.assets.len());
     for (zone_asset_name, config_override) in config.assets.into_iter() {
         let config = config_override
-            .map(|overrides| overrides.merge(&config.defaults))
-            .unwrap_or_else(|| config.defaults.clone());
+            .map(|overrides| overrides.merge(&defaults))
+            .unwrap_or_else(|| defaults.clone());
         match build_navmesh(asset_cache, &zone_asset_name, config).await {
             Ok(navmesh) => {
                 navmeshes.insert(zone_asset_name, navmesh);
