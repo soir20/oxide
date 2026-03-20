@@ -192,8 +192,6 @@ impl NonLinearPathState {
             })
             .collect();
 
-        println!("waypoints: {:?}", waypoints);
-
         if let Some(last_waypoint) = waypoints.pop_back() {
             destination.pos = last_waypoint.pos;
             waypoints.push_back(destination);
