@@ -1,4 +1,4 @@
-use std::{collections::HashMap, num::TryFromIntError};
+use std::{collections::HashMap, fs::File, num::TryFromIntError, path::Path};
 
 use asset_serialize::gcnk::Gcnk;
 use rerecast::{
@@ -7,10 +7,10 @@ use rerecast::{
 };
 use serde::Deserialize;
 
-use crate::{asset_cache::AssetCache, warn};
+use crate::{asset_cache::AssetCache, warn, ConfigError};
 
 #[derive(Deserialize)]
-pub struct RerecastConfigOverride {
+struct RerecastConfigOverride {
     pub cell_size_fraction: Option<f32>,
     pub cell_height_fraction: Option<f32>,
     pub agent_height: Option<f32>,
@@ -73,20 +73,24 @@ impl RerecastConfigOverride {
 }
 
 #[derive(Deserialize)]
-pub struct NavmeshConfig {
+struct NavmeshConfig {
     pub assets: HashMap<String, Option<RerecastConfigOverride>>,
-    pub default_settings: rerecast::ConfigBuilder,
+    #[serde(default)]
+    pub defaults: rerecast::ConfigBuilder,
 }
 
 pub async fn load_navmeshes(
-    config: NavmeshConfig,
+    config_dir: &Path,
     asset_cache: &AssetCache,
-) -> HashMap<String, polyanya::Mesh> {
+) -> Result<HashMap<String, polyanya::Mesh>, ConfigError> {
+    let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
+    let config: NavmeshConfig = serde_yaml::from_reader(&mut file)?;
+
     let mut navmeshes = HashMap::with_capacity(config.assets.len());
     for (zone_asset_name, config_override) in config.assets.into_iter() {
         let config = config_override
-            .map(|overrides| overrides.merge(&config.default_settings))
-            .unwrap_or_else(|| config.default_settings.clone());
+            .map(|overrides| overrides.merge(&config.defaults))
+            .unwrap_or_else(|| config.defaults.clone());
         match build_navmesh(asset_cache, &zone_asset_name, config).await {
             Ok(navmesh) => {
                 navmeshes.insert(zone_asset_name, navmesh);
@@ -95,7 +99,7 @@ pub async fn load_navmeshes(
         };
     }
 
-    navmeshes
+    Ok(navmeshes)
 }
 
 #[derive(Debug)]
