@@ -21,6 +21,17 @@ const fn default_stack_size() -> i32 {
     1
 }
 
+#[derive(Default, Debug, Deserialize)]
+#[serde(untagged)]
+pub enum AbilitySlot {
+    #[default]
+    Empty,
+    Filled {
+        icon_set_id: u32,
+        name_id: u32,
+    },
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ItemConfig {
@@ -80,53 +91,35 @@ pub struct ItemConfig {
     #[serde(default)]
     pub customization_id: u32,
     #[serde(default)]
-    pub abilities: AbilitySlots,
+    pub abilities: Vec<AbilitySlot>,
 }
 
-#[derive(Default, Debug, Deserialize)]
-pub enum AbilitySlot {
-    #[default]
-    Empty,
-    Filled {
-        icon_set_id: u32,
-        name_id: u32,
-    },
-}
-
-#[derive(Default, Debug, Deserialize)]
-pub struct AbilitySlots {
-    #[serde(default)]
-    pub slot0: AbilitySlot,
-    #[serde(default)]
-    pub slot1: AbilitySlot,
-    #[serde(default)]
-    pub slot2: AbilitySlot,
-    #[serde(default)]
-    pub slot3: AbilitySlot,
-}
-
-impl AbilitySlots {
+impl ItemConfig {
     fn to_specials(&self) -> Vec<SpecialItemAbility> {
-        // Only slots 1–3 are considered special
-        let slots = [&self.slot1, &self.slot2, &self.slot3];
-
-        slots
+        self.abilities
             .iter()
             .enumerate()
-            .filter_map(|(i, slot)| match slot {
-                AbilitySlot::Filled {
-                    icon_set_id,
-                    name_id,
-                } => Some(SpecialItemAbility {
-                    ability_id: 0,
-                    ability_slot: (i + 1) as u32,
-                    unknown3: 0,
-                    ability_icon: *icon_set_id,
-                    unknown5: 0,
-                    unknown6: 0,
-                    ability_name: *name_id,
-                }),
-                AbilitySlot::Empty => None,
+            .filter_map(|(i, slot)| {
+                // Only slots 2–4 are considered special
+                if i == 0 {
+                    return None;
+                }
+
+                match slot {
+                    AbilitySlot::Filled {
+                        icon_set_id,
+                        name_id,
+                    } => Some(SpecialItemAbility {
+                        ability_id: 0,
+                        ability_slot: i as u32,
+                        unknown3: 0,
+                        ability_icon: *icon_set_id,
+                        unknown5: 0,
+                        unknown6: 0,
+                        ability_name: *name_id,
+                    }),
+                    AbilitySlot::Empty => None,
+                }
             })
             .collect()
     }
@@ -176,7 +169,7 @@ impl From<&ItemConfig> for ItemDefinition {
             customization_id: cfg.customization_id,
             unknown40: 0,
             stats: vec![],
-            special_abilities: cfg.abilities.to_specials(),
+            special_abilities: cfg.to_specials(),
         }
     }
 }
@@ -200,6 +193,15 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemConf
         let configs: Vec<ItemConfig> = serde_yaml::from_reader(file)?;
 
         for cfg in configs {
+            if cfg.abilities.len() > 4 {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Item {} has {} abilities, but max is 4 (file: {:?})",
+                    cfg.guid,
+                    cfg.abilities.len(),
+                    file_path
+                )));
+            }
+
             if let Some(previous) = items.insert(cfg.guid, cfg) {
                 return Err(ConfigError::ConstraintViolated(format!(
                     "Two item definitions have ID {} (file: {:?})",

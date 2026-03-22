@@ -9,7 +9,7 @@ use crate::{
     game_server::{
         handlers::{
             character::PlayerInventory,
-            item::{AbilitySlot, AbilitySlots, ItemConfig, SABER_ITEM_TYPE},
+            item::{AbilitySlot, ItemConfig, SABER_ITEM_TYPE},
         },
         packets::{
             client_update::{EquipItem, UnequipItem, UpdateActionBarSlot, UpdateCredits},
@@ -303,22 +303,16 @@ fn process_unequip_slot(
         })
 }
 
-fn equip_action_bar_slot(abilities: &AbilitySlots) -> Vec<Vec<u8>> {
-    let slots = [
-        &abilities.slot0,
-        &abilities.slot1,
-        &abilities.slot2,
-        &abilities.slot3,
-    ];
-
+fn equip_action_bar_slot(abilities: &[AbilitySlot]) -> Vec<Vec<u8>> {
     let mut packets = Vec::new();
 
-    for (slot_index, slot) in slots.iter().enumerate() {
+    for slot_index in 0..4 {
+        let slot = abilities.get(slot_index).unwrap_or(&AbilitySlot::Empty);
+
         let slot = match slot {
             AbilitySlot::Filled {
                 icon_set_id,
                 name_id,
-                ..
             } => ActionBarSlot {
                 is_empty: false,
                 icon_id: *icon_set_id,
