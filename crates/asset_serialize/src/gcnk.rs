@@ -1,4 +1,4 @@
-use std::io::Cursor;
+use std::{fmt::Display, io::Cursor};
 
 use async_compression::tokio::bufread::ZlibDecoder;
 use serde::{Deserialize, Serialize};
@@ -98,6 +98,15 @@ impl TerrainObjectIdentifier {
             Ok(TerrainObjectIdentifier::Name(
                 deserialize_null_terminated_string(file).await?.0,
             ))
+        }
+    }
+}
+
+impl Display for TerrainObjectIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            TerrainObjectIdentifier::Id(id) => id.fmt(f),
+            TerrainObjectIdentifier::Name(name) => name.fmt(f),
         }
     }
 }
