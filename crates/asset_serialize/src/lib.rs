@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 
 use std::{
     any::type_name,
-    collections::HashMap,
+    collections::{BTreeMap, HashMap},
     future::Future,
     io::SeekFrom,
     path::{Path, PathBuf},
@@ -289,6 +289,7 @@ fn usize_to_i32(value: usize) -> Result<i32, Error> {
     })
 }
 
+#[derive(Clone, Debug)]
 pub struct Asset {
     pub path: PathBuf,
     pub offset: u64,
@@ -321,17 +322,17 @@ impl<P: AsRef<Path>> From<P> for AssetType {
 async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
     path: P,
     mut file: File,
-) -> HashMap<String, Asset> {
-    let is_pack = AssetType::from(&path) == AssetType::Pack;
+    is_pack: bool,
+) -> (HashMap<String, Asset>, bool) {
     match is_pack {
         true => {
             let mut reader = BufReader::new(&mut file);
             let Ok(pack) = <Pack as DeserializeAsset>::deserialize(path.clone(), &mut reader).await
             else {
-                return HashMap::new();
+                return (HashMap::new(), is_pack);
             };
 
-            pack.flatten()
+            (pack.flatten(), is_pack)
         }
         false => {
             let Some(Ok(name)) = path
@@ -339,7 +340,7 @@ async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
                 .file_name()
                 .map(|name| name.to_os_string().into_string())
             else {
-                return HashMap::new();
+                return (HashMap::new(), is_pack);
             };
 
             let mut results: HashMap<_, _> = HashMap::new();
@@ -351,7 +352,7 @@ async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
                 },
             );
 
-            results
+            (results, is_pack)
         }
     }
 }
@@ -360,28 +361,37 @@ pub async fn list_assets<P: AsRef<Path>>(
     directory_path: P,
     follow_links: bool,
     mut predicate: impl FnMut(&Path) -> bool,
-) -> Result<HashMap<String, Asset>, tokio::io::Error> {
+) -> Result<BTreeMap<String, Asset>, tokio::io::Error> {
     let mut futures = JoinSet::new();
 
     let walker = WalkDir::new(&directory_path)
         .follow_links(follow_links)
         .into_iter();
     for entry in walker.filter_map(|err| err.ok()) {
-        if predicate(entry.path()) {
+        let is_pack = AssetType::from(&entry.path()) == AssetType::Pack;
+        if predicate(entry.path()) || is_pack {
             // Per PathBuf#isFile():
             // When the goal is simply to read from (or write to) the source, the most reliable way
             // to test the source can be read (or written to) is to open it.
             if let Ok(file) = OpenOptions::new().read(true).open(entry.path()).await {
-                futures.spawn(list_assets_in_file(entry.into_path(), file));
+                futures.spawn(list_assets_in_file(entry.into_path(), file, is_pack));
             }
         }
     }
 
-    let mut final_result = HashMap::new();
+    let mut final_result = BTreeMap::new();
     futures
         .join_all()
         .await
         .into_iter()
-        .for_each(|result| final_result.extend(result.into_iter()));
+        .for_each(|(result, is_pack)| match is_pack {
+            // Single files should override pack files
+            true => {
+                for (asset_name, asset) in result.into_iter() {
+                    final_result.entry(asset_name).or_insert(asset);
+                }
+            }
+            false => final_result.extend(result.into_iter()),
+        });
     Ok(final_result)
 }
