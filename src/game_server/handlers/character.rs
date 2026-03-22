@@ -15,6 +15,7 @@ use crate::{
             combat::ThreatTable,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
+            item::ItemConfig,
             lock_enforcer::CharacterWriteGuard,
             offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
@@ -23,7 +24,7 @@ use crate::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget},
-            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
+            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, WieldType},
             minigame::ScoreEntry,
             player_update::{
                 AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
@@ -937,7 +938,7 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> (Vec<Broadcast>, Option<TickPosUpdate>) {
         let mut packets_for_all = Vec::new();
@@ -1587,7 +1588,7 @@ impl TickableProcedure {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> TickResult {
@@ -1806,7 +1807,7 @@ impl TickableProcedureTracker {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
@@ -2099,7 +2100,7 @@ impl Player {
         &self,
         character: &CharacterStats,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         if !self.ready {
@@ -2607,7 +2608,7 @@ impl CharacterStats {
         &self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         let mut packets = match &self.character_type {
@@ -2955,7 +2956,7 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {

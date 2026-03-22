@@ -16,13 +16,15 @@ use crate::{
         handlers::{
             character::BaseNpcConfig,
             dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
-            distance3_pos, offset_destination,
+            distance3_pos,
+            item::ItemConfig,
+            offset_destination,
         },
         packets::{
             client_update::Position,
             command::MoveToInteract,
             housing::BuildArea,
-            item::{ItemDefinition, WieldType},
+            item::WieldType,
             login::{ClientBeginZoning, ZoneDetails},
             player_update::Customization,
             tunnel::TunneledPacket,
@@ -673,7 +675,7 @@ impl ZoneInstance {
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
         moved_character_handle: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();

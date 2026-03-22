@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use packet_serialize::NullTerminatedString;
 
 use crate::{
@@ -7,6 +9,7 @@ use crate::{
             minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         },
         packets::{
+            item::ItemDefinition,
             login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
             player_update::ItemDefinitionsReply,
             tunnel::TunneledPacket,
@@ -79,13 +82,19 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             };
             packets.push(GamePacket::serialize(&settings));
 
-            let item_defs = TunneledPacket {
+            let item_defs: BTreeMap<u32, ItemDefinition> = game_server
+            .items()
+            .iter()
+            .map(|(id, cfg)| (*id, ItemDefinition::from(cfg)))
+            .collect();
+
+            let item_defs_reply = TunneledPacket {
                 unknown1: true,
                 inner: ItemDefinitionsReply {
-                    definitions: game_server.items(),
+                    definitions: &item_defs,
                 },
             };
-            packets.push(GamePacket::serialize(&item_defs));
+            packets.push(GamePacket::serialize(&item_defs_reply));
 
             let player = TunneledPacket {
                 unknown1: true,

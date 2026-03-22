@@ -192,7 +192,7 @@ pub struct ItemStat {}
 
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
-pub struct ItemAbility {
+pub struct SpecialItemAbility {
     pub ability_slot: u32,
     pub ability_id: u32,
     pub unknown3: u32,
@@ -246,7 +246,7 @@ pub struct ItemDefinition {
     pub customization_id: u32,
     pub unknown40: u32,
     pub stats: Vec<ItemStat>,
-    pub abilities: Vec<ItemAbility>,
+    pub special_abilities: Vec<SpecialItemAbility>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

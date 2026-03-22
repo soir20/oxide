@@ -2,16 +2,19 @@ use std::collections::BTreeMap;
 
 use packet_serialize::LengthlessVec;
 
-use crate::game_server::packets::{
-    item::{EquipmentSlot, Item, ItemDefinition, MarketData},
-    player_data::{
-        Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
-        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Unknown12,
-        Unknown13, Unknown2,
+use crate::game_server::{
+    handlers::item::ItemConfig,
+    packets::{
+        item::{EquipmentSlot, Item, MarketData},
+        player_data::{
+            Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
+            InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Unknown12,
+            Unknown13, Unknown2,
+        },
+        player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
+        tunnel::TunneledPacket,
+        AbilitySubType, ActionBarSlot, ActionBarType, GamePacket, Name, Pos,
     },
-    player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
-    tunnel::TunneledPacket,
-    AbilitySubType, ActionBarSlot, ActionBarType, GamePacket, Name, Pos,
 };
 
 use super::{
@@ -23,7 +26,7 @@ use super::{
 pub fn make_test_player(
     guid: u32,
     mounts: &BTreeMap<u32, MountConfig>,
-    items: &BTreeMap<u32, ItemDefinition>,
+    items: &BTreeMap<u32, ItemConfig>,
 ) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {

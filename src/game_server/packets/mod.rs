@@ -631,3 +631,26 @@ pub struct ActionBarSlot {
     pub is_consumable: bool,
     pub millis_since_last_use: u32,
 }
+
+impl Default for ActionBarSlot {
+    fn default() -> Self {
+        ActionBarSlot {
+            is_empty: true,
+            icon_id: 0,
+            icon_tint_id: 0,
+            name_id: 0,
+            ability_type: 0,
+            ability_sub_type: AbilitySubType::CastableSingleTarget,
+            area_of_effect_radius: 0.0,
+            max_distance_from_player: 0.0,
+            required_force_points: 0,
+            is_enabled: false,
+            use_cooldown_millis: 0,
+            init_cooldown_millis: 0,
+            unknown13: 0,
+            quantity: 0,
+            is_consumable: false,
+            millis_since_last_use: 0,
+        }
+    }
+}

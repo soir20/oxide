@@ -9,10 +9,12 @@ use evalexpr::{context_map, eval_with_context, Value};
 use serde::Deserialize;
 
 use crate::{
-    game_server::packets::{
-        item::ItemDefinition,
-        reference_data::ItemGroupDefinition,
-        store::{StoreItem, StoreItemList},
+    game_server::{
+        handlers::item::ItemConfig,
+        packets::{
+            reference_data::ItemGroupDefinition,
+            store::{StoreItem, StoreItemList},
+        },
     },
     info, ConfigError,
 };
@@ -40,7 +42,7 @@ pub struct CostEntry {
 
 pub fn load_cost_map(
     config_dir: &Path,
-    items: &BTreeMap<u32, ItemDefinition>,
+    items: &BTreeMap<u32, ItemConfig>,
     item_groups: &[ItemGroupDefinition],
 ) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
     let mut file = File::open(config_dir.join("sales.yaml"))?;
@@ -75,7 +77,7 @@ impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
 }
 
 fn cost_map_from_sales(
-    items: &BTreeMap<u32, ItemDefinition>,
+    items: &BTreeMap<u32, ItemConfig>,
     item_groups: &[ItemGroupDefinition],
     sales: Vec<Sale>,
 ) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {

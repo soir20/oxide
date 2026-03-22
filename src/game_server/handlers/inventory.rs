@@ -7,19 +7,22 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::{character::PlayerInventory, item::SABER_ITEM_TYPE},
+        handlers::{
+            character::PlayerInventory,
+            item::{AbilitySlot, AbilitySlots, ItemConfig, SABER_ITEM_TYPE},
+        },
         packets::{
-            client_update::{EquipItem, UnequipItem, UpdateCredits},
+            client_update::{EquipItem, UnequipItem, UpdateActionBarSlot, UpdateCredits},
             inventory::{
                 EquipCustomization, EquipGuid, InventoryOpCode, PreviewCustomization, UnequipSlot,
             },
-            item::{Attachment, EquipmentSlot, ItemDefinition, WieldType},
+            item::{Attachment, EquipmentSlot, WieldType},
             player_update::{
                 Customization, UpdateCustomizations, UpdateEquippedItem, UpdateWieldType,
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket,
+            AbilitySubType, ActionBarSlot, ActionBarType, GamePacket,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -186,6 +189,19 @@ pub fn customizations_from_item_guids(
     Ok(result)
 }
 
+fn unequip_action_bar_slots(packets_for_sender: &mut Vec<Vec<u8>>) {
+    for slot_index in 0..4 {
+        packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateActionBarSlot {
+                action_bar_type: ActionBarType::Weapon,
+                slot_index,
+                slot: ActionBarSlot::default(),
+            },
+        }));
+    }
+}
+
 fn process_unequip_slot(
     game_server: &GameServer,
     cursor: &mut Cursor<&[u8]>,
@@ -222,12 +238,13 @@ fn process_unequip_slot(
                     return Ok(Vec::new());
                 }
 
-                let mut all_player_packets = Vec::new();
+                let mut packets_for_all = Vec::new();
+                let mut packets_for_sender = Vec::new();
 
-                // There are no weapons that allow equipping both weapon slots and then unequipping only the primary slot.
-                // You can only unequip the secondary slot or unequip both slots after you equip both slots. Therefore, after
-                // an item is unequipped, only the primary slot can influence the wield type.
+                // Clear action bar if a weapon was unequipped
                 if unequip_slot.slot.is_weapon() {
+                    unequip_action_bar_slots(&mut packets_for_sender);
+
                     let wield_type = wield_type_from_slot(
                         &player.inventory.equipped_items(unequip_slot.battle_class),
                         EquipmentSlot::PrimaryWeapon,
@@ -236,7 +253,7 @@ fn process_unequip_slot(
 
                     character_write_handle.set_brandished_wield_type(wield_type);
 
-                    all_player_packets.push(GamePacket::serialize(&TunneledPacket {
+                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: UpdateWieldType {
                             guid: player_guid(sender),
@@ -245,18 +262,15 @@ fn process_unequip_slot(
                     }));
                 }
 
-                let mut broadcasts = vec![Broadcast::Single(
-                    sender,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: UnequipItem {
-                            slot: unequip_slot.slot,
-                            battle_class: unequip_slot.battle_class,
-                        },
-                    })],
-                )];
+                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: UnequipItem {
+                        slot: unequip_slot.slot,
+                        battle_class: unequip_slot.battle_class,
+                    },
+                }));
 
-                all_player_packets.push(GamePacket::serialize(&TunneledPacket {
+                packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateEquippedItem {
                         guid: player_guid(sender),
@@ -275,16 +289,69 @@ fn process_unequip_slot(
                 }));
 
                 let (_, instance_guid, chunk) = character_write_handle.index1();
-                let all_players_nearby = ZoneInstance::all_players_nearby(
+                let nearby_players = ZoneInstance::all_players_nearby(
                     chunk,
                     instance_guid,
                     characters_table_read_handle,
                 );
-                broadcasts.push(Broadcast::Multi(all_players_nearby, all_player_packets));
 
-                Ok(broadcasts)
+                Ok(vec![
+                    Broadcast::Multi(nearby_players, packets_for_all),
+                    Broadcast::Single(sender, packets_for_sender),
+                ])
             },
         })
+}
+
+fn equip_action_bar_slot(abilities: &AbilitySlots) -> Vec<Vec<u8>> {
+    let slots = [
+        &abilities.slot0,
+        &abilities.slot1,
+        &abilities.slot2,
+        &abilities.slot3,
+    ];
+
+    let mut packets = Vec::new();
+
+    for (slot_index, slot) in slots.iter().enumerate() {
+        let slot = match slot {
+            AbilitySlot::Filled {
+                ability_icon,
+                ability_name,
+                ..
+            } => ActionBarSlot {
+                is_empty: false,
+                icon_id: *ability_icon,
+                icon_tint_id: 0,
+                name_id: *ability_name,
+                ability_type: 0,
+                ability_sub_type: AbilitySubType::CastableSingleTarget,
+                area_of_effect_radius: 0.0,
+                max_distance_from_player: 0.0,
+                required_force_points: 0,
+                is_enabled: true,
+                use_cooldown_millis: 0,
+                init_cooldown_millis: 0,
+                unknown13: 0,
+                quantity: 1,
+                is_consumable: false,
+                millis_since_last_use: 0,
+            },
+
+            AbilitySlot::Empty => ActionBarSlot::default(),
+        };
+
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateActionBarSlot {
+                action_bar_type: ActionBarType::Weapon,
+                slot_index: slot_index as u32,
+                slot,
+            },
+        }));
+    }
+
+    packets
 }
 
 fn process_equip_guid(
@@ -571,7 +638,7 @@ fn item_def_from_slot<'a>(
     items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &'a GameServer,
-) -> Option<&'a ItemDefinition> {
+) -> Option<&'a ItemConfig> {
     items
         .get(&slot)
         .and_then(|item_guid| game_server.items().get(item_guid))
@@ -618,7 +685,7 @@ pub fn update_saber_tints<'a>(
                         texture_alias: primary_shape_def.texture_alias.clone(),
                         tint_alias: primary_shape_def.tint_alias.clone(),
                         tint: primary_color_def.tint,
-                        composite_effect: primary_shape_def.composite_effect,
+                        composite_effect: primary_shape_def.composite_effect.unwrap_or(0),
                         slot: EquipmentSlot::PrimarySaberShape,
                     },
                     battle_class,
@@ -636,7 +703,7 @@ pub fn update_saber_tints<'a>(
                         texture_alias: primary_shape_def.texture_alias.clone(),
                         tint_alias: primary_shape_def.tint_alias.clone(),
                         tint: primary_color_def.tint,
-                        composite_effect: primary_shape_def.composite_effect,
+                        composite_effect: primary_shape_def.composite_effect.unwrap_or(0),
                         slot: EquipmentSlot::PrimarySaberShape,
                     },
                     battle_class,
@@ -665,7 +732,7 @@ pub fn update_saber_tints<'a>(
                         texture_alias: secondary_shape_def.texture_alias.clone(),
                         tint_alias: secondary_shape_def.tint_alias.clone(),
                         tint: secondary_color_def.tint,
-                        composite_effect: secondary_shape_def.composite_effect,
+                        composite_effect: secondary_shape_def.composite_effect.unwrap_or(0),
                         slot: EquipmentSlot::SecondarySaberShape,
                     },
                     battle_class,
@@ -683,7 +750,7 @@ pub fn update_saber_tints<'a>(
                         texture_alias: secondary_shape_def.texture_alias.clone(),
                         tint_alias: secondary_shape_def.tint_alias.clone(),
                         tint: secondary_color_def.tint,
-                        composite_effect: secondary_shape_def.composite_effect,
+                        composite_effect: secondary_shape_def.composite_effect.unwrap_or(0),
                         slot: EquipmentSlot::SecondarySaberShape,
                     },
                     battle_class,
@@ -708,7 +775,7 @@ pub fn update_saber_tints<'a>(
 pub fn player_has_saber_equipped(
     inventory: &PlayerInventory,
     battle_class: u32,
-    item_definitions: &BTreeMap<u32, ItemDefinition>,
+    item_definitions: &BTreeMap<u32, ItemConfig>,
 ) -> bool {
     inventory
         .equipped_item(battle_class, EquipmentSlot::PrimaryWeapon)
@@ -743,7 +810,7 @@ impl From<ExtendedAttachment> for Attachment {
 
 pub fn attachments_from_equipped_items(
     equipped_items: &BTreeMap<EquipmentSlot, u32>,
-    item_definitions: &BTreeMap<u32, ItemDefinition>,
+    item_definitions: &BTreeMap<u32, ItemConfig>,
 ) -> Vec<ExtendedAttachment> {
     equipped_items
         .iter()
@@ -767,7 +834,7 @@ pub fn attachments_from_equipped_items(
                     texture_alias: item_definition.texture_alias.clone(),
                     tint_alias: item_definition.tint_alias.clone(),
                     tint: tint_override.unwrap_or(item_definition.tint),
-                    composite_effect: item_definition.composite_effect,
+                    composite_effect: item_definition.composite_effect.unwrap_or(0),
                     slot: *slot,
                     item_guid: *item_guid,
                     item_class: item_definition.item_class,
@@ -947,7 +1014,7 @@ fn equip_item_in_slot<'a>(
                 texture_alias: item_def.texture_alias.clone(),
                 tint_alias: item_def.tint_alias.clone(),
                 tint: tint_override.unwrap_or(item_def.tint),
-                composite_effect: item_def.composite_effect,
+                composite_effect: item_def.composite_effect.unwrap_or(0),
                 slot: equip_guid.slot,
             },
             battle_class: equip_guid.battle_class,
@@ -965,7 +1032,7 @@ fn equip_item_in_slot<'a>(
                 texture_alias: item_def.texture_alias.clone(),
                 tint_alias: item_def.tint_alias.clone(),
                 tint: tint_override.unwrap_or(item_def.tint),
-                composite_effect: item_def.composite_effect,
+                composite_effect: item_def.composite_effect.unwrap_or(0),
                 slot: equip_guid.slot,
             },
             battle_class: equip_guid.battle_class,
@@ -991,6 +1058,8 @@ fn equip_item_in_slot<'a>(
         }
 
         if equip_guid.slot.is_weapon() {
+            sender_only_packets.extend(equip_action_bar_slot(&item_def.abilities));
+
             // Some weapons, like bows, can be equipped in the secondary slot without
             // a primary weapon, so check the opposite slot instead of the primary slot.
             let other_weapon_slot = equip_guid.slot.opposite_slot();

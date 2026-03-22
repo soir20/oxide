@@ -23,7 +23,7 @@ use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
     load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
 };
-use handlers::item::load_item_definitions;
+use handlers::item::{load_item_definitions, ItemConfig};
 use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
@@ -50,7 +50,6 @@ use handlers::zone::{
     PointOfInterestConfig, ZoneInstance, ZoneTemplate,
 };
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -188,7 +187,7 @@ pub struct GameServer {
     default_sabers: BTreeMap<u32, DefaultSaber>,
     enemy_types: EnemyTypeConfig,
     lock_enforcer_source: LockEnforcerSource,
-    items: BTreeMap<u32, ItemDefinition>,
+    items: BTreeMap<u32, ItemConfig>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
@@ -832,7 +831,7 @@ impl GameServer {
         &self.enemy_types
     }
 
-    pub fn items(&self) -> &BTreeMap<u32, ItemDefinition> {
+    pub fn items(&self) -> &BTreeMap<u32, ItemConfig> {
         &self.items
     }
 
