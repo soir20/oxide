@@ -293,6 +293,7 @@ fn usize_to_i32(value: usize) -> Result<i32, Error> {
 pub struct Asset {
     pub path: PathBuf,
     pub offset: u64,
+    pub size: Option<u32>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -349,6 +350,7 @@ async fn list_assets_in_file<P: AsRef<Path> + Clone + Send>(
                 Asset {
                     path: path.as_ref().to_path_buf(),
                     offset: 0,
+                    size: None,
                 },
             );
 

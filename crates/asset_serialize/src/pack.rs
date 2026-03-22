@@ -86,6 +86,7 @@ impl Pack {
                     Asset {
                         path: self.path.clone(),
                         offset: asset.offset,
+                        size: Some(asset.size),
                     },
                 )
             })
