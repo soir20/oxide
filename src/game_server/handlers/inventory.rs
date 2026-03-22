@@ -316,14 +316,14 @@ fn equip_action_bar_slot(abilities: &AbilitySlots) -> Vec<Vec<u8>> {
     for (slot_index, slot) in slots.iter().enumerate() {
         let slot = match slot {
             AbilitySlot::Filled {
-                ability_icon,
-                ability_name,
+                icon_set_id,
+                name_id,
                 ..
             } => ActionBarSlot {
                 is_empty: false,
-                icon_id: *ability_icon,
+                icon_id: *icon_set_id,
                 icon_tint_id: 0,
-                name_id: *ability_name,
+                name_id: *name_id,
                 ability_type: 0,
                 ability_sub_type: AbilitySubType::CastableSingleTarget,
                 area_of_effect_radius: 0.0,

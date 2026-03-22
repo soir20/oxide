@@ -88,8 +88,8 @@ pub enum AbilitySlot {
     #[default]
     Empty,
     Filled {
-        ability_icon: u32,
-        ability_name: u32,
+        icon_set_id: u32,
+        name_id: u32,
     },
 }
 
@@ -115,16 +115,16 @@ impl AbilitySlots {
             .enumerate()
             .filter_map(|(i, slot)| match slot {
                 AbilitySlot::Filled {
-                    ability_icon,
-                    ability_name,
+                    icon_set_id,
+                    name_id,
                 } => Some(SpecialItemAbility {
                     ability_id: 0,
                     ability_slot: (i + 1) as u32,
                     unknown3: 0,
-                    ability_icon: *ability_icon,
+                    ability_icon: *icon_set_id,
                     unknown5: 0,
                     unknown6: 0,
-                    ability_name: *ability_name,
+                    ability_name: *name_id,
                 }),
                 AbilitySlot::Empty => None,
             })
