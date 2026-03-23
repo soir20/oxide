@@ -82,7 +82,7 @@ impl RuntimeObjectTint {
     }
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Hash, Serialize, Deserialize)]
 pub enum TerrainObjectIdentifier {
     Id(u32),
     Name(String),
