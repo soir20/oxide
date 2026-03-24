@@ -63,6 +63,7 @@ use rand::Rng;
 
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
+use crate::game_server::navmesh::config::load_navmeshes;
 use crate::game_server::navmesh::Navmesh;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
@@ -203,10 +204,7 @@ pub struct GameServer {
 }
 
 impl GameServer {
-    pub fn new(
-        config_dir: &Path,
-        navmeshes: HashMap<String, polyanya::Mesh>,
-    ) -> Result<Self, ConfigError> {
+    pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let item_definitions = load_item_definitions(config_dir)?;
@@ -226,10 +224,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
-            navmeshes: navmeshes
-                .into_iter()
-                .map(|(zone_asset_name, mesh)| (zone_asset_name, mesh.into()))
-                .collect(),
+            navmeshes: load_navmeshes(config_dir)?,
             points_of_interest,
             start_time: Instant::now(),
             zone_templates: templates,

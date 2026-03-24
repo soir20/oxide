@@ -7,6 +7,8 @@ use crate::game_server::{
     packets::{update_position::UpdatePlayerPos, CharacterState, CharacterStateFlags, Pos},
 };
 
+pub mod config;
+
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct NavmeshWaypoint {
     pub pos: Pos,
@@ -235,14 +237,14 @@ impl NonLinearPathState {
 pub enum Navmesh {
     #[default]
     Simple,
-    Recast(polyanya::Mesh),
+    Complex(polyanya::Mesh),
 }
 
 pub const DEFAULT_NAVMESH: Navmesh = Navmesh::Simple;
 
 impl From<polyanya::Mesh> for Navmesh {
     fn from(value: polyanya::Mesh) -> Self {
-        Navmesh::Recast(value)
+        Navmesh::Complex(value)
     }
 }
 
@@ -250,7 +252,7 @@ impl Navmesh {
     pub fn path(&self, start: Pos, end: Pos) -> Vec<Pos> {
         match self {
             Navmesh::Simple => vec![end],
-            Navmesh::Recast(navmesh) => {
+            Navmesh::Complex(navmesh) => {
                 let Some(start_polygon) =
                     navmesh.get_closest_point_at_height(Vec2::new(start.x, start.z), start.y)
                 else {
