@@ -1,4 +1,7 @@
-use std::{collections::VecDeque, time::Duration};
+use std::{
+    collections::VecDeque,
+    time::{Duration, Instant},
+};
 
 use glam::{Vec2, Vec3};
 
@@ -44,7 +47,7 @@ impl NavmeshWaypoint {
     }
 }
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 struct LinearPathState {
     direction_unit_vector: Pos,
     distance_traveled: f32,
@@ -53,6 +56,7 @@ struct LinearPathState {
     new_pos: Pos,
     estimated_delta_since_last_tick: Pos,
     destination: NavmeshWaypoint,
+    last_speed_update: Instant,
 }
 
 impl LinearPathState {
@@ -67,7 +71,18 @@ impl LinearPathState {
             new_pos: start_pos,
             estimated_delta_since_last_tick: Pos::default(),
             destination,
+            last_speed_update: Instant::now(),
         }
+    }
+
+    pub fn update_speed(&mut self, previous_speed: f32) {
+        let now = Instant::now();
+        let seconds_since_last_speed_update = now
+            .saturating_duration_since(self.last_speed_update)
+            .as_secs_f32();
+        self.estimated_delta_since_last_tick +=
+            self.direction_unit_vector * previous_speed * seconds_since_last_speed_update;
+        self.last_speed_update = now;
     }
 
     pub fn tick(
@@ -80,9 +95,8 @@ impl LinearPathState {
         if self.reached_destination() {
             return None;
         }
-        
-        self.estimated_delta_since_last_tick +=
-            self.direction_unit_vector * speed * tick_duration.as_secs_f32();
+
+        self.update_speed(speed);
 
         let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
         let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
@@ -209,6 +223,10 @@ impl NonLinearPathState {
                 current_pos,
             ),
         }
+    }
+
+    pub fn update_speed(&mut self, previous_speed: f32) {
+        self.linear_path_state.update_speed(previous_speed);
     }
 
     pub fn tick(

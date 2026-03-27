@@ -1639,6 +1639,14 @@ impl TickableProcedureTracker {
         }
     }
 
+    pub fn update_progress(&mut self, previous_speed: f32) {
+        if let Some(procedure) = self.procedures.get_mut(&self.current_procedure_key) {
+            if let Some(pos_update_progress) = &mut procedure.pos_update_progress {
+                pos_update_progress.update_speed(previous_speed);
+            }
+        }
+    }
+
     pub fn tickable(&self) -> bool {
         !self.procedures.is_empty()
     }
@@ -2959,7 +2967,10 @@ impl Character {
     }
 
     pub fn update_speed(&mut self, mut f: impl FnMut(&mut CharacterStat)) {
+        let previous_speed = self.stats.speed.total();
         f(&mut self.stats.speed);
+        self.tickable_procedure_tracker
+            .update_progress(previous_speed);
     }
 
     fn tickable(&self) -> bool {
