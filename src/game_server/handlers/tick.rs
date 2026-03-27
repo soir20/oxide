@@ -12,6 +12,7 @@ use crate::{
         navmesh::{Navmesh, DEFAULT_NAVMESH},
         packets::{
             minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
+            player_update::PhysicsState,
             tunnel::TunneledPacket,
             GamePacket,
         },
@@ -129,9 +130,12 @@ pub fn tick_single_chunk(
                             read_guids: vec![instance_guid],
                             write_guids: Vec::new(),
                             zone_consumer: |_, zones_read, _| {
-                                let navmesh: &Navmesh = zones_read.get(&instance_guid)
-                                    .and_then(|zone_instance: &parking_lot::lock_api::RwLockReadGuard<'_, parking_lot::RawRwLock, ZoneInstance>| game_server.navmeshes().get(&zone_instance.asset_name))
-                                    .unwrap_or(&DEFAULT_NAVMESH);
+                                let navmesh: &Navmesh = match tickable_character.stats.physics {
+                                    PhysicsState::Disabled => &DEFAULT_NAVMESH,
+                                    PhysicsState::Enabled => zones_read.get(&instance_guid)
+                                        .and_then(|zone_instance| game_server.navmeshes().get(&zone_instance.asset_name))
+                                        .unwrap_or(&DEFAULT_NAVMESH),
+                                };
 
                                 let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
                                     now,
