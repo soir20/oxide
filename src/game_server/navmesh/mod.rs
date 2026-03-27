@@ -80,6 +80,9 @@ impl LinearPathState {
         if self.reached_destination() {
             return None;
         }
+        
+        self.estimated_delta_since_last_tick +=
+            self.direction_unit_vector * speed * tick_duration.as_secs_f32();
 
         let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
         let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
