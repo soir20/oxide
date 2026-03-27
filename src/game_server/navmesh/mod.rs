@@ -201,7 +201,10 @@ impl NonLinearPathState {
 
         NonLinearPathState {
             waypoints,
-            linear_path_state: LinearPathState::default(),
+            linear_path_state: LinearPathState::new(
+                NavmeshWaypoint::without_rot(current_pos, CharacterState::default()),
+                current_pos,
+            ),
         }
     }
 
