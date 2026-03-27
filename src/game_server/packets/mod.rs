@@ -248,9 +248,21 @@ pub struct CharacterStateFlags {
     pub jumping: bool,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, SerializePacket, DeserializePacket)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, SerializePacket, DeserializePacket)]
 pub struct CharacterState {
     state: u8,
+}
+
+impl Default for CharacterState {
+    fn default() -> Self {
+        STANDING
+    }
+}
+
+impl CharacterState {
+    pub fn moving(&self) -> bool {
+        self.state & (1 << 1) > 0
+    }
 }
 
 const fn flags_to_state(flags: CharacterStateFlags) -> CharacterState {

@@ -57,6 +57,7 @@ struct LinearPathState {
     estimated_delta_since_last_tick: Pos,
     destination: NavmeshWaypoint,
     last_speed_update: Instant,
+    last_character_state: CharacterState,
 }
 
 impl LinearPathState {
@@ -72,6 +73,7 @@ impl LinearPathState {
             estimated_delta_since_last_tick: Pos::default(),
             destination,
             last_speed_update: Instant::now(),
+            last_character_state: CharacterState::default(),
         }
     }
 
@@ -102,23 +104,26 @@ impl LinearPathState {
         let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
         let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
 
-        self.distance_traveled += max_distance_traveled.min(distance_to_new_pos);
+        self.distance_traveled += match self.last_character_state.moving() {
+            true => max_distance_traveled,
+            false => distance_to_new_pos,
+        };
 
         // Allow the next tickable step to start just as the NPC is almost reaching its
         // destination on clients. Since we set the old_pos to destination.pos, the NPC's
         // position will be set to the desired end position without drift.
         let seconds_per_tick = tick_duration.as_secs_f32();
         let estimated_distance_per_tick = speed * seconds_per_tick;
-        let close_enough_distance = self.distance_required - estimated_distance_per_tick;
+        let close_enough_distance = self.distance_required - estimated_distance_per_tick * 0.25;
 
         // The max distance traveled might be less than we expect if the NPC slowed down
         // during the tick. If the tick was longer than we expected, then the NPC stopped
         // at the new_pos and did not go any further.
         self.old_pos = match self.distance_traveled >= close_enough_distance {
             true => self.destination.pos,
-            false => match max_distance_traveled > distance_to_new_pos {
-                true => self.new_pos,
-                false => estimated_current_pos,
+            false => match self.last_character_state.moving() {
+                true => estimated_current_pos,
+                false => self.new_pos,
             },
         };
 
@@ -169,6 +174,7 @@ impl LinearPathState {
         }
 
         self.estimated_delta_since_last_tick = Pos::default();
+        self.last_character_state = character_state;
         Some(UpdatePlayerPos {
             guid,
             pos_x: self.new_pos.x,
