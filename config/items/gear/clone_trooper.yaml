@@ -1984,6 +1984,16 @@
   texture_alias: CloneKix
   item_type: 1
   category: 62
+# Kix's Clone Trooper Boots
+- guid: 160298
+  name_id: 4389
+  description_id: 14
+  icon_set_id: 680
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 63
 # Boost's Armor
 - guid: 160188
   name_id: 2370
