@@ -1319,9 +1319,9 @@
   item_type: 1
   category: 62
   members: true
-# Rookie Echo's Armor
+# Rookie Echo's Boots
 - guid: 160124
-  name_id: 186
+  name_id: 188
   description_id: 14
   icon_set_id: 127
   slot: !Equipment Feet
@@ -1414,9 +1414,9 @@
   item_type: 1
   category: 63
   members: true
-# Arc Trooper Fives Phase II
+# Fives' Phase II Armor
 - guid: 160133
-  name_id: 4356
+  name_id: 4384
   description_id: 14
   icon_set_id: 2466
   slot: !Equipment Body
@@ -1984,6 +1984,16 @@
   texture_alias: CloneKix
   item_type: 1
   category: 62
+# Kix's Clone Trooper Boots
+- guid: 160298
+  name_id: 4389
+  description_id: 14
+  icon_set_id: 135
+  slot: !Equipment Feet
+  model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
+  texture_alias: CloneBasic
+  item_type: 1
+  category: 63
 # Boost's Armor
 - guid: 160188
   name_id: 2370
