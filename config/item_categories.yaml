@@ -12,6 +12,12 @@ definitions:
     icon_set_id: 0
     sort_order: -1
     visible: true
+  # Store
+  - guid: 2
+    name_id: 100
+    icon_set_id: 1440
+    sort_order: 2
+    visible: true
   # Portal
   - guid: 10
     name_id: 0
@@ -36,6 +42,30 @@ definitions:
     icon_set_id: 1151
     sort_order: 13
     visible: true
+  # Housing
+  - guid: 14
+    name_id: 1222
+    icon_set_id: 1229
+    sort_order: 14
+    visible: true
+  # Companions
+  - guid: 15
+    name_id: 1223
+    icon_set_id: 421
+    sort_order: 15
+    visible: true
+  # Vehicles
+  - guid: 16
+    name_id: 1224
+    icon_set_id: 428
+    sort_order: 16
+    visible: true
+  # Actions
+  - guid: 17
+    name_id: 1225
+    icon_set_id: 422
+    sort_order: 17
+    visible: true
   # Face Customization
   - guid: 18
     name_id: 1226
@@ -48,11 +78,59 @@ definitions:
     icon_set_id: 431
     sort_order: 19
     visible: true
-  # Housing
-  - guid: 65
-    name_id: 1222
-    icon_set_id: 0
-    sort_order: 65
+  # Moves
+  - guid: 20
+    name_id: 113
+    icon_set_id: 672
+    sort_order: 20
+    visible: true
+  # Holoprojectors
+  - guid: 21
+    name_id: 114
+    icon_set_id: 669
+    sort_order: 21
+    visible: true
+  # Mind Tricks
+  - guid: 22
+    name_id: 115
+    icon_set_id: 670
+    sort_order: 22
+    visible: true
+  # Hasbro Armory
+  - guid: 26
+    name_id: 44940
+    icon_set_id: 2134
+    sort_order: 26
+    visible: false
+  # Furniture
+  - guid: 30
+    name_id: 8506
+    icon_set_id: 423
+    sort_order: 30
+    visible: true
+  # Speeders
+  - guid: 32
+    name_id: 8508
+    icon_set_id: 683
+    sort_order: 32
+    visible: true
+  # Ships
+  - guid: 33
+    name_id: 8509
+    icon_set_id: 428
+    sort_order: 33
+    visible: true
+  # Houses
+  - guid: 34
+    name_id: 32455
+    icon_set_id: 1229
+    sort_order: 34
+    visible: true
+  # Change Name
+  - guid: 35
+    name_id: 2149
+    icon_set_id: 1776
+    sort_order: 35
     visible: true
   # My Headgear
   - guid: 60
@@ -84,11 +162,71 @@ definitions:
     icon_set_id: 681
     sort_order: 59
     visible: true
+  # Housing
+  - guid: 65
+    name_id: 1222
+    icon_set_id: 0
+    sort_order: 65
+    visible: true
   # My Gear
   - guid: 70
     name_id: 1238
     icon_set_id: 675
     sort_order: 70
+    visible: true
+  # Droids
+  - guid: 71
+    name_id: 1247
+    icon_set_id: 678
+    sort_order: 71
+    visible: true
+  # Droid Parts
+  - guid: 72
+    name_id: 1248
+    icon_set_id: 678
+    sort_order: 72
+    visible: true
+  # Jedi Living Quarters Modules
+  - guid: 75
+    name_id: 0
+    icon_set_id: 1995
+    sort_order: 75
+    visible: false
+  # Attack Cruiser Modules
+  - guid: 76
+    name_id: 0
+    icon_set_id: 1994
+    sort_order: 76
+    visible: false
+  # Consumables
+  - guid: 78
+    name_id: 4885
+    icon_set_id: 3069
+    sort_order: 78
+    visible: true
+  # Card Commander
+  - guid: 80
+    name_id: 2602
+    icon_set_id: 1153
+    sort_order: 80
+    visible: true
+  # Creatures
+  - guid: 84
+    name_id: 43526
+    icon_set_id: 1855
+    sort_order: 84
+    visible: true
+  # Creature Gear
+  - guid: 85
+    name_id: 43527
+    icon_set_id: 1854
+    sort_order: 85
+    visible: true
+  # Sidekicks
+  - guid: 88
+    name_id: 4251
+    icon_set_id: 2407
+    sort_order: 88
     visible: true
   # Collections
   - guid: 90
@@ -96,12 +234,78 @@ definitions:
     icon_set_id: 2597
     sort_order: 90
     visible: true
+  # Hot Items!
+  - guid: 91
+    name_id: 4433
+    icon_set_id: 2525
+    sort_order: 1
+    visible: true
+  # Mounts
+  - guid: 93
+    name_id: 4483
+    icon_set_id: 2585
+    sort_order: 93
+    visible: true
+  # Crates and Codes
+  - guid: 95
+    name_id: 4485
+    icon_set_id: 2582
+    sort_order: 3
+    visible: true
   # Crates and Codes
   - guid: 96
     name_id: 4485
     icon_set_id: 2582
     sort_order: 96
     visible: true
+  # Clone Trooper Gear
+  - guid: 101
+    name_id: 28
+    icon_set_id: 1155
+    sort_order: 101
+    visible: true
+  # Jedi Gear
+  - guid: 102
+    name_id: 29
+    icon_set_id: 1156
+    sort_order: 102
+    visible: true
+  # Bounty Hunter Gear
+  - guid: 104
+    name_id: 32
+    icon_set_id: 1157
+    sort_order: 104
+    visible: true
+  # Republic Gear
+  - guid: 105
+    name_id: 31
+    icon_set_id: 1158
+    sort_order: 105
+    visible: true
+  # Costume Gear
+  - guid: 107
+    name_id: 107
+    icon_set_id: 1162
+    sort_order: 107
+    visible: false
+  # Planetary Forces Gear
+  - guid: 108
+    name_id: 108
+    icon_set_id: 1159
+    sort_order: 108
+    visible: true
+  # Separatist Gear
+  - guid: 109
+    name_id: 110
+    icon_set_id: 1160
+    sort_order: 109
+    visible: true
+  # Retired Gear
+  - guid: 111
+    name_id: 112
+    icon_set_id: 1161
+    sort_order: 111
+    visible: false
   # Chairs
   - guid: 1000
     name_id: 316
@@ -117,35 +321,157 @@ definitions:
 relations:
   - parent_guid: -1
     child_guid: 10
+
+  - parent_guid: 70
+    child_guid: 2
+
+  - parent_guid: 2
+    child_guid: 91
+
+  - parent_guid: 2
+    child_guid: 95
+
+  - parent_guid: 2
+    child_guid: 11
+
+  - parent_guid: 2
+    child_guid: 14
+
+  - parent_guid: 2
+    child_guid: 15
+
+  - parent_guid: 2
+    child_guid: 16
+
+  - parent_guid: 2
+    child_guid: 93
+
+  - parent_guid: 2
+    child_guid: 17
+
+  - parent_guid: 2
+    child_guid: 80
+
+  - parent_guid: 2
+    child_guid: 26
+
   - parent_guid: 10
     child_guid: -2
+
   - parent_guid: 10
     child_guid: 12
+
   - parent_guid: 10
     child_guid: 13
+
   - parent_guid: 10
     child_guid: 70
+
   - parent_guid: 70
     child_guid: 11
+
   - parent_guid: 10
     child_guid: 90
+
   - parent_guid: 10
     child_guid: 96
+
   - parent_guid: 11
     child_guid: 60
+
   - parent_guid: 11
     child_guid: 61
+
   - parent_guid: 11
     child_guid: 62
+
   - parent_guid: 11
     child_guid: 63
+
   - parent_guid: 11
     child_guid: 64
+
+  - parent_guid: 11
+    child_guid: 101
+
+  - parent_guid: 11
+    child_guid: 102
+
+  - parent_guid: 11
+    child_guid: 104
+
+  - parent_guid: 11
+    child_guid: 105
+
+  - parent_guid: 11
+    child_guid: 108
+
+  - parent_guid: 11
+    child_guid: 109
+
+  - parent_guid: 11
+    child_guid: 107
+
+  - parent_guid: 11
+    child_guid: 111
+
   - parent_guid: 13
     child_guid: 18
+
   - parent_guid: 13
     child_guid: 19
+
+  - parent_guid: 13
+    child_guid: 35
+
+  - parent_guid: 14
+    child_guid: 34
+
+  - parent_guid: 14
+    child_guid: 30
+
+  - parent_guid: 14
+    child_guid: 75
+
+  - parent_guid: 14
+    child_guid: 76
+
+  - parent_guid: 15
+    child_guid: 71
+
+  - parent_guid: 15
+    child_guid: 72
+
+# Testing Consumables, likely not a valid section
+  - parent_guid: 2
+    child_guid: 78
+
+  - parent_guid: 15
+    child_guid: 84
+
+  - parent_guid: 15
+    child_guid: 85
+
+  - parent_guid: 15
+    child_guid: 88
+
+  - parent_guid: 16
+    child_guid: 32
+
+  - parent_guid: 16
+    child_guid: 33
+
+  - parent_guid: 17
+    child_guid: 20
+
+  - parent_guid: 17
+    child_guid: 21
+
+  - parent_guid: 17
+    child_guid: 22
+
   - parent_guid: 65
     child_guid: 1000
+
   - parent_guid: 65
     child_guid: 1001
