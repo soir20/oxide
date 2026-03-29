@@ -21,7 +21,7 @@
   item_type: 25
   members: true
 # Ahsoka Tano's Offhand Lightsaber
-- guid: 140014
+- guid: 2140
   name_id: 19893
   description_id: 14
   icon_set_id: 1459
@@ -478,7 +478,7 @@
   item_type: 25
   members: true
 # Asajj Ventress' Left Lightsaber
-- guid: 140061
+- guid: 300
   name_id: 8776
   description_id: 14
   icon_set_id: 237
