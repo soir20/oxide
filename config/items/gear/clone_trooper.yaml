@@ -1319,9 +1319,9 @@
   item_type: 1
   category: 62
   members: true
-# Rookie Echo's Armor
+# Rookie Echo's Boots
 - guid: 160124
-  name_id: 186
+  name_id: 188
   description_id: 14
   icon_set_id: 127
   slot: !Equipment Feet
