@@ -1414,9 +1414,9 @@
   item_type: 1
   category: 63
   members: true
-# Arc Trooper Fives Phase II
+# Fives' Phase II Armor
 - guid: 160133
-  name_id: 4356
+  name_id: 4384
   description_id: 14
   icon_set_id: 2466
   slot: !Equipment Body
