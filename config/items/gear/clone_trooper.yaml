@@ -1988,7 +1988,7 @@
 - guid: 160298
   name_id: 4389
   description_id: 14
-  icon_set_id: 680
+  icon_set_id: 135
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_CloneSeason4Boots.adr
   texture_alias: CloneBasic
