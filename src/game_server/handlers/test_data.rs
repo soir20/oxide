@@ -144,7 +144,7 @@ pub fn make_test_player(
                             EquipmentSlot::Head,
                             EquippedItem {
                                 slot: EquipmentSlot::Head,
-                                guid: 200020,
+                                guid: 259,
                                 category: 0,
                             },
                         ),
@@ -152,7 +152,7 @@ pub fn make_test_player(
                             EquipmentSlot::Hands,
                             EquippedItem {
                                 slot: EquipmentSlot::Hands,
-                                guid: 190036,
+                                guid: 1159,
                                 category: 0,
                             },
                         ),
@@ -168,7 +168,7 @@ pub fn make_test_player(
                             EquipmentSlot::Feet,
                             EquippedItem {
                                 slot: EquipmentSlot::Feet,
-                                guid: 160132,
+                                guid: 2700,
                                 category: 0,
                             },
                         ),
@@ -176,7 +176,7 @@ pub fn make_test_player(
                             EquipmentSlot::PrimaryWeapon,
                             EquippedItem {
                                 slot: EquipmentSlot::PrimaryWeapon,
-                                guid: 80052,
+                                guid: 2909,
                                 category: 0,
                             },
                         ),

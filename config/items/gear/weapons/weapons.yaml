@@ -1,6 +1,6 @@
 ---
 # Ion Blaster
-- guid: 80000
+- guid: 3371
   name_id: 4612
   description_id: 14
   icon_set_id: 2680
@@ -11,7 +11,7 @@
   item_type: 1
   category: 64
 # Bowcaster
-- guid: 80001
+- guid: 759
   name_id: 14784
   description_id: 14
   icon_set_id: 506
@@ -23,7 +23,7 @@
   category: 64
   members: true
 # Cad Bane's Blaster Rifle
-- guid: 80002
+- guid: 3328
   name_id: 4543
   description_id: 14
   icon_set_id: 2654
@@ -34,7 +34,7 @@
   item_type: 1
   category: 64
 # Clone Trooper Blaster
-- guid: 80003
+- guid: 55
   name_id: 314
   description_id: 14
   icon_set_id: 213
@@ -45,7 +45,7 @@
   item_type: 1
   category: 64
 # Mandalorian Blaster Rifle
-- guid: 80005
+- guid: 758
   name_id: 14782
   description_id: 14
   icon_set_id: 507
@@ -69,7 +69,7 @@
   category: 64
   members: true
 # Boba Fett's Blaster Rifle
-- guid: 80008
+- guid: 57
   name_id: 8789
   description_id: 14
   icon_set_id: 215
@@ -92,7 +92,7 @@
   category: 64
   members: true
 # Umbaran Blaster Rifle
-- guid: 80010
+- guid: 3172
   name_id: 4320
   description_id: 14
   icon_set_id: 2448
@@ -128,7 +128,7 @@
   category: 64
   members: true
 # Zygerrian Blaster Rifle
-- guid: 80013
+- guid: 3254
   name_id: 4455
   description_id: 14
   icon_set_id: 2513
@@ -140,7 +140,7 @@
   category: 64
   members: true
 # Cupid Clone's Bow
-- guid: 80014
+- guid: 2392
   name_id: 33888
   description_id: 14
   icon_set_id: 1674
@@ -151,7 +151,7 @@
   item_type: 1
   category: 64
 # Nightsister's Bow
-- guid: 80015
+- guid: 2254
   name_id: 32965
   description_id: 14
   icon_set_id: 1624
@@ -163,7 +163,7 @@
   category: 64
   members: true
 # Cryo-Cannon
-- guid: 80016
+- guid: 3369
   name_id: 4610
   description_id: 14
   icon_set_id: 2678
@@ -174,7 +174,7 @@
   item_type: 1
   category: 64
 # Plasma Thrower
-- guid: 80017
+- guid: 3370
   name_id: 4611
   description_id: 14
   icon_set_id: 2679
@@ -240,7 +240,7 @@
   item_type: 1
   category: 64
 # Republic Flamethrower
-- guid: 80024
+- guid: 520
   name_id: 8790
   description_id: 14
   icon_set_id: 216
@@ -251,7 +251,7 @@
   item_type: 1
   category: 64
 # Spring Fever
-- guid: 80025
+- guid: 1415
   name_id: 43859
   description_id: 14
   icon_set_id: 1935
@@ -262,7 +262,7 @@
   item_type: 1
   category: 64
 # Rotary Blaster Cannon
-- guid: 80026
+- guid: 522
   name_id: 8794
   description_id: 14
   icon_set_id: 217
@@ -284,7 +284,7 @@
   item_type: 1
   category: 64
 # Republic Missile Launcher
-- guid: 80029
+- guid: 521
   name_id: 2424
   description_id: 14
   icon_set_id: 218
@@ -307,7 +307,7 @@
   item_type: 1
   category: 64
 # Balnab Hunter Rifle
-- guid: 80031
+- guid: 1637
   name_id: 3130
   description_id: 14
   icon_set_id: 2391
@@ -341,7 +341,7 @@
   item_type: 1
   category: 64
 # Aurra Sing's Hunting Rifle
-- guid: 80034
+- guid: 513
   name_id: 2408
   description_id: 14
   icon_set_id: 238
@@ -353,7 +353,7 @@
   category: 64
   members: true
 # Clone Trooper Blaster Rifle
-- guid: 80035
+- guid: 439
   name_id: 8781
   description_id: 14
   icon_set_id: 240
@@ -365,7 +365,7 @@
   category: 64
   members: true
 # Blinged-Out Trooper Rifle
-- guid: 80036
+- guid: 54
   name_id: 8784
   description_id: 14
   icon_set_id: 239
@@ -387,7 +387,7 @@
   item_type: 1
   category: 64
 # Shadow Tech Rifle
-- guid: 80038
+- guid: 3280
   name_id: 4482
   description_id: 14
   icon_set_id: 2571
@@ -399,7 +399,7 @@
   category: 64
   members: true
 # Rako Hardeen's Sniper Rifle
-- guid: 80040
+- guid: 3327
   name_id: 4542
   description_id: 14
   icon_set_id: 2659
@@ -481,7 +481,7 @@
   item_type: 1
   category: 64
 # Quarzite Boba Fett's Blaster
-- guid: 80047
+- guid: 3413
   name_id: 4685
   description_id: 14
   icon_set_id: 2734
@@ -503,7 +503,7 @@
   item_type: 1
   category: 64
 # Quarzite Boba Fett's Offhand Blaster
-- guid: 80049
+- guid: 3414
   name_id: 4686
   description_id: 14
   icon_set_id: 2734
@@ -525,7 +525,7 @@
   item_type: 1
   category: 64
 # Captain Rex's Right Blaster
-- guid: 80051
+- guid: 514
   name_id: 2410
   description_id: 14
   icon_set_id: 244
@@ -537,7 +537,7 @@
   category: 64
   members: true
 # Vigilance
-- guid: 80052
+- guid: 2909
   name_id: 2896
   description_id: 14
   icon_set_id: 2312
@@ -548,7 +548,7 @@
   item_type: 1
   category: 64
 # Negotiator
-- guid: 80053
+- guid: 2910
   name_id: 2897
   description_id: 14
   icon_set_id: 2312
@@ -559,7 +559,7 @@
   item_type: 1
   category: 64
 # Captain Rex's Left Blaster
-- guid: 80054
+- guid: 141
   name_id: 65
   description_id: 14
   icon_set_id: 244
@@ -571,7 +571,7 @@
   category: 64
   members: true
 # Han Solo's Blaster Pistol
-- guid: 80056
+- guid: 516
   name_id: 2414
   description_id: 14
   icon_set_id: 246
@@ -582,7 +582,7 @@
   item_type: 1
   category: 64
 # Assassin Aurra Sing's Right Blaster
-- guid: 80057
+- guid: 1165
   name_id: 1803
   description_id: 14
   icon_set_id: 1409
@@ -594,7 +594,7 @@
   category: 64
   members: true
 # Assassin Aurra Sing's Left Blaster
-- guid: 80058
+- guid: 1166
   name_id: 1805
   description_id: 14
   icon_set_id: 1409
@@ -618,7 +618,7 @@
   category: 64
   members: true
 # Cad Bane's Right Blaster
-- guid: 80060
+- guid: 512
   name_id: 8779
   description_id: 14
   icon_set_id: 248
@@ -629,7 +629,7 @@
   item_type: 1
   category: 64
 # Cad Bane's Left Blaster
-- guid: 80061
+- guid: 400
   name_id: 1293
   description_id: 14
   icon_set_id: 248
@@ -662,7 +662,7 @@
   item_type: 1
   category: 64
 # Papanoida Blaster
-- guid: 80064
+- guid: 1144
   name_id: 1713
   description_id: 14
   icon_set_id: 1327
@@ -697,7 +697,7 @@
   category: 64
   members: true
 # Naboo Security Blaster Pistol
-- guid: 80070
+- guid: 58
   name_id: 8793
   description_id: 14
   icon_set_id: 250
@@ -709,7 +709,7 @@
   category: 64
   members: true
 # Gungan Double-headed Spear
-- guid: 80071
+- guid: 1322
   name_id: 3068
   description_id: 14
   icon_set_id: 2337
@@ -720,7 +720,7 @@
   category: 64
   members: true
 # Captain Rex's Zygerrian Electrostaff
-- guid: 80072
+- guid: 3262
   name_id: 4463
   description_id: 14
   icon_set_id: 2518
@@ -742,7 +742,7 @@
   category: 64
   members: true
 # Satine's Royal Guard Staff
-- guid: 80075
+- guid: 1167
   name_id: 1811
   description_id: 14
   icon_set_id: 1353
@@ -753,7 +753,7 @@
   item_type: 1
   category: 64
 # Savage Opress' Pike
-- guid: 80076
+- guid: 2266
   name_id: 32983
   description_id: 14
   icon_set_id: 1632
@@ -764,7 +764,7 @@
   item_type: 1
   category: 64
 # Skeletal Clone Trooper Scythe
-- guid: 80077
+- guid: 3092
   name_id: 4280
   description_id: 14
   icon_set_id: 2399
@@ -776,7 +776,7 @@
   category: 64
   members: true
 # Gaffi Stick
-- guid: 80079
+- guid: 59
   name_id: 300
   description_id: 14
   icon_set_id: 253
@@ -788,7 +788,7 @@
   category: 64
   members: true
 # Pink Gaffi Stick
-- guid: 80080
+- guid: 38
   name_id: 97
   description_id: 14
   icon_set_id: 518
@@ -800,7 +800,7 @@
   category: 64
   members: true
 # Blue Sparkler
-- guid: 80081
+- guid: 2809
   name_id: 44661
   description_id: 14
   icon_set_id: 2001
@@ -812,7 +812,7 @@
   category: 64
   members: true
 # Green Sparkler
-- guid: 80082
+- guid: 2810
   name_id: 44662
   description_id: 14
   icon_set_id: 2002
@@ -824,7 +824,7 @@
   category: 64
   members: true
 # Orange Sparkler
-- guid: 80083
+- guid: 2811
   name_id: 44663
   description_id: 14
   icon_set_id: 2003
@@ -836,7 +836,7 @@
   category: 64
   members: true
 # Purple Sparkler
-- guid: 80084
+- guid: 2812
   name_id: 44664
   description_id: 14
   icon_set_id: 2004
@@ -848,7 +848,7 @@
   category: 64
   members: true
 # Red Sparkler
-- guid: 80085
+- guid: 2813
   name_id: 44665
   description_id: 14
   icon_set_id: 2005
@@ -860,7 +860,7 @@
   category: 64
   members: true
 # White Sparkler
-- guid: 80086
+- guid: 2814
   name_id: 44666
   description_id: 14
   icon_set_id: 2006
@@ -872,7 +872,7 @@
   category: 64
   members: true
 # Yellow Sparkler
-- guid: 80087
+- guid: 2815
   name_id: 44667
   description_id: 14
   icon_set_id: 2007
