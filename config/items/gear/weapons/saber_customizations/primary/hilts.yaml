@@ -689,7 +689,7 @@
   description_id: 14
   icon_set_id: 3169
   item_class: 10
-  slot: !Equipment None
+  slot: !Equipment PrimaryWeapon
   model_name: Wield_LightsaberHiltStandard_Yoda_LightsaberDueling.adr
   texture_alias: Yoda
   item_type: 25
