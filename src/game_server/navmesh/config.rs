@@ -6,22 +6,25 @@ use serde::Deserialize;
 
 use crate::{game_server::navmesh::Navmesh, ConfigError};
 
+type Polygon = Vec<[f32; 3]>;
+
 #[derive(Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 struct NavmeshLayer {
-    pub outer_edges: Vec<[f32; 3]>,
+    pub exterior: Polygon,
+    pub obstacles: Vec<Polygon>,
 }
 
 impl From<NavmeshLayer> for Layer {
     fn from(value: NavmeshLayer) -> Self {
         let edges: Vec<Vec2> = value
-            .outer_edges
+            .exterior
             .iter()
             .map(|edge| Vec2::new(edge[0], edge[2]))
             .collect();
         let triangulation = Triangulation::from_outer_edges(&edges);
         let mut layer = triangulation.as_layer();
-        layer.height = value.outer_edges.into_iter().map(|edge| edge[1]).collect();
+        layer.height = value.exterior.into_iter().map(|edge| edge[1]).collect();
         layer
     }
 }
@@ -51,7 +54,7 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
             for (layer_index, layer) in layers.iter().enumerate() {
                 let layer_index = layer_index as u8;
 
-                for (vertex_index, vertex) in layer.outer_edges.iter().enumerate() {
+                for (vertex_index, vertex) in layer.exterior.iter().enumerate() {
                     let vertex_bits = [
                         vertex[0].to_bits(),
                         vertex[1].to_bits(),
