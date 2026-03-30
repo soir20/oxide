@@ -114,7 +114,7 @@ impl LinearPathState {
         // position will be set to the desired end position without drift.
         let seconds_per_tick = tick_duration.as_secs_f32();
         let estimated_distance_per_tick = speed * seconds_per_tick;
-        let close_enough_distance = self.distance_required - estimated_distance_per_tick * 0.25;
+        let close_enough_distance = self.distance_required - estimated_distance_per_tick;
 
         // The max distance traveled might be less than we expect if the NPC slowed down
         // during the tick. If the tick was longer than we expected, then the NPC stopped
@@ -242,23 +242,23 @@ impl NonLinearPathState {
         tick_duration: Duration,
         current_rot: Pos,
     ) -> Option<UpdatePlayerPos> {
+        let pos_update = self
+            .linear_path_state
+            .tick(guid, speed, tick_duration, current_rot);
+
         if self.linear_path_state.reached_destination() {
             while let Some(waypoint) = self.waypoints.pop_front() {
-                if distance3_pos(self.linear_path_state.old_pos, waypoint.pos)
-                    >= speed * tick_duration.as_secs_f32()
-                {
-                    let mut linear_path_state =
-                        LinearPathState::new(waypoint, self.linear_path_state.old_pos);
-                    let pos_update =
-                        linear_path_state.tick(guid, speed, tick_duration, current_rot);
+                let mut linear_path_state =
+                    LinearPathState::new(waypoint, self.linear_path_state.old_pos);
+                let pos_update = linear_path_state.tick(guid, speed, tick_duration, current_rot);
+                if !linear_path_state.reached_destination() {
                     self.linear_path_state = linear_path_state;
                     return pos_update;
                 }
             }
         }
 
-        self.linear_path_state
-            .tick(guid, speed, tick_duration, current_rot)
+        pos_update
     }
 
     pub fn reached_destination(&self) -> bool {
