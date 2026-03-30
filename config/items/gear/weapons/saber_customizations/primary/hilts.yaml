@@ -11,7 +11,7 @@
   item_type: 25
   category: 64
 # Zabrak Sith Lightsaber
-- guid: 110001
+- guid: 437
   name_id: 8764
   description_id: 14
   icon_set_id: 219
@@ -34,7 +34,7 @@
   item_type: 25
   category: 64
 # Savage Opress' Lightsaber
-- guid: 110003
+- guid: 2363
   name_id: 33110
   description_id: 14
   icon_set_id: 1656
@@ -56,7 +56,7 @@
   item_type: 25
   category: 64
 # Ahsoka Tano's Reverse Lightsaber
-- guid: 110005
+- guid: 422
   name_id: 8761
   description_id: 14
   icon_set_id: 220
@@ -125,7 +125,7 @@
   item_type: 25
   category: 64
 # Adi Gallia's Lightsaber
-- guid: 110011
+- guid: 526
   name_id: 8768
   description_id: 14
   icon_set_id: 222
@@ -137,7 +137,7 @@
   category: 64
   members: true
 # Ahsoka Tano's Lightsaber
-- guid: 110012
+- guid: 2141
   name_id: 19895
   description_id: 14
   icon_set_id: 220
@@ -148,7 +148,7 @@
   item_type: 25
   category: 64
 # Anakin Skywalker's Lightsaber
-- guid: 110015
+- guid: 435
   name_id: 8762
   description_id: 14
   icon_set_id: 223
@@ -183,7 +183,7 @@
   category: 64
   members: true
 # Miko Jedi Lightsaber
-- guid: 110019
+- guid: 761
   name_id: 14788
   description_id: 14
   icon_set_id: 509
@@ -205,7 +205,7 @@
   item_type: 25
   category: 64
 # Pre Vizsla's Darksaber
-- guid: 110021
+- guid: 527
   name_id: 8763
   description_id: 14
   icon_set_id: 224
@@ -250,7 +250,7 @@
   category: 64
   members: true
 # Count Dooku's Lightsaber
-- guid: 110025
+- guid: 528
   name_id: 8766
   description_id: 14
   icon_set_id: 225
@@ -306,7 +306,7 @@
   category: 64
   members: true
 # Ultimate FX Gungan Lightsaber
-- guid: 110030
+- guid: 1992
   name_id: 2650
   description_id: 14
   icon_set_id: 2136
@@ -341,7 +341,7 @@
   category: 64
   members: true
 # Kashyyyk Lightsaber
-- guid: 110033
+- guid: 2801
   name_id: 44507
   description_id: 14
   icon_set_id: 1993
@@ -353,7 +353,7 @@
   category: 64
   members: true
 # Mestare Lightsaber
-- guid: 110034
+- guid: 762
   name_id: 44850
   description_id: 14
   icon_set_id: 510
@@ -387,7 +387,7 @@
   item_type: 25
   category: 64
 # Kit Fisto's Lightsaber
-- guid: 110037
+- guid: 532
   name_id: 8767
   description_id: 14
   icon_set_id: 229
@@ -398,7 +398,7 @@
   item_type: 25
   category: 64
 # Kyle Katarn's Lightsaber
-- guid: 110038
+- guid: 786
   name_id: 974
   description_id: 14
   icon_set_id: 511
@@ -431,7 +431,7 @@
   item_type: 25
   category: 64
 # Luminara Unduli's Lightsaber
-- guid: 110041
+- guid: 534
   name_id: 8771
   description_id: 14
   icon_set_id: 231
@@ -443,7 +443,7 @@
   category: 64
   members: true
 # Plo Koon's Lightsaber
-- guid: 110042
+- guid: 63
   name_id: 308
   description_id: 14
   icon_set_id: 232
@@ -455,7 +455,7 @@
   category: 64
   members: true
 # Mace Windu's Lightsaber
-- guid: 110043
+- guid: 535
   name_id: 8772
   description_id: 14
   icon_set_id: 233
@@ -466,7 +466,7 @@
   item_type: 25
   category: 64
 # Obi-Wan Kenobi's Lightsaber
-- guid: 110045
+- guid: 536
   name_id: 8773
   description_id: 14
   icon_set_id: 234
@@ -490,7 +490,7 @@
   category: 64
   members: true
 # Shotem Jedi Lightsaber
-- guid: 110047
+- guid: 787
   name_id: 976
   description_id: 14
   icon_set_id: 512
@@ -512,7 +512,7 @@
   item_type: 25
   category: 64
 # Quinlan Vos' Lightsaber
-- guid: 110049
+- guid: 2134
   name_id: 19637
   description_id: 14
   icon_set_id: 1436
@@ -523,7 +523,7 @@
   item_type: 25
   category: 64
 # Saesee Tiin's Lightsaber
-- guid: 110050
+- guid: 2708
   name_id: 43190
   description_id: 14
   icon_set_id: 1792
@@ -534,7 +534,7 @@
   item_type: 25
   category: 64
 # Shaak Ti's Lightsaber
-- guid: 110051
+- guid: 763
   name_id: 14792
   description_id: 14
   icon_set_id: 513
@@ -546,7 +546,7 @@
   category: 64
   members: true
 # Darth Sidious' Lightsaber
-- guid: 110052
+- guid: 537
   name_id: 8774
   description_id: 14
   icon_set_id: 235
@@ -557,7 +557,7 @@
   item_type: 25
   category: 64
 # Bravis Sith Lightsaber
-- guid: 110053
+- guid: 788
   name_id: 978
   description_id: 14
   icon_set_id: 514
@@ -580,7 +580,7 @@
   item_type: 25
   category: 64
 # Ermi Jedi Lightsaber
-- guid: 110055
+- guid: 789
   name_id: 980
   description_id: 14
   icon_set_id: 515
@@ -603,7 +603,7 @@
   item_type: 25
   category: 64
 # Training Lightsaber
-- guid: 110057
+- guid: 538
   name_id: 8775
   description_id: 14
   icon_set_id: 236
@@ -614,7 +614,7 @@
   item_type: 25
   category: 64
 # Ancient Cobal Lightsaber
-- guid: 110058
+- guid: 790
   name_id: 982
   description_id: 14
   icon_set_id: 516
@@ -625,7 +625,7 @@
   item_type: 25
   category: 64
 # Savek Lightsaber
-- guid: 110059
+- guid: 764
   name_id: 14794
   description_id: 14
   icon_set_id: 517
@@ -637,7 +637,7 @@
   category: 64
   members: true
 # Asajj Ventress' Right Lightsaber
-- guid: 110060
+- guid: 539
   name_id: 8777
   description_id: 14
   icon_set_id: 237
@@ -672,7 +672,7 @@
   category: 64
   members: true
 # Dahgee Jedi Lightsaber
-- guid: 110064
+- guid: 227
   name_id: 986
   description_id: 14
   icon_set_id: 1148
