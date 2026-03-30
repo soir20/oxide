@@ -1,6 +1,7 @@
 use std::{collections::HashMap, fs::File, path::Path};
 
 use glam::Vec2;
+use kiddo::{immutable::float::kdtree::ImmutableKdTree, SquaredEuclidean};
 use polyanya::{Layer, Mesh, Triangulation};
 use serde::Deserialize;
 
@@ -17,12 +18,20 @@ struct NavmeshLayer {
 
 impl From<NavmeshLayer> for Layer {
     fn from(value: NavmeshLayer) -> Self {
-        let vertices: Vec<Vec2> = value
+        let all_vertices = &[&value.exterior[..], &value.obstacles.concat()].concat();
+        let kd_tree: ImmutableKdTree<f32, usize, 2, 32> = ImmutableKdTree::new_from_slice(
+            &all_vertices
+                .iter()
+                .map(|vertex| [vertex[0], vertex[2]])
+                .collect::<Vec<[f32; 2]>>(),
+        );
+
+        let exterior_vertices: Vec<Vec2> = value
             .exterior
             .iter()
             .map(|vertex| Vec2::new(vertex[0], vertex[2]))
             .collect();
-        let mut triangulation = Triangulation::from_outer_edges(&vertices);
+        let mut triangulation = Triangulation::from_outer_edges(&exterior_vertices);
         triangulation.add_obstacles(value.obstacles.into_iter().map(|obstacle| {
             obstacle
                 .into_iter()
@@ -32,7 +41,16 @@ impl From<NavmeshLayer> for Layer {
         triangulation.set_agent_radius(1.0);
 
         let mut layer = triangulation.as_layer();
-        layer.height = value.exterior.into_iter().map(|edge| edge[1]).collect();
+        layer.height = layer
+            .vertices
+            .iter()
+            .map(|vertex| {
+                let nearest = kd_tree
+                    .nearest_one::<SquaredEuclidean>(&[vertex.coords.x, vertex.coords.y])
+                    .item;
+                all_vertices[nearest][1]
+            })
+            .collect();
         layer
     }
 }
