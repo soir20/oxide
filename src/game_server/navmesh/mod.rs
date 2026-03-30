@@ -94,7 +94,7 @@ impl LinearPathState {
         tick_duration: Duration,
         current_rot: Pos,
     ) -> Option<UpdatePlayerPos> {
-        if self.reached_destination() {
+        if self.should_reach_destination() {
             return None;
         }
 
@@ -192,6 +192,11 @@ impl LinearPathState {
         // We can do an exact comparison because we set old_pos to the destination pos exactly
         self.old_pos == self.destination.pos
     }
+
+    pub fn should_reach_destination(&self) -> bool {
+        // We can do an exact comparison because we set new_pos to the destination pos exactly
+        self.new_pos == self.destination.pos
+    }
 }
 
 #[derive(Clone)]
@@ -246,12 +251,12 @@ impl NonLinearPathState {
             .linear_path_state
             .tick(guid, speed, tick_duration, current_rot);
 
-        if self.linear_path_state.reached_destination() {
+        if self.linear_path_state.should_reach_destination() {
             while let Some(waypoint) = self.waypoints.pop_front() {
                 let mut linear_path_state =
                     LinearPathState::new(waypoint, self.linear_path_state.old_pos);
                 let pos_update = linear_path_state.tick(guid, speed, tick_duration, current_rot);
-                if !linear_path_state.reached_destination() {
+                if !linear_path_state.should_reach_destination() {
                     self.linear_path_state = linear_path_state;
                     return pos_update;
                 }
