@@ -4,7 +4,7 @@ use crate::game_server::packets::CharacterState;
 
 use super::{GamePacket, OpCode, Pos};
 
-#[derive(Copy, Clone, SerializePacket, DeserializePacket)]
+#[derive(Copy, Clone, Debug, SerializePacket, DeserializePacket)]
 pub struct UpdatePlayerPos {
     pub guid: u64,
     pub pos_x: f32,
