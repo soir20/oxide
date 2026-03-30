@@ -17,12 +17,18 @@ struct NavmeshLayer {
 
 impl From<NavmeshLayer> for Layer {
     fn from(value: NavmeshLayer) -> Self {
-        let edges: Vec<Vec2> = value
+        let vertices: Vec<Vec2> = value
             .exterior
             .iter()
-            .map(|edge| Vec2::new(edge[0], edge[2]))
+            .map(|vertex| Vec2::new(vertex[0], vertex[2]))
             .collect();
-        let triangulation = Triangulation::from_outer_edges(&edges);
+        let mut triangulation = Triangulation::from_outer_edges(&vertices);
+        triangulation.add_obstacles(value.obstacles.into_iter().map(|obstacle| {
+            obstacle
+                .into_iter()
+                .map(|vertex| Vec2::new(vertex[0], vertex[2]))
+        }));
+
         let mut layer = triangulation.as_layer();
         layer.height = value.exterior.into_iter().map(|edge| edge[1]).collect();
         layer
