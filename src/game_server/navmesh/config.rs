@@ -37,7 +37,6 @@ impl From<NavmeshLayer> for Layer {
                 .into_iter()
                 .map(|vertex| Vec2::new(vertex[0], vertex[2]))
         }));
-        triangulation.agent_radius_on_outer_edge(true);
         triangulation.set_agent_radius(1.0);
 
         let mut layer = triangulation.as_layer();
@@ -51,6 +50,7 @@ impl From<NavmeshLayer> for Layer {
                 all_vertices[nearest][1]
             })
             .collect();
+        layer.bake();
         layer
     }
 }
