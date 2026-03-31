@@ -249,7 +249,7 @@ impl NonLinearPathState {
                 let mut linear_path_state =
                     LinearPathState::new(waypoint, self.linear_path_state.old_pos);
                 let pos_update = linear_path_state.tick(guid, speed, tick_duration, current_rot);
-                if !linear_path_state.should_reach_destination() {
+                if !linear_path_state.should_reach_destination() || self.waypoints.is_empty() {
                     self.linear_path_state = linear_path_state;
                     return pos_update;
                 }
