@@ -94,19 +94,16 @@ impl LinearPathState {
         tick_duration: Duration,
         current_rot: Pos,
     ) -> Option<UpdatePlayerPos> {
-        if self.should_reach_destination() {
+        if self.reached_destination() {
             return None;
         }
 
         self.update_speed(speed);
-
         let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
-        let max_distance_traveled = distance3_pos(self.old_pos, estimated_current_pos);
-        let distance_to_new_pos = distance3_pos(self.old_pos, self.new_pos);
 
         self.distance_traveled += match self.last_character_state.moving() {
-            true => max_distance_traveled,
-            false => distance_to_new_pos,
+            true => distance3_pos(self.old_pos, estimated_current_pos),
+            false => distance3_pos(self.old_pos, self.new_pos),
         };
 
         // Allow the next tickable step to start just as the NPC is almost reaching its
@@ -114,15 +111,14 @@ impl LinearPathState {
         // position will be set to the desired end position without drift.
         let seconds_per_tick = tick_duration.as_secs_f32();
         let estimated_distance_per_tick = speed * seconds_per_tick;
-        let close_enough_distance = self.distance_required - estimated_distance_per_tick;
 
         // The max distance traveled might be less than we expect if the NPC slowed down
         // during the tick. If the tick was longer than we expected, then the NPC stopped
         // at the new_pos and did not go any further.
-        self.old_pos = match self.distance_traveled >= close_enough_distance {
-            true => self.destination.pos,
-            false => match self.last_character_state.moving() {
-                true => estimated_current_pos,
+        self.old_pos = match self.last_character_state.moving() {
+            true => estimated_current_pos,
+            false => match self.distance_traveled >= self.distance_required {
+                true => self.destination.pos,
                 false => self.new_pos,
             },
         };
@@ -189,8 +185,7 @@ impl LinearPathState {
     }
 
     pub fn reached_destination(&self) -> bool {
-        // We can do an exact comparison because we set old_pos to the destination pos exactly
-        self.old_pos == self.destination.pos
+        self.distance_traveled >= self.distance_required
     }
 
     pub fn should_reach_destination(&self) -> bool {
