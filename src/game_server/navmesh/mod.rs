@@ -50,7 +50,7 @@ impl NavmeshWaypoint {
 #[derive(Clone)]
 struct LinearPathState {
     direction_unit_vector: Pos,
-    distance_traveled: f32,
+    potential_distance_traveled: f32,
     distance_required: f32,
     old_pos: Pos,
     new_pos: Pos,
@@ -66,7 +66,7 @@ impl LinearPathState {
         let distance_required = distance3_pos(start_pos, end_pos);
         LinearPathState {
             direction_unit_vector: (end_pos - start_pos) / distance_required.max(f32::MIN_POSITIVE),
-            distance_traveled: 0.0,
+            potential_distance_traveled: 0.0,
             distance_required,
             old_pos: start_pos,
             new_pos: start_pos,
@@ -101,10 +101,7 @@ impl LinearPathState {
         self.update_speed(speed);
         let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
 
-        self.distance_traveled += match self.last_character_state.moving() {
-            true => distance3_pos(self.old_pos, estimated_current_pos),
-            false => distance3_pos(self.old_pos, self.new_pos),
-        };
+        self.potential_distance_traveled += distance3_pos(self.old_pos, estimated_current_pos);
 
         // Allow the next tickable step to start just as the NPC is almost reaching its
         // destination on clients. Since we set the old_pos to destination.pos, the NPC's
@@ -117,7 +114,7 @@ impl LinearPathState {
         // at the new_pos and did not go any further.
         self.old_pos = match self.last_character_state.moving() {
             true => estimated_current_pos,
-            false => match self.distance_traveled >= self.distance_required {
+            false => match self.potential_distance_traveled >= self.distance_required {
                 true => self.destination.pos,
                 false => self.new_pos,
             },
@@ -125,8 +122,9 @@ impl LinearPathState {
 
         // We don't know for certain if the NPC will reach the destination in the next tick,
         // because its speed could change
-        let should_reach_destination =
-            self.distance_traveled + estimated_distance_per_tick >= self.distance_required;
+        let should_reach_destination = self.potential_distance_traveled
+            + estimated_distance_per_tick
+            >= self.distance_required;
         self.new_pos = match should_reach_destination {
             true => self.destination.pos,
             false => self.old_pos + self.direction_unit_vector * estimated_distance_per_tick,
@@ -185,7 +183,7 @@ impl LinearPathState {
     }
 
     pub fn reached_destination(&self) -> bool {
-        self.distance_traveled >= self.distance_required
+        self.potential_distance_traveled >= self.distance_required
     }
 
     pub fn should_reach_destination(&self) -> bool {
