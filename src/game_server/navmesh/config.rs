@@ -37,7 +37,7 @@ impl From<NavmeshLayer> for Layer {
                 .into_iter()
                 .map(|vertex| Vec2::new(vertex[0], vertex[2]))
         }));
-        triangulation.set_agent_radius(0.5);
+        triangulation.set_agent_radius(0.75);
 
         let mut layer = triangulation.as_layer();
         layer.height = layer
