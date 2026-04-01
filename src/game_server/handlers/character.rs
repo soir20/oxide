@@ -1437,7 +1437,11 @@ impl TickableProcedure {
             if new_step_index >= self.steps.len() {
                 TickResult::MustChangeProcedure(self.next_procedure())
             } else {
-                let old_pos = character.pos;
+                let old_pos = self
+                    .pos_update_progress
+                    .as_ref()
+                    .map(|pos_update| pos_update.pos_at_tick_start())
+                    .unwrap_or(character.pos);
 
                 let (broadcasts, pos_update) = self.steps[new_step_index].apply(
                     character,

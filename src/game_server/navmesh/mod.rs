@@ -190,6 +190,10 @@ impl LinearPathState {
         // We can do an exact comparison because we set new_pos to the destination pos exactly
         self.new_pos == self.destination.pos
     }
+
+    pub fn pos_at_tick_start(&self) -> Pos {
+        self.old_pos
+    }
 }
 
 #[derive(Clone)]
@@ -247,7 +251,7 @@ impl NonLinearPathState {
         if self.linear_path_state.should_reach_destination() {
             while let Some(waypoint) = self.waypoints.pop_front() {
                 let mut linear_path_state =
-                    LinearPathState::new(waypoint, self.linear_path_state.old_pos);
+                    LinearPathState::new(waypoint, self.linear_path_state.pos_at_tick_start());
                 let pos_update = linear_path_state.tick(guid, speed, tick_duration, current_rot);
                 if !linear_path_state.should_reach_destination() || self.waypoints.is_empty() {
                     self.linear_path_state = linear_path_state;
@@ -261,6 +265,10 @@ impl NonLinearPathState {
 
     pub fn reached_destination(&self) -> bool {
         self.waypoints.is_empty() && self.linear_path_state.reached_destination()
+    }
+
+    pub fn pos_at_tick_start(&self) -> Pos {
+        self.linear_path_state.pos_at_tick_start()
     }
 }
 
