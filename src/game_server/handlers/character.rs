@@ -11,23 +11,36 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType, TickableNpcSynchronization, handlers::{
+        handlers::{
             combat::ThreatTable,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             lock_enforcer::CharacterWriteGuard,
             offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
-        }, navmesh::{Navmesh, NavmeshWaypoint, NonLinearPathState}, packets::{
-            CharacterStateFlags, GamePacket, GuidTarget, Name, Pos, Rgba, STANDING, Target, chat::{ActionBarTextColor, SendStringId}, client_update::UpdateCredits, command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget}, item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType}, minigame::ScoreEntry, player_update::{
+        },
+        navmesh::{Navmesh, NavmeshWaypoint, NonLinearPathState},
+        packets::{
+            chat::{ActionBarTextColor, SendStringId},
+            client_update::UpdateCredits,
+            command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget},
+            item::{Attachment, BaseAttachmentGroup, EquipmentSlot, ItemDefinition, WieldType},
+            minigame::ScoreEntry,
+            player_update::{
                 AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
                 CustomizationSlot, Hostility, HudMessage, Icon, MoveOnRail, NameplateImage,
                 NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect, QueueAnimation,
                 RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
                 SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
                 UpdateTemporaryModel,
-            }, tunnel::TunneledPacket, ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams}, update_position::UpdatePlayerPos
-        }
+            },
+            tunnel::TunneledPacket,
+            ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
+            update_position::UpdatePlayerPos,
+            CharacterStateFlags, GamePacket, GuidTarget, Name, Pos, Rgba, Target, STANDING,
+        },
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        TickableNpcSynchronization,
     },
     info,
 };
@@ -1028,7 +1041,11 @@ impl TickableStep {
             rot_z_offset: self.new_rot_offset_z,
             character_state: self.character_state.into(),
         };
-        if potential_pos_update.differs_from(character.pos, character.rot, self.character_state.into()) {
+        if potential_pos_update.differs_from(
+            character.pos,
+            character.rot,
+            self.character_state.into(),
+        ) {
             pos_update = Some(potential_pos_update);
         }
 
@@ -1052,7 +1069,10 @@ impl TickableStep {
                 w: character.pos.w,
             };
 
-            pos_update = Some(NavmeshWaypoint::without_rot(new_pos, self.character_state.into()));
+            pos_update = Some(NavmeshWaypoint::without_rot(
+                new_pos,
+                self.character_state.into(),
+            ));
         }
 
         if let Some(animation_id) = self.animation_id {
