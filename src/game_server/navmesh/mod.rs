@@ -219,10 +219,12 @@ impl NonLinearPathState {
             })
             .collect();
 
-        if let Some(last_waypoint) = waypoints.pop_back() {
-            destination.pos = last_waypoint.pos;
-            waypoints.push_back(destination);
-        }
+        let last_pos = waypoints
+            .pop_back()
+            .map(|last_waypoint| last_waypoint.pos)
+            .unwrap_or(current_pos);
+        destination.pos = last_pos;
+        waypoints.push_back(destination);
 
         NonLinearPathState {
             waypoints,
