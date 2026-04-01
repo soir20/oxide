@@ -244,7 +244,9 @@ impl DivAssign for Pos {
 #[derive(Clone, Copy, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CharacterStateFlags {
+    #[serde(default)]
     pub moving: bool,
+    #[serde(default)]
     pub jumping: bool,
 }
 
