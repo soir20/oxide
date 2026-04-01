@@ -93,11 +93,7 @@ impl LinearPathState {
         speed: f32,
         tick_duration: Duration,
         current_rot: Pos,
-    ) -> Option<UpdatePlayerPos> {
-        if self.reached_destination() {
-            return None;
-        }
-
+    ) -> UpdatePlayerPos {
         self.update_speed(speed);
         let estimated_current_pos = self.old_pos + self.estimated_delta_since_last_tick;
 
@@ -169,7 +165,7 @@ impl LinearPathState {
 
         self.estimated_delta_since_last_tick = Pos::default();
         self.last_character_state = character_state;
-        Some(UpdatePlayerPos {
+        UpdatePlayerPos {
             guid,
             pos_x: self.new_pos.x,
             pos_y: self.new_pos.y,
@@ -179,7 +175,7 @@ impl LinearPathState {
             rot_z: new_rot.z,
             character_state,
             unknown: 0,
-        })
+        }
     }
 
     pub fn reached_destination(&self) -> bool {
@@ -245,7 +241,7 @@ impl NonLinearPathState {
         speed: f32,
         tick_duration: Duration,
         current_rot: Pos,
-    ) -> Option<UpdatePlayerPos> {
+    ) -> UpdatePlayerPos {
         let pos_update = self
             .linear_path_state
             .tick(guid, speed, tick_duration, current_rot);

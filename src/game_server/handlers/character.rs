@@ -1406,7 +1406,7 @@ impl TickableProcedure {
                 let pos_update_packet =
                     self.pos_update_progress
                         .as_mut()
-                        .and_then(|pos_update_progress| {
+                        .map(|pos_update_progress| {
                             pos_update_progress.tick(
                                 Guid::guid(character),
                                 character.speed.total(),
@@ -1455,17 +1455,14 @@ impl TickableProcedure {
                 let mut pos_update_progress = pos_update.map(|pos_update| {
                     Box::new(NonLinearPathState::new(old_pos, pos_update, navmesh))
                 });
-                let first_pos_update =
-                    pos_update_progress
-                        .as_mut()
-                        .and_then(|pos_update_progress| {
-                            pos_update_progress.tick(
-                                Guid::guid(character),
-                                character.speed.total(),
-                                tick_duration,
-                                character.rot,
-                            )
-                        });
+                let first_pos_update = pos_update_progress.as_mut().map(|pos_update_progress| {
+                    pos_update_progress.tick(
+                        Guid::guid(character),
+                        character.speed.total(),
+                        tick_duration,
+                        character.rot,
+                    )
+                });
 
                 self.current_step_index = Some(new_step_index);
                 self.last_step_change = now;
@@ -2815,12 +2812,12 @@ impl Character {
                                 NavmeshWaypoint::without_rot(destination, STANDING),
                                 navmesh,
                             );
-                            pos_update = pos_update_progress.tick(
+                            pos_update = Some(pos_update_progress.tick(
                                 self.stats.guid,
                                 speed,
                                 tick_duration,
                                 self.stats.rot,
-                            );
+                            ));
                         }
 
                         return (broadcasts, pos_update);
@@ -2841,8 +2838,12 @@ impl Character {
                     },
                     navmesh,
                 );
-                pos_update =
-                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot);
+                pos_update = Some(pos_update_progress.tick(
+                    self.stats.guid,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                ));
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
                 };
@@ -2870,8 +2871,12 @@ impl Character {
             TargetState::ReturningToOrigin {
                 pos_update_progress,
             } => {
-                let pos_update =
-                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot);
+                let pos_update = Some(pos_update_progress.tick(
+                    self.stats.guid,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                ));
                 if !pos_update_progress.reached_destination() {
                     return (Vec::new(), pos_update);
                 }
