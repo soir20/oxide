@@ -16,7 +16,6 @@ use crate::{
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
             lock_enforcer::CharacterWriteGuard,
-            offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
         navmesh::{Navmesh, NavmeshWaypoint, NonLinearPathState},
@@ -1453,7 +1452,7 @@ impl TickableProcedure {
                 );
 
                 let mut pos_update_progress = pos_update.map(|pos_update| {
-                    Box::new(NonLinearPathState::new(old_pos, pos_update, navmesh))
+                    Box::new(NonLinearPathState::new(old_pos, pos_update, navmesh, 0.0))
                 });
                 let first_pos_update = pos_update_progress.as_mut().map(|pos_update_progress| {
                     pos_update_progress.tick(
@@ -2786,7 +2785,7 @@ impl Character {
                 pos_update_progress,
             } => {
                 let broadcasts = Vec::new();
-                let mut pos_update = None;
+                let pos_update;
 
                 if let Some(target_read_handle) = nearby_characters.get(guid) {
                     let distance_from_origin =
@@ -2794,36 +2793,27 @@ impl Character {
                     let too_far_from_origin =
                         distance_from_origin > self.stats.max_distance_from_origin;
 
-                    let distance_from_target =
-                        distance3_pos(target_read_handle.stats.pos, self.stats.pos);
-                    let too_far_from_target =
-                        distance_from_target > self.stats.max_distance_from_target;
-
                     if !too_far_from_origin {
-                        if too_far_from_target {
-                            let destination = offset_destination(
+                        let destination = target_read_handle.stats.pos;
+                        if pos_update_progress.destination_differs_from(
+                            destination,
+                            STANDING,
+                            self.stats.max_distance_from_target,
+                        ) {
+                            **pos_update_progress = NonLinearPathState::new(
                                 self.stats.pos,
-                                target_read_handle.stats.pos,
+                                NavmeshWaypoint::without_rot(destination, STANDING),
+                                navmesh,
                                 self.stats.max_distance_from_target,
                             );
-
-                            if pos_update_progress
-                                .destination()
-                                .pos_differs_from(destination, STANDING)
-                            {
-                                **pos_update_progress = NonLinearPathState::new(
-                                    self.stats.pos,
-                                    NavmeshWaypoint::without_rot(destination, STANDING),
-                                    navmesh,
-                                );
-                            }
-                            pos_update = Some(pos_update_progress.tick(
-                                self.stats.guid,
-                                speed,
-                                tick_duration,
-                                self.stats.rot,
-                            ));
                         }
+
+                        pos_update = Some(pos_update_progress.tick(
+                            self.stats.guid,
+                            speed,
+                            tick_duration,
+                            self.stats.rot,
+                        ));
 
                         return (broadcasts, pos_update);
                     }
@@ -2842,6 +2832,7 @@ impl Character {
                         character_state: STANDING,
                     },
                     navmesh,
+                    0.0,
                 );
                 pos_update = Some(pos_update_progress.tick(
                     self.stats.guid,
@@ -3061,6 +3052,7 @@ impl Character {
                         self.stats.pos,
                         NavmeshWaypoint::without_rot(self.stats.pos, STANDING),
                         navmesh,
+                        0.0,
                     )),
                 };
             }

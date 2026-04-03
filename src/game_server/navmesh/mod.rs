@@ -199,12 +199,18 @@ impl LinearPathState {
 #[derive(Clone)]
 pub struct NonLinearPathState {
     destination: NavmeshWaypoint,
+    max_offset: f32,
     waypoints: VecDeque<NavmeshWaypoint>,
     linear_path_state: LinearPathState,
 }
 
 impl NonLinearPathState {
-    pub fn new(current_pos: Pos, mut destination: NavmeshWaypoint, navmesh: &Navmesh) -> Self {
+    pub fn new(
+        current_pos: Pos,
+        mut destination: NavmeshWaypoint,
+        navmesh: &Navmesh,
+        max_offset: f32,
+    ) -> Self {
         let original_destination = destination.clone();
 
         let mut waypoints: VecDeque<NavmeshWaypoint> = navmesh
@@ -222,6 +228,13 @@ impl NonLinearPathState {
             })
             .collect();
 
+        let furthest_destination_index = waypoints
+            .iter()
+            .position(|waypoint| distance3_pos(waypoint.pos, destination.pos) <= max_offset);
+        if let Some(index) = furthest_destination_index {
+            waypoints.truncate(index.saturating_add(1));
+        }
+
         let last_pos = waypoints
             .pop_back()
             .map(|last_waypoint| last_waypoint.pos)
@@ -231,6 +244,7 @@ impl NonLinearPathState {
 
         NonLinearPathState {
             destination: original_destination,
+            max_offset,
             waypoints,
             linear_path_state: LinearPathState::new(
                 NavmeshWaypoint::without_rot(current_pos, CharacterState::default()),
@@ -277,8 +291,13 @@ impl NonLinearPathState {
         self.linear_path_state.pos_at_tick_start()
     }
 
-    pub fn destination(&self) -> &NavmeshWaypoint {
-        &self.destination
+    pub fn destination_differs_from(
+        &self,
+        pos: Pos,
+        character_state: CharacterState,
+        max_offset: f32,
+    ) -> bool {
+        self.destination.pos_differs_from(pos, character_state) || self.max_offset > max_offset
     }
 }
 
