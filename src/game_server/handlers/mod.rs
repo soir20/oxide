@@ -48,15 +48,15 @@ pub fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
 }
 
 pub fn direction(old_pos: Pos, new_pos: Pos) -> Pos {
-    let dir_x = new_pos.x - old_pos.x;
-    let dir_y = new_pos.y - old_pos.y;
-    let dir_z = new_pos.z - old_pos.z;
+    let diff_x = new_pos.x - old_pos.x;
+    let diff_y = new_pos.y - old_pos.y;
+    let diff_z = new_pos.z - old_pos.z;
 
     let distance_required = distance3_pos(old_pos, new_pos).max(f32::MIN_POSITIVE);
     Pos {
-        x: dir_x / distance_required,
-        y: dir_y / distance_required,
-        z: dir_z / distance_required,
+        x: diff_x / distance_required,
+        y: diff_y / distance_required,
+        z: diff_z / distance_required,
         w: new_pos.w,
     }
 }
