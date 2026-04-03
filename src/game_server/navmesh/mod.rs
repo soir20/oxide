@@ -45,6 +45,10 @@ impl NavmeshWaypoint {
             || self.rot_z.unwrap_or(rot.z) + self.rot_z_offset != rot.z
             || self.character_state != character_state
     }
+
+    pub fn pos_differs_from(&self, pos: Pos, character_state: CharacterState) -> bool {
+        self.pos != pos || self.character_state != character_state
+    }
 }
 
 #[derive(Clone)]
@@ -194,12 +198,15 @@ impl LinearPathState {
 
 #[derive(Clone)]
 pub struct NonLinearPathState {
+    destination: NavmeshWaypoint,
     waypoints: VecDeque<NavmeshWaypoint>,
     linear_path_state: LinearPathState,
 }
 
 impl NonLinearPathState {
     pub fn new(current_pos: Pos, mut destination: NavmeshWaypoint, navmesh: &Navmesh) -> Self {
+        let original_destination = destination.clone();
+
         let mut waypoints: VecDeque<NavmeshWaypoint> = navmesh
             .path(current_pos, destination.pos)
             .into_iter()
@@ -223,6 +230,7 @@ impl NonLinearPathState {
         waypoints.push_back(destination);
 
         NonLinearPathState {
+            destination: original_destination,
             waypoints,
             linear_path_state: LinearPathState::new(
                 NavmeshWaypoint::without_rot(current_pos, CharacterState::default()),
@@ -267,6 +275,10 @@ impl NonLinearPathState {
 
     pub fn pos_at_tick_start(&self) -> Pos {
         self.linear_path_state.pos_at_tick_start()
+    }
+
+    pub fn destination(&self) -> &NavmeshWaypoint {
+        &self.destination
     }
 }
 

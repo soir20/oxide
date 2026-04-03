@@ -2807,11 +2807,16 @@ impl Character {
                                 self.stats.max_distance_from_target,
                             );
 
-                            **pos_update_progress = NonLinearPathState::new(
-                                self.stats.pos,
-                                NavmeshWaypoint::without_rot(destination, STANDING),
-                                navmesh,
-                            );
+                            if pos_update_progress
+                                .destination()
+                                .pos_differs_from(destination, STANDING)
+                            {
+                                **pos_update_progress = NonLinearPathState::new(
+                                    self.stats.pos,
+                                    NavmeshWaypoint::without_rot(destination, STANDING),
+                                    navmesh,
+                                );
+                            }
                             pos_update = Some(pos_update_progress.tick(
                                 self.stats.guid,
                                 speed,
