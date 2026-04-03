@@ -55,13 +55,30 @@ impl From<NavmeshLayer> for Layer {
     }
 }
 
-type NavmeshConfig = HashMap<String, Vec<NavmeshLayer>>;
+const fn default_search_delta() -> f32 {
+    0.1
+}
+
+const fn default_search_steps() -> u32 {
+    2
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
+struct NavmeshConfig {
+    layers: HashMap<String, Vec<NavmeshLayer>>,
+    #[serde(default = "default_search_delta")]
+    search_delta: f32,
+    #[serde(default = "default_search_steps")]
+    search_steps: u32,
+}
 
 pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, ConfigError> {
     let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
     let config: NavmeshConfig = serde_yaml::from_reader(&mut file)?;
 
     if config
+        .layers
         .iter()
         .any(|(_, layers)| layers.len() > u8::MAX as usize)
     {
@@ -72,6 +89,7 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
     }
 
     Ok(config
+        .layers
         .into_iter()
         .map(|(asset_name, layers)| {
             let mut layers_by_vertex = HashMap::new();
@@ -110,6 +128,8 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
             };
 
             mesh.stitch_at_vertices(stitch_vertices.into_iter().collect(), false);
+            mesh.set_search_delta(config.search_delta);
+            mesh.set_search_steps(config.search_steps);
 
             (asset_name, Navmesh::Complex(mesh))
         })
