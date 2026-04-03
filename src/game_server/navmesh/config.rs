@@ -66,21 +66,22 @@ const fn default_search_steps() -> u32 {
 #[derive(Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 struct NavmeshConfig {
-    layers: HashMap<String, Vec<NavmeshLayer>>,
+    layers: Vec<NavmeshLayer>,
     #[serde(default = "default_search_delta")]
     search_delta: f32,
     #[serde(default = "default_search_steps")]
     search_steps: u32,
 }
 
+type NavmeshConfigs = HashMap<String, NavmeshConfig>;
+
 pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, ConfigError> {
     let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
-    let config: NavmeshConfig = serde_yaml::from_reader(&mut file)?;
+    let configs: NavmeshConfigs = serde_yaml::from_reader(&mut file)?;
 
-    if config
-        .layers
+    if configs
         .iter()
-        .any(|(_, layers)| layers.len() > u8::MAX as usize)
+        .any(|(_, config)| config.layers.len() > u8::MAX as usize)
     {
         return Err(ConfigError::ConstraintViolated(format!(
             "Cannot have more than {} navmesh layers",
@@ -88,14 +89,13 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
         )));
     }
 
-    Ok(config
-        .layers
+    Ok(configs
         .into_iter()
-        .map(|(asset_name, layers)| {
+        .map(|(asset_name, config)| {
             let mut layers_by_vertex = HashMap::new();
             let mut stitch_vertices: HashMap<(u8, u8), Vec<(usize, usize)>> = HashMap::new();
 
-            for (layer_index, layer) in layers.iter().enumerate() {
+            for (layer_index, layer) in config.layers.iter().enumerate() {
                 let layer_index = layer_index as u8;
 
                 for (vertex_index, vertex) in layer.exterior.iter().enumerate() {
@@ -123,7 +123,7 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
             }
 
             let mut mesh = Mesh {
-                layers: layers.into_iter().map(Layer::from).collect(),
+                layers: config.layers.into_iter().map(Layer::from).collect(),
                 ..Default::default()
             };
 
