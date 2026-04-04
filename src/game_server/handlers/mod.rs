@@ -120,7 +120,7 @@ pub fn pos_on_segment_at_distance_from_pos(
     };
 
     let candidate1_on_segment = is_between(segment_start, segment_end, candidate1);
-    let candidate2_on_segment = is_between(segment_start, segment_end, candidate1);
+    let candidate2_on_segment = is_between(segment_start, segment_end, candidate2);
 
     let dist1_to_start = distance3_pos(segment_start, candidate1);
     let dist2_to_start = distance3_pos(segment_start, candidate2);
