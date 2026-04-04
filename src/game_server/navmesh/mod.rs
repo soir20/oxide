@@ -235,29 +235,29 @@ impl NonLinearPathState {
             waypoints.truncate(index.saturating_add(1));
         }
 
-        let mut last_pos = waypoints
-            .pop_back()
-            .map(|last_waypoint| last_waypoint.pos)
-            .unwrap_or(current_pos);
         // We know the previous pos is further than max_offset from the destination
         // because we truncated the list of waypoints
-        let final_leg_distance = distance3_pos(last_pos, destination.pos);
-        if final_leg_distance < max_offset {
-            let before_last_pos = waypoints
-                .back()
-                .map(|waypoint| waypoint.pos)
-                .unwrap_or(current_pos);
-            if let Some(offset_pos) = pos_on_segment_at_distance_from_pos(
-                before_last_pos,
-                last_pos,
-                destination.pos,
-                max_offset,
-            ) {
-                last_pos = offset_pos;
+        if let Some(mut last_pos) = waypoints.pop_back().map(|last_waypoint| last_waypoint.pos) {
+            let final_leg_distance = distance3_pos(last_pos, destination.pos);
+
+            if final_leg_distance < max_offset {
+                let before_last_pos = waypoints
+                    .back()
+                    .map(|waypoint| waypoint.pos)
+                    .unwrap_or(current_pos);
+                if let Some(offset_pos) = pos_on_segment_at_distance_from_pos(
+                    before_last_pos,
+                    last_pos,
+                    destination.pos,
+                    max_offset,
+                ) {
+                    last_pos = offset_pos;
+                }
             }
+
+            destination.pos = last_pos;
+            waypoints.push_back(destination);
         }
-        destination.pos = last_pos;
-        waypoints.push_back(destination);
 
         NonLinearPathState {
             destination: original_destination,
