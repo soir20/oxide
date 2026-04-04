@@ -211,6 +211,18 @@ impl NonLinearPathState {
         navmesh: &Navmesh,
         max_offset: f32,
     ) -> Self {
+        if distance3_pos(current_pos, destination.pos) <= max_offset {
+            return NonLinearPathState {
+                destination,
+                max_offset,
+                waypoints: VecDeque::new(),
+                linear_path_state: LinearPathState::new(
+                    NavmeshWaypoint::without_rot(current_pos, CharacterState::default()),
+                    current_pos,
+                ),
+            };
+        }
+
         let original_destination = destination.clone();
 
         let mut waypoints: VecDeque<NavmeshWaypoint> = navmesh
