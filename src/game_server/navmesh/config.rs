@@ -56,11 +56,11 @@ impl From<NavmeshLayer> for Layer {
 }
 
 const fn default_search_delta() -> f32 {
-    0.1
+    0.25
 }
 
 const fn default_search_steps() -> u32 {
-    2
+    40
 }
 
 #[derive(Deserialize, Debug)]
