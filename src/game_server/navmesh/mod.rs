@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use glam::{Vec2, Vec3};
+use glam::Vec2;
 
 use crate::game_server::{
     handlers::{direction, distance3_pos, pos_on_segment_at_distance_from_pos},
@@ -365,8 +365,8 @@ impl Navmesh {
                     .path(start_polygon, end_polygon)
                     .map(|path| {
                         path.path_with_height(
-                            Vec3::new(start.x, start.y, start.z),
-                            Vec3::new(end.x, end.y, end.z),
+                            start_polygon.position_with_height(navmesh),
+                            end_polygon.position_with_height(navmesh),
                             navmesh,
                         )
                         .into_iter()
