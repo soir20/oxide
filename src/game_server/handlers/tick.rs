@@ -4,11 +4,7 @@ use crossbeam_channel::Sender;
 
 use crate::{
     game_server::{
-        handlers::{
-            character::CharacterType,
-            guid::IndexedGuid,
-            lock_enforcer::{ZoneLockEnforcer, ZoneLockRequest},
-        },
+        handlers::{character::CharacterType, guid::IndexedGuid},
         navmesh::{Navmesh, DEFAULT_NAVMESH},
         packets::{
             minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
@@ -92,10 +88,9 @@ pub fn tick_single_chunk(
             character_consumer: move |_,
             _,
             mut characters_write,
-            minigame_data_lock_enforcer| {
+            _| {
                 let mut broadcasts = Vec::new();
                 let mut pos_updates = Vec::new();
-                let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
 
                 for guid in tickable_characters.iter() {
                     let Some(mut tickable_character) = characters_write.remove(guid) else {
@@ -125,37 +120,30 @@ pub fn tick_single_chunk(
                         }
                     }
 
-                    zones_lock_enforcer.read_zones(|_| {
-                        ZoneLockRequest {
-                            read_guids: vec![instance_guid],
-                            write_guids: Vec::new(),
-                            zone_consumer: |_, zones_read, _| {
-                                let navmesh: &Navmesh = match tickable_character.stats.physics {
-                                    PhysicsState::Disabled => &DEFAULT_NAVMESH,
-                                    PhysicsState::Enabled => zones_read.get(&instance_guid)
-                                        .and_then(|zone_instance| game_server.navmeshes().get(&zone_instance.asset_name))
-                                        .unwrap_or(&DEFAULT_NAVMESH),
-                                };
+                    let navmesh: &Navmesh = match tickable_character.stats.physics {
+                        PhysicsState::Disabled => &DEFAULT_NAVMESH,
+                        PhysicsState::Enabled => tickable_character.stats.navmesh
+                            .as_ref()
+                            .and_then(|navmesh| game_server.navmeshes().get(navmesh))
+                            .unwrap_or(&DEFAULT_NAVMESH),
+                    };
 
-                                let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
-                                    now,
-                                    &nearby_player_guids,
-                                    &characters_write,
-                                    game_server.mounts(),
-                                    game_server.items(),
-                                    game_server.customizations(),
-                                    tick_duration,
-                                    navmesh,
-                                );
-                                broadcasts.append(&mut character_broadcasts);
-                                if let Some(pos_update) = character_pos_update {
-                                    pos_updates.push((*guid, pos_update));
-                                }
+                    let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
+                        now,
+                        &nearby_player_guids,
+                        &characters_write,
+                        game_server.mounts(),
+                        game_server.items(),
+                        game_server.customizations(),
+                        tick_duration,
+                        navmesh,
+                    );
+                    broadcasts.append(&mut character_broadcasts);
+                    if let Some(pos_update) = character_pos_update {
+                        pos_updates.push((*guid, pos_update));
+                    }
 
-                                characters_write.insert(*guid, tickable_character);
-                            },
-                        }
-                    });
+                    characters_write.insert(*guid, tickable_character);
                 }
 
                 (broadcasts, pos_updates)

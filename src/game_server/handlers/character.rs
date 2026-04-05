@@ -306,6 +306,7 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
+    pub navmesh: Option<String>,
 }
 
 #[derive(Clone)]
@@ -2123,6 +2124,7 @@ pub struct BaseNpcTemplate {
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
+    pub navmesh: Option<String>,
 }
 
 impl BaseNpcTemplate {
@@ -2211,6 +2213,7 @@ impl BaseNpcTemplate {
             one_shot_interaction: resolved_action,
             triggered_npc_keys_on_interact: config.triggered_npc_keys_on_interact.clone(),
             notification_icon: config.notification_icon,
+            navmesh: config.navmesh,
         }
     }
 
@@ -2268,6 +2271,7 @@ impl BaseNpcTemplate {
                 threat_table: self.enemy_prioritization.clone().into(),
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
+                navmesh: self.navmesh.clone(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2402,6 +2406,7 @@ pub struct CharacterStats {
     pub threat_table: ThreatTable,
     pub health: u32,
     pub composite_effect_tags: BTreeMap<u32, u32>,
+    pub navmesh: Option<String>,
 }
 
 impl CharacterStats {
@@ -2660,6 +2665,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
+                navmesh: None,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -2728,6 +2734,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
+                navmesh: None,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
