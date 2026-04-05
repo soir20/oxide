@@ -16,9 +16,9 @@ struct NavmeshLayer {
     pub obstacles: Vec<Polygon>,
 }
 
-impl From<NavmeshLayer> for Layer {
-    fn from(value: NavmeshLayer) -> Self {
-        let all_vertices = &[&value.exterior[..], &value.obstacles.concat()].concat();
+impl NavmeshLayer {
+    fn into(self, agent_radius: f32) -> Layer {
+        let all_vertices = &[&self.exterior[..], &self.obstacles.concat()].concat();
         let kd_tree: ImmutableKdTree<f32, usize, 2, 32> = ImmutableKdTree::new_from_slice(
             &all_vertices
                 .iter()
@@ -26,18 +26,18 @@ impl From<NavmeshLayer> for Layer {
                 .collect::<Vec<[f32; 2]>>(),
         );
 
-        let exterior_vertices: Vec<Vec2> = value
+        let exterior_vertices: Vec<Vec2> = self
             .exterior
             .iter()
             .map(|vertex| Vec2::new(vertex[0], vertex[2]))
             .collect();
         let mut triangulation = Triangulation::from_outer_edges(&exterior_vertices);
-        triangulation.add_obstacles(value.obstacles.into_iter().map(|obstacle| {
+        triangulation.add_obstacles(self.obstacles.into_iter().map(|obstacle| {
             obstacle
                 .into_iter()
                 .map(|vertex| Vec2::new(vertex[0], vertex[2]))
         }));
-        triangulation.set_agent_radius(0.75);
+        triangulation.set_agent_radius(agent_radius);
 
         let mut layer = triangulation.as_layer();
         layer.height = layer
@@ -63,6 +63,10 @@ const fn default_search_steps() -> u32 {
     40
 }
 
+const fn default_agent_radius() -> f32 {
+    0.75
+}
+
 #[derive(Deserialize, Debug)]
 #[serde(deny_unknown_fields)]
 struct NavmeshConfig {
@@ -71,6 +75,8 @@ struct NavmeshConfig {
     search_delta: f32,
     #[serde(default = "default_search_steps")]
     search_steps: u32,
+    #[serde(default = "default_agent_radius")]
+    agent_radius: f32,
 }
 
 type NavmeshConfigs = HashMap<String, NavmeshConfig>;
@@ -123,7 +129,11 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
             }
 
             let mut mesh = Mesh {
-                layers: config.layers.into_iter().map(Layer::from).collect(),
+                layers: config
+                    .layers
+                    .into_iter()
+                    .map(|layer| layer.into(config.agent_radius))
+                    .collect(),
                 ..Default::default()
             };
 
