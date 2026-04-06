@@ -1574,6 +1574,7 @@ impl<'de> Deserialize<'de> for DailyResetOffset {
 }
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 struct DeserializableMinigameConfigs {
     #[serde(rename(deserialize = "daily_reset_utc_offset_seconds"))]
     daily_reset_offset: DailyResetOffset,
