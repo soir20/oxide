@@ -1,5 +1,5 @@
 use std::backtrace::Backtrace;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
 use std::num::ParseIntError;
@@ -63,10 +63,13 @@ use rand::Rng;
 
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
+use crate::game_server::navmesh::config::load_navmeshes;
+use crate::game_server::navmesh::Navmesh;
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod handlers;
+mod navmesh;
 mod packets;
 
 #[derive(Debug)]
@@ -193,6 +196,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
+    navmeshes: HashMap<String, Navmesh>,
     points_of_interest: BTreeMap<u32, (u8, PointOfInterestConfig)>,
     start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
@@ -220,6 +224,7 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
+            navmeshes: load_navmeshes(config_dir)?,
             points_of_interest,
             start_time: Instant::now(),
             zone_templates: templates,
@@ -850,6 +855,10 @@ impl GameServer {
 
     pub fn mounts(&self) -> &BTreeMap<u32, MountConfig> {
         &self.mounts
+    }
+
+    pub fn navmeshes(&self) -> &HashMap<String, Navmesh> {
+        &self.navmeshes
     }
 
     pub fn points_of_interest(&self) -> &BTreeMap<u32, (u8, PointOfInterestConfig)> {
