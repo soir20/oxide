@@ -354,7 +354,7 @@
   item_type: 25
   category: 64
 # Nelona Lightsaber
-- guid: 110002
+- guid: 110001
   name_id: 4806
   description_id: 14
   icon_set_id: 2838
@@ -365,7 +365,7 @@
   item_type: 25
   category: 64
 # Sith Warrior Lightsaber
-- guid: 110004
+- guid: 110002
   name_id: 52792
   description_id: 14
   icon_set_id: 3118
@@ -376,7 +376,7 @@
   item_type: 25
   category: 64
 # Sith Inquisitor Lightsaber
-- guid: 110006
+- guid: 110003
   name_id: 4907
   description_id: 14
   icon_set_id: 2938
@@ -387,7 +387,7 @@
   item_type: 25
   category: 64
 # Forgotten Jedi Reverse Lightsaber
-- guid: 110007
+- guid: 110004
   name_id: 60286
   description_id: 14
   icon_set_id: 3735
@@ -399,7 +399,7 @@
   category: 64
   members: true
 # Jedi Champion Reverse Lightsaber
-- guid: 110008
+- guid: 110005
   name_id: 52786
   description_id: 14
   icon_set_id: 3133
@@ -411,7 +411,7 @@
   category: 64
   members: true
 # Kofun Lightsaber
-- guid: 110009
+- guid: 110006
   name_id: 4823
   description_id: 14
   icon_set_id: 2862
@@ -422,7 +422,7 @@
   item_type: 25
   category: 64
 # Aayla Secura's Lightsaber
-- guid: 110010
+- guid: 110007
   name_id: 306
   description_id: 14
   icon_set_id: 221
@@ -433,7 +433,7 @@
   item_type: 25
   category: 64
 # Barriss Offee's Lightsaber
-- guid: 110017
+- guid: 110008
   name_id: 14786
   description_id: 14
   icon_set_id: 508
@@ -445,7 +445,7 @@
   category: 64
   members: true
 # Byph's Lightsaber
-- guid: 110018
+- guid: 110009
   name_id: 53615
   description_id: 14
   icon_set_id: 3207
@@ -457,7 +457,7 @@
   category: 64
   members: true
 # Sith Infiltrator Lightsaber
-- guid: 110020
+- guid: 110010
   name_id: 4976
   description_id: 14
   icon_set_id: 3045
@@ -468,7 +468,7 @@
   item_type: 25
   category: 64
 # Dolovite Darksaber
-- guid: 110022
+- guid: 110011
   name_id: 54592
   description_id: 14
   icon_set_id: 3829
@@ -479,7 +479,7 @@
   item_type: 25
   category: 64
 # Phrik Darksaber
-- guid: 110023
+- guid: 110012
   name_id: 54521
   description_id: 14
   icon_set_id: 3791
@@ -490,7 +490,7 @@
   item_type: 25
   category: 64
 # Darth Maul's Lightsaber
-- guid: 110024
+- guid: 110013
   name_id: 4718
   description_id: 14
   icon_set_id: 2764
@@ -502,7 +502,7 @@
   category: 64
   members: true
 # Eeth Koth's Lightsaber
-- guid: 110026
+- guid: 110014
   name_id: 2440
   description_id: 14
   icon_set_id: 226
@@ -513,7 +513,7 @@
   item_type: 25
   category: 64
 # Jedi Exile Lightsaber
-- guid: 110027
+- guid: 110015
   name_id: 54602
   description_id: 14
   icon_set_id: 3835
@@ -524,7 +524,7 @@
   item_type: 25
   category: 64
 # Forked Lightsaber
-- guid: 110028
+- guid: 110016
   name_id: 54593
   description_id: 14
   icon_set_id: 3828
@@ -535,7 +535,7 @@
   item_type: 25
   category: 64
 # Ganodi's Lightsaber
-- guid: 110029
+- guid: 110017
   name_id: 53620
   description_id: 14
   icon_set_id: 3212
@@ -547,7 +547,7 @@
   category: 64
   members: true
 # Gungi's Lightsaber
-- guid: 110031
+- guid: 110018
   name_id: 53616
   description_id: 14
   icon_set_id: 3208
@@ -559,7 +559,7 @@
   category: 64
   members: true
 # Jocasta Nu's Lightsaber
-- guid: 110032
+- guid: 110019
   name_id: 8769
   description_id: 14
   icon_set_id: 227
@@ -571,7 +571,7 @@
   category: 64
   members: true
 # Katooni's Lightsaber
-- guid: 110035
+- guid: 110020
   name_id: 53621
   description_id: 14
   icon_set_id: 3213
@@ -583,7 +583,7 @@
   category: 64
   members: true
 # Ki-Adi-Mundi's Lightsaber
-- guid: 110036
+- guid: 110021
   name_id: 2444
   description_id: 14
   icon_set_id: 228
@@ -594,7 +594,7 @@
   item_type: 25
   category: 64
 # Sulon Jedi Lightsaber
-- guid: 110039
+- guid: 110022
   name_id: 60157
   description_id: 14
   icon_set_id: 511
@@ -605,7 +605,7 @@
   item_type: 25
   category: 64
 # Luke Skywalker's Lightsaber
-- guid: 110040
+- guid: 110023
   name_id: 8770
   description_id: 14
   icon_set_id: 230
@@ -616,7 +616,7 @@
   item_type: 25
   category: 64
 # Petro's Lightsaber
-- guid: 110046
+- guid: 110024
   name_id: 53617
   description_id: 14
   icon_set_id: 3209
@@ -628,7 +628,7 @@
   category: 64
   members: true
 # Shotem Master Lightsaber
-- guid: 110048
+- guid: 110025
   name_id: 60678
   description_id: 14
   icon_set_id: 3788
@@ -639,7 +639,7 @@
   item_type: 25
   category: 64
 # Crimson Prowler Lightsaber
-- guid: 110054
+- guid: 110026
   name_id: 60198
   description_id: 14
   icon_set_id: 3721
@@ -650,7 +650,7 @@
   item_type: 25
   category: 64
 # Talz Lightsaber
-- guid: 110056
+- guid: 110027
   name_id: 4824
   description_id: 14
   icon_set_id: 2863
@@ -661,7 +661,7 @@
   item_type: 25
   category: 64
 # Yoda's Lightsaber
-- guid: 110062
+- guid: 110028
   name_id: 1797
   description_id: 14
   icon_set_id: 3169
@@ -672,7 +672,7 @@
   item_type: 25
   category: 64
 # Zatt's Lightsaber
-- guid: 110063
+- guid: 110029
   name_id: 53619
   description_id: 14
   icon_set_id: 3211
@@ -684,7 +684,7 @@
   category: 64
   members: true
 # Yoda's Lightsaber (NPC only)
-- guid: 110065
+- guid: 110030
   name_id: 1797
   description_id: 14
   icon_set_id: 3169

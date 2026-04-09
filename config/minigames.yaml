@@ -478,7 +478,7 @@ categories:
                       name_id: 9522
                       model_id: 388
                       primary_saber:
-                        hilt_item_guid: 110017
+                        hilt_item_guid: 110008
                         shape_item_guid: 90000
                         color_item_guid: 100000
                       entrance_animation_id: 6205
@@ -655,7 +655,7 @@ categories:
                       name_id: 9540
                       model_id: 387
                       primary_saber:
-                        hilt_item_guid: 110036
+                        hilt_item_guid: 110021
                         shape_item_guid: 90000
                         color_item_guid: 100000
                       entrance_animation_id: 6207
@@ -1013,7 +1013,7 @@ categories:
                         shape_item_guid: 90000
                         color_item_guid: 100001
                       secondary_saber:
-                        hilt_item_guid: 140010
+                        hilt_item_guid: 140000
                         shape_item_guid: 120000
                         color_item_guid: 130000
                       entrance_animation_id: 6201
@@ -2793,7 +2793,7 @@ categories:
                       name_id: 5150
                       model_id: 2566
                       primary_saber:
-                        hilt_item_guid: 110065
+                        hilt_item_guid: 110030
                         shape_item_guid: 90014
                         color_item_guid: 100001
                       entrance_animation_id: 6214
@@ -3736,7 +3736,7 @@ categories:
                       name_id: 10380
                       model_id: 2313
                       primary_saber:
-                        hilt_item_guid: 110024
+                        hilt_item_guid: 110013
                         shape_item_guid: 90000
                         color_item_guid: 100004
                       entrance_animation_id: 6219
@@ -3884,7 +3884,7 @@ categories:
                         shape_item_guid: 90000
                         color_item_guid: 100002
                       secondary_saber:
-                        hilt_item_guid: 140019
+                        hilt_item_guid: 140005
                         shape_item_guid: 120000
                         color_item_guid: 130004
                       entrance_animation_id: 5004
