@@ -1,6 +1,6 @@
 ---
 # Blinged-Out Trooper Armor
-- guid: 170000
+- guid: 749
   name_id: 14164
   description_id: 14
   icon_set_id: 446
@@ -10,7 +10,7 @@
   item_type: 1
   category: 61
 # Blinged-Out Trooper Helmet
-- guid: 170001
+- guid: 752
   name_id: 14170
   description_id: 14
   icon_set_id: 449
@@ -20,7 +20,7 @@
   item_type: 1
   category: 60
 # Blinged-Out Trooper Gloves
-- guid: 170002
+- guid: 751
   name_id: 14168
   description_id: 14
   icon_set_id: 448
@@ -30,7 +30,7 @@
   item_type: 1
   category: 62
 # Blinged-Out Trooper Boots
-- guid: 170003
+- guid: 750
   name_id: 14166
   description_id: 14
   icon_set_id: 447
@@ -40,7 +40,7 @@
   item_type: 1
   category: 63
 # Skeletal Clone Trooper Armor
-- guid: 170004
+- guid: 3090
   name_id: 4278
   description_id: 14
   icon_set_id: 2397
@@ -51,7 +51,7 @@
   category: 61
   members: true
 # Skeletal Clone Trooper Helmet
-- guid: 170005
+- guid: 3088
   name_id: 4276
   description_id: 14
   icon_set_id: 2395
@@ -62,7 +62,7 @@
   category: 60
   members: true
 # Skeletal Clone Trooper Gloves
-- guid: 170006
+- guid: 3089
   name_id: 4277
   description_id: 14
   icon_set_id: 2396
@@ -73,7 +73,7 @@
   category: 62
   members: true
 # Skeletal Clone Trooper Boots
-- guid: 170007
+- guid: 3091
   name_id: 4279
   description_id: 14
   icon_set_id: 2398
@@ -84,7 +84,7 @@
   category: 63
   members: true
 # Spiked Trooper Armor
-- guid: 170008
+- guid: 271
   name_id: 894
   description_id: 14
   icon_set_id: 498
@@ -94,7 +94,7 @@
   item_type: 1
   category: 61
 # Spiked Trooper Helmet
-- guid: 170009
+- guid: 269
   name_id: 890
   description_id: 14
   icon_set_id: 501
@@ -104,7 +104,7 @@
   item_type: 1
   category: 60
 # Spiked Trooper Gloves
-- guid: 170010
+- guid: 270
   name_id: 892
   description_id: 14
   icon_set_id: 500
@@ -114,7 +114,7 @@
   item_type: 1
   category: 62
 # Spiked Trooper Boots
-- guid: 170011
+- guid: 272
   name_id: 896
   description_id: 14
   icon_set_id: 499
@@ -124,7 +124,7 @@
   item_type: 1
   category: 63
 # Pirate Jedi Coat
-- guid: 170012
+- guid: 1598
   name_id: 2973
   description_id: 14
   icon_set_id: 2384
@@ -135,7 +135,7 @@
   category: 61
   members: true
 # Pirate Jedi Hat
-- guid: 170013
+- guid: 1596
   name_id: 2969
   description_id: 14
   icon_set_id: 2382
@@ -146,7 +146,7 @@
   category: 60
   members: true
 # Pirate Jedi Gloves
-- guid: 170014
+- guid: 1597
   name_id: 2971
   description_id: 14
   icon_set_id: 2383
@@ -157,7 +157,7 @@
   category: 62
   members: true
 # Pirate Jedi Pegleg
-- guid: 170015
+- guid: 1599
   name_id: 2975
   description_id: 14
   icon_set_id: 2385
@@ -168,7 +168,7 @@
   category: 63
   members: true
 # Purple Wampa Suit
-- guid: 170016
+- guid: 768
   name_id: 938
   description_id: 14
   icon_set_id: 483
@@ -179,7 +179,7 @@
   category: 61
   members: true
 # Purple Wampa Mask
-- guid: 170017
+- guid: 783
   name_id: 968
   description_id: 14
   icon_set_id: 486
@@ -190,7 +190,7 @@
   category: 60
   members: true
 # Purple Wampa Claws
-- guid: 170018
+- guid: 778
   name_id: 958
   description_id: 14
   icon_set_id: 485
@@ -201,7 +201,7 @@
   category: 62
   members: true
 # Purple Wampa Feet
-- guid: 170019
+- guid: 772
   name_id: 946
   description_id: 14
   icon_set_id: 484
@@ -212,7 +212,7 @@
   category: 63
   members: true
 # Zillo Beast Suit
-- guid: 170020
+- guid: 866
   name_id: 1331
   description_id: 14
   icon_set_id: 1144
@@ -222,7 +222,7 @@
   item_type: 1
   category: 61
 # Zillo Beast Head
-- guid: 170021
+- guid: 914
   name_id: 1426
   description_id: 14
   icon_set_id: 1147
@@ -232,7 +232,7 @@
   item_type: 1
   category: 60
 # Zillo Beast Gloves
-- guid: 170022
+- guid: 898
   name_id: 1394
   description_id: 14
   icon_set_id: 1146
@@ -242,7 +242,7 @@
   item_type: 1
   category: 62
 # Zillo Beast Shoes
-- guid: 170023
+- guid: 883
   name_id: 1364
   description_id: 14
   icon_set_id: 1145
@@ -252,7 +252,7 @@
   item_type: 1
   category: 63
 # Pink Tusken Raider Robes
-- guid: 170024
+- guid: 612
   name_id: 224
   description_id: 14
   icon_set_id: 114
@@ -263,7 +263,7 @@
   category: 61
   members: true
 # Pink Tusken Raider Helmet
-- guid: 170025
+- guid: 610
   name_id: 220
   description_id: 14
   icon_set_id: 208
@@ -274,7 +274,7 @@
   category: 60
   members: true
 # Pink Tusken Raider Gloves
-- guid: 170026
+- guid: 611
   name_id: 222
   description_id: 14
   icon_set_id: 182
@@ -285,7 +285,7 @@
   category: 62
   members: true
 # Pink Tusken Raider Boots
-- guid: 170027
+- guid: 613
   name_id: 226
   description_id: 14
   icon_set_id: 152
@@ -327,7 +327,7 @@
   item_type: 1
   category: 60
 # Grievous Mask
-- guid: 170031
+- guid: 1106
   name_id: 1624
   description_id: 14
   icon_set_id: 1386
@@ -338,7 +338,7 @@
   category: 60
   members: true
 # Gungan Mask
-- guid: 170032
+- guid: 1107
   name_id: 1626
   description_id: 14
   icon_set_id: 1387
@@ -348,7 +348,7 @@
   item_type: 1
   category: 60
 # Jabba Mask
-- guid: 170033
+- guid: 1191
   name_id: 1842
   description_id: 14
   icon_set_id: 1388
@@ -359,7 +359,7 @@
   category: 60
   members: true
 # Ortolan Mask
-- guid: 170034
+- guid: 1109
   name_id: 1630
   description_id: 14
   icon_set_id: 1389
@@ -391,7 +391,7 @@
   category: 60
   members: true
 # Protocol Droid Mask
-- guid: 170037
+- guid: 1190
   name_id: 1860
   description_id: 14
   icon_set_id: 1392
@@ -401,7 +401,7 @@
   item_type: 1
   category: 60
 # Yoda Mask
-- guid: 170038
+- guid: 1108
   name_id: 1666
   description_id: 14
   icon_set_id: 1393
@@ -412,7 +412,7 @@
   category: 60
   members: true
 # Life Day Robe
-- guid: 170039
+- guid: 2184
   name_id: 20305
   description_id: 14
   icon_set_id: 1480
@@ -422,7 +422,7 @@
   item_type: 1
   category: 61
 # Life Day Boots
-- guid: 170040
+- guid: 2185
   name_id: 20307
   description_id: 14
   icon_set_id: 1481
@@ -432,7 +432,7 @@
   item_type: 1
   category: 63
 # Life Day Clone Trooper Armor
-- guid: 170041
+- guid: 2200
   name_id: 20321
   description_id: 14
   icon_set_id: 1488
@@ -442,7 +442,7 @@
   item_type: 1
   category: 61
 # Life Day Clone Trooper Helm
-- guid: 170042
+- guid: 2198
   name_id: 20317
   description_id: 14
   icon_set_id: 1486
@@ -452,7 +452,7 @@
   item_type: 1
   category: 60
 # Life Day Clone Trooper Gloves
-- guid: 170043
+- guid: 2199
   name_id: 20319
   description_id: 14
   icon_set_id: 1487
@@ -462,7 +462,7 @@
   item_type: 1
   category: 62
 # Life Day Clone Trooper Boots
-- guid: 170044
+- guid: 2201
   name_id: 20323
   description_id: 14
   icon_set_id: 1489
@@ -472,7 +472,7 @@
   item_type: 1
   category: 63
 # Nutcracker Clone Trooper Armor
-- guid: 170045
+- guid: 2192
   name_id: 20313
   description_id: 14
   icon_set_id: 1484
@@ -482,7 +482,7 @@
   item_type: 1
   category: 61
 # Nutcracker Clone Trooper Helm
-- guid: 170046
+- guid: 2190
   name_id: 20309
   description_id: 14
   icon_set_id: 1482
@@ -492,7 +492,7 @@
   item_type: 1
   category: 60
 # Nutcracker Clone Trooper Gloves
-- guid: 170047
+- guid: 2191
   name_id: 20311
   description_id: 14
   icon_set_id: 1483
@@ -502,7 +502,7 @@
   item_type: 1
   category: 62
 # Nutcracker Clone Trooper Boots
-- guid: 170048
+- guid: 2193
   name_id: 20315
   description_id: 14
   icon_set_id: 1485
@@ -512,7 +512,7 @@
   item_type: 1
   category: 63
 # Obi-Wan's Festive Robe
-- guid: 170049
+- guid: 3309
   name_id: 4510
   description_id: 14
   icon_set_id: 2580
@@ -523,7 +523,7 @@
   category: 61
   members: true
 # Obi-Wan's Festive Hat
-- guid: 170050
+- guid: 3307
   name_id: 4508
   description_id: 14
   icon_set_id: 2578
@@ -534,7 +534,7 @@
   category: 60
   members: true
 # Obi-Wan's Festive Gloves
-- guid: 170051
+- guid: 3308
   name_id: 4509
   description_id: 14
   icon_set_id: 2579
@@ -545,7 +545,7 @@
   category: 62
   members: true
 # Obi-Wan's Festive Boots
-- guid: 170052
+- guid: 3310
   name_id: 4511
   description_id: 14
   icon_set_id: 2581
@@ -556,7 +556,7 @@
   category: 63
   members: true
 # Wampa Suit
-- guid: 170053
+- guid: 769
   name_id: 940
   description_id: 14
   icon_set_id: 502
@@ -567,7 +567,7 @@
   category: 61
   members: true
 # Wampa Mask
-- guid: 170054
+- guid: 784
   name_id: 970
   description_id: 14
   icon_set_id: 505
@@ -578,7 +578,7 @@
   category: 60
   members: true
 # Wampa Claws
-- guid: 170055
+- guid: 779
   name_id: 960
   description_id: 14
   icon_set_id: 504
@@ -589,7 +589,7 @@
   category: 62
   members: true
 # Wampa Feet
-- guid: 170056
+- guid: 773
   name_id: 948
   description_id: 14
   icon_set_id: 503
@@ -640,7 +640,7 @@
   item_type: 1
   category: 63
 # Cupid Clone's Armor
-- guid: 170061
+- guid: 2390
   name_id: 33885
   description_id: 14
   icon_set_id: 1669
@@ -650,7 +650,7 @@
   item_type: 1
   category: 61
 # Cupid Clone's Helmet
-- guid: 170062
+- guid: 2388
   name_id: 33884
   description_id: 14
   icon_set_id: 1672
@@ -660,7 +660,7 @@
   item_type: 1
   category: 60
 # Cupid Clone's Gloves
-- guid: 170063
+- guid: 2389
   name_id: 33886
   description_id: 14
   icon_set_id: 1671
@@ -670,7 +670,7 @@
   item_type: 1
   category: 62
 # Cupid Clone's Boots
-- guid: 170064
+- guid: 2391
   name_id: 33887
   description_id: 14
   icon_set_id: 1670

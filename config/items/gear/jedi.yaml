@@ -1,6 +1,6 @@
 ---
 # Adi Gallia's Tunic
-- guid: 180000
+- guid: 188
   name_id: 914
   description_id: 14
   icon_set_id: 432
@@ -11,7 +11,7 @@
   category: 61
   members: true
 # Adi Gallia's Headdress
-- guid: 180001
+- guid: 780
   name_id: 962
   description_id: 14
   icon_set_id: 435
@@ -22,7 +22,7 @@
   category: 60
   members: true
 # Adi Gallia's Gloves
-- guid: 180002
+- guid: 187
   name_id: 912
   description_id: 14
   icon_set_id: 434
@@ -33,7 +33,7 @@
   category: 62
   members: true
 # Adi Gallia's Boots
-- guid: 180003
+- guid: 189
   name_id: 916
   description_id: 14
   icon_set_id: 433
@@ -44,7 +44,7 @@
   category: 63
   members: true
 # Anakin Skywalker's Original Robes
-- guid: 180004
+- guid: 416
   name_id: 2514
   description_id: 14
   icon_set_id: 80
@@ -54,7 +54,7 @@
   item_type: 1
   category: 61
 # Anakin Skywalker's Original Gloves
-- guid: 180005
+- guid: 418
   name_id: 2516
   description_id: 14
   icon_set_id: 154
@@ -64,7 +64,7 @@
   item_type: 1
   category: 62
 # Anakin Skywalker's Original Boots
-- guid: 180006
+- guid: 417
   name_id: 2515
   description_id: 14
   icon_set_id: 117
@@ -74,7 +74,7 @@
   item_type: 1
   category: 63
 # Anakin Skywalker's Robes
-- guid: 180007
+- guid: 1279
   name_id: 1903
   description_id: 14
   icon_set_id: 1445
@@ -84,7 +84,7 @@
   item_type: 1
   category: 61
 # Anakin Skywalker's Gloves
-- guid: 180008
+- guid: 1278
   name_id: 1901
   description_id: 14
   icon_set_id: 1447
@@ -94,7 +94,7 @@
   item_type: 1
   category: 62
 # Anakin Skywalker's Boots
-- guid: 180009
+- guid: 1280
   name_id: 1905
   description_id: 14
   icon_set_id: 1446
@@ -104,7 +104,7 @@
   item_type: 1
   category: 63
 # Republic Diver Gloves
-- guid: 180010
+- guid: 1311
   name_id: 2346
   description_id: 14
   icon_set_id: 2325
@@ -114,7 +114,7 @@
   item_type: 1
   category: 62
 # Republic Diver Flippers
-- guid: 180011
+- guid: 1313
   name_id: 2350
   description_id: 14
   icon_set_id: 2324
@@ -124,7 +124,7 @@
   item_type: 1
   category: 63
 # Republic Diver Wetsuit
-- guid: 180012
+- guid: 1312
   name_id: 2348
   description_id: 14
   icon_set_id: 2323
@@ -134,7 +134,7 @@
   item_type: 1
   category: 61
 # Diver Anakin Skywalker's Helmet
-- guid: 180013
+- guid: 1310
   name_id: 2344
   description_id: 14
   icon_set_id: 2326
@@ -144,7 +144,7 @@
   item_type: 1
   category: 60
 # Mace Windu's Robes
-- guid: 180014
+- guid: 463
   name_id: 8896
   description_id: 14
   icon_set_id: 103
@@ -154,7 +154,7 @@
   item_type: 1
   category: 61
 # Mace Windu's Gloves
-- guid: 180015
+- guid: 465
   name_id: 8900
   description_id: 14
   icon_set_id: 173
@@ -164,7 +164,7 @@
   item_type: 1
   category: 62
 # Mace Windu's Boots
-- guid: 180016
+- guid: 464
   name_id: 8898
   description_id: 14
   icon_set_id: 146
@@ -174,7 +174,7 @@
   item_type: 1
   category: 63
 # Shotem Jedi Robes
-- guid: 180017
+- guid: 860
   name_id: 1319
   description_id: 14
   icon_set_id: 1104
@@ -184,7 +184,7 @@
   item_type: 1
   category: 61
 # Shotem Jedi Visor
-- guid: 180018
+- guid: 909
   name_id: 1416
   description_id: 14
   icon_set_id: 1107
@@ -194,7 +194,7 @@
   item_type: 1
   category: 60
 # Shotem Jedi Gloves
-- guid: 180019
+- guid: 894
   name_id: 1386
   description_id: 14
   icon_set_id: 1106
@@ -204,7 +204,7 @@
   item_type: 1
   category: 62
 # Shotem Jedi Boots
-- guid: 180020
+- guid: 879
   name_id: 1356
   description_id: 14
   icon_set_id: 1105
@@ -254,7 +254,7 @@
   item_type: 1
   category: 63
 # Miko Jedi Tunic
-- guid: 180025
+- guid: 245
   name_id: 842
   description_id: 14
   icon_set_id: 458
@@ -264,7 +264,7 @@
   item_type: 1
   category: 61
 # Miko Jedi Gloves
-- guid: 180026
+- guid: 244
   name_id: 840
   description_id: 14
   icon_set_id: 460
@@ -274,7 +274,7 @@
   item_type: 1
   category: 62
 # Miko Jedi Boots
-- guid: 180027
+- guid: 246
   name_id: 844
   description_id: 14
   icon_set_id: 459
@@ -284,7 +284,7 @@
   item_type: 1
   category: 63
 # Quinlan Vos' Jedi Robes
-- guid: 180028
+- guid: 1152
   name_id: 1753
   description_id: 14
   icon_set_id: 1433
@@ -294,7 +294,7 @@
   item_type: 1
   category: 61
 # Quinlan Vos' Wraps
-- guid: 180029
+- guid: 1151
   name_id: 1751
   description_id: 14
   icon_set_id: 1435
@@ -304,7 +304,7 @@
   item_type: 1
   category: 62
 # Quinlan Vos' Boots
-- guid: 180030
+- guid: 1153
   name_id: 1755
   description_id: 14
   icon_set_id: 1434
@@ -314,7 +314,7 @@
   item_type: 1
   category: 63
 # Ahsoka Tano's Original Tunic
-- guid: 180031
+- guid: 191
   name_id: 920
   description_id: 14
   icon_set_id: 436
@@ -325,7 +325,7 @@
   category: 61
   members: true
 # Ahsoka Tano's Original Gloves
-- guid: 180032
+- guid: 190
   name_id: 918
   description_id: 14
   icon_set_id: 438
@@ -336,7 +336,7 @@
   category: 62
   members: true
 # Ahsoka Tano's Original Boots
-- guid: 180033
+- guid: 192
   name_id: 922
   description_id: 14
   icon_set_id: 437
@@ -347,7 +347,7 @@
   category: 63
   members: true
 # Ahsoka Tano's Tunic
-- guid: 180034
+- guid: 1276
   name_id: 1897
   description_id: 14
   icon_set_id: 1444
@@ -357,7 +357,7 @@
   item_type: 1
   category: 61
 # Ahsoka Tano's Gloves
-- guid: 180035
+- guid: 1274
   name_id: 1893
   description_id: 14
   icon_set_id: 1443
@@ -367,7 +367,7 @@
   item_type: 1
   category: 62
 # Ahsoka Tano's Boots
-- guid: 180036
+- guid: 1277
   name_id: 1899
   description_id: 14
   icon_set_id: 1442
@@ -377,7 +377,7 @@
   item_type: 1
   category: 63
 # Ahsoka Tano's Zygerrian Suit
-- guid: 180037
+- guid: 3248
   name_id: 4450
   description_id: 14
   icon_set_id: 2508
@@ -387,7 +387,7 @@
   item_type: 1
   category: 61
 # Ahsoka Tano's Zygerrian Shoes
-- guid: 180038
+- guid: 3249
   name_id: 4451
   description_id: 14
   icon_set_id: 2509
@@ -397,7 +397,7 @@
   item_type: 1
   category: 63
 # Saesee Tiin's Flight Gear
-- guid: 180039
+- guid: 2889
   name_id: 44894
   description_id: 14
   icon_set_id: 2130
@@ -407,7 +407,7 @@
   item_type: 1
   category: 61
 # Saesee Tiin's Robes
-- guid: 180040
+- guid: 2704
   name_id: 43186
   description_id: 14
   icon_set_id: 1789
@@ -417,7 +417,7 @@
   item_type: 1
   category: 61
 # Saesee Tiin's Gloves
-- guid: 180041
+- guid: 2703
   name_id: 43185
   description_id: 14
   icon_set_id: 1791
@@ -427,7 +427,7 @@
   item_type: 1
   category: 62
 # Saesee Tiin's Boots
-- guid: 180042
+- guid: 2705
   name_id: 43187
   description_id: 14
   icon_set_id: 1790
@@ -481,7 +481,7 @@
   category: 63
   members: true
 # Covert Anakin Tunic
-- guid: 180047
+- guid: 2770
   name_id: 43963
   description_id: 14
   icon_set_id: 1947
@@ -491,7 +491,7 @@
   item_type: 1
   category: 61
 # Covert Anakin Gloves
-- guid: 180048
+- guid: 2769
   name_id: 43962
   description_id: 14
   icon_set_id: 1949
@@ -501,7 +501,7 @@
   item_type: 1
   category: 62
 # Covert Anakin Boots
-- guid: 180049
+- guid: 2771
   name_id: 43964
   description_id: 14
   icon_set_id: 1948
@@ -511,7 +511,7 @@
   item_type: 1
   category: 63
 # Fiery Ahsoka Tunic
-- guid: 180050
+- guid: 2775
   name_id: 44191
   description_id: 14
   icon_set_id: 1957
@@ -521,7 +521,7 @@
   item_type: 1
   category: 61
 # Fiery Ahsoka Gloves
-- guid: 180051
+- guid: 2774
   name_id: 44190
   description_id: 14
   icon_set_id: 1959
@@ -531,7 +531,7 @@
   item_type: 1
   category: 62
 # Fiery Ahsoka Boots
-- guid: 180052
+- guid: 2776
   name_id: 44192
   description_id: 14
   icon_set_id: 1958
@@ -541,7 +541,7 @@
   item_type: 1
   category: 63
 # Sassy Ahsoka Tunic
-- guid: 180053
+- guid: 2788
   name_id: 44378
   description_id: 14
   icon_set_id: 1978
@@ -551,7 +551,7 @@
   item_type: 1
   category: 61
 # Sassy Ahsoka Gloves
-- guid: 180054
+- guid: 2787
   name_id: 44377
   description_id: 14
   icon_set_id: 1980
@@ -561,7 +561,7 @@
   item_type: 1
   category: 62
 # Sassy Ahsoka Boots
-- guid: 180055
+- guid: 2789
   name_id: 44376
   description_id: 14
   icon_set_id: 1979
@@ -571,7 +571,7 @@
   item_type: 1
   category: 63
 # Adept Ahsoka Tunic
-- guid: 180056
+- guid: 2792
   name_id: 44503
   description_id: 14
   icon_set_id: 1986
@@ -581,7 +581,7 @@
   item_type: 1
   category: 61
 # Adept Ahsoka Gloves
-- guid: 180057
+- guid: 2791
   name_id: 44502
   description_id: 14
   icon_set_id: 1985
@@ -591,7 +591,7 @@
   item_type: 1
   category: 62
 # Adept Ahsoka Boots
-- guid: 180058
+- guid: 2793
   name_id: 44504
   description_id: 14
   icon_set_id: 1987
@@ -601,7 +601,7 @@
   item_type: 1
   category: 63
 # Icy Anakin Tunic
-- guid: 180059
+- guid: 2817
   name_id: 44669
   description_id: 14
   icon_set_id: 2008
@@ -611,7 +611,7 @@
   item_type: 1
   category: 61
 # Icy Anakin Gloves
-- guid: 180060
+- guid: 2816
   name_id: 44668
   description_id: 14
   icon_set_id: 2010
@@ -621,7 +621,7 @@
   item_type: 1
   category: 62
 # Icy Anakin Boots
-- guid: 180061
+- guid: 2818
   name_id: 44670
   description_id: 14
   icon_set_id: 2009
@@ -631,7 +631,7 @@
   item_type: 1
   category: 63
 # Ancient Cobal Robes
-- guid: 180062
+- guid: 231
   name_id: 814
   description_id: 14
   icon_set_id: 439
@@ -641,7 +641,7 @@
   item_type: 1
   category: 61
 # Ancient Cobal Gloves
-- guid: 180063
+- guid: 230
   name_id: 812
   description_id: 14
   icon_set_id: 441
@@ -651,7 +651,7 @@
   item_type: 1
   category: 62
 # Ancient Cobal Boots
-- guid: 180064
+- guid: 232
   name_id: 816
   description_id: 14
   icon_set_id: 440
@@ -661,7 +661,7 @@
   item_type: 1
   category: 63
 # Mestare Jedi Robes
-- guid: 180065
+- guid: 861
   name_id: 44852
   description_id: 14
   icon_set_id: 1108
@@ -671,7 +671,7 @@
   item_type: 1
   category: 61
 # Mestare Jedi Gloves
-- guid: 180066
+- guid: 895
   name_id: 44854
   description_id: 14
   icon_set_id: 1110
@@ -681,7 +681,7 @@
   item_type: 1
   category: 62
 # Mestare Jedi Boots
-- guid: 180067
+- guid: 880
   name_id: 44853
   description_id: 14
   icon_set_id: 1109
@@ -691,7 +691,7 @@
   item_type: 1
   category: 63
 # Mustafar Anakin's Tunic
-- guid: 180068
+- guid: 2867
   name_id: 44842
   description_id: 14
   icon_set_id: 2099
@@ -701,7 +701,7 @@
   item_type: 1
   category: 61
 # Mustafar Anakin's Gloves
-- guid: 180069
+- guid: 2866
   name_id: 44841
   description_id: 14
   icon_set_id: 2098
@@ -711,7 +711,7 @@
   item_type: 1
   category: 62
 # Mustafar Anakin's Boots
-- guid: 180070
+- guid: 2868
   name_id: 44843
   description_id: 14
   icon_set_id: 2100
@@ -721,7 +721,7 @@
   item_type: 1
   category: 63
 # Kashyyyk Obi-Wan's Robes
-- guid: 180071
+- guid: 2453
   name_id: 2661
   description_id: 14
   icon_set_id: 2161
@@ -731,7 +731,7 @@
   item_type: 1
   category: 61
 # Kashyyyk Obi-Wan's Gloves
-- guid: 180072
+- guid: 2452
   name_id: 2660
   description_id: 14
   icon_set_id: 2163
@@ -741,7 +741,7 @@
   item_type: 1
   category: 62
 # Kashyyyk Obi-Wan's Boots
-- guid: 180073
+- guid: 2451
   name_id: 2659
   description_id: 14
   icon_set_id: 2162
@@ -750,8 +750,8 @@
   texture_alias: ObiwanKashyyyk
   item_type: 1
   category: 63
-# Tranquil Ahoska's Tunic
-- guid: 180074
+# Tranquil Ahsoka's Tunic
+- guid: 2459
   name_id: 2667
   description_id: 14
   icon_set_id: 2298
@@ -761,7 +761,7 @@
   item_type: 1
   category: 61
 # Tranquil Ahsoka's Gloves
-- guid: 180075
+- guid: 2458
   name_id: 2666
   description_id: 14
   icon_set_id: 2297
@@ -771,7 +771,7 @@
   item_type: 1
   category: 62
 # Tranquil Ahsoka's Boots
-- guid: 180076
+- guid: 2460
   name_id: 2668
   description_id: 14
   icon_set_id: 2299
@@ -781,7 +781,7 @@
   item_type: 1
   category: 63
 # Camo Obi-Wan's Robes
-- guid: 180077
+- guid: 2462
   name_id: 2670
   description_id: 14
   icon_set_id: 2295
@@ -791,7 +791,7 @@
   item_type: 1
   category: 61
 # Camo Obi-Wan's Gloves
-- guid: 180078
+- guid: 2461
   name_id: 2669
   description_id: 14
   icon_set_id: 2294
@@ -801,7 +801,7 @@
   item_type: 1
   category: 62
 # Camo Obi-Wan's Boots
-- guid: 180079
+- guid: 2463
   name_id: 2671
   description_id: 14
   icon_set_id: 2296
@@ -811,7 +811,7 @@
   item_type: 1
   category: 63
 # Obi-Wan Kenobi's Original Uniform
-- guid: 180080
+- guid: 405
   name_id: 8534
   description_id: 14
   icon_set_id: 105
@@ -822,7 +822,7 @@
   category: 61
   members: true
 # Obi-Wan Kenobi's Original Gloves
-- guid: 180081
+- guid: 407
   name_id: 8538
   description_id: 14
   icon_set_id: 175
@@ -833,7 +833,7 @@
   category: 62
   members: true
 # Obi-Wan Kenobi's Original Boots
-- guid: 180082
+- guid: 406
   name_id: 8536
   description_id: 14
   icon_set_id: 148
@@ -844,7 +844,7 @@
   category: 63
   members: true
 # Obi-Wan Kenobi's Robes
-- guid: 180083
+- guid: 2248
   name_id: 32936
   description_id: 14
   icon_set_id: 1602
@@ -855,7 +855,7 @@
   category: 61
   members: true
 # Obi-Wan Kenobi's Gloves
-- guid: 180084
+- guid: 2247
   name_id: 32935
   description_id: 14
   icon_set_id: 1604
@@ -866,7 +866,7 @@
   category: 62
   members: true
 # Obi-Wan Kenobi's Boots
-- guid: 180085
+- guid: 2249
   name_id: 32937
   description_id: 14
   icon_set_id: 1603
@@ -877,7 +877,7 @@
   category: 63
   members: true
 # Plo Koon's Robes
-- guid: 180086
+- guid: 616
   name_id: 232
   description_id: 14
   icon_set_id: 107
@@ -888,7 +888,7 @@
   category: 61
   members: true
 # Plo Koon's Mask
-- guid: 180087
+- guid: 614
   name_id: 228
   description_id: 14
   icon_set_id: 204
@@ -899,7 +899,7 @@
   category: 60
   members: true
 # Plo Koon's Gloves
-- guid: 180088
+- guid: 615
   name_id: 230
   description_id: 14
   icon_set_id: 176
@@ -910,7 +910,7 @@
   category: 62
   members: true
 # Plo Koon's Boots
-- guid: 180089
+- guid: 617
   name_id: 234
   description_id: 14
   icon_set_id: 149
@@ -921,7 +921,7 @@
   category: 63
   members: true
 # Cold Weather Plo's Suit
-- guid: 180090
+- guid: 2871
   name_id: 44875
   description_id: 14
   icon_set_id: 2105
@@ -932,7 +932,7 @@
   category: 61
   members: true
 # Cold Weather Plo's Hood
-- guid: 180091
+- guid: 2869
   name_id: 44873
   description_id: 14
   icon_set_id: 2103
@@ -943,7 +943,7 @@
   category: 60
   members: true
 # Cold Weather Plo's Gloves
-- guid: 180092
+- guid: 2870
   name_id: 44874
   description_id: 14
   icon_set_id: 2104
@@ -954,7 +954,7 @@
   category: 62
   members: true
 # Cold Weather Plo's Boots
-- guid: 180093
+- guid: 2872
   name_id: 44876
   description_id: 14
   icon_set_id: 2106
@@ -965,7 +965,7 @@
   category: 63
   members: true
 # Ermi Jedi Robe
-- guid: 180094
+- guid: 864
   name_id: 1327
   description_id: 14
   icon_set_id: 1117
@@ -976,7 +976,7 @@
   category: 61
   members: true
 # Ermi Jedi Hood
-- guid: 180095
+- guid: 912
   name_id: 1422
   description_id: 14
   icon_set_id: 1120
@@ -987,7 +987,7 @@
   category: 60
   members: true
 # Ermi Jedi Gloves
-- guid: 180096
+- guid: 896
   name_id: 1390
   description_id: 14
   icon_set_id: 1119
@@ -998,7 +998,7 @@
   category: 62
   members: true
 # Ermi Jedi Boots
-- guid: 180097
+- guid: 882
   name_id: 1362
   description_id: 14
   icon_set_id: 1118
@@ -1009,7 +1009,7 @@
   category: 63
   members: true
 # Shaak Ti's Robe
-- guid: 180098
+- guid: 923
   name_id: 1464
   description_id: 14
   icon_set_id: 1111
@@ -1020,7 +1020,7 @@
   category: 61
   members: true
 # Shaak Ti's Boots
-- guid: 180099
+- guid: 928
   name_id: 1474
   description_id: 14
   icon_set_id: 1112
@@ -1031,7 +1031,7 @@
   category: 63
   members: true
 # Luminara Unduli's Robes
-- guid: 180100
+- guid: 605
   name_id: 210
   description_id: 14
   icon_set_id: 102
@@ -1042,7 +1042,7 @@
   category: 61
   members: true
 # Luminara Unduli's Headdress
-- guid: 180101
+- guid: 604
   name_id: 208
   description_id: 14
   icon_set_id: 202
@@ -1053,7 +1053,7 @@
   category: 60
   members: true
 # Luminara Unduli's Boots
-- guid: 180102
+- guid: 606
   name_id: 212
   description_id: 14
   icon_set_id: 145
@@ -1064,7 +1064,7 @@
   category: 63
   members: true
 # Kalifa's Suit
-- guid: 180103
+- guid: 2748
   name_id: 43511
   description_id: 14
   icon_set_id: 1842
@@ -1075,7 +1075,7 @@
   category: 61
   members: true
 # Kalifa's Boots
-- guid: 180104
+- guid: 2749
   name_id: 43512
   description_id: 14
   icon_set_id: 1843
@@ -1086,7 +1086,7 @@
   category: 63
   members: true
 # Dahgee Jedi Robes
-- guid: 180105
+- guid: 944
   name_id: 1506
   description_id: 14
   icon_set_id: 1141
@@ -1097,7 +1097,7 @@
   category: 61
   members: true
 # Dahgee Jedi Gloves
-- guid: 180106
+- guid: 941
   name_id: 1500
   description_id: 14
   icon_set_id: 1143
@@ -1108,7 +1108,7 @@
   category: 62
   members: true
 # Dahgee Jedi Boots
-- guid: 180107
+- guid: 929
   name_id: 1476
   description_id: 14
   icon_set_id: 1142
@@ -1119,7 +1119,7 @@
   category: 63
   members: true
 # Aquatic Obi-Wan Tunic
-- guid: 180108
+- guid: 2795
   name_id: 44500
   description_id: 14
   icon_set_id: 1983
@@ -1130,7 +1130,7 @@
   category: 61
   members: true
 # Aquatic Obi-Wan Gloves
-- guid: 180109
+- guid: 2794
   name_id: 44499
   description_id: 14
   icon_set_id: 1982
@@ -1141,7 +1141,7 @@
   category: 62
   members: true
 # Aquatic Obi-Wan Boots
-- guid: 180110
+- guid: 2796
   name_id: 44501
   description_id: 14
   icon_set_id: 1984
@@ -1152,7 +1152,7 @@
   category: 63
   members: true
 # Fiery Obi-Wan's Tunic
-- guid: 180111
+- guid: 2836
   name_id: 44829
   description_id: 14
   icon_set_id: 2063
@@ -1163,7 +1163,7 @@
   category: 61
   members: true
 # Fiery Obi-Wan's Gloves
-- guid: 180112
+- guid: 2835
   name_id: 44828
   description_id: 14
   icon_set_id: 2062
@@ -1174,7 +1174,7 @@
   category: 62
   members: true
 # Fiery Obi-Wan's Boots
-- guid: 180113
+- guid: 2837
   name_id: 44830
   description_id: 14
   icon_set_id: 2064
@@ -1185,7 +1185,7 @@
   category: 63
   members: true
 # Kit Fisto's Robes
-- guid: 180114
+- guid: 468
   name_id: 8902
   description_id: 14
   icon_set_id: 99
@@ -1195,7 +1195,7 @@
   item_type: 1
   category: 61
 # Kit Fisto's Gloves
-- guid: 180115
+- guid: 470
   name_id: 8906
   description_id: 14
   icon_set_id: 170
@@ -1205,7 +1205,7 @@
   item_type: 1
   category: 62
 # Kit Fisto's Boots
-- guid: 180116
+- guid: 469
   name_id: 8904
   description_id: 14
   icon_set_id: 141
@@ -1215,7 +1215,7 @@
   item_type: 1
   category: 63
 # Cold Weather Kit Fisto's Suit
-- guid: 180117
+- guid: 2875
   name_id: 44879
   description_id: 14
   icon_set_id: 2110
@@ -1226,7 +1226,7 @@
   category: 61
   members: true
 # Cold Weather Kit Fisto's Hood
-- guid: 180118
+- guid: 2873
   name_id: 44877
   description_id: 14
   icon_set_id: 2108
@@ -1237,7 +1237,7 @@
   category: 60
   members: true
 # Cold Weather Kit Fisto's Gloves
-- guid: 180119
+- guid: 2874
   name_id: 44878
   description_id: 14
   icon_set_id: 2109
@@ -1248,7 +1248,7 @@
   category: 62
   members: true
 # Cold Weather Kit Fisto's Boots
-- guid: 180120
+- guid: 2876
   name_id: 44880
   description_id: 14
   icon_set_id: 2111
@@ -1299,7 +1299,7 @@
   item_type: 1
   category: 63
 # Simple Padawan Robes
-- guid: 180125
+- guid: 410
   name_id: 8611
   description_id: 14
   icon_set_id: 112
@@ -1309,7 +1309,7 @@
   item_type: 1
   category: 61
 # Light Padawan Helmet
-- guid: 180126
+- guid: 411
   name_id: 8546
   description_id: 14
   icon_set_id: 211
@@ -1319,7 +1319,7 @@
   item_type: 1
   category: 60
 # Brown Padawan Boots
-- guid: 180127
+- guid: 9
   name_id: 67
   description_id: 14
   icon_set_id: 123
@@ -1329,7 +1329,7 @@
   item_type: 1
   category: 63
 # Green Padawan Robes
-- guid: 180128
+- guid: 448
   name_id: 8610
   description_id: 14
   icon_set_id: 111
@@ -1339,7 +1339,7 @@
   item_type: 1
   category: 61
 # Tan Padawan Boots
-- guid: 180129
+- guid: 449
   name_id: 8880
   description_id: 14
   icon_set_id: 121
@@ -1349,7 +1349,7 @@
   item_type: 1
   category: 63
 # Dark Padawan Helmet
-- guid: 180130
+- guid: 450
   name_id: 8882
   description_id: 14
   icon_set_id: 210
@@ -1359,7 +1359,7 @@
   item_type: 1
   category: 60
 # Long Padawan Robes
-- guid: 180131
+- guid: 453
   name_id: 8609
   description_id: 14
   icon_set_id: 113
@@ -1369,7 +1369,7 @@
   item_type: 1
   category: 61
 # Rusty Padawan Boots
-- guid: 180132
+- guid: 454
   name_id: 8886
   description_id: 14
   icon_set_id: 144
@@ -1631,7 +1631,7 @@
   category: 63
   members: true
 # Even Piell's Climbing Suit
-- guid: 180157
+- guid: 2886
   name_id: 44891
   description_id: 14
   icon_set_id: 2125
@@ -1642,7 +1642,7 @@
   category: 61
   members: true
 # Even Piell's Gloves
-- guid: 180158
+- guid: 2885
   name_id: 44890
   description_id: 14
   icon_set_id: 2124
@@ -1653,7 +1653,7 @@
   category: 62
   members: true
 # Even Piell's Boots
-- guid: 180159
+- guid: 2887
   name_id: 44892
   description_id: 14
   icon_set_id: 2126
