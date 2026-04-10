@@ -21,15 +21,10 @@ const fn default_stack_size() -> i32 {
     1
 }
 
-#[derive(Default, Debug, Deserialize)]
-#[serde(untagged)]
-pub enum AbilitySlot {
-    #[default]
-    Empty,
-    Filled {
-        icon_set_id: u32,
-        name_id: u32,
-    },
+#[derive(Clone, Copy, Debug, Deserialize)]
+pub struct ItemAbilityConfig {
+    pub icon_set_id: u32,
+    pub name_id: u32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -91,7 +86,7 @@ pub struct ItemConfig {
     #[serde(default)]
     pub customization_id: u32,
     #[serde(default)]
-    pub abilities: Vec<AbilitySlot>,
+    pub abilities: Vec<ItemAbilityConfig>,
 }
 
 impl ItemConfig {
@@ -99,27 +94,21 @@ impl ItemConfig {
         self.abilities
             .iter()
             .enumerate()
-            .filter_map(|(i, slot)| {
-                // Only slots 2–4 are considered special
+            .filter_map(|(i, cfg)| {
+                // Only index 1-3 are considered special
                 if i == 0 {
                     return None;
                 }
 
-                match slot {
-                    AbilitySlot::Filled {
-                        icon_set_id,
-                        name_id,
-                    } => Some(SpecialItemAbility {
-                        ability_id: 0,
-                        ability_slot: i as u32,
-                        unknown3: 0,
-                        ability_icon: *icon_set_id,
-                        unknown5: 0,
-                        unknown6: 0,
-                        ability_name: *name_id,
-                    }),
-                    AbilitySlot::Empty => None,
-                }
+                Some(SpecialItemAbility {
+                    ability_id: 0,
+                    ability_slot: i as u32,
+                    unknown3: 0,
+                    ability_icon: cfg.icon_set_id,
+                    unknown5: 0,
+                    unknown6: 0,
+                    ability_name: cfg.name_id,
+                })
             })
             .collect()
     }
@@ -195,7 +184,7 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemConf
         for cfg in configs {
             if cfg.abilities.len() > 4 {
                 return Err(ConfigError::ConstraintViolated(format!(
-                    "Item {} has {} abilities, but max is 4 (file: {:?})",
+                    "Item ID {} has too many abilities: {} (max 4) (file: {:?})",
                     cfg.guid,
                     cfg.abilities.len(),
                     file_path

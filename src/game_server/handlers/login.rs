@@ -5,7 +5,9 @@ use packet_serialize::NullTerminatedString;
 use crate::{
     game_server::{
         handlers::{
-            character::{BattleClass, PlayerInventory, Toggles},
+            character::{
+                BattleClass, PlayerAbilitySlot, PlayerActionBar, PlayerInventory, Toggles,
+            },
             minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         },
         packets::{
@@ -161,6 +163,20 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         click_to_teleport: false,
                     },
                     role: Role::Admin,
+                    action_bar: PlayerActionBar {
+                        weapon_abilities: [
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                        ],
+                        consumables: [
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                            PlayerAbilitySlot::Empty,
+                        ],
+                    },
                 },
                 game_server,
             ));
