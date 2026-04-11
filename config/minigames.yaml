@@ -6576,7 +6576,33 @@ categories:
               challenges:
                 # Use base level's credit ratio as a placeholder
                 - guid: 27166
-                  name_id: 9116
+                  name_id: 9119
+                  description_id: 9137
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4493
+                  members_only: true
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 120
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+                # Use base level's credit ratio as a placeholder
+                - guid: 27167
+                  name_id: 9120
+                  description_id: 9143
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4499
+                  members_only: true
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 121
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 170
+                # Use base level's credit ratio as a placeholder
+                - guid: 27168
+                  name_id: 9121
                   description_id: 9139
                   min_players: 1
                   max_players: 1
@@ -6584,33 +6610,7 @@ categories:
                   members_only: true
                   minigame_type:
                     !SaberStrike
-                    saber_strike_stage_id: 117
-                  zone_template_guid: 200
-                  score_to_credits_expression: x / 170
-                # Use base level's credit ratio as a placeholder
-                - guid: 27167
-                  name_id: 9117
-                  description_id: 9135
-                  min_players: 1
-                  max_players: 1
-                  start_sound_id: 4491
-                  members_only: true
-                  minigame_type:
-                    !SaberStrike
-                    saber_strike_stage_id: 118
-                  zone_template_guid: 200
-                  score_to_credits_expression: x / 170
-                # Use base level's credit ratio as a placeholder
-                - guid: 27168
-                  name_id: 9118
-                  description_id: 9138
-                  min_players: 1
-                  max_players: 1
-                  start_sound_id: 4494
-                  members_only: true
-                  minigame_type:
-                    !SaberStrike
-                    saber_strike_stage_id: 119
+                    saber_strike_stage_id: 122
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
             - !Stage
@@ -6635,33 +6635,7 @@ categories:
               challenges:
                 # Use base level's credit ratio as a placeholder
                 - guid: 27169
-                  name_id: 9119
-                  description_id: 9137
-                  min_players: 1
-                  max_players: 1
-                  start_sound_id: 4493
-                  members_only: true
-                  minigame_type:
-                    !SaberStrike
-                    saber_strike_stage_id: 120
-                  zone_template_guid: 200
-                  score_to_credits_expression: x / 147
-                # Use base level's credit ratio as a placeholder
-                - guid: 27170
-                  name_id: 9120
-                  description_id: 9143
-                  min_players: 1
-                  max_players: 1
-                  start_sound_id: 4499
-                  members_only: true
-                  minigame_type:
-                    !SaberStrike
-                    saber_strike_stage_id: 121
-                  zone_template_guid: 200
-                  score_to_credits_expression: x / 147
-                # Use base level's credit ratio as a placeholder
-                - guid: 27171
-                  name_id: 9121
+                  name_id: 9116
                   description_id: 9139
                   min_players: 1
                   max_players: 1
@@ -6669,7 +6643,33 @@ categories:
                   members_only: true
                   minigame_type:
                     !SaberStrike
-                    saber_strike_stage_id: 122
+                    saber_strike_stage_id: 117
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+                # Use base level's credit ratio as a placeholder
+                - guid: 27170
+                  name_id: 9117
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4491
+                  members_only: true
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 118
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 147
+                # Use base level's credit ratio as a placeholder
+                - guid: 27171
+                  name_id: 9118
+                  description_id: 9138
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4494
+                  members_only: true
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 119
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
             - !Stage
