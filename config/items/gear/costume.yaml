@@ -369,7 +369,7 @@
   item_type: 1
   category: 60
 # Padme Amidala Mask
-- guid: 170035
+- guid: 1188
   name_id: 1856
   description_id: 14
   icon_set_id: 1390
@@ -380,7 +380,7 @@
   category: 60
   members: true
 # Chancellor Palpatine Mask
-- guid: 170036
+- guid: 1189
   name_id: 1858
   description_id: 14
   icon_set_id: 1391

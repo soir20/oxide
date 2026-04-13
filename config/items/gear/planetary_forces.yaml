@@ -133,7 +133,7 @@
   item_type: 1
   category: 60
 # Pre Vizsla's Gloves
-- guid: 380
+- guid: 390
   name_id: 1198
   description_id: 14
   icon_set_id: 388
@@ -533,7 +533,7 @@
   item_type: 1
   category: 62
 # Mandalorian Deathwatch Boots
-- guid: 4168
+- guid: 3168
   name_id: 4304
   description_id: 14
   icon_set_id: 2424
