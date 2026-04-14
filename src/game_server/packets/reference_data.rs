@@ -128,14 +128,14 @@ pub struct ItemGroupDefinition {
     pub icon_set_id: u32,
     pub category: u32,
     pub page: u32,
-    pub unknown9: u32,
-    pub unknown10: u32,
+    pub preview_model_id: u32,
+    pub preview_animation_id: i32,
     pub unknown11: bool,
     pub unknown12: u32,
     pub unknown13: u32,
     pub unknown14: u32,
     pub unknown16: String,
-    pub unknown17: bool,
+    pub members_only: bool,
     pub items: Vec<ItemGroupItem>,
 }
 
