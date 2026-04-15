@@ -21,10 +21,11 @@ const fn default_stack_size() -> i32 {
     1
 }
 
-#[derive(Clone, Copy, Debug, Deserialize)]
+#[derive(PartialEq, Eq, Clone, Copy, Debug, Deserialize)]
 pub struct ItemAbilityConfig {
     pub icon_set_id: u32,
     pub name_id: u32,
+    pub action_bar_priority_override: Option<u32>,
 }
 
 #[derive(Debug, Deserialize)]

@@ -15,7 +15,7 @@ use crate::{
             combat::ThreatTable,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
-            item::{ItemAbilityConfig, ItemConfig},
+            item::ItemConfig,
             lock_enforcer::CharacterWriteGuard,
             offset_destination,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
@@ -2077,18 +2077,18 @@ pub struct PreviousLocation {
     pub rot: Pos,
 }
 
-#[allow(dead_code)]
-#[derive(Clone, Default, Copy)]
-pub enum PlayerAbilitySlot {
-    #[default]
-    Empty,
-    Filled(ItemAbilityConfig),
+#[derive(Clone)]
+pub struct PlayerItemAbility {
+    pub source_item_id: u32,
+    pub ability_index: u32,
+    pub priority: u32,
 }
 
-#[derive(Clone, Copy)]
+#[allow(dead_code)]
+#[derive(Clone)]
 pub struct PlayerActionBar {
-    pub weapon_abilities: [PlayerAbilitySlot; 4],
-    pub consumables: [PlayerAbilitySlot; 4],
+    pub weapon_abilities: Vec<PlayerItemAbility>,
+    pub consumables: Vec<PlayerItemAbility>,
 }
 
 #[derive(Clone)]

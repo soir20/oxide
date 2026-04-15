@@ -589,7 +589,14 @@ pub struct RewardBundle {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Debug,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    PartialEq,
 )]
 #[repr(u32)]
 pub enum ActionBarType {

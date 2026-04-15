@@ -53,6 +53,14 @@ pub enum EquipmentSlot {
 }
 
 impl EquipmentSlot {
+    pub fn action_bar_slot_priority(self) -> u32 {
+        match self {
+            EquipmentSlot::PrimaryWeapon => 0,
+            EquipmentSlot::SecondaryWeapon => 1,
+            _ => 2,
+        }
+    }
+
     pub fn is_weapon(self) -> bool {
         self == EquipmentSlot::PrimaryWeapon || self == EquipmentSlot::SecondaryWeapon
     }

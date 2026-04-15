@@ -8,7 +8,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            character::{Player, PlayerAbilitySlot, PlayerInventory},
+            character::{PlayerInventory, PlayerItemAbility},
             item::{ItemAbilityConfig, ItemConfig, SABER_ITEM_TYPE},
         },
         packets::{
@@ -189,112 +189,46 @@ pub fn customizations_from_item_guids(
     Ok(result)
 }
 
-fn unequip_action_bar_slot(
-    sender: u32,
-    player: &mut Player,
+fn build_action_bar_packets(
     bar_type: ActionBarType,
-    specific_indices: Option<Vec<usize>>,
-) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    assignments: &[(u32, Option<&ItemAbilityConfig>)],
+) -> Vec<Vec<u8>> {
     let mut packets = Vec::new();
 
-    let max_slots = match bar_type {
-        ActionBarType::Weapon => player.action_bar.weapon_abilities.len(),
-        ActionBarType::Consumable => player.action_bar.consumables.len(),
-        _ => return Ok(packets),
-    };
-
-    let filtered_indices: Vec<usize> = {
-        let indices = match specific_indices {
-            Some(list) => {
-                let invalid_indices: Vec<usize> =
-                    list.iter().cloned().filter(|&i| i >= max_slots).collect();
-
-                if !invalid_indices.is_empty() {
-                    return Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Sender {} tried to unequip invalid slot indices for bar type {:?} Max slots {} Invalid indices {:?}",
-                        sender, bar_type, max_slots, invalid_indices,
-                    ),
-                ));
-                }
-
-                list
-            }
-            None => (0..max_slots).collect(),
+    for &(slot_index, ability) in assignments {
+        let slot = match ability {
+            Some(cfg) => ActionBarSlot {
+                is_empty: false,
+                icon_id: cfg.icon_set_id,
+                icon_tint_id: 0,
+                name_id: cfg.name_id,
+                ability_type: 0,
+                ability_sub_type: AbilitySubType::InstantSingleTarget,
+                area_of_effect_radius: 0.0,
+                max_distance_from_player: 0.0,
+                required_force_points: 0,
+                is_enabled: true,
+                use_cooldown_millis: 1000,
+                init_cooldown_millis: 1000,
+                unknown13: 0,
+                quantity: 1,
+                is_consumable: bar_type == ActionBarType::Consumable,
+                millis_since_last_use: 1000,
+            },
+            None => ActionBarSlot::default(),
         };
 
-        indices
-            .into_iter()
-            .filter(|&i| match bar_type {
-                ActionBarType::Weapon => !matches!(
-                    player.action_bar.weapon_abilities[i],
-                    PlayerAbilitySlot::Empty
-                ),
-                ActionBarType::Consumable => {
-                    !matches!(player.action_bar.consumables[i], PlayerAbilitySlot::Empty)
-                }
-                _ => false,
-            })
-            .collect()
-    };
-
-    match bar_type {
-        ActionBarType::Weapon => {
-            let slots = &mut player.action_bar.weapon_abilities;
-
-            for slot_index in filtered_indices {
-                slots[slot_index] = PlayerAbilitySlot::Empty;
-
-                packets.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateActionBarSlot {
-                        action_bar_type: bar_type,
-                        slot_index: slot_index as u32,
-                        slot: ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
-                            icon_tint_id: 0,
-                            name_id: 0,
-                            ability_type: 0,
-                            ability_sub_type: AbilitySubType::CastableSingleTarget,
-                            area_of_effect_radius: 0.0,
-                            max_distance_from_player: 0.0,
-                            required_force_points: 0,
-                            is_enabled: false,
-                            use_cooldown_millis: 0,
-                            init_cooldown_millis: 0,
-                            unknown13: 0,
-                            quantity: 0,
-                            is_consumable: false,
-                            millis_since_last_use: 0,
-                        }, //ActionBarSlot::default(),
-                    },
-                }));
-            }
-        }
-
-        ActionBarType::Consumable => {
-            let slots = &mut player.action_bar.consumables;
-
-            for slot_index in filtered_indices {
-                slots[slot_index] = PlayerAbilitySlot::Empty;
-
-                packets.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateActionBarSlot {
-                        action_bar_type: bar_type,
-                        slot_index: slot_index as u32,
-                        slot: ActionBarSlot::default(),
-                    },
-                }));
-            }
-        }
-
-        _ => {}
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: UpdateActionBarSlot {
+                action_bar_type: bar_type,
+                slot_index,
+                slot,
+            },
+        }));
     }
 
-    Ok(packets)
+    packets
 }
 
 fn process_unequip_slot(
@@ -303,104 +237,151 @@ fn process_unequip_slot(
     sender: u32,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let unequip_slot: UnequipSlot = DeserializePacket::deserialize(cursor)?;
-    game_server
-        .lock_enforcer()
-        .read_characters(|_| CharacterLockRequest {
-            read_guids: vec![],
-            write_guids: vec![player_guid(sender)],
-            character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
-                let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender))
-                else {
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!("Unknown player {sender} tried to unequip slot"),
-                    ));
-                };
 
-                let CharacterType::Player(ref mut player) =
-                    character_write_handle.stats.character_type
-                else {
-                    return Err(ProcessPacketError::new(
-                        ProcessPacketErrorType::ConstraintViolated,
-                        format!("Non-player character {sender} tried to unequip slot"),
-                    ));
-                };
+    game_server.lock_enforcer().read_characters(|_| CharacterLockRequest {
+        read_guids: vec![],
+        write_guids: vec![player_guid(sender)],
+        character_consumer: |characters_table_read_handle, _, mut characters_write, _| {
+            let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Unknown player {sender} tried to unequip slot"),
+                ));
+            };
 
-                let gear_changed = player
-                    .inventory
-                    .unequip_item(unequip_slot.battle_class, unequip_slot.slot)?;
-                if !gear_changed {
-                    return Ok(Vec::new());
+            let CharacterType::Player(ref mut player) =
+                character_write_handle.stats.character_type
+            else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Non-player character {sender} tried to unequip slot"),
+                ));
+            };
+
+            let Some(item_guid) = player.inventory.equipped_item(
+                unequip_slot.battle_class,
+                unequip_slot.slot,
+            ) else {
+                // Nothing to unequip
+                return Ok(Vec::new());
+            };
+
+            let Some(item_def) = game_server.items().get(&item_guid) else {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Player {sender} tried to unequip slot {:?} in battle class {} containing unknown item {}",
+                        unequip_slot.slot,
+                        unequip_slot.battle_class,
+                        item_guid,
+                    ),
+                ));
+            };
+
+            let gear_changed = player
+                .inventory
+                .unequip_item(unequip_slot.battle_class, unequip_slot.slot)?;
+
+            if !gear_changed {
+                return Ok(Vec::new());
+            }
+
+            let mut packets_for_all = Vec::new();
+            let mut packets_for_sender = Vec::new();
+
+            if !item_def.abilities.is_empty() {
+                player
+                    .action_bar
+                    .weapon_abilities
+                    .retain(|action_bar| action_bar.source_item_id != item_guid);
+
+                player
+                    .action_bar
+                    .weapon_abilities
+                    .sort_by_key(|a| a.priority);
+
+                let mut assignments = Vec::new();
+
+                for i in 0..4 {
+                    let ability = player
+                        .action_bar
+                        .weapon_abilities
+                        .get(i)
+                        .and_then(|action_bar| {
+                            game_server
+                                .items()
+                                .get(&action_bar.source_item_id)
+                                .and_then(|def| {
+                                    def.abilities.get(action_bar.ability_index as usize)
+                                })
+                        });
+
+                    assignments.push((i as u32, ability));
                 }
 
-                let mut packets_for_all = Vec::new();
-                let mut packets_for_sender = Vec::new();
+                packets_for_sender.extend(build_action_bar_packets(
+                    ActionBarType::Weapon,
+                    &assignments,
+                ));
+            }
 
-                if unequip_slot.slot.is_weapon() {
-                    // Clear any ability slots this weapon occupied
-                    packets_for_sender.extend(unequip_action_bar_slot(
-                        sender,
-                        player,
-                        ActionBarType::Weapon,
-                        None,
-                    )?);
+            if unequip_slot.slot.is_weapon() {
+                let wield_type = wield_type_from_slot(
+                    &player.inventory.equipped_items(unequip_slot.battle_class),
+                    EquipmentSlot::PrimaryWeapon,
+                    game_server,
+                );
 
-                    let wield_type = wield_type_from_slot(
-                        &player.inventory.equipped_items(unequip_slot.battle_class),
-                        EquipmentSlot::PrimaryWeapon,
-                        game_server,
-                    );
-
-                    character_write_handle.set_brandished_wield_type(wield_type);
-
-                    packets_for_all.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: UpdateWieldType {
-                            guid: player_guid(sender),
-                            wield_type,
-                        },
-                    }));
-                }
-
-                packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UnequipItem {
-                        slot: unequip_slot.slot,
-                        battle_class: unequip_slot.battle_class,
-                    },
-                }));
+                character_write_handle.set_brandished_wield_type(wield_type);
 
                 packets_for_all.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: UpdateEquippedItem {
+                    inner: UpdateWieldType {
                         guid: player_guid(sender),
-                        item_guid: 0,
-                        item: Attachment {
-                            model_name: "".to_string(),
-                            texture_alias: "".to_string(),
-                            tint_alias: "".to_string(),
-                            tint: 0,
-                            composite_effect: 0,
-                            slot: unequip_slot.slot,
-                        },
-                        battle_class: unequip_slot.battle_class,
-                        wield_type: character_write_handle.stats.wield_type(),
+                        wield_type,
                     },
                 }));
+            }
 
-                let (_, instance_guid, chunk) = character_write_handle.index1();
-                let nearby_players = ZoneInstance::all_players_nearby(
-                    chunk,
-                    instance_guid,
-                    characters_table_read_handle,
-                );
+            packets_for_sender.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UnequipItem {
+                    slot: unequip_slot.slot,
+                    battle_class: unequip_slot.battle_class,
+                },
+            }));
 
-                Ok(vec![
-                    Broadcast::Multi(nearby_players, packets_for_all),
-                    Broadcast::Single(sender, packets_for_sender),
-                ])
-            },
-        })
+            packets_for_all.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: UpdateEquippedItem {
+                    guid: player_guid(sender),
+                    item_guid: 0,
+                    item: Attachment {
+                        model_name: "".to_string(),
+                        texture_alias: "".to_string(),
+                        tint_alias: "".to_string(),
+                        tint: 0,
+                        composite_effect: 0,
+                        slot: unequip_slot.slot,
+                    },
+                    battle_class: unequip_slot.battle_class,
+                    wield_type: character_write_handle.stats.wield_type(),
+                },
+            }));
+
+            let (_, instance_guid, chunk) = character_write_handle.index1();
+            let nearby_players = ZoneInstance::all_players_nearby(
+                chunk,
+                instance_guid,
+                characters_table_read_handle,
+            );
+
+            Ok(vec![
+                Broadcast::Multi(nearby_players, packets_for_all),
+                Broadcast::Single(sender, packets_for_sender),
+            ])
+        },
+    })
 }
 
 fn process_equip_guid(
@@ -994,110 +975,6 @@ pub fn update_player_equipped_items(
     (broadcasts, wield_type)
 }
 
-fn equip_action_bar_slot(
-    sender: u32,
-    player: &mut Player,
-    bar_type: ActionBarType,
-    abilities: &[ItemAbilityConfig],
-) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-    let mut packets = Vec::new();
-
-    let max_slots = match bar_type {
-        ActionBarType::Weapon => player.action_bar.weapon_abilities.len(),
-        ActionBarType::Consumable => player.action_bar.consumables.len(),
-        _ => 0,
-    };
-
-    if abilities.len() > max_slots {
-        return Err(ProcessPacketError::new(
-            ProcessPacketErrorType::ConstraintViolated,
-            format!(
-                "Sender {} tried equipping too many abilities for Bar Type {:?} Max slots {} Requested slots {}",
-                sender,
-                bar_type,
-                max_slots,
-                abilities.len()
-            ),
-        ));
-    }
-
-    match bar_type {
-        ActionBarType::Weapon => {
-            for (i, cfg) in abilities.iter().enumerate() {
-                player.action_bar.weapon_abilities[i] = PlayerAbilitySlot::Filled(*cfg);
-
-                packets.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateActionBarSlot {
-                        action_bar_type: ActionBarType::Weapon,
-                        slot_index: i as u32,
-                        slot: ActionBarSlot {
-                            is_empty: false,
-                            icon_id: cfg.icon_set_id,
-                            icon_tint_id: 0,
-                            name_id: cfg.name_id,
-                            ability_type: 0,
-                            ability_sub_type: AbilitySubType::InstantSingleTarget,
-                            area_of_effect_radius: 0.0,
-                            max_distance_from_player: 0.0,
-                            required_force_points: 0,
-                            is_enabled: true,
-                            use_cooldown_millis: 1000,
-                            init_cooldown_millis: 1000,
-                            unknown13: 0,
-                            quantity: 0,
-                            is_consumable: false,
-                            millis_since_last_use: 1000,
-                        },
-                    },
-                }));
-            }
-        }
-
-        ActionBarType::Consumable => {
-            for cfg in abilities {
-                let slots = &mut player.action_bar.consumables;
-
-                let slot_index = slots
-                    .iter()
-                    .position(|s| matches!(s, PlayerAbilitySlot::Empty))
-                    .unwrap_or(slots.len() - 1);
-
-                slots[slot_index] = PlayerAbilitySlot::Filled(*cfg);
-
-                packets.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: UpdateActionBarSlot {
-                        action_bar_type: ActionBarType::Consumable,
-                        slot_index: slot_index as u32,
-                        slot: ActionBarSlot {
-                            is_empty: false,
-                            icon_id: cfg.icon_set_id,
-                            icon_tint_id: 0,
-                            name_id: cfg.name_id,
-                            ability_type: 0,
-                            ability_sub_type: AbilitySubType::CastableSingleTarget,
-                            area_of_effect_radius: 0.0,
-                            max_distance_from_player: 0.0,
-                            required_force_points: 0,
-                            is_enabled: true,
-                            use_cooldown_millis: 0,
-                            init_cooldown_millis: 0,
-                            unknown13: 0,
-                            quantity: 1,
-                            is_consumable: true,
-                            millis_since_last_use: 0,
-                        },
-                    },
-                }));
-            }
-        }
-        _ => {}
-    }
-
-    Ok(packets)
-}
-
 fn equip_item_in_slot<'a>(
     sender: u32,
     equip_guid: &EquipGuid,
@@ -1149,6 +1026,27 @@ fn equip_item_in_slot<'a>(
         ));
     };
 
+    let previous_item_guid = player
+        .inventory
+        .equipped_item(equip_guid.battle_class, equip_guid.slot);
+
+    let previous_item_def = if let Some(guid) = previous_item_guid {
+        let Some(def) = game_server.items().get(&guid) else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                "Player {sender} tried to equip item {} in slot {:?} containing unknown item {}",
+                equip_guid.item_guid,
+                equip_guid.slot,
+                guid,
+            ),
+            ));
+        };
+        Some(def)
+    } else {
+        None
+    };
+
     let gear_changed = player.inventory.equip_item(
         equip_guid.battle_class,
         equip_guid.slot,
@@ -1193,6 +1091,53 @@ fn equip_item_in_slot<'a>(
         },
     })];
 
+    if let Some(previous_item) = previous_item_def {
+        if !previous_item.abilities.is_empty() {
+            player
+                .action_bar
+                .weapon_abilities
+                .retain(|ab| ab.source_item_id != previous_item.guid);
+        }
+    }
+
+    if !item_def.abilities.is_empty() {
+        let priority = item_def
+            .abilities
+            .iter()
+            .find_map(|ab| ab.action_bar_priority_override)
+            .unwrap_or_else(|| equip_guid.slot.action_bar_slot_priority());
+
+        for (i, _) in item_def.abilities.iter().enumerate() {
+            player.action_bar.weapon_abilities.push(PlayerItemAbility {
+                source_item_id: item_def.guid,
+                ability_index: i as u32,
+                priority,
+            });
+        }
+    }
+
+    player
+        .action_bar
+        .weapon_abilities
+        .sort_by_key(|a| a.priority);
+
+    let mut assignments = Vec::new();
+    for i in 0..4 {
+        let ability = player.action_bar.weapon_abilities.get(i).and_then(|pa| {
+            game_server
+                .items()
+                .get(&pa.source_item_id)
+                .and_then(|item| item.abilities.get(pa.ability_index as usize))
+        });
+
+        assignments.push((i as u32, ability));
+    }
+
+    sender_only_packets.extend(build_action_bar_packets(
+        ActionBarType::Weapon,
+        &assignments,
+    ));
+
     if let Some(item_class) = game_server
         .item_classes()
         .definitions
@@ -1211,31 +1156,6 @@ fn equip_item_in_slot<'a>(
         }
 
         if equip_guid.slot.is_weapon() {
-            let mut abilities_to_equip = Vec::new();
-            let mut unused_ability_slots = Vec::new();
-
-            for i in 0..player.action_bar.weapon_abilities.len() {
-                match item_def.abilities.get(i).copied() {
-                    Some(cfg) => abilities_to_equip.push(cfg),
-                    None => unused_ability_slots.push(i),
-                }
-            }
-
-            sender_only_packets.extend(equip_action_bar_slot(
-                sender,
-                player,
-                ActionBarType::Weapon,
-                &abilities_to_equip,
-            )?);
-
-            // If slots were previously occupied by a weapon, but are empty on this one clear them out.
-            sender_only_packets.extend(unequip_action_bar_slot(
-                sender,
-                player,
-                ActionBarType::Weapon,
-                Some(unused_ability_slots),
-            )?);
-
             // Some weapons, like bows, can be equipped in the secondary slot without
             // a primary weapon, so check the opposite slot instead of the primary slot.
             let other_weapon_slot = equip_guid.slot.opposite_slot();
