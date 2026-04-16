@@ -4,6 +4,7 @@ use crate::{
     game_server::packets::{
         item::{ItemDefinition, ItemType, SpecialItemAbility},
         player_update::CustomizationSlot,
+        AbilitySubType,
     },
     ConfigError,
 };
@@ -21,11 +22,35 @@ const fn default_stack_size() -> i32 {
     1
 }
 
-#[derive(PartialEq, Eq, Clone, Copy, Debug, Deserialize)]
+const fn default_ability_uses() -> u32 {
+    1
+}
+
+const fn default_ability_subtype() -> AbilitySubType {
+    AbilitySubType::InstantSingleTarget
+}
+
+#[derive(PartialEq, Clone, Copy, Debug, Deserialize)]
 pub struct ItemAbilityConfig {
     pub icon_set_id: u32,
     pub name_id: u32,
+    #[serde(default)]
+    pub icon_tint_id: u32,
     pub action_bar_priority_override: Option<u32>,
+    #[serde(default)]
+    pub required_force_points: u32,
+    #[serde(default)]
+    pub use_cooldown_millis: u32,
+    #[serde(default)]
+    pub init_cooldown_millis: u32,
+    #[serde(default = "default_ability_uses")]
+    pub quantity: u32,
+    #[serde(default)]
+    pub area_of_effect_radius: f32,
+    #[serde(default)]
+    pub max_distance_from_player: f32,
+    #[serde(default = "default_ability_subtype")]
+    pub ability_sub_type: AbilitySubType,
 }
 
 #[derive(Debug, Deserialize)]
