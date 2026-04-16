@@ -1182,6 +1182,51 @@ fn equip_item_in_slot<'a>(
                 game_server,
             );
             if item_class.wield_type != other_wield_type {
+                if let Some(unequipped_guid) = player
+                    .inventory
+                    .equipped_item(equip_guid.battle_class, other_weapon_slot)
+                {
+                    let unequipped_def =
+                        game_server.items().get(&unequipped_guid).ok_or_else(|| {
+                            ProcessPacketError::new(
+                                ProcessPacketErrorType::ConstraintViolated,
+                                format!(
+                                    "Player {sender} tried to unequip unknown item {} in slot {:?}",
+                                    unequipped_guid, other_weapon_slot
+                                ),
+                            )
+                        })?;
+
+                    if !unequipped_def.abilities.is_empty() {
+                        player
+                            .action_bar
+                            .weapon_abilities
+                            .retain(|ab| ab.source_item_id != unequipped_def.guid);
+
+                        player
+                            .action_bar
+                            .weapon_abilities
+                            .sort_by_key(|a| a.priority);
+                    }
+                }
+
+                let mut assignments = Vec::new();
+                for i in 0..4 {
+                    let ability = player.action_bar.weapon_abilities.get(i).and_then(|pa| {
+                        game_server
+                            .items()
+                            .get(&pa.source_item_id)
+                            .and_then(|item| item.abilities.get(pa.ability_index as usize))
+                    });
+
+                    assignments.push((i as u32, ability));
+                }
+
+                sender_only_packets.extend(build_action_bar_packets(
+                    ActionBarType::Weapon,
+                    &assignments,
+                ));
+
                 sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UnequipItem {
@@ -1189,6 +1234,7 @@ fn equip_item_in_slot<'a>(
                         battle_class: equip_guid.battle_class,
                     },
                 }));
+
                 other_player_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: UpdateEquippedItem {
@@ -1206,6 +1252,7 @@ fn equip_item_in_slot<'a>(
                         wield_type: current_wield_type,
                     },
                 }));
+
                 player
                     .inventory
                     .unequip_item(equip_guid.battle_class, other_weapon_slot)?;
