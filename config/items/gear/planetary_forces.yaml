@@ -1,6 +1,6 @@
 ---
 # Zygerrian Guard Uniform
-- guid: 190000
+- guid: 3252
   name_id: 4453
   description_id: 14
   icon_set_id: 2511
@@ -11,7 +11,7 @@
   category: 61
   members: true
 # Zygerrian Guard Helmet
-- guid: 190001
+- guid: 3250
   name_id: 4452
   description_id: 14
   icon_set_id: 2510
@@ -22,7 +22,7 @@
   category: 60
   members: true
 # Zygerrian Guard Boots
-- guid: 190002
+- guid: 3253
   name_id: 4454
   description_id: 14
   icon_set_id: 2512
@@ -33,7 +33,7 @@
   category: 63
   members: true
 # Bo Katan's Death Watch Suit
-- guid: 190003
+- guid: 3338
   name_id: 4552
   description_id: 14
   icon_set_id: 2634
@@ -43,7 +43,7 @@
   item_type: 1
   category: 61
 # Bo Katan's Death Watch Helmet
-- guid: 190004
+- guid: 3336
   name_id: 4550
   description_id: 14
   icon_set_id: 2632
@@ -53,7 +53,7 @@
   item_type: 1
   category: 60
 # Bo Katan's Death Watch Gloves
-- guid: 190005
+- guid: 3337
   name_id: 4551
   description_id: 14
   icon_set_id: 2633
@@ -63,7 +63,7 @@
   item_type: 1
   category: 62
 # Bo Katan's Death Watch Boots
-- guid: 190006
+- guid: 3339
   name_id: 4553
   description_id: 14
   icon_set_id: 2635
@@ -73,7 +73,7 @@
   item_type: 1
   category: 63
 # Krismo Sodi's Kage Uniform
-- guid: 190007
+- guid: 3437
   name_id: 4715
   description_id: 14
   icon_set_id: 2762
@@ -83,7 +83,7 @@
   item_type: 1
   category: 61
 # Krismo Sodi's Hooded Mask
-- guid: 190008
+- guid: 3435
   name_id: 4713
   description_id: 14
   icon_set_id: 2760
@@ -93,7 +93,7 @@
   item_type: 1
   category: 60
 # Krismo Sodi's Gloves
-- guid: 190009
+- guid: 3436
   name_id: 4714
   description_id: 14
   icon_set_id: 2761
@@ -103,7 +103,7 @@
   item_type: 1
   category: 62
 # Krismo Sodi's Boots
-- guid: 190010
+- guid: 3438
   name_id: 4716
   description_id: 14
   icon_set_id: 2763
@@ -113,7 +113,7 @@
   item_type: 1
   category: 63
 # Pre Vizsla's Armor
-- guid: 190011
+- guid: 388
   name_id: 1194
   description_id: 14
   icon_set_id: 376
@@ -123,7 +123,7 @@
   item_type: 1
   category: 61
 # Pre Vizsla's Helmet
-- guid: 190012
+- guid: 391
   name_id: 1200
   description_id: 14
   icon_set_id: 394
@@ -133,7 +133,7 @@
   item_type: 1
   category: 60
 # Pre Vizsla's Gloves
-- guid: 190013
+- guid: 390
   name_id: 1198
   description_id: 14
   icon_set_id: 388
@@ -143,7 +143,7 @@
   item_type: 1
   category: 62
 # Pre Vizsla's Boots
-- guid: 190014
+- guid: 389
   name_id: 1196
   description_id: 14
   icon_set_id: 382
@@ -193,7 +193,7 @@
   item_type: 1
   category: 63
 # King Katuunko's Suit
-- guid: 190019
+- guid: 1104
   name_id: 1620
   description_id: 14
   icon_set_id: 1246
@@ -203,7 +203,7 @@
   item_type: 1
   category: 61
 # King Katuunko's Visor
-- guid: 190020
+- guid: 1102
   name_id: 1616
   description_id: 14
   icon_set_id: 1249
@@ -213,7 +213,7 @@
   item_type: 1
   category: 60
 # King Katuunko's Handguards
-- guid: 190021
+- guid: 1103
   name_id: 1618
   description_id: 14
   icon_set_id: 1248
@@ -223,7 +223,7 @@
   item_type: 1
   category: 62
 # King Katuunko's Boots
-- guid: 190022
+- guid: 1105
   name_id: 1622
   description_id: 14
   icon_set_id: 1247
@@ -233,7 +233,7 @@
   item_type: 1
   category: 63
 # Baron Papanoida's Suit
-- guid: 190023
+- guid: 1115
   name_id: 1642
   description_id: 14
   icon_set_id: 1323
@@ -243,7 +243,7 @@
   item_type: 1
   category: 61
 # Baron Papanoida's Hat
-- guid: 190024
+- guid: 1113
   name_id: 1638
   description_id: 14
   icon_set_id: 1326
@@ -253,7 +253,7 @@
   item_type: 1
   category: 60
 # Baron Papanoida's Gloves
-- guid: 190025
+- guid: 1114
   name_id: 1640
   description_id: 14
   icon_set_id: 1325
@@ -263,7 +263,7 @@
   item_type: 1
   category: 62
 # Baron Papanoida's Boots
-- guid: 190026
+- guid: 1116
   name_id: 1644
   description_id: 14
   icon_set_id: 1324
@@ -273,7 +273,7 @@
   item_type: 1
   category: 63
 # Satine's Royal Guard Armor
-- guid: 190027
+- guid: 1156
   name_id: 1761
   description_id: 14
   icon_set_id: 1349
@@ -283,7 +283,7 @@
   item_type: 1
   category: 61
 # Satine's Royal Guard Helm
-- guid: 190028
+- guid: 1154
   name_id: 1757
   description_id: 14
   icon_set_id: 1352
@@ -293,7 +293,7 @@
   item_type: 1
   category: 60
 # Satine's Royal Guard Gloves
-- guid: 190029
+- guid: 1155
   name_id: 1759
   description_id: 14
   icon_set_id: 1351
@@ -303,7 +303,7 @@
   item_type: 1
   category: 62
 # Satine's Royal Guard Boots
-- guid: 190030
+- guid: 1157
   name_id: 1763
   description_id: 14
   icon_set_id: 1350
@@ -313,7 +313,7 @@
   item_type: 1
   category: 63
 # Duchess Satine's Robes
-- guid: 190031
+- guid: 1181
   name_id: 1845
   description_id: 14
   icon_set_id: 1378
@@ -323,7 +323,7 @@
   item_type: 1
   category: 61
 # Duchess Satine's Headdress
-- guid: 190032
+- guid: 1180
   name_id: 1837
   description_id: 14
   icon_set_id: 1380
@@ -333,7 +333,7 @@
   item_type: 1
   category: 60
 # Duchess Satine's Boots
-- guid: 190033
+- guid: 1182
   name_id: 1840
   description_id: 14
   icon_set_id: 1379
@@ -343,7 +343,7 @@
   item_type: 1
   category: 63
 # Mandalorian Secret Service Armor
-- guid: 190034
+- guid: 1160
   name_id: 1769
   description_id: 14
   icon_set_id: 1374
@@ -353,7 +353,7 @@
   item_type: 1
   category: 61
 # Mandalorian Secret Service Helmet
-- guid: 190035
+- guid: 1158
   name_id: 1765
   description_id: 14
   icon_set_id: 1377
@@ -363,7 +363,7 @@
   item_type: 1
   category: 60
 # Mandalorian Secret Service Gloves
-- guid: 190036
+- guid: 1159
   name_id: 1767
   description_id: 14
   icon_set_id: 1376
@@ -373,7 +373,7 @@
   item_type: 1
   category: 62
 # Mandalorian Secret Service Boots
-- guid: 190037
+- guid: 1161
   name_id: 1771
   description_id: 14
   icon_set_id: 1375
@@ -383,7 +383,7 @@
   item_type: 1
   category: 63
 # Mother Talzin's Robes
-- guid: 190038
+- guid: 2243
   name_id: 32931
   description_id: 14
   icon_set_id: 1595
@@ -393,7 +393,7 @@
   item_type: 1
   category: 61
 # Mother Talzin's Hood
-- guid: 190039
+- guid: 2244
   name_id: 32932
   description_id: 14
   icon_set_id: 1597
@@ -403,7 +403,7 @@
   item_type: 1
   category: 60
 # Mother Talzin's Boots
-- guid: 190040
+- guid: 2246
   name_id: 32934
   description_id: 14
   icon_set_id: 1596
@@ -413,7 +413,7 @@
   item_type: 1
   category: 63
 # Nightsister Ventress' Outfit
-- guid: 190041
+- guid: 2264
   name_id: 32981
   description_id: 14
   icon_set_id: 1612
@@ -423,7 +423,7 @@
   item_type: 1
   category: 61
 # Nightsister Ventress' Hood
-- guid: 190042
+- guid: 2262
   name_id: 32979
   description_id: 14
   icon_set_id: 1615
@@ -433,7 +433,7 @@
   item_type: 1
   category: 60
 # Nightsister Ventress' Gloves
-- guid: 190043
+- guid: 2263
   name_id: 32980
   description_id: 14
   icon_set_id: 1614
@@ -443,7 +443,7 @@
   item_type: 1
   category: 62
 # Nightsister Ventress' Boots
-- guid: 190044
+- guid: 2265
   name_id: 32982
   description_id: 14
   icon_set_id: 1613
@@ -453,7 +453,7 @@
   item_type: 1
   category: 63
 # Mortis Son's Suit
-- guid: 190045
+- guid: 2376
   name_id: 33559
   description_id: 14
   icon_set_id: 1659
@@ -463,7 +463,7 @@
   item_type: 1
   category: 61
 # Mortis Son's Collar
-- guid: 190046
+- guid: 2374
   name_id: 33557
   description_id: 14
   icon_set_id: 1657
@@ -473,7 +473,7 @@
   item_type: 1
   category: 60
 # Mortis Son's Gloves
-- guid: 190047
+- guid: 2375
   name_id: 33558
   description_id: 14
   icon_set_id: 1658
@@ -483,7 +483,7 @@
   item_type: 1
   category: 62
 # Mortis Son's Boots
-- guid: 190048
+- guid: 2377
   name_id: 33560
   description_id: 14
   icon_set_id: 1660
@@ -493,7 +493,7 @@
   item_type: 1
   category: 63
 # Garnac's Suit
-- guid: 190049
+- guid: 2747
   name_id: 43515
   description_id: 14
   icon_set_id: 1838
@@ -503,7 +503,7 @@
   item_type: 1
   category: 61
 # Mandalorian Deathwatch Suit
-- guid: 190050
+- guid: 3167
   name_id: 4303
   description_id: 14
   icon_set_id: 2423
@@ -513,7 +513,7 @@
   item_type: 1
   category: 61
 # Mandalorian Deathwatch Helmet
-- guid: 190051
+- guid: 3165
   name_id: 4301
   description_id: 14
   icon_set_id: 2426
@@ -523,7 +523,7 @@
   item_type: 1
   category: 60
 # Mandalorian Deathwatch Gloves
-- guid: 190052
+- guid: 3166
   name_id: 4302
   description_id: 14
   icon_set_id: 2425
@@ -533,7 +533,7 @@
   item_type: 1
   category: 62
 # Mandalorian Deathwatch Boots
-- guid: 190053
+- guid: 3168
   name_id: 4304
   description_id: 14
   icon_set_id: 2424
@@ -543,7 +543,7 @@
   item_type: 1
   category: 63
 # Mandalorian Mercenary Armor
-- guid: 190054
+- guid: 2456
   name_id: 2664
   description_id: 14
   icon_set_id: 2164
@@ -553,7 +553,7 @@
   item_type: 1
   category: 61
 # Mandalorian Mercenary Helmet
-- guid: 190055
+- guid: 2454
   name_id: 2662
   description_id: 14
   icon_set_id: 2167
@@ -563,7 +563,7 @@
   item_type: 1
   category: 60
 # Mandalorian Mercenary Gloves
-- guid: 190056
+- guid: 2455
   name_id: 2663
   description_id: 14
   icon_set_id: 2166
@@ -573,7 +573,7 @@
   item_type: 1
   category: 62
 # Mandalorian Mercenary Boots
-- guid: 190057
+- guid: 2457
   name_id: 2665
   description_id: 14
   icon_set_id: 2165
@@ -583,7 +583,7 @@
   item_type: 1
   category: 63
 # Death Watch Armor
-- guid: 190058
+- guid: 589
   name_id: 178
   description_id: 14
   icon_set_id: 95
@@ -594,7 +594,7 @@
   category: 61
   members: true
 # Death Watch Helmet
-- guid: 190059
+- guid: 587
   name_id: 174
   description_id: 14
   icon_set_id: 200
@@ -605,7 +605,7 @@
   category: 60
   members: true
 # Death Watch Gloves
-- guid: 190060
+- guid: 588
   name_id: 176
   description_id: 14
   icon_set_id: 169
@@ -616,7 +616,7 @@
   category: 62
   members: true
 # Death Watch Boots
-- guid: 190061
+- guid: 590
   name_id: 180
   description_id: 14
   icon_set_id: 137
@@ -627,7 +627,7 @@
   category: 63
   members: true
 # Tusken Raider Robes
-- guid: 190062
+- guid: 628
   name_id: 256
   description_id: 14
   icon_set_id: 115
@@ -638,7 +638,7 @@
   category: 61
   members: true
 # Tusken Raider Helmet
-- guid: 190063
+- guid: 626
   name_id: 252
   description_id: 14
   icon_set_id: 209
@@ -649,7 +649,7 @@
   category: 60
   members: true
 # Tusken Raider Gloves
-- guid: 190064
+- guid: 627
   name_id: 254
   description_id: 14
   icon_set_id: 183
@@ -660,7 +660,7 @@
   category: 62
   members: true
 # Tusken Raider Boots
-- guid: 190065
+- guid: 629
   name_id: 258
   description_id: 14
   icon_set_id: 153
@@ -671,7 +671,7 @@
   category: 63
   members: true
 # Captain Typho's Armor
-- guid: 190066
+- guid: 865
   name_id: 1329
   description_id: 14
   icon_set_id: 1197
@@ -682,7 +682,7 @@
   category: 61
   members: true
 # Captain Typho's Eyepatch
-- guid: 190067
+- guid: 913
   name_id: 1424
   description_id: 14
   icon_set_id: 1200
@@ -693,7 +693,7 @@
   category: 60
   members: true
 # Captain Typho's Gloves
-- guid: 190068
+- guid: 897
   name_id: 1392
   description_id: 14
   icon_set_id: 1199
@@ -704,7 +704,7 @@
   category: 62
   members: true
 # Captain Typho's Boots
-- guid: 190069
+- guid: 876
   name_id: 1350
   description_id: 14
   icon_set_id: 1198
@@ -715,7 +715,7 @@
   category: 63
   members: true
 # Lama Su's Armor
-- guid: 190070
+- guid: 991
   name_id: 1577
   description_id: 14
   icon_set_id: 1237
@@ -726,7 +726,7 @@
   category: 61
   members: true
 # Lama Su's Boots
-- guid: 190071
+- guid: 992
   name_id: 1579
   description_id: 14
   icon_set_id: 1239
@@ -737,7 +737,7 @@
   category: 63
   members: true
 # Toydarian Royal Guard Uniform
-- guid: 190072
+- guid: 1125
   name_id: 1662
   description_id: 14
   icon_set_id: 1250
@@ -748,7 +748,7 @@
   category: 61
   members: true
 # Toydarian Royal Guard Helmet
-- guid: 190073
+- guid: 1123
   name_id: 1658
   description_id: 14
   icon_set_id: 1253
@@ -759,7 +759,7 @@
   category: 60
   members: true
 # Toydarian Royal Guard Gloves
-- guid: 190074
+- guid: 1124
   name_id: 1660
   description_id: 14
   icon_set_id: 1252
@@ -770,7 +770,7 @@
   category: 62
   members: true
 # Toydarian Royal Guard Boots
-- guid: 190075
+- guid: 1126
   name_id: 1664
   description_id: 14
   icon_set_id: 1251
@@ -781,7 +781,7 @@
   category: 63
   members: true
 # Ion Papanoida's Uniform
-- guid: 190076
+- guid: 989
   name_id: 1573
   description_id: 14
   icon_set_id: 1319
@@ -792,7 +792,7 @@
   category: 61
   members: true
 # Ion Papanoida's Hat
-- guid: 190077
+- guid: 987
   name_id: 1569
   description_id: 14
   icon_set_id: 1322
@@ -803,7 +803,7 @@
   category: 60
   members: true
 # Ion Papanoida's Gloves
-- guid: 190078
+- guid: 988
   name_id: 1571
   description_id: 14
   icon_set_id: 1321
@@ -814,7 +814,7 @@
   category: 62
   members: true
 # Ion Papanoida's Boots
-- guid: 190079
+- guid: 990
   name_id: 1575
   description_id: 14
   icon_set_id: 1320
@@ -825,7 +825,7 @@
   category: 63
   members: true
 # Mandalorian Police Captain Armor
-- guid: 190080
+- guid: 1149
   name_id: 1743
   description_id: 14
   icon_set_id: 1342
@@ -836,7 +836,7 @@
   category: 61
   members: true
 # Mandalorian Police Captain Helmet
-- guid: 190081
+- guid: 1147
   name_id: 1739
   description_id: 14
   icon_set_id: 1345
@@ -847,7 +847,7 @@
   category: 60
   members: true
 # Mandalorian Police Captain Gloves
-- guid: 190082
+- guid: 1148
   name_id: 1741
   description_id: 14
   icon_set_id: 1344
@@ -858,7 +858,7 @@
   category: 62
   members: true
 # Mandalorian Police Captain Boots
-- guid: 190083
+- guid: 1150
   name_id: 1745
   description_id: 14
   icon_set_id: 1343
@@ -869,7 +869,7 @@
   category: 63
   members: true
 # Tee Va's Robe
-- guid: 190084
+- guid: 1162
   name_id: 1773
   description_id: 14
   icon_set_id: 1346
@@ -880,7 +880,7 @@
   category: 61
   members: true
 # Tee Va's Headdress
-- guid: 190085
+- guid: 1179
   name_id: 1813
   description_id: 14
   icon_set_id: 1348
@@ -891,7 +891,7 @@
   category: 60
   members: true
 # Tee Va's Sandals
-- guid: 190086
+- guid: 1163
   name_id: 1775
   description_id: 14
   icon_set_id: 1347
@@ -902,7 +902,7 @@
   category: 63
   members: true
 # Mandalorian Cadet Uniform
-- guid: 190087
+- guid: 1184
   name_id: 1848
   description_id: 14
   icon_set_id: 1383
@@ -913,7 +913,7 @@
   category: 61
   members: true
 # Mandalorian Cadet Visor
-- guid: 190088
+- guid: 1183
   name_id: 1846
   description_id: 14
   icon_set_id: 1381
@@ -924,7 +924,7 @@
   category: 60
   members: true
 # Mandalorian Cadet Boots
-- guid: 190089
+- guid: 1185
   name_id: 1850
   description_id: 14
   icon_set_id: 1382
@@ -935,7 +935,7 @@
   category: 63
   members: true
 # Coruscant Engineer Uniform
-- guid: 190090
+- guid: 1283
   name_id: 1911
   description_id: 14
   icon_set_id: 1448
@@ -946,7 +946,7 @@
   category: 61
   members: true
 # Coruscant Engineer Hat
-- guid: 190091
+- guid: 1281
   name_id: 1907
   description_id: 14
   icon_set_id: 1451
@@ -957,7 +957,7 @@
   category: 60
   members: true
 # Coruscant Engineer Gloves
-- guid: 190092
+- guid: 1282
   name_id: 1909
   description_id: 14
   icon_set_id: 1450
@@ -968,7 +968,7 @@
   category: 62
   members: true
 # Coruscant Engineer Boots
-- guid: 190093
+- guid: 1284
   name_id: 1913
   description_id: 14
   icon_set_id: 1449
@@ -979,7 +979,7 @@
   category: 63
   members: true
 # Sochek's Suit
-- guid: 190094
+- guid: 2751
   name_id: 43514
   description_id: 14
   icon_set_id: 1844
@@ -990,7 +990,7 @@
   category: 61
   members: true
 # Sochek's Goggles
-- guid: 190095
+- guid: 2750
   name_id: 43513
   description_id: 14
   icon_set_id: 1845
@@ -1001,7 +1001,7 @@
   category: 60
   members: true
 # Captain Ackbar's Uniform
-- guid: 190096
+- guid: 1308
   name_id: 2340
   description_id: 14
   icon_set_id: 2328
@@ -1012,7 +1012,7 @@
   category: 61
   members: true
 # Captain Ackbar's Helmet
-- guid: 190097
+- guid: 1307
   name_id: 2338
   description_id: 14
   icon_set_id: 2330
@@ -1023,7 +1023,7 @@
   category: 60
   members: true
 # Captain Ackbar's Boots
-- guid: 190098
+- guid: 1309
   name_id: 2342
   description_id: 14
   icon_set_id: 2329
@@ -1034,7 +1034,7 @@
   category: 63
   members: true
 # Gungan Warrior Armor
-- guid: 190099
+- guid: 1316
   name_id: 2356
   description_id: 14
   icon_set_id: 2331
@@ -1045,7 +1045,7 @@
   category: 61
   members: true
 # Gungan Warrior Mask
-- guid: 190100
+- guid: 1314
   name_id: 2352
   description_id: 14
   icon_set_id: 2333
@@ -1056,7 +1056,7 @@
   category: 60
   members: true
 # Gungan Warrior Gloves
-- guid: 190101
+- guid: 1315
   name_id: 2354
   description_id: 14
   icon_set_id: 2332
@@ -1067,7 +1067,7 @@
   category: 62
   members: true
 # Lee-Char's Suit
-- guid: 190102
+- guid: 1319
   name_id: 2362
   description_id: 14
   icon_set_id: 2334
@@ -1078,7 +1078,7 @@
   category: 61
   members: true
 # Lee-Char's Crown
-- guid: 190103
+- guid: 1318
   name_id: 2360
   description_id: 14
   icon_set_id: 2336
@@ -1089,7 +1089,7 @@
   category: 60
   members: true
 # Lee-Char's Boots
-- guid: 190104
+- guid: 1320
   name_id: 2364
   description_id: 14
   icon_set_id: 2335
@@ -1100,7 +1100,7 @@
   category: 63
   members: true
 # Boss Lyonie's Robes
-- guid: 190105
+- guid: 3078
   name_id: 2390
   description_id: 14
   icon_set_id: 2366
@@ -1111,7 +1111,7 @@
   category: 61
   members: true
 # Boss Lyonie's Headdress
-- guid: 190106
+- guid: 3077
   name_id: 2389
   description_id: 14
   icon_set_id: 2365
@@ -1122,7 +1122,7 @@
   category: 60
   members: true
 # Balnab Hunter Suit
-- guid: 190107
+- guid: 1586
   name_id: 2949
   description_id: 14
   icon_set_id: 2388
@@ -1133,7 +1133,7 @@
   category: 61
   members: true
 # Balnab Hunter Helmet
-- guid: 190108
+- guid: 1585
   name_id: 2947
   description_id: 14
   icon_set_id: 2390
@@ -1144,7 +1144,7 @@
   category: 60
   members: true
 # Balnab Hunter Boots
-- guid: 190109
+- guid: 1587
   name_id: 2951
   description_id: 14
   icon_set_id: 2389
@@ -1155,7 +1155,7 @@
   category: 63
   members: true
 # Umbaran Suit
-- guid: 190110
+- guid: 3163
   name_id: 4299
   description_id: 14
   icon_set_id: 2408
@@ -1166,7 +1166,7 @@
   category: 61
   members: true
 # Umbaran Gloves
-- guid: 190111
+- guid: 3162
   name_id: 4298
   description_id: 14
   icon_set_id: 2410
@@ -1177,7 +1177,7 @@
   category: 62
   members: true
 # Umbaran Boots
-- guid: 190112
+- guid: 3164
   name_id: 4300
   description_id: 14
   icon_set_id: 2409
@@ -1188,7 +1188,7 @@
   category: 63
   members: true
 # Hondo Ohnaka's Tunic
-- guid: 190113
+- guid: 858
   name_id: 1315
   description_id: 14
   icon_set_id: 1096
@@ -1198,7 +1198,7 @@
   item_type: 1
   category: 61
 # Hondo Ohnaka's Cap
-- guid: 190114
+- guid: 908
   name_id: 1414
   description_id: 14
   icon_set_id: 1099
@@ -1208,7 +1208,7 @@
   item_type: 1
   category: 60
 # Hondo Ohnaka's Wraps
-- guid: 190115
+- guid: 893
   name_id: 1384
   description_id: 14
   icon_set_id: 1098
@@ -1218,7 +1218,7 @@
   item_type: 1
   category: 62
 # Hondo Ohnaka's Boots
-- guid: 190116
+- guid: 877
   name_id: 1352
   description_id: 14
   icon_set_id: 1097
@@ -1228,7 +1228,7 @@
   item_type: 1
   category: 63
 # Nightsister's Robes
-- guid: 190117
+- guid: 2252
   name_id: 32940
   description_id: 14
   icon_set_id: 1598
@@ -1239,7 +1239,7 @@
   category: 61
   members: true
 # Nightsister's Hood
-- guid: 190118
+- guid: 2250
   name_id: 32938
   description_id: 14
   icon_set_id: 1601
@@ -1250,7 +1250,7 @@
   category: 60
   members: true
 # Nightsister's Wrist Wraps
-- guid: 190119
+- guid: 2251
   name_id: 32939
   description_id: 14
   icon_set_id: 1600
@@ -1261,7 +1261,7 @@
   category: 62
   members: true
 # Nightsister's Boots
-- guid: 190120
+- guid: 2253
   name_id: 32941
   description_id: 14
   icon_set_id: 1599
@@ -1272,7 +1272,7 @@
   category: 63
   members: true
 # Nightbrother Tunic
-- guid: 190121
+- guid: 2268
   name_id: 32985
   description_id: 14
   icon_set_id: 1625
@@ -1283,7 +1283,7 @@
   category: 61
   members: true
 # Nightbrother Bracers
-- guid: 190122
+- guid: 2267
   name_id: 32984
   description_id: 14
   icon_set_id: 1627
@@ -1294,7 +1294,7 @@
   category: 62
   members: true
 # Nightbrother Boots
-- guid: 190123
+- guid: 2269
   name_id: 32986
   description_id: 14
   icon_set_id: 1626
@@ -1305,7 +1305,7 @@
   category: 63
   members: true
 # Mortis Father's Suit
-- guid: 190124
+- guid: 2379
   name_id: 33784
   description_id: 14
   icon_set_id: 1665
@@ -1316,7 +1316,7 @@
   category: 61
   members: true
 # Mortis Father's Hat
-- guid: 190125
+- guid: 2378
   name_id: 33783
   description_id: 14
   icon_set_id: 1667
@@ -1327,7 +1327,7 @@
   category: 60
   members: true
 # Mortis Father's Boots
-- guid: 190126
+- guid: 2380
   name_id: 33785
   description_id: 14
   icon_set_id: 1666
@@ -1338,7 +1338,7 @@
   category: 63
   members: true
 # Cassie Cryar's Suit
-- guid: 190127
+- guid: 234
   name_id: 820
   description_id: 14
   icon_set_id: 442
@@ -1349,7 +1349,7 @@
   category: 61
   members: true
 # Cassie Cryar's Gloves
-- guid: 190128
+- guid: 233
   name_id: 818
   description_id: 14
   icon_set_id: 444
@@ -1360,7 +1360,7 @@
   category: 62
   members: true
 # Cassie Cryar's Shoes
-- guid: 190129
+- guid: 235
   name_id: 822
   description_id: 14
   icon_set_id: 443
@@ -1371,7 +1371,7 @@
   category: 63
   members: true
 # Coruscant Underworld Garb
-- guid: 190130
+- guid: 392
   name_id: 1202
   description_id: 14
   icon_set_id: 375
@@ -1382,7 +1382,7 @@
   category: 61
   members: true
 # Coruscant Underworld Headgear
-- guid: 190131
+- guid: 395
   name_id: 1208
   description_id: 14
   icon_set_id: 393
@@ -1393,7 +1393,7 @@
   category: 60
   members: true
 # Coruscant Underworld Gloves
-- guid: 190132
+- guid: 394
   name_id: 1206
   description_id: 14
   icon_set_id: 387
@@ -1404,7 +1404,7 @@
   category: 62
   members: true
 # Coruscant Underworld Boots
-- guid: 190133
+- guid: 393
   name_id: 1204
   description_id: 14
   icon_set_id: 381
@@ -2200,7 +2200,7 @@
   category: 60
   members: true
 # Camouflaged Death Watch Armor
-- guid: 190207
+- guid: 2489
   name_id: 2697
   description_id: 14
   icon_set_id: 2591
@@ -2210,7 +2210,7 @@
   item_type: 1
   category: 61
 # Camouflaged Death Watch Helmet
-- guid: 190208
+- guid: 2487
   name_id: 2695
   description_id: 14
   icon_set_id: 2589
@@ -2220,7 +2220,7 @@
   item_type: 1
   category: 60
 # Camouflaged Death Watch Gloves
-- guid: 190209
+- guid: 2488
   name_id: 2696
   description_id: 14
   icon_set_id: 2590
@@ -2230,7 +2230,7 @@
   item_type: 1
   category: 62
 # Camouflaged Death Watch Boots
-- guid: 190210
+- guid: 2490
   name_id: 2698
   description_id: 14
   icon_set_id: 2592
@@ -2280,7 +2280,7 @@
   item_type: 1
   category: 63
 # Vicious Savage's Pants
-- guid: 190215
+- guid: 2881
   name_id: 44885
   description_id: 14
   icon_set_id: 2118

@@ -1008,18 +1008,8 @@
   texture_alias: MaceWindu
   item_type: 25
   category: 64
-# 'Umbara Academy: Ghost Attack 1'
-- guid: 230101
-  name_id: 51036
-  description_id: 14
-  icon_set_id: 425
-  item_class: 10
-  slot: !Equipment None
-  model_name: Wield_LightsaberHiltStandard_AhsokaV2_Ghost.adr
-  texture_alias: Ahsoka
-  item_type: 25
 # 'Umbara Academy: Ghost Attack 2'
-- guid: 230102
+- guid: 230101
   name_id: 51037
   description_id: 14
   icon_set_id: 425
@@ -1029,7 +1019,7 @@
   texture_alias: Anakin
   item_type: 25
 # 'Umbara Academy: Ghost Attack 3'
-- guid: 230103
+- guid: 230102
   name_id: 51038
   description_id: 14
   icon_set_id: 425
@@ -1039,7 +1029,7 @@
   texture_alias: MaceWindu
   item_type: 25
 # Mandalorian Shatterer Battle Rifle
-- guid: 230104
+- guid: 230103
   name_id: 8780
   description_id: 14
   icon_set_id: 241
@@ -1050,7 +1040,7 @@
   item_type: 1
   category: 64
 # Rebel Pilot Blaster
-- guid: 230105
+- guid: 230104
   name_id: 2412
   description_id: 14
   icon_set_id: 245
@@ -1061,7 +1051,7 @@
   item_type: 1
   category: 64
 # Covert Diplomat Blaster Pistol
-- guid: 230106
+- guid: 230105
   name_id: 8792
   description_id: 14
   icon_set_id: 249
@@ -1072,7 +1062,7 @@
   item_type: 1
   category: 64
 # Imperial Royal Guard Force Pike
-- guid: 230107
+- guid: 230106
   name_id: 8799
   description_id: 14
   icon_set_id: 251
@@ -1083,7 +1073,7 @@
   item_type: 1
   category: 64
 # Tamtel Skreej's Pike
-- guid: 230108
+- guid: 230107
   name_id: 8798
   description_id: 14
   icon_set_id: 252
@@ -1094,7 +1084,7 @@
   item_type: 1
   category: 64
 # His cane
-- guid: 230109
+- guid: 230108
   name_id: 10423
   description_id: 14
   icon_set_id: 681
@@ -1104,7 +1094,7 @@
   item_type: 1
   category: 64
 # Renegade Heavy Blaster Pistol (Left)
-- guid: 230110
+- guid: 230109
   description_id: 14
   icon_set_id: 3792
   item_class: 9

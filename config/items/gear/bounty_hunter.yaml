@@ -1,6 +1,6 @@
 ---
 # Embo's Suit
-- guid: 150000
+- guid: 857
   name_id: 1313
   description_id: 14
   icon_set_id: 1088
@@ -11,7 +11,7 @@
   category: 61
   members: true
 # Embo's Helmet
-- guid: 150001
+- guid: 906
   name_id: 1410
   description_id: 14
   icon_set_id: 1091
@@ -22,7 +22,7 @@
   category: 60
   members: true
 # Embo's Gloves
-- guid: 150002
+- guid: 892
   name_id: 1382
   description_id: 14
   icon_set_id: 1090
@@ -33,7 +33,7 @@
   category: 62
   members: true
 # Embo's Boots
-- guid: 150003
+- guid: 875
   name_id: 1348
   description_id: 14
   icon_set_id: 1089
@@ -44,7 +44,7 @@
   category: 63
   members: true
 # Aurra Sing's Body Suit
-- guid: 150004
+- guid: 573
   name_id: 146
   description_id: 14
   icon_set_id: 82
@@ -55,7 +55,7 @@
   category: 61
   members: true
 # Aurra Sing's Antenna
-- guid: 150005
+- guid: 571
   name_id: 142
   description_id: 14
   icon_set_id: 187
@@ -66,7 +66,7 @@
   category: 60
   members: true
 # Aurra Sing's Wrist Wraps
-- guid: 150006
+- guid: 572
   name_id: 144
   description_id: 14
   icon_set_id: 155
@@ -77,7 +77,7 @@
   category: 62
   members: true
 # Aurra Sing's Boots
-- guid: 150007
+- guid: 574
   name_id: 148
   description_id: 14
   icon_set_id: 119
@@ -88,7 +88,7 @@
   category: 63
   members: true
 # Assassin Aurra Sing's Suit
-- guid: 150008
+- guid: 1146
   name_id: 1727
   description_id: 14
   icon_set_id: 1406
@@ -98,7 +98,7 @@
   item_type: 1
   category: 61
 # Assassin Aurra Sing's Mask
-- guid: 150009
+- guid: 1145
   name_id: 1725
   description_id: 14
   icon_set_id: 1408
@@ -108,7 +108,7 @@
   item_type: 1
   category: 60
 # Assassin Aurra Sing's Boots
-- guid: 150010
+- guid: 1273
   name_id: 1881
   description_id: 14
   icon_set_id: 1407
@@ -118,7 +118,7 @@
   item_type: 1
   category: 63
 # Robonino's Suit
-- guid: 150011
+- guid: 2153
   name_id: 20055
   description_id: 14
   icon_set_id: 1472
@@ -128,7 +128,7 @@
   item_type: 1
   category: 61
 # Robonino's Eyepatch
-- guid: 150012
+- guid: 2152
   name_id: 20054
   description_id: 14
   icon_set_id: 1471
@@ -138,7 +138,7 @@
   item_type: 1
   category: 60
 # Robonino's Boots
-- guid: 150013
+- guid: 2154
   name_id: 20056
   description_id: 14
   icon_set_id: 1473
@@ -148,7 +148,7 @@
   item_type: 1
   category: 63
 # Chata Hyoki's Suit
-- guid: 150014
+- guid: 2150
   name_id: 20052
   description_id: 14
   icon_set_id: 1469
@@ -158,7 +158,7 @@
   item_type: 1
   category: 61
 # Chata Hyoki's Helmet
-- guid: 150015
+- guid: 2148
   name_id: 20050
   description_id: 14
   icon_set_id: 1467
@@ -168,7 +168,7 @@
   item_type: 1
   category: 60
 # Chata Hyoki's Gloves
-- guid: 150016
+- guid: 2149
   name_id: 20051
   description_id: 14
   icon_set_id: 1468
@@ -178,7 +178,7 @@
   item_type: 1
   category: 62
 # Chata Hyoki's Boots
-- guid: 150017
+- guid: 2151
   name_id: 20053
   description_id: 14
   icon_set_id: 1470
@@ -188,7 +188,7 @@
   item_type: 1
   category: 63
 # Cad Bane's Jacket
-- guid: 150018
+- guid: 412
   name_id: 8510
   description_id: 14
   icon_set_id: 84
@@ -198,7 +198,7 @@
   item_type: 1
   category: 61
 # Cad Bane's Hat
-- guid: 150019
+- guid: 415
   name_id: 8513
   description_id: 14
   icon_set_id: 189
@@ -208,7 +208,7 @@
   item_type: 1
   category: 60
 # Cad Bane's Gloves
-- guid: 150020
+- guid: 414
   name_id: 8512
   description_id: 14
   icon_set_id: 157
@@ -218,7 +218,7 @@
   item_type: 1
   category: 62
 # Cad Bane's Boots
-- guid: 150021
+- guid: 413
   name_id: 8511
   description_id: 14
   icon_set_id: 124
@@ -228,7 +228,7 @@
   item_type: 1
   category: 63
 # Cad Bane's Fugitive Vest
-- guid: 150022
+- guid: 3350
   name_id: 4586
   description_id: 14
   icon_set_id: 2652
@@ -238,7 +238,7 @@
   item_type: 1
   category: 61
 # Cad Bane's Fugitive Hat
-- guid: 150023
+- guid: 3348
   name_id: 4584
   description_id: 14
   icon_set_id: 2650
@@ -248,7 +248,7 @@
   item_type: 1
   category: 60
 # Cad Bane's Fugitive Gloves
-- guid: 150024
+- guid: 3349
   name_id: 4585
   description_id: 14
   icon_set_id: 2651
@@ -258,7 +258,7 @@
   item_type: 1
   category: 62
 # Cad Bane's Fugitive Boots
-- guid: 150025
+- guid: 3351
   name_id: 4587
   description_id: 14
   icon_set_id: 2653
@@ -268,7 +268,7 @@
   item_type: 1
   category: 63
 # Quarzite Boba Fett's Suit
-- guid: 150026
+- guid: 3418
   name_id: 4703
   description_id: 14
   icon_set_id: 2751
@@ -278,7 +278,7 @@
   item_type: 1
   category: 61
 # Quarzite Boba Fett's Helmet
-- guid: 150027
+- guid: 3416
   name_id: 4701
   description_id: 14
   icon_set_id: 2749
@@ -288,7 +288,7 @@
   item_type: 1
   category: 60
 # Quarzite Boba Fett's Gauntlets
-- guid: 150028
+- guid: 3417
   name_id: 4702
   description_id: 14
   icon_set_id: 2750
@@ -298,7 +298,7 @@
   item_type: 1
   category: 62
 # Quarzite Boba Fett's Boots
-- guid: 150029
+- guid: 3419
   name_id: 4704
   description_id: 14
   icon_set_id: 2752
@@ -348,7 +348,7 @@
   item_type: 1
   category: 63
 # Dengar's Armor
-- guid: 150034
+- guid: 3411
   name_id: 4683
   description_id: 14
   icon_set_id: 2737
@@ -359,7 +359,7 @@
   category: 61
   members: true
 # Dengar's Headwrap
-- guid: 150035
+- guid: 3409
   name_id: 4681
   description_id: 14
   icon_set_id: 2735
@@ -370,7 +370,7 @@
   category: 60
   members: true
 # Dengar's Gloves
-- guid: 150036
+- guid: 3410
   name_id: 4682
   description_id: 14
   icon_set_id: 2736
@@ -381,7 +381,7 @@
   category: 62
   members: true
 # Dengar's Boots
-- guid: 150037
+- guid: 3412
   name_id: 4684
   description_id: 14
   icon_set_id: 2738
@@ -392,7 +392,7 @@
   category: 63
   members: true
 # Asajj Ventress' Bounty Hunter Suit
-- guid: 150038
+- guid: 3402
   name_id: 4671
   description_id: 14
   icon_set_id: 2731
@@ -412,7 +412,7 @@
   item_type: 1
   category: 60
 # Asajj Ventress' Bounty Hunter Gloves
-- guid: 150040
+- guid: 3401
   name_id: 4670
   description_id: 14
   icon_set_id: 2730
@@ -422,7 +422,7 @@
   item_type: 1
   category: 62
 # Asajj Ventress' Bounty Hunter Boots
-- guid: 150041
+- guid: 3403
   name_id: 4672
   description_id: 14
   icon_set_id: 2732
@@ -432,7 +432,7 @@
   item_type: 1
   category: 63
 # Derrown's Bounty Suit
-- guid: 150042
+- guid: 3385
   name_id: 4625
   description_id: 14
   icon_set_id: 2690
@@ -443,7 +443,7 @@
   category: 61
   members: true
 # Derrown's Bounty Helm
-- guid: 150043
+- guid: 3383
   name_id: 4623
   description_id: 14
   icon_set_id: 2688
@@ -454,7 +454,7 @@
   category: 60
   members: true
 # Derrown's Bounty Gloves
-- guid: 150044
+- guid: 3384
   name_id: 4624
   description_id: 14
   icon_set_id: 2689
@@ -465,7 +465,7 @@
   category: 62
   members: true
 # Derrown's Bounty Boots
-- guid: 150045
+- guid: 3386
   name_id: 4626
   description_id: 14
   icon_set_id: 2691
@@ -476,7 +476,7 @@
   category: 63
   members: true
 # Twazzi's Bounty Suit
-- guid: 150046
+- guid: 3375
   name_id: 4614
   description_id: 14
   icon_set_id: 2682
@@ -487,7 +487,7 @@
   category: 61
   members: true
 # Twazzi's Bounty Gloves
-- guid: 150047
+- guid: 3374
   name_id: 4613
   description_id: 14
   icon_set_id: 2681
@@ -498,7 +498,7 @@
   category: 62
   members: true
 # Twazzi's Bounty Boots
-- guid: 150048
+- guid: 3376
   name_id: 4615
   description_id: 14
   icon_set_id: 2683
@@ -509,7 +509,7 @@
   category: 63
   members: true
 # Rako Hardeen's Fugitive Vest
-- guid: 150049
+- guid: 3356
   name_id: 4593
   description_id: 14
   icon_set_id: 2657
@@ -519,7 +519,7 @@
   item_type: 1
   category: 61
 # Rako Hardeen's Fugitive Helmet
-- guid: 150050
+- guid: 3354
   name_id: 4591
   description_id: 14
   icon_set_id: 2655
@@ -529,7 +529,7 @@
   item_type: 1
   category: 60
 # Rako Hardeen's Fugitive Gloves
-- guid: 150051
+- guid: 3355
   name_id: 4592
   description_id: 14
   icon_set_id: 2656
@@ -539,7 +539,7 @@
   item_type: 1
   category: 62
 # Rako Hardeen's Fugitive Boots
-- guid: 150052
+- guid: 3357
   name_id: 4594
   description_id: 14
   icon_set_id: 2658
@@ -632,7 +632,7 @@
   item_type: 1
   category: 61
 # Boba Fett's Armor
-- guid: 150061
+- guid: 577
   name_id: 154
   description_id: 14
   icon_set_id: 83
@@ -642,7 +642,7 @@
   item_type: 1
   category: 61
 # Boba Fett's Helmet
-- guid: 150062
+- guid: 575
   name_id: 150
   description_id: 14
   icon_set_id: 188
@@ -652,7 +652,7 @@
   item_type: 1
   category: 60
 # Boba Fett's Gloves
-- guid: 150063
+- guid: 576
   name_id: 152
   description_id: 14
   icon_set_id: 156
@@ -662,7 +662,7 @@
   item_type: 1
   category: 62
 # Boba Fett's Boots
-- guid: 150064
+- guid: 578
   name_id: 156
   description_id: 14
   icon_set_id: 120

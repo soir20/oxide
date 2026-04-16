@@ -48,16 +48,93 @@ pub fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
 }
 
 pub fn direction(old_pos: Pos, new_pos: Pos) -> Pos {
-    let dir_x = new_pos.x - old_pos.x;
-    let dir_y = new_pos.y - old_pos.y;
-    let dir_z = new_pos.z - old_pos.z;
+    let diff_x = new_pos.x - old_pos.x;
+    let diff_y = new_pos.y - old_pos.y;
+    let diff_z = new_pos.z - old_pos.z;
 
     let distance_required = distance3_pos(old_pos, new_pos).max(f32::MIN_POSITIVE);
     Pos {
-        x: dir_x / distance_required,
-        y: dir_y / distance_required,
-        z: dir_z / distance_required,
+        x: diff_x / distance_required,
+        y: diff_y / distance_required,
+        z: diff_z / distance_required,
         w: new_pos.w,
+    }
+}
+
+pub fn is_between(segment_start: Pos, segment_end: Pos, pos: Pos) -> bool {
+    segment_start.x.min(segment_end.x) <= pos.x
+        && pos.x <= segment_start.x.max(segment_end.x)
+        && segment_start.y.min(segment_end.y) <= pos.y
+        && pos.y <= segment_start.y.max(segment_end.y)
+        && segment_start.z.min(segment_end.z) <= pos.z
+        && pos.z <= segment_start.z.max(segment_end.z)
+}
+
+pub fn pos_on_segment_at_distance_from_pos(
+    segment_start: Pos,
+    segment_end: Pos,
+    target: Pos,
+    distance: f32,
+) -> Option<Pos> {
+    //                         target
+    //                           *
+    //                          /|
+    //                         / | perpendicular_distance
+    //                        /  |
+    // segment_start --------*--------*-------- segment_end
+    //                     cand1    cand2
+    //               (closer to start)
+
+    let segment_direction = direction(segment_start, segment_end);
+    let vector_to_target = target - segment_start;
+
+    let projection_len = vector_to_target.x * segment_direction.x
+        + vector_to_target.y * segment_direction.y
+        + vector_to_target.z * segment_direction.z;
+
+    let closest_pos_on_segment = Pos {
+        x: segment_start.x + projection_len * segment_direction.x,
+        y: segment_start.y + projection_len * segment_direction.y,
+        z: segment_start.z + projection_len * segment_direction.z,
+        w: segment_start.w,
+    };
+
+    let perpendicular_distance = distance3_pos(target, closest_pos_on_segment);
+    let offset_squared = distance * distance - perpendicular_distance * perpendicular_distance;
+    if offset_squared < 0.0 {
+        return None;
+    }
+
+    let offset_from_closest_pos = offset_squared.sqrt();
+    let candidate1 = Pos {
+        x: closest_pos_on_segment.x + offset_from_closest_pos * segment_direction.x,
+        y: closest_pos_on_segment.y + offset_from_closest_pos * segment_direction.y,
+        z: closest_pos_on_segment.z + offset_from_closest_pos * segment_direction.z,
+        w: closest_pos_on_segment.w,
+    };
+    let candidate2 = Pos {
+        x: closest_pos_on_segment.x - offset_from_closest_pos * segment_direction.x,
+        y: closest_pos_on_segment.y - offset_from_closest_pos * segment_direction.y,
+        z: closest_pos_on_segment.z - offset_from_closest_pos * segment_direction.z,
+        w: closest_pos_on_segment.w,
+    };
+
+    let candidate1_on_segment = is_between(segment_start, segment_end, candidate1);
+    let candidate2_on_segment = is_between(segment_start, segment_end, candidate2);
+
+    let dist1_to_start = distance3_pos(segment_start, candidate1);
+    let dist2_to_start = distance3_pos(segment_start, candidate2);
+
+    match (
+        candidate1_on_segment,
+        candidate2_on_segment,
+        dist1_to_start < dist2_to_start,
+    ) {
+        (true, true, true) => Some(candidate1),
+        (true, true, false) => Some(candidate2),
+        (true, false, _) => Some(candidate1),
+        (false, true, _) => Some(candidate2),
+        (false, false, _) => None,
     }
 }
 
