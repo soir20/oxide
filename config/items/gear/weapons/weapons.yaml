@@ -754,7 +754,8 @@
   category: 64
   members: true
   abilities:
-    - icon_set_id: 2925 # unsure
+    # Unsure
+    - icon_set_id: 2925
       name_id: 60026
     # Deflector Shield
     - icon_set_id: 3178
