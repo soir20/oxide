@@ -1133,28 +1133,6 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    player
-        .action_bar
-        .weapon_abilities
-        .sort_by_key(|a| a.priority);
-
-    let mut assignments = Vec::new();
-    for i in 0..4 {
-        let ability = player.action_bar.weapon_abilities.get(i).and_then(|pa| {
-            game_server
-                .items()
-                .get(&pa.source_item_id)
-                .and_then(|item| item.abilities.get(pa.ability_index as usize))
-        });
-
-        assignments.push((i as u32, ability));
-    }
-
-    sender_only_packets.extend(build_action_bar_packets(
-        ActionBarType::Weapon,
-        &assignments,
-    ));
-
     if let Some(item_class) = game_server
         .item_classes()
         .definitions
@@ -1202,30 +1180,8 @@ fn equip_item_in_slot<'a>(
                             .action_bar
                             .weapon_abilities
                             .retain(|ab| ab.source_item_id != unequipped_def.guid);
-
-                        player
-                            .action_bar
-                            .weapon_abilities
-                            .sort_by_key(|a| a.priority);
                     }
                 }
-
-                let mut assignments = Vec::new();
-                for i in 0..4 {
-                    let ability = player.action_bar.weapon_abilities.get(i).and_then(|pa| {
-                        game_server
-                            .items()
-                            .get(&pa.source_item_id)
-                            .and_then(|item| item.abilities.get(pa.ability_index as usize))
-                    });
-
-                    assignments.push((i as u32, ability));
-                }
-
-                sender_only_packets.extend(build_action_bar_packets(
-                    ActionBarType::Weapon,
-                    &assignments,
-                ));
 
                 sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
@@ -1284,6 +1240,28 @@ fn equip_item_in_slot<'a>(
             brandished_wield_type = Some(wield_type);
         }
     }
+
+    player
+        .action_bar
+        .weapon_abilities
+        .sort_by_key(|a| a.priority);
+
+    let mut assignments = Vec::new();
+    for i in 0..4 {
+        let ability = player.action_bar.weapon_abilities.get(i).and_then(|pa| {
+            game_server
+                .items()
+                .get(&pa.source_item_id)
+                .and_then(|item| item.abilities.get(pa.ability_index as usize))
+        });
+
+        assignments.push((i as u32, ability));
+    }
+
+    sender_only_packets.extend(build_action_bar_packets(
+        ActionBarType::Weapon,
+        &assignments,
+    ));
 
     let (_, instance_guid, chunk) = character_write_handle.index1();
     let mut nearby_players = ZoneInstance::other_players_nearby(
