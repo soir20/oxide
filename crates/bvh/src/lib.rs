@@ -127,13 +127,12 @@ pub struct BvhInstance {
 }
 
 impl BvhInstance {
-    pub fn new(
+    pub fn new<'a>(
         id: u32,
         pos: [f32; 3],
         rot: [f32; 3],
         scale: f32,
-        vertices: &[[f32; 3]],
-        triangles: &[[u16; 3]],
+        triangles: impl Iterator<Item = &'a [[f32; 3]; 3]>,
     ) -> Self {
         BvhInstance {
             id,
@@ -141,14 +140,7 @@ impl BvhInstance {
             rot,
             scale,
             aabb: triangles
-                .iter()
-                .map(|triangle| {
-                    triangle_to_aabb(
-                        vertices[usize::from(triangle[0])],
-                        vertices[usize::from(triangle[1])],
-                        vertices[usize::from(triangle[2])],
-                    )
-                })
+                .map(|triangle| triangle_to_aabb(triangle[0], triangle[1], triangle[2]))
                 .fold(Aabb::empty(), |acc, next| acc.join(&next)),
             node_index: 0,
         }
