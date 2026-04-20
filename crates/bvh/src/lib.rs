@@ -3,16 +3,15 @@ use std::{
     collections::HashMap,
     fs::File,
     io::{BufReader, Read},
-    path::Path,
 };
 
 use bvh::{
     aabb::{Aabb, Bounded},
     bounding_hierarchy::BHShape,
-    bvh::Bvh,
+    bvh::Bvh as SubBvh,
     ray::Ray,
 };
-use flate2::bufread::GzDecoder;
+use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
 use glam::{EulerRot, Quat, Vec3};
 use serde::{Deserialize, Serialize};
 
@@ -51,9 +50,9 @@ fn with_vertices<'a>(
         .collect()
 }
 
-fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> Bvh<f32, 3> {
+fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
     let mut triangles_with_vertices = with_vertices(vertices, triangles);
-    Bvh::build(&mut triangles_with_vertices)
+    SubBvh::build(&mut triangles_with_vertices)
 }
 
 #[derive(Deserialize, Serialize)]
@@ -97,7 +96,7 @@ impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
 
 #[derive(Deserialize, Serialize)]
 pub struct BvhTemplate {
-    bvh: Bvh<f32, 3>,
+    bvh: SubBvh<f32, 3>,
     vertices: Vec<[f32; 3]>,
     triangles: Vec<Triangle>,
 }
@@ -173,16 +172,16 @@ impl BHShape<f32, 3> for BvhInstance {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct ZoneBvh {
-    root: Bvh<f32, 3>,
+pub struct Bvh {
+    root: SubBvh<f32, 3>,
     templates: HashMap<u32, BvhTemplate>,
     instances: Vec<BvhInstance>,
 }
 
-impl ZoneBvh {
+impl Bvh {
     pub fn new(templates: HashMap<u32, BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
-        ZoneBvh {
-            root: Bvh::build(&mut instances),
+        Bvh {
+            root: SubBvh::build(&mut instances),
             templates,
             instances,
         }
@@ -236,13 +235,17 @@ impl ZoneBvh {
     }
 }
 
-pub fn load_bvh(config_dir: &Path, name: &str) -> Result<ZoneBvh, pot::Error> {
-    let path = config_dir.join(format!("{name}.gz"));
+pub fn write_bvh(file: &File, bvh: &Bvh) -> Result<(), pot::Error> {
+    let serialized_bvh: Vec<u8> = pot::to_vec(bvh)?;
+    let mut encoder = GzEncoder::new(file, Compression::best());
+    std::io::Write::write_all(&mut encoder, &serialized_bvh)?;
+    encoder.finish()?;
+    Ok(())
+}
 
-    let file = File::open(path)?;
+pub fn read_bvh(file: &File) -> Result<Bvh, pot::Error> {
     let mut decoder = GzDecoder::new(BufReader::new(file));
     let mut buffer = Vec::new();
     decoder.read_to_end(&mut buffer)?;
-
     pot::from_slice(&buffer)
 }
