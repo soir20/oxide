@@ -36,7 +36,6 @@ pub struct ItemAbilityConfig {
     pub name_id: u32,
     #[serde(default)]
     pub icon_tint_id: u32,
-    pub action_bar_priority_override: Option<u32>,
     #[serde(default)]
     pub required_force_points: u32,
     #[serde(default)]
@@ -51,6 +50,12 @@ pub struct ItemAbilityConfig {
     pub max_distance_from_player: f32,
     #[serde(default = "default_ability_subtype")]
     pub ability_sub_type: AbilitySubType,
+}
+
+#[derive(PartialEq, Clone, Default, Debug, Deserialize)]
+pub struct ItemAbilitiesConfig {
+    pub action_bar_priority_override: Option<u32>,
+    pub abilities: Vec<ItemAbilityConfig>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -112,12 +117,13 @@ pub struct ItemConfig {
     #[serde(default)]
     pub customization_id: u32,
     #[serde(default)]
-    pub abilities: Vec<ItemAbilityConfig>,
+    pub abilities: ItemAbilitiesConfig,
 }
 
 impl ItemConfig {
     fn to_specials(&self) -> Vec<SpecialItemAbility> {
         self.abilities
+            .abilities
             .iter()
             .enumerate()
             .filter_map(|(i, cfg)| {
@@ -208,18 +214,18 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemConf
         let configs: Vec<ItemConfig> = serde_yaml::from_reader(file)?;
 
         for cfg in configs {
-            if cfg.abilities.len() > 4 {
+            if cfg.abilities.abilities.len() > 4 {
                 return Err(ConfigError::ConstraintViolated(format!(
-                    "Item ID {} has too many abilities: {} (max 4) (file: {:?})",
+                    "Item ID {} has too many abilities {} in file {:?} (max 4)",
                     cfg.guid,
-                    cfg.abilities.len(),
+                    cfg.abilities.abilities.len(),
                     file_path
                 )));
             }
 
             if let Some(previous) = items.insert(cfg.guid, cfg) {
                 return Err(ConfigError::ConstraintViolated(format!(
-                    "Two item definitions have ID {} (file: {:?})",
+                    "Two item definitions have ID {} in file {:?}",
                     previous.guid, file_path
                 )));
             }

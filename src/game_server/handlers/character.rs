@@ -1881,17 +1881,21 @@ pub struct PreviousLocation {
 }
 
 #[derive(Clone)]
-pub struct PlayerItemAbility {
+pub struct PlayerAbilityGroup {
     pub source_item_id: u32,
-    pub ability_index: u32,
     pub priority: u32,
+}
+
+#[derive(Clone)]
+pub struct PlayerItemAbilities {
+    pub abilities: Vec<PlayerAbilityGroup>,
 }
 
 #[allow(dead_code)]
 #[derive(Clone)]
 pub struct PlayerActionBar {
-    pub weapon_abilities: Vec<PlayerItemAbility>,
-    pub consumables: Vec<PlayerItemAbility>,
+    pub weapon_abilities: PlayerItemAbilities,
+    pub consumables: PlayerItemAbilities,
 }
 
 #[derive(Clone)]
