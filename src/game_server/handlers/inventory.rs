@@ -306,18 +306,18 @@ fn process_unequip_slot(
             let mut packets_for_all = Vec::new();
             let mut packets_for_sender = Vec::new();
 
-            if !item_def.abilities.abilities.is_empty() {
+            if !item_def.action_bar.abilities.is_empty() {
                 player.action_bar.weapon_abilities.abilities.retain(|pa| pa.source_item_id != item_guid);
                 player.action_bar.weapon_abilities.abilities.sort_by_key(|a| a.priority);
 
-                let mut flattened_abilities = player.action_bar.weapon_abilities.abilities.iter().flat_map(|pa| {
-                    game_server.items().get(&pa.source_item_id).into_iter().flat_map(|item| item.abilities.abilities.iter())
+                let mut abilities = player.action_bar.weapon_abilities.abilities.iter().flat_map(|ab| {
+                    game_server.items().get(&ab.source_item_id).into_iter().flat_map(|item| item.action_bar.abilities.iter())
                 });
 
                 let mut assignments = Vec::new();
 
                 for i in 0..4 {
-                    assignments.push((i as u32, flattened_abilities.next()));
+                    assignments.push((i as u32, abilities.next()));
                 }
 
                 packets_for_sender.extend(build_action_bar_packets(ActionBarType::Weapon, &assignments));
@@ -1090,7 +1090,7 @@ fn equip_item_in_slot<'a>(
     })];
 
     if let Some(previous_item) = previous_item_def {
-        if !previous_item.abilities.abilities.is_empty() {
+        if !previous_item.action_bar.abilities.is_empty() {
             player
                 .action_bar
                 .weapon_abilities
@@ -1099,9 +1099,9 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    if !item_def.abilities.abilities.is_empty() {
+    if !item_def.action_bar.abilities.is_empty() {
         let priority = item_def
-            .abilities
+            .action_bar
             .action_bar_priority_override
             .unwrap_or_else(|| equip_guid.slot.action_bar_slot_priority());
 
@@ -1157,7 +1157,7 @@ fn equip_item_in_slot<'a>(
                             )
                         })?;
 
-                    if !unequipped_def.abilities.abilities.is_empty() {
+                    if !unequipped_def.action_bar.abilities.is_empty() {
                         player
                             .action_bar
                             .weapon_abilities
@@ -1240,7 +1240,7 @@ fn equip_item_in_slot<'a>(
                 .items()
                 .get(&ab.source_item_id)
                 .into_iter()
-                .flat_map(|item| item.abilities.abilities.iter())
+                .flat_map(|item| item.action_bar.abilities.iter())
         });
 
     let mut assignments = Vec::new();

@@ -117,12 +117,12 @@ pub struct ItemConfig {
     #[serde(default)]
     pub customization_id: u32,
     #[serde(default)]
-    pub abilities: ItemAbilitiesConfig,
+    pub action_bar: ItemAbilitiesConfig,
 }
 
 impl ItemConfig {
     fn to_specials(&self) -> Vec<SpecialItemAbility> {
-        self.abilities
+        self.action_bar
             .abilities
             .iter()
             .enumerate()
@@ -214,11 +214,11 @@ pub fn load_item_definitions(config_dir: &Path) -> Result<BTreeMap<u32, ItemConf
         let configs: Vec<ItemConfig> = serde_yaml::from_reader(file)?;
 
         for cfg in configs {
-            if cfg.abilities.abilities.len() > 4 {
+            if cfg.action_bar.abilities.len() > 4 {
                 return Err(ConfigError::ConstraintViolated(format!(
                     "Item ID {} has too many abilities {} in file {:?} (max 4)",
                     cfg.guid,
-                    cfg.abilities.abilities.len(),
+                    cfg.action_bar.abilities.len(),
                     file_path
                 )));
             }
