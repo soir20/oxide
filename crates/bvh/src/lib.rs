@@ -1,4 +1,5 @@
 use std::{
+    cell::Cell,
     collections::HashMap,
     fs::File,
     io::{BufReader, Read},
@@ -37,9 +38,12 @@ fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     )
 }
 
-fn map_triangles_with_vertices<'a>(vertices: &'a [[f32; 3]], triangles: &'a mut [Triangle]) -> Vec<TriangleWithVertices<'a>> {
+fn with_vertices<'a>(
+    vertices: &'a [[f32; 3]],
+    triangles: &'a [Triangle],
+) -> Vec<TriangleWithVertices<'a>> {
     triangles
-        .iter_mut()
+        .iter()
         .map(|triangle| TriangleWithVertices {
             triangle,
             vertices: &vertices,
@@ -48,27 +52,27 @@ fn map_triangles_with_vertices<'a>(vertices: &'a [[f32; 3]], triangles: &'a mut 
 }
 
 fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> Bvh<f32, 3> {
-    let mut triangles_with_vertices = map_triangles_with_vertices(vertices, triangles);
+    let mut triangles_with_vertices = with_vertices(vertices, triangles);
     Bvh::build(&mut triangles_with_vertices)
 }
 
 #[derive(Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
-    node_index: usize,
+    node_index: Cell<usize>,
 }
 
 impl From<[u16; 3]> for Triangle {
     fn from(indices: [u16; 3]) -> Self {
         Triangle {
             indices,
-            node_index: 0,
+            node_index: Cell::new(0),
         }
     }
 }
 
 struct TriangleWithVertices<'a> {
-    triangle: &'a mut Triangle,
+    triangle: &'a Triangle,
     vertices: &'a [[f32; 3]],
 }
 
@@ -83,11 +87,11 @@ impl<'a> Bounded<f32, 3> for TriangleWithVertices<'a> {
 
 impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
     fn set_bh_node_index(&mut self, node_index: usize) {
-        self.triangle.node_index = node_index;
+        self.triangle.node_index.set(node_index);
     }
 
     fn bh_node_index(&self) -> usize {
-        self.triangle.node_index
+        self.triangle.node_index.get()
     }
 }
 
@@ -211,9 +215,20 @@ impl ZoneBvh {
                 relative_direction.into(),
             );
 
-            let triangles_with_vertices = map_triangles_with_vertices(&bvh_template.vertices, &mut bvh_template.triangles);
-            for triangle in bvh_template.bvh.traverse(&relative_ray, &triangles_with_vertices) {
-                //
+            let triangles_with_vertices =
+                with_vertices(&bvh_template.vertices, &bvh_template.triangles);
+            for triangle in bvh_template
+                .bvh
+                .traverse(&relative_ray, &triangles_with_vertices)
+            {
+                let intersection = relative_ray.intersects_triangle(
+                    &triangle.vertices[0].into(),
+                    &triangle.vertices[1].into(),
+                    &triangle.vertices[2].into(),
+                );
+                if intersection.distance < f32::INFINITY {
+                    return false;
+                }
             }
         }
 
