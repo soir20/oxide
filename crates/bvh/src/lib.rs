@@ -127,12 +127,12 @@ pub struct BvhInstance {
 }
 
 impl BvhInstance {
-    pub fn new<'a>(
+    pub fn new(
         id: u32,
         pos: [f32; 3],
         rot: [f32; 3],
         scale: f32,
-        triangles: impl Iterator<Item = &'a [[f32; 3]; 3]>,
+        triangles: impl Iterator<Item = [[f32; 3]; 3]>,
     ) -> Self {
         BvhInstance {
             id,
