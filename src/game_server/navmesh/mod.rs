@@ -383,3 +383,34 @@ impl Navmesh {
         }
     }
 }
+
+#[derive(Clone, Debug, Default)]
+pub enum Collision {
+    #[default]
+    Empty,
+    Bvh(oxide_bvh::Bvh),
+}
+
+impl Collision {
+    pub fn has_line_of_sight(
+        &self,
+        start_feet_pos: Pos,
+        start_height: f32,
+        end_feet_pos: Pos,
+        end_height: f32,
+    ) -> bool {
+        match self {
+            Collision::Empty => true,
+            Collision::Bvh(bvh) => {
+                let start = [
+                    start_feet_pos.x,
+                    start_feet_pos.y + start_height,
+                    start_feet_pos.z,
+                ];
+                let end = [end_feet_pos.x, end_feet_pos.y + end_height, end_feet_pos.z];
+
+                bvh.has_line_of_sight(start, end)
+            }
+        }
+    }
+}

@@ -55,7 +55,7 @@ fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32
     SubBvh::build(&mut triangles_with_vertices)
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
     node_index: Cell<usize>,
@@ -94,7 +94,7 @@ impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BvhTemplate {
     bvh: SubBvh<f32, 3>,
     vertices: Vec<[f32; 3]>,
@@ -116,7 +116,7 @@ impl BvhTemplate {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct BvhInstance {
     id: u32,
     pos: [f32; 3],
@@ -163,7 +163,7 @@ impl BHShape<f32, 3> for BvhInstance {
     }
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Bvh {
     root: SubBvh<f32, 3>,
     templates: HashMap<u32, BvhTemplate>,
