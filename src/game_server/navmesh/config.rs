@@ -86,7 +86,7 @@ struct NavmeshConfig {
 type NavmeshConfigs = HashMap<String, NavmeshConfig>;
 
 fn load_bvh(config_dir: &Path, name: &str) -> Result<Bvh, ConfigError> {
-    let path = config_dir.join(format!("{name}.gz"));
+    let path = config_dir.join("bvhs").join(format!("{name}.gz"));
 
     let file = File::open(path)?;
     Ok(read_bvh(&file)?)
