@@ -131,7 +131,7 @@ pub fn tick_single_chunk(
                     let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
                         now,
                         &nearby_player_guids,
-                        &characters_write,
+                        &mut characters_write,
                         game_server.mounts(),
                         game_server.items(),
                         game_server.customizations(),

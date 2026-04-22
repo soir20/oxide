@@ -102,6 +102,10 @@ pub const fn default_spawn_animation_id() -> i32 {
     1
 }
 
+const fn default_ability_height() -> f32 {
+    1.0
+}
+
 const fn default_hud_message_millis() -> u32 {
     2000
 }
@@ -297,6 +301,8 @@ pub struct BaseNpcConfig {
     pub max_distance_from_origin: f32,
     #[serde(default)]
     pub auto_target_radius: f32,
+    #[serde(default = "default_ability_height")]
+    pub ability_height: f32,
     #[serde(default)]
     pub enemy_types: HashSet<String>,
     #[serde(default)]
@@ -2099,6 +2105,7 @@ pub struct BaseNpcTemplate {
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
     pub auto_target_radius: f32,
+    pub ability_height: f32,
     pub enemy_types: HashSet<String>,
     pub enemy_prioritization: HashMap<String, i8>,
     pub texture_alias: String,
@@ -2214,6 +2221,7 @@ impl BaseNpcTemplate {
             triggered_npc_keys_on_interact: config.triggered_npc_keys_on_interact.clone(),
             notification_icon: config.notification_icon,
             navmesh: config.navmesh,
+            ability_height: config.ability_height,
         }
     }
 
@@ -2272,6 +2280,7 @@ impl BaseNpcTemplate {
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: self.navmesh.clone(),
+                ability_height: self.ability_height,
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
@@ -2402,6 +2411,7 @@ pub struct CharacterStats {
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
     pub auto_target_radius: f32,
+    pub ability_height: f32,
     pub enemy_types: HashSet<String>,
     pub threat_table: ThreatTable,
     pub health: u32,
@@ -2666,6 +2676,7 @@ impl Character {
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
+                ability_height: default_ability_height(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
@@ -2735,6 +2746,7 @@ impl Character {
                 health: 1,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
+                ability_height: default_ability_height(),
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
@@ -2762,7 +2774,7 @@ impl Character {
         &mut self,
         now: Instant,
         nearby_player_guids: &[u32],
-        nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
+        nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_definitions: &BTreeMap<u32, ItemDefinition>,
         customizations: &BTreeMap<u32, Customization>,
@@ -2772,139 +2784,20 @@ impl Character {
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         self.update_target(nearby_characters, navmesh);
 
-        let speed = self.stats.speed.total();
+        let (mut broadcasts, pos_update) = self.seek_next_pos(
+            now,
+            nearby_player_guids,
+            nearby_characters,
+            mount_configs,
+            item_definitions,
+            customizations,
+            tick_duration,
+            navmesh,
+        );
 
-        match &mut self.stats.target_state {
-            TargetState::None => self.tickable_procedure_tracker.tick(
-                &mut self.stats,
-                now,
-                nearby_player_guids,
-                nearby_characters,
-                mount_configs,
-                item_definitions,
-                customizations,
-                tick_duration,
-                navmesh,
-            ),
-            TargetState::Targeting {
-                guid,
-                origin_pos,
-                origin_rot,
-                pos_update_progress,
-            } => {
-                let broadcasts = Vec::new();
-                let pos_update;
+        broadcasts.append(&mut self.use_ability(nearby_characters, collision));
 
-                if let Some(target_read_handle) = nearby_characters.get(guid) {
-                    let distance_from_origin =
-                        distance3_pos(target_read_handle.stats.pos, *origin_pos);
-                    let too_far_from_origin =
-                        distance_from_origin > self.stats.max_distance_from_origin;
-
-                    if !too_far_from_origin {
-                        let destination = target_read_handle.stats.pos;
-                        if pos_update_progress.destination_differs_from(
-                            destination,
-                            STANDING,
-                            self.stats.max_distance_from_target,
-                        ) {
-                            **pos_update_progress = NonLinearPathState::new(
-                                self.stats.pos,
-                                NavmeshWaypoint::without_rot(destination, STANDING),
-                                navmesh,
-                                self.stats.max_distance_from_target,
-                            );
-                        }
-
-                        pos_update = Some(pos_update_progress.tick(
-                            self.stats.guid,
-                            speed,
-                            tick_duration,
-                            self.stats.rot,
-                        ));
-
-                        return (broadcasts, pos_update);
-                    }
-                }
-
-                **pos_update_progress = NonLinearPathState::new(
-                    self.stats.pos,
-                    NavmeshWaypoint {
-                        pos: *origin_pos,
-                        rot_x: Some(origin_rot.x),
-                        rot_y: Some(origin_rot.y),
-                        rot_z: Some(origin_rot.z),
-                        rot_x_offset: 0.0,
-                        rot_y_offset: 0.0,
-                        rot_z_offset: 0.0,
-                        character_state: STANDING,
-                    },
-                    navmesh,
-                    0.0,
-                );
-                pos_update = Some(pos_update_progress.tick(
-                    self.stats.guid,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
-                ));
-                self.stats.target_state = TargetState::ReturningToOrigin {
-                    pos_update_progress: pos_update_progress.clone(),
-                };
-                self.stats
-                    .composite_effect_tags
-                    .insert(ORIGIN_RESET_TAG_ID, ORIGIN_RESET_COMPOSITE_EFFECT_ID);
-
-                (
-                    vec![Broadcast::Multi(
-                        nearby_player_guids.to_vec(),
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: AddCompositeEffectTag {
-                                guid: self.stats.guid,
-                                tag_id: ORIGIN_RESET_TAG_ID,
-                                composite_effect_id: ORIGIN_RESET_COMPOSITE_EFFECT_ID,
-                                triggered_by_guid: 0,
-                                unknown2: 0,
-                            },
-                        })],
-                    )],
-                    pos_update,
-                )
-            }
-            TargetState::ReturningToOrigin {
-                pos_update_progress,
-            } => {
-                let pos_update = Some(pos_update_progress.tick(
-                    self.stats.guid,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
-                ));
-                if !pos_update_progress.reached_destination() {
-                    return (Vec::new(), pos_update);
-                }
-
-                self.stats.target_state = TargetState::None;
-                self.stats.threat_table.clear();
-                self.stats
-                    .composite_effect_tags
-                    .remove(&ORIGIN_RESET_TAG_ID);
-                (
-                    vec![Broadcast::Multi(
-                        nearby_player_guids.to_vec(),
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: RemoveCompositeEffectTag {
-                                guid: self.stats.guid,
-                                tag_id: ORIGIN_RESET_TAG_ID,
-                            },
-                        })],
-                    )],
-                    pos_update,
-                )
-            }
-        }
+        (broadcasts, pos_update)
     }
 
     pub fn current_tickable_procedure(&self) -> Option<&String> {
@@ -3064,6 +2957,178 @@ impl Character {
                     )),
                 };
             }
+        }
+    }
+
+    fn seek_next_pos(
+        &mut self,
+        now: Instant,
+        nearby_player_guids: &[u32],
+        nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
+        mount_configs: &BTreeMap<u32, MountConfig>,
+        item_definitions: &BTreeMap<u32, ItemDefinition>,
+        customizations: &BTreeMap<u32, Customization>,
+        tick_duration: Duration,
+        navmesh: &Navmesh,
+    ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
+        let speed = self.stats.speed.total();
+
+        match &mut self.stats.target_state {
+            TargetState::None => self.tickable_procedure_tracker.tick(
+                &mut self.stats,
+                now,
+                nearby_player_guids,
+                nearby_characters,
+                mount_configs,
+                item_definitions,
+                customizations,
+                tick_duration,
+                navmesh,
+            ),
+            TargetState::Targeting {
+                guid,
+                origin_pos,
+                origin_rot,
+                pos_update_progress,
+            } => {
+                let pos_update;
+
+                if let Some(target_read_handle) = nearby_characters.get(guid) {
+                    let distance_from_origin =
+                        distance3_pos(target_read_handle.stats.pos, *origin_pos);
+                    let too_far_from_origin =
+                        distance_from_origin > self.stats.max_distance_from_origin;
+
+                    if !too_far_from_origin {
+                        let destination = target_read_handle.stats.pos;
+                        if pos_update_progress.destination_differs_from(
+                            destination,
+                            STANDING,
+                            self.stats.max_distance_from_target,
+                        ) {
+                            **pos_update_progress = NonLinearPathState::new(
+                                self.stats.pos,
+                                NavmeshWaypoint::without_rot(destination, STANDING),
+                                navmesh,
+                                self.stats.max_distance_from_target,
+                            );
+                        }
+
+                        pos_update = Some(pos_update_progress.tick(
+                            self.stats.guid,
+                            speed,
+                            tick_duration,
+                            self.stats.rot,
+                        ));
+
+                        return (Vec::new(), pos_update);
+                    }
+                }
+
+                **pos_update_progress = NonLinearPathState::new(
+                    self.stats.pos,
+                    NavmeshWaypoint {
+                        pos: *origin_pos,
+                        rot_x: Some(origin_rot.x),
+                        rot_y: Some(origin_rot.y),
+                        rot_z: Some(origin_rot.z),
+                        rot_x_offset: 0.0,
+                        rot_y_offset: 0.0,
+                        rot_z_offset: 0.0,
+                        character_state: STANDING,
+                    },
+                    navmesh,
+                    0.0,
+                );
+                pos_update = Some(pos_update_progress.tick(
+                    self.stats.guid,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                ));
+                self.stats.target_state = TargetState::ReturningToOrigin {
+                    pos_update_progress: pos_update_progress.clone(),
+                };
+                self.stats
+                    .composite_effect_tags
+                    .insert(ORIGIN_RESET_TAG_ID, ORIGIN_RESET_COMPOSITE_EFFECT_ID);
+
+                (
+                    vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AddCompositeEffectTag {
+                                guid: self.stats.guid,
+                                tag_id: ORIGIN_RESET_TAG_ID,
+                                composite_effect_id: ORIGIN_RESET_COMPOSITE_EFFECT_ID,
+                                triggered_by_guid: 0,
+                                unknown2: 0,
+                            },
+                        })],
+                    )],
+                    pos_update,
+                )
+            }
+            TargetState::ReturningToOrigin {
+                pos_update_progress,
+            } => {
+                let pos_update = Some(pos_update_progress.tick(
+                    self.stats.guid,
+                    speed,
+                    tick_duration,
+                    self.stats.rot,
+                ));
+                if !pos_update_progress.reached_destination() {
+                    return (Vec::new(), pos_update);
+                }
+
+                self.stats.target_state = TargetState::None;
+                self.stats.threat_table.clear();
+                self.stats
+                    .composite_effect_tags
+                    .remove(&ORIGIN_RESET_TAG_ID);
+                (
+                    vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: RemoveCompositeEffectTag {
+                                guid: self.stats.guid,
+                                tag_id: ORIGIN_RESET_TAG_ID,
+                            },
+                        })],
+                    )],
+                    pos_update,
+                )
+            }
+        }
+    }
+
+    fn use_ability(
+        &mut self,
+        nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
+        collision: &Collision,
+    ) -> Vec<Broadcast> {
+        match &self.stats.target_state {
+            TargetState::None => Vec::new(),
+            TargetState::Targeting { guid, .. } => {
+                let Some(target_read_handle) = nearby_characters.get(guid) else {
+                    return Vec::new();
+                };
+
+                if collision.has_line_of_sight(
+                    self.stats.pos,
+                    self.stats.ability_height,
+                    target_read_handle.stats.pos,
+                    target_read_handle.stats.ability_height,
+                ) {
+                    return Vec::new();
+                }
+
+                Vec::new()
+            }
+            TargetState::ReturningToOrigin { .. } => Vec::new(),
         }
     }
 }
