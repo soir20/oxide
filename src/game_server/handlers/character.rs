@@ -2795,7 +2795,12 @@ impl Character {
             navmesh,
         );
 
-        broadcasts.append(&mut self.use_ability(nearby_characters, collision));
+        broadcasts.append(&mut self.use_ability(
+            nearby_player_guids,
+            nearby_characters,
+            tick_duration,
+            collision,
+        ));
 
         (broadcasts, pos_update)
     }
@@ -3107,7 +3112,9 @@ impl Character {
 
     fn use_ability(
         &mut self,
+        nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
+        tick_duration: Duration,
         collision: &Collision,
     ) -> Vec<Broadcast> {
         match &self.stats.target_state {
@@ -3123,7 +3130,20 @@ impl Character {
                     target_read_handle.stats.pos,
                     target_read_handle.stats.ability_height,
                 ) {
-                    return Vec::new();
+                    return vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: PlayCompositeEffect {
+                                guid: *guid,
+                                triggered_by_guid: self.stats.guid,
+                                composite_effect: 1166,
+                                delay_millis: 0,
+                                duration_millis: tick_duration.as_millis() as u32,
+                                pos: Pos::default(),
+                            },
+                        })],
+                    )];
                 }
 
                 Vec::new()
