@@ -167,9 +167,8 @@ impl From<ZoneConfig> for ZoneTemplate {
     fn from(value: ZoneConfig) -> Self {
         let mut button_keys_to_id = HashMap::new();
         let mut seen_keys = HashSet::new();
-        let mut next_id = 1;
 
-        for choice in &value.dialog_choices {
+        for (next_id, choice) in (1..).zip(value.dialog_choices.iter()) {
             if !seen_keys.insert(choice.button_key.clone()) {
                 panic!(
                     "Duplicate (Button Key: '{}') found in (Zone Template GUID: {})",
@@ -178,7 +177,6 @@ impl From<ZoneConfig> for ZoneTemplate {
             }
 
             button_keys_to_id.insert(choice.button_key.clone(), next_id);
-            next_id += 1;
         }
 
         let mut characters = Vec::new();
