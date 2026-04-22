@@ -1,8 +1,8 @@
 use std::{
-    cell::Cell,
     collections::HashMap,
     fs::File,
     io::{BufReader, Read},
+    sync::atomic::{AtomicUsize, Ordering},
 };
 
 use bvh::{
@@ -55,17 +55,17 @@ fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32
     SubBvh::build(&mut triangles_with_vertices)
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
-    node_index: Cell<usize>,
+    node_index: AtomicUsize,
 }
 
 impl From<[u16; 3]> for Triangle {
     fn from(indices: [u16; 3]) -> Self {
         Triangle {
             indices,
-            node_index: Cell::new(0),
+            node_index: AtomicUsize::new(0),
         }
     }
 }
@@ -86,15 +86,17 @@ impl<'a> Bounded<f32, 3> for TriangleWithVertices<'a> {
 
 impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
     fn set_bh_node_index(&mut self, node_index: usize) {
-        self.triangle.node_index.set(node_index);
+        self.triangle
+            .node_index
+            .store(node_index, Ordering::Relaxed);
     }
 
     fn bh_node_index(&self) -> usize {
-        self.triangle.node_index.get()
+        self.triangle.node_index.load(Ordering::Relaxed)
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BvhTemplate {
     bvh: SubBvh<f32, 3>,
     vertices: Vec<[f32; 3]>,
@@ -116,7 +118,7 @@ impl BvhTemplate {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct BvhInstance {
     id: u32,
     pos: [f32; 3],
@@ -163,7 +165,7 @@ impl BHShape<f32, 3> for BvhInstance {
     }
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Bvh {
     root: SubBvh<f32, 3>,
     templates: HashMap<u32, BvhTemplate>,

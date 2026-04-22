@@ -384,12 +384,14 @@ impl Navmesh {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Debug, Default)]
 pub enum Collision {
     #[default]
     Empty,
     Bvh(oxide_bvh::Bvh),
 }
+
+pub const DEFAULT_COLLISION: Collision = Collision::Empty;
 
 impl Collision {
     pub fn has_line_of_sight(

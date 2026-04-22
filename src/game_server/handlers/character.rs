@@ -18,7 +18,7 @@ use crate::{
             lock_enforcer::CharacterWriteGuard,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
-        navmesh::{Navmesh, NavmeshWaypoint, NonLinearPathState},
+        navmesh::{Collision, Navmesh, NavmeshWaypoint, NonLinearPathState},
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
@@ -2768,6 +2768,7 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
+        collision: &Collision,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         self.update_target(nearby_characters, navmesh);
 
