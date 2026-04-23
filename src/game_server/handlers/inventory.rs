@@ -1103,7 +1103,7 @@ fn equip_item_in_slot<'a>(
         let priority = item_def
             .action_bar
             .action_bar_priority_override
-            .unwrap_or_else(|| equip_guid.slot.action_bar_slot_priority());
+            .unwrap_or_else(|| equip_guid.slot.action_bar_priority());
 
         player
             .action_bar
