@@ -203,6 +203,7 @@ impl Bvh {
             let relative_end =
                 (inverse_rotation * (end - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
             let relative_direction: [f32; 3] = (relative_end - relative_start).normalize().into();
+            let relative_max_distance = (relative_end - relative_start).length();
             let relative_ray = Ray::new(
                 <[f32; 3]>::from(relative_start).into(),
                 relative_direction.into(),
@@ -219,7 +220,7 @@ impl Bvh {
                     &triangle.vertices[1].into(),
                     &triangle.vertices[2].into(),
                 );
-                if intersection.distance < f32::INFINITY {
+                if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
                     return false;
                 }
             }
