@@ -6,7 +6,6 @@ edition = "2021"
 [dependencies]
 asset_serialize = { path = "crates/asset_serialize" }
 axum = "0.7.5"
-bvh = { version = "0.12.0", features = ["serde"] }
 byteorder = "1.5.0"
 chrono = "0.4.38"
 clap = { version = "4.5.51", features = ["derive"] }
@@ -15,7 +14,6 @@ crossbeam-channel = "0.5.13"
 defer-lite = "1.0.0"
 enum-iterator = "2.1.0"
 evalexpr = "11.3.0"
-flate2 = "1.1.9"
 glam = "0.30.10"
 kiddo = "5.3.0"
 packet_serialize = { path = "crates/packet_serialize" }

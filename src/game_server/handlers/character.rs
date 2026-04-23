@@ -3114,7 +3114,7 @@ impl Character {
         &mut self,
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
-        tick_duration: Duration,
+        _: Duration,
         collision: &Collision,
     ) -> Vec<Broadcast> {
         match &self.stats.target_state {
