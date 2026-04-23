@@ -11,15 +11,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 518
-      name_id: 60026
-    # Force Heal
-    - icon_set_id: 3173
-      name_id: 53518
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 518
+        name_id: 60026
+      # Force Heal
+      - icon_set_id: 3173
+        name_id: 53518
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Blinged-Out Trooper Rifle
 - guid: 54
@@ -32,15 +33,16 @@
   texture_alias: CloneBling
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 239
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 239
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Clone Trooper Blaster
 - guid: 55
@@ -53,15 +55,16 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 213
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 213
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Boba Fett's Blaster Rifle
 - guid: 57
@@ -88,15 +91,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 250
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 250
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Gaffi Stick
 - guid: 59
@@ -110,15 +114,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 253
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 253
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Captain Rex's Left Blaster
 - guid: 141
@@ -157,15 +162,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 240
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 240
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Cad Bane's Right Blaster
 - guid: 512
@@ -178,15 +184,16 @@
   texture_alias: CadBane
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 248
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 248
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Aurra Sing's Hunting Rifle
 - guid: 513
@@ -200,15 +207,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 238
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 238
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Captain Rex's Right Blaster
 - guid: 514
@@ -222,15 +230,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 244
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 244
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Han Solo's Blaster Pistol
 - guid: 516
@@ -256,15 +265,16 @@
   texture_alias: CommanderJet
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 216
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Rapid Fire
-    - icon_set_id: 3755
-      name_id: 60326
+  action_bar:
+    abilities:
+      - icon_set_id: 216
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Republic Missile Launcher
 - guid: 521
@@ -278,15 +288,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 218
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Rapid Fire
-    - icon_set_id: 3755
-      name_id: 60326
+  action_bar:
+    abilities:
+      - icon_set_id: 218
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Rotary Blaster Cannon
 - guid: 522
@@ -299,15 +310,16 @@
   texture_alias: CloneGunner
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 217
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Rapid Fire
-    - icon_set_id: 3755
-      name_id: 60326
+  action_bar:
+    abilities:
+      - icon_set_id: 217
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Mandalorian Blaster Rifle
 - guid: 758
@@ -321,15 +333,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 507
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 507
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Bowcaster
 - guid: 759
@@ -343,15 +356,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 506
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 506
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Papanoida Blaster
 - guid: 1144
@@ -365,15 +379,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 1327
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 1327
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Assassin Aurra Sing's Right Blaster
 - guid: 1165
@@ -387,15 +402,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 1409
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 1409
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Assassin Aurra Sing's Left Blaster
 - guid: 1166
@@ -434,15 +450,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2337
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 2337
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Spring Fever
 - guid: 1415
@@ -469,15 +486,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2391
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2391
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Nightsister's Bow
 - guid: 2254
@@ -491,15 +509,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 1624
-      name_id: 60026
-    # Force Lightning
-    - icon_set_id: 3174
-      name_id: 10641
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 1624
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Savage Opress' Pike
 - guid: 2266
@@ -512,15 +531,16 @@
   texture_alias: Opress
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 1632
-      name_id: 60026
-    # Force Lightning
-    - icon_set_id: 3174
-      name_id: 10641
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 1632
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Cupid Clone's Bow
 - guid: 2392
@@ -547,15 +567,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2001
-      name_id: 60026
-    # Force Push
-    - icon_set_id: 3175
-      name_id: 50564
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2001
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Green Sparkler
 - guid: 2810
@@ -569,15 +590,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2002
-      name_id: 60026
-    # Force Push
-    - icon_set_id: 3175
-      name_id: 50564
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2002
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Orange Sparkler
 - guid: 2811
@@ -591,15 +613,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2003
-      name_id: 60026
-    # Force Push
-    - icon_set_id: 3175
-      name_id: 50564
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2003
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Purple Sparkler
 - guid: 2812
@@ -613,15 +636,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2004
-      name_id: 60026
-    # Force Valor
-    - icon_set_id: 3176
-      name_id: 53516
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2004
+        name_id: 60026
+      # Force Valor
+      - icon_set_id: 3176
+        name_id: 53516
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Red Sparkler
 - guid: 2813
@@ -635,15 +659,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2005
-      name_id: 60026
-    # Force Lightning
-    - icon_set_id: 3174
-      name_id: 10641
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2005
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # White Sparkler
 - guid: 2814
@@ -657,15 +682,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2006
-      name_id: 60026
-    # Force Heal
-    - icon_set_id: 3173
-      name_id: 53518
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2006
+        name_id: 60026
+      # Force Heal
+      - icon_set_id: 3173
+        name_id: 53518
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Yellow Sparkler
 - guid: 2815
@@ -679,15 +705,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2007
-      name_id: 60026
-    # Force Valor
-    - icon_set_id: 3176
-      name_id: 53516
-    # Slashing Strike
-    - icon_set_id: 3752
-      name_id: 60321
+  action_bar:
+    abilities:
+      - icon_set_id: 2007
+        name_id: 60026
+      # Force Valor
+      - icon_set_id: 3176
+        name_id: 53516
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Vigilance
 - guid: 2909
@@ -700,15 +727,16 @@
   texture_alias: Vigilance
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2312
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 2312
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Negotiator
 - guid: 2910
@@ -734,15 +762,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2399
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 2399
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Umbaran Blaster Rifle
 - guid: 3172
@@ -756,15 +785,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2448
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2448
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Zygerrian Blaster Rifle
 - guid: 3254
@@ -778,15 +808,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2513
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2513
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Captain Rex's Zygerrian Electrostaff
 - guid: 3262
@@ -798,15 +829,16 @@
   model_name: Wield_PoleArm_ElectroStaff.adr
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2518
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 2518
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Shadow Tech Rifle
 - guid: 3280
@@ -820,15 +852,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2571
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2571
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Rako Hardeen's Sniper Rifle
 - guid: 3327
@@ -841,15 +874,16 @@
   texture_alias: RakoHardeen
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2659
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2659
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Cad Bane's Blaster Rifle
 - guid: 3328
@@ -862,15 +896,16 @@
   texture_alias: CadBane
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2654
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2654
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Cryo-Cannon
 - guid: 3369
@@ -909,15 +944,16 @@
   texture_alias: IonBlaster
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2680
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2680
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Quarzite Boba Fett's Blaster
 - guid: 3413
@@ -956,15 +992,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2976
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2976
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Ming Po Militia Rifle
 - guid: 80001
@@ -978,15 +1015,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 3085
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 3085
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Usk Bunker General Blaster Rifle
 - guid: 80002
@@ -1000,15 +1038,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2819
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2819
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Grek Bunker General Blaster Rifle
 - guid: 80003
@@ -1022,15 +1061,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2815
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2815
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Republic Grenade Launcher
 - guid: 80004
@@ -1056,15 +1096,16 @@
   texture_alias: Basic
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2882
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Charged Shot
-    - icon_set_id: 3751
-      name_id: 60327
+  action_bar:
+    abilities:
+      - icon_set_id: 2882
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Charged Shot
+      - icon_set_id: 3751
+        name_id: 60327
 
 # Rail Cannon
 - guid: 80006
@@ -1077,15 +1118,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 3771
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Charged Shot
-    - icon_set_id: 3751
-      name_id: 60327
+  action_bar:
+    abilities:
+      - icon_set_id: 3771
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Charged Shot
+      - icon_set_id: 3751
+        name_id: 60327
 
 # Hip-Mounted Cannon
 - guid: 80007
@@ -1098,15 +1140,16 @@
   texture_alias: Basic
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2810
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Charged Shot
-    - icon_set_id: 3751
-      name_id: 60327
+  action_bar:
+    abilities:
+      - icon_set_id: 2810
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Charged Shot
+      - icon_set_id: 3751
+        name_id: 60327
 
 # Mandalorian Repeater
 - guid: 80008
@@ -1145,15 +1188,16 @@
   texture_alias: Turbolaser01
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2811
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Charged Shot
-    - icon_set_id: 3751
-      name_id: 60327
+  action_bar:
+    abilities:
+      - icon_set_id: 2811
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Charged Shot
+      - icon_set_id: 3751
+        name_id: 60327
 
 # Bossk's Long Rifle
 - guid: 80011
@@ -1166,15 +1210,16 @@
   texture_alias: Bossk
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 2789
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 2789
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Grand Officer Rifle
 - guid: 80012
@@ -1187,15 +1232,16 @@
   texture_alias: GrandOfficer
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 3108
-      name_id: 60026
-    # Cryo Grenade
-    - icon_set_id: 3286
-      name_id: 18103
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 3108
+        name_id: 60026
+      # Cryo Grenade
+      - icon_set_id: 3286
+        name_id: 18103
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Felucian Commando Rifle
 - guid: 80013
@@ -1208,15 +1254,16 @@
   texture_alias: BlackTiger
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 3726
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 3726
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Onderon Long Rifle
 - guid: 80014
@@ -1230,15 +1277,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 3158
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Aimed Shot
-    - icon_set_id: 3750
-      name_id: 60324
+  action_bar:
+    abilities:
+      - icon_set_id: 3158
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Energized Disruptor
 - guid: 80015
@@ -1252,15 +1300,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2680
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 2680
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Light Plasma Pistol
 - guid: 80016
@@ -1274,15 +1323,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2925
-      name_id: 60026
-    # Deflector Shield
-    - icon_set_id: 3178
-      name_id: 52684
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 2925
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Major Rigosso's Quarzite Pistol
 - guid: 80017
@@ -1296,15 +1346,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 2808
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 2808
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Major Rigosso's Offhand Quarzite Pistol
 - guid: 80018
@@ -1330,15 +1381,16 @@
   texture_alias: BlackSun
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 3637
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 3637
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Subtram Hunter Blaster
 - guid: 80020
@@ -1377,15 +1429,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 247
-      name_id: 60026
-    # Thermal Grenade
-    - icon_set_id: 3179
-      name_id: 7
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 247
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Corrupt Warlord Right Pistol
 - guid: 80023
@@ -1398,15 +1451,16 @@
   texture_alias: Mercenary
   item_type: 1
   category: 64
-  abilities:
-    - icon_set_id: 3143
-      name_id: 60026
-    # Deploy Turret
-    - icon_set_id: 3288
-      name_id: 54056
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 3143
+        name_id: 60026
+      # Deploy Turret
+      - icon_set_id: 3288
+        name_id: 54056
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Corrupt Warlord Left Pistol
 - guid: 80024
@@ -1445,15 +1499,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 3159
-      name_id: 60026
-    # Proximity Mine
-    - icon_set_id: 3177
-      name_id: 53514
-    # Focused Shot
-    - icon_set_id: 3754
-      name_id: 60323
+  action_bar:
+    abilities:
+      - icon_set_id: 3159
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # IG-113's Electrostaff
 - guid: 80027
@@ -1467,15 +1522,16 @@
   item_type: 1
   category: 64
   members: true
-  abilities:
-    - icon_set_id: 3002
-      name_id: 60026
-    # Force Lightning
-    - icon_set_id: 3174
-      name_id: 10641
-    # Chopping Lunge
-    - icon_set_id: 3753
-      name_id: 60322
+  action_bar:
+    abilities:
+      - icon_set_id: 3002
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Renegade Heavy Blaster Pistol (Right)
 - guid: 80028
