@@ -103,7 +103,7 @@ pub const fn default_spawn_animation_id() -> i32 {
 }
 
 const fn default_ability_height() -> f32 {
-    1.0
+    1.5
 }
 
 const fn default_hud_message_millis() -> u32 {
