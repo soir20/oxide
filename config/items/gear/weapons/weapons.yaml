@@ -77,7 +77,16 @@
   texture_alias: BobaFett
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 215
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Aimed Shot
+      - icon_set_id: 3750
+        name_id: 60324
 
 # Naboo Security Blaster Pistol
 - guid: 58
@@ -553,7 +562,16 @@
   texture_alias: Cupid
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 1674
+        name_id: 60026
+      # Force Heal
+      - icon_set_id: 3173
+        name_id: 53518
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Blue Sparkler
 - guid: 2809
@@ -918,7 +936,16 @@
   texture_alias: Cryo
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2678
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Plasma Thrower
 - guid: 3370
