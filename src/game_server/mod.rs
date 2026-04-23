@@ -64,7 +64,7 @@ use rand::Rng;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::game_server::navmesh::config::load_navmeshes;
-use crate::game_server::navmesh::Navmesh;
+use crate::game_server::navmesh::{Collision, Navmesh};
 use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -196,7 +196,7 @@ pub struct GameServer {
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
     mounts: BTreeMap<u32, MountConfig>,
-    navmeshes: HashMap<String, Navmesh>,
+    navmeshes: HashMap<String, (Navmesh, Collision)>,
     points_of_interest: BTreeMap<u32, (u8, PointOfInterestConfig)>,
     start_time: Instant,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
@@ -857,7 +857,7 @@ impl GameServer {
         &self.mounts
     }
 
-    pub fn navmeshes(&self) -> &HashMap<String, Navmesh> {
+    pub fn navmeshes(&self) -> &HashMap<String, (Navmesh, Collision)> {
         &self.navmeshes
     }
 

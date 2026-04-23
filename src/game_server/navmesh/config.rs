@@ -2,10 +2,14 @@ use std::{collections::HashMap, fs::File, path::Path};
 
 use glam::Vec2;
 use kiddo::{immutable::float::kdtree::ImmutableKdTree, SquaredEuclidean};
+use oxide_bvh::{read_bvh, Bvh};
 use polyanya::{Layer, Mesh, Triangulation};
 use serde::Deserialize;
 
-use crate::{game_server::navmesh::Navmesh, ConfigError};
+use crate::{
+    game_server::navmesh::{Collision, Navmesh},
+    info, ConfigError,
+};
 
 type Polygon = Vec<[f32; 3]>;
 
@@ -81,7 +85,16 @@ struct NavmeshConfig {
 
 type NavmeshConfigs = HashMap<String, NavmeshConfig>;
 
-pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, ConfigError> {
+fn load_bvh(config_dir: &Path, name: &str) -> Result<Bvh, ConfigError> {
+    let path = config_dir.join("bvhs").join(format!("{name}.gz"));
+
+    let file = File::open(path)?;
+    Ok(read_bvh(&file)?)
+}
+
+pub fn load_navmeshes(
+    config_dir: &Path,
+) -> Result<HashMap<String, (Navmesh, Collision)>, ConfigError> {
     let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
     let configs: NavmeshConfigs = serde_yaml::from_reader(&mut file)?;
 
@@ -141,7 +154,15 @@ pub fn load_navmeshes(config_dir: &Path) -> Result<HashMap<String, Navmesh>, Con
             mesh.set_search_delta(config.search_delta);
             mesh.set_search_steps(config.search_steps);
 
-            (asset_name, Navmesh::Complex(mesh))
+            let collision = match load_bvh(config_dir, &asset_name) {
+                Ok(bvh) => Collision::Bvh(bvh),
+                Err(err) => {
+                    info!("Failed to read BVH for {asset_name}: {err:?}. Defaulting to empty BVH.");
+                    Collision::Empty
+                }
+            };
+
+            (asset_name, (Navmesh::Complex(mesh), collision))
         })
         .collect())
 }

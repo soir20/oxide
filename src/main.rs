@@ -82,6 +82,7 @@ pub enum ConfigError {
     Io(Error),
     Deserialize(serde_yaml::Error),
     ConstraintViolated(String),
+    BvhDeserialize(pot::Error),
 }
 
 impl From<Error> for ConfigError {
@@ -93,6 +94,12 @@ impl From<Error> for ConfigError {
 impl From<serde_yaml::Error> for ConfigError {
     fn from(value: serde_yaml::Error) -> Self {
         ConfigError::Deserialize(value)
+    }
+}
+
+impl From<pot::Error> for ConfigError {
+    fn from(value: pot::Error) -> Self {
+        ConfigError::BvhDeserialize(value)
     }
 }
 
