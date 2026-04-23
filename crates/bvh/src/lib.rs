@@ -215,11 +215,10 @@ impl Bvh {
                 .bvh
                 .traverse(&relative_ray, &triangles_with_vertices)
             {
-                let intersection = relative_ray.intersects_triangle(
-                    &triangle.vertices[0].into(),
-                    &triangle.vertices[1].into(),
-                    &triangle.vertices[2].into(),
-                );
+                let v1 = vertex_from_index(triangle.vertices, triangle.triangle.indices[0]).into();
+                let v2 = vertex_from_index(triangle.vertices, triangle.triangle.indices[1]).into();
+                let v3 = vertex_from_index(triangle.vertices, triangle.triangle.indices[2]).into();
+                let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
                     return false;
                 }
