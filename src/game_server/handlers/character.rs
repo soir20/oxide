@@ -3130,20 +3130,7 @@ impl Character {
                     target_read_handle.stats.pos,
                     target_read_handle.stats.ability_height,
                 ) {
-                    return vec![Broadcast::Multi(
-                        nearby_player_guids.to_vec(),
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: PlayCompositeEffect {
-                                guid: *guid,
-                                triggered_by_guid: self.stats.guid,
-                                composite_effect: 1166,
-                                delay_millis: 0,
-                                duration_millis: tick_duration.as_millis() as u32,
-                                pos: Pos::default(),
-                            },
-                        })],
-                    )];
+                    return vec![Broadcast::Multi(nearby_player_guids.to_vec(), vec![])];
                 }
 
                 Vec::new()
