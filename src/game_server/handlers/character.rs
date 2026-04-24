@@ -1324,7 +1324,7 @@ pub struct TickableProcedureConfig {
 }
 
 pub enum TickResult {
-    TickedCurrentProcedure(Vec<Broadcast>, Option<UpdatePlayerPos>),
+    TickedCurrentProcedure(Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>),
     MustChangeProcedure(String),
 }
 
@@ -1413,11 +1413,14 @@ impl TickableProcedure {
                     self.pos_update_progress
                         .as_mut()
                         .map(|pos_update_progress| {
-                            pos_update_progress.tick(
-                                Guid::guid(character),
-                                character.speed.total(),
-                                tick_duration,
-                                character.rot,
+                            (
+                                pos_update_progress.tick(
+                                    Guid::guid(character),
+                                    character.speed.total(),
+                                    tick_duration,
+                                    character.rot,
+                                ),
+                                pos_update_progress.pos_at_tick_start(),
                             )
                         });
                 let reached_destination = self
@@ -1462,11 +1465,14 @@ impl TickableProcedure {
                     Box::new(NonLinearPathState::new(old_pos, pos_update, navmesh, 0.0))
                 });
                 let first_pos_update = pos_update_progress.as_mut().map(|pos_update_progress| {
-                    pos_update_progress.tick(
-                        Guid::guid(character),
-                        character.speed.total(),
-                        tick_duration,
-                        character.rot,
+                    (
+                        pos_update_progress.tick(
+                            Guid::guid(character),
+                            character.speed.total(),
+                            tick_duration,
+                            character.rot,
+                        ),
+                        pos_update_progress.pos_at_tick_start(),
                     )
                 });
 
@@ -1617,7 +1623,7 @@ impl TickableProcedureTracker {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
-    ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
+    ) -> (Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>) {
         if self.procedures.is_empty() {
             return (Vec::new(), None);
         }
@@ -2795,14 +2801,19 @@ impl Character {
             navmesh,
         );
 
-        broadcasts.append(&mut self.use_ability(
-            nearby_player_guids,
-            nearby_characters,
-            tick_duration,
-            collision,
-        ));
+        broadcasts.append(
+            &mut self.use_ability(
+                pos_update
+                    .map(|(_, current_pos)| current_pos)
+                    .unwrap_or(self.stats.pos),
+                nearby_player_guids,
+                nearby_characters,
+                tick_duration,
+                collision,
+            ),
+        );
 
-        (broadcasts, pos_update)
+        (broadcasts, pos_update.map(|(packet, _)| packet))
     }
 
     pub fn current_tickable_procedure(&self) -> Option<&String> {
@@ -2975,7 +2986,7 @@ impl Character {
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
-    ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
+    ) -> (Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>) {
         let speed = self.stats.speed.total();
 
         match &mut self.stats.target_state {
@@ -3019,11 +3030,14 @@ impl Character {
                             );
                         }
 
-                        pos_update = Some(pos_update_progress.tick(
-                            self.stats.guid,
-                            speed,
-                            tick_duration,
-                            self.stats.rot,
+                        pos_update = Some((
+                            pos_update_progress.tick(
+                                self.stats.guid,
+                                speed,
+                                tick_duration,
+                                self.stats.rot,
+                            ),
+                            pos_update_progress.pos_at_tick_start(),
                         ));
 
                         return (Vec::new(), pos_update);
@@ -3045,11 +3059,9 @@ impl Character {
                     navmesh,
                     0.0,
                 );
-                pos_update = Some(pos_update_progress.tick(
-                    self.stats.guid,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
+                pos_update = Some((
+                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot),
+                    pos_update_progress.pos_at_tick_start(),
                 ));
                 self.stats.target_state = TargetState::ReturningToOrigin {
                     pos_update_progress: pos_update_progress.clone(),
@@ -3078,11 +3090,9 @@ impl Character {
             TargetState::ReturningToOrigin {
                 pos_update_progress,
             } => {
-                let pos_update = Some(pos_update_progress.tick(
-                    self.stats.guid,
-                    speed,
-                    tick_duration,
-                    self.stats.rot,
+                let pos_update = Some((
+                    pos_update_progress.tick(self.stats.guid, speed, tick_duration, self.stats.rot),
+                    pos_update_progress.pos_at_tick_start(),
                 ));
                 if !pos_update_progress.reached_destination() {
                     return (Vec::new(), pos_update);
@@ -3112,6 +3122,7 @@ impl Character {
 
     fn use_ability(
         &mut self,
+        current_pos: Pos,
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         _: Duration,
@@ -3125,7 +3136,7 @@ impl Character {
                 };
 
                 if collision.has_line_of_sight(
-                    self.stats.pos,
+                    current_pos,
                     self.stats.ability_height,
                     target_read_handle.stats.pos,
                     target_read_handle.stats.ability_height,
