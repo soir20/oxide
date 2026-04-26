@@ -7,7 +7,6 @@ use std::{
 use enum_iterator::all;
 use parking_lot::RwLockReadGuard;
 use serde::Deserialize;
-use serde_yaml::{Mapping, Value};
 
 use crate::{
     config::merge_config_dir,
