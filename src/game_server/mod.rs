@@ -61,11 +61,11 @@ use packets::zone::PointOfInterestTeleportRequest;
 use packets::{GamePacket, OpCode};
 use rand::Rng;
 
+use crate::config::ConfigError;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::game_server::navmesh::config::load_navmeshes;
 use crate::game_server::navmesh::{Collision, Navmesh};
-use crate::ConfigError;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod handlers;

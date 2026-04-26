@@ -8,7 +8,6 @@ use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
 use serde::Deserialize;
 use std::cell::Cell;
 use std::fs::File;
-use std::io::Error;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, LazyLock};
@@ -18,11 +17,13 @@ use std::{env, panic, process};
 use tokio::spawn;
 
 use crate::channel_manager::{ChannelManager, ReceiveResult};
+use crate::config::ConfigError;
 use crate::game_server::GameServer;
 use crate::protocol::Channel;
 
 mod asset_server;
 mod channel_manager;
+mod config;
 mod game_server;
 mod protocol;
 
@@ -75,32 +76,6 @@ macro_rules! debug {
     ($($arg:tt)*) => {{
         $crate::log_debug(&format!($($arg)*))
     }};
-}
-
-#[derive(Debug)]
-pub enum ConfigError {
-    Io(Error),
-    Deserialize(serde_yaml::Error),
-    ConstraintViolated(String),
-    BvhDeserialize(pot::Error),
-}
-
-impl From<Error> for ConfigError {
-    fn from(value: Error) -> Self {
-        ConfigError::Io(value)
-    }
-}
-
-impl From<serde_yaml::Error> for ConfigError {
-    fn from(value: serde_yaml::Error) -> Self {
-        ConfigError::Deserialize(value)
-    }
-}
-
-impl From<pot::Error> for ConfigError {
-    fn from(value: pot::Error) -> Self {
-        ConfigError::BvhDeserialize(value)
-    }
 }
 
 #[derive(Parser, Debug)]

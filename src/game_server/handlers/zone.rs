@@ -1,9 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
-    fs,
-    fs::File,
     iter,
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 use enum_iterator::all;
@@ -12,6 +10,7 @@ use serde::Deserialize;
 use serde_yaml::{Mapping, Value};
 
 use crate::{
+    config::merge_config_dir,
     game_server::{
         handlers::{
             character::BaseNpcConfig,
@@ -918,66 +917,15 @@ type LoadedZones = (
     PointOfInterestMap,
 );
 pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
-    fn find_zone_folders(root: &Path) -> Result<Vec<PathBuf>, ConfigError> {
-        let mut folders_with_yaml = Vec::new();
-
-        for entry in fs::read_dir(root)? {
-            let entry_path = entry?.path();
-            if entry_path.is_dir() {
-                let contains_yaml = fs::read_dir(&entry_path)?.any(|file_entry| {
-                    file_entry.as_ref().ok().is_some_and(|file| {
-                        file.path().extension().is_some_and(|ext| ext == "yaml")
-                    })
-                });
-
-                if contains_yaml {
-                    folders_with_yaml.push(entry_path.clone());
-                }
-
-                folders_with_yaml.extend(find_zone_folders(&entry_path)?);
-            }
-        }
-
-        Ok(folders_with_yaml)
-    }
-
     let zones_dir = config_dir.join("zones");
-    let zone_folders = find_zone_folders(&zones_dir)?;
-    let mut all_fragments = Vec::new();
-
-    for zone_path in zone_folders {
-        for entry in fs::read_dir(&zone_path)? {
-            let file_path = entry?.path();
-            if file_path.extension().is_some_and(|ext| ext == "yaml") {
-                let file = File::open(&file_path)?;
-                let parsed_yaml: BTreeMap<String, Value> = serde_yaml::from_reader(file)?;
-
-                for (zone_name, fragment) in parsed_yaml {
-                    if let Value::Mapping(map) = fragment {
-                        all_fragments.push((zone_name, map));
-                    } else {
-                        return Err(ConfigError::ConstraintViolated(format!(
-                            "Zone fragment in (File path: {:?}) for (Zone: {:?}) must be a mapping",
-                            file_path, zone_name
-                        )));
-                    }
-                }
-            }
-        }
-    }
-
-    let mut zone_fragments: BTreeMap<String, Vec<Mapping>> = BTreeMap::new();
-    for (zone_name, fragment) in all_fragments {
-        zone_fragments.entry(zone_name).or_default().push(fragment);
-    }
+    let root_config = merge_config_dir(&zones_dir)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
     let mut points_of_interest = BTreeMap::new();
 
-    for (zone_name, fragments) in zone_fragments {
-        let merged_value = merge_zone_fragments(&zone_name, fragments)?;
-        let zone_config: ZoneConfig = serde_yaml::from_value(merged_value)?;
+    for (_, zone_value) in root_config {
+        let zone_config: ZoneConfig = serde_yaml::from_value(zone_value)?;
 
         for point_of_interest in zone_config
             .other_points_of_interest
@@ -991,7 +939,10 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
                 )
                 .is_some()
             {
-                panic!("Two points of interest have ID {}", point_of_interest.guid);
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Two points of interest have ID {}",
+                    point_of_interest.guid
+                )));
             }
         }
 
@@ -999,54 +950,19 @@ pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
         let template_guid = Guid::guid(&template);
 
         if template.chunk_size == 0 {
-            panic!("Zone template {template_guid} cannot have a chunk size of 0");
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Zone template {template_guid} cannot have a chunk size of 0"
+            )));
         }
 
         if templates.insert(template_guid, template).is_some() {
-            panic!("Two zone templates have ID {template_guid}");
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Two zone templates have ID {template_guid}"
+            )));
         }
     }
 
     Ok((templates, zones, points_of_interest))
-}
-
-fn merge_zone_fragments(zone_name: &str, fragments: Vec<Mapping>) -> Result<Value, ConfigError> {
-    let mut merged = Mapping::new();
-
-    for fragment in fragments {
-        merged = merge_yaml_values(zone_name, merged, fragment)?;
-    }
-
-    Ok(Value::Mapping(merged))
-}
-
-fn merge_yaml_values(
-    zone_name: &str,
-    mut accumulated_map: Mapping,
-    incoming_map: Mapping,
-) -> Result<Mapping, ConfigError> {
-    for (key, incoming_value) in incoming_map {
-        match accumulated_map.get(&key) {
-            Some(existing_value) => match (existing_value, &incoming_value) {
-                (Value::Mapping(existing_map), Value::Mapping(incoming_map)) => {
-                    let merged =
-                        merge_yaml_values(zone_name, existing_map.clone(), incoming_map.clone())?;
-                    accumulated_map.insert(key.clone(), Value::Mapping(merged));
-                }
-                _ => {
-                    return Err(ConfigError::ConstraintViolated(format!(
-                        "Merge conflict at (Key: {:?}) in (Zone: {:?}) non-mapping values cannot be combined",
-                        key, zone_name
-                    )));
-                }
-            },
-            None => {
-                accumulated_map.insert(key.clone(), incoming_value.clone());
-            }
-        }
-    }
-
-    Ok(accumulated_map)
 }
 
 pub fn enter_zone(
