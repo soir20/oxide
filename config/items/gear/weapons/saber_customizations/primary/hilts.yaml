@@ -1202,7 +1202,16 @@
   texture_alias: Yoda
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3169
+        name_id: 60026
+      # Force Valor
+      - icon_set_id: 3176
+        name_id: 53516
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Zatt's Lightsaber
 - guid: 110029
