@@ -261,7 +261,16 @@
   texture_alias: HanSolo
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 246
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Republic Flamethrower
 - guid: 520
@@ -446,7 +455,16 @@
   texture_alias: SRG
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 251
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Chopping Lunge
+      - icon_set_id: 3753
+        name_id: 60322
 
 # Gungan Double-headed Spear
 - guid: 1322
@@ -1110,7 +1128,16 @@
   texture_alias: GrenadeLauncher
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2809
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Accelerated Thermal Carbine
 - guid: 80005
@@ -1189,7 +1216,16 @@
   texture_alias: MandalorianBlue
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3790
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Repeater Cannon
 - guid: 80009
@@ -1202,7 +1238,16 @@
   texture_alias: Silver
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3827
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Turbolaser
 - guid: 80010
@@ -1571,4 +1616,13 @@
   texture_alias: RenegadeHeavyBlaster
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3792
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
