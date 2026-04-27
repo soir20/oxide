@@ -1090,7 +1090,17 @@
   texture_alias: LukeSkywalker
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      # Abilities unconfirmed
+      - icon_set_id: 230
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Petro's Lightsaber
 - guid: 110024
