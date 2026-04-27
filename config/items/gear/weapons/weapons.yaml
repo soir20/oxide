@@ -1011,7 +1011,16 @@
   texture_alias: BobaFett
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2734
+        name_id: 60026
+      # Proximity Mine
+      - icon_set_id: 3177
+        name_id: 53514
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Quarzite Boba Fett's Offhand Blaster
 - guid: 3414
