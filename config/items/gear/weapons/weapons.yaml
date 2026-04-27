@@ -1566,7 +1566,16 @@
   texture_alias: Pyke
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3638
+        name_id: 60026
+      # Thermal Grenade
+      - icon_set_id: 3179
+        name_id: 7
+      # Focused Shot
+      - icon_set_id: 3754
+        name_id: 60323
 
 # Onderon Blaster Pistol
 - guid: 80026
