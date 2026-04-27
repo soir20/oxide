@@ -79,7 +79,16 @@
   texture_alias: Anakin
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 223
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Zabrak Sith Lightsaber
 - guid: 437
@@ -160,7 +169,16 @@
   texture_alias: Dooku
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 225
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Kit Fisto's Lightsaber
 - guid: 532
@@ -839,7 +857,16 @@
   texture_alias: Gold
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3829
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Phrik Darksaber
 - guid: 110012
@@ -923,7 +950,16 @@
   texture_alias: Forked
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3828
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Ganodi's Lightsaber
 - guid: 110017
@@ -1112,7 +1148,16 @@
   texture_alias: DarkKnight
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3721
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Talz Lightsaber
 - guid: 110027
