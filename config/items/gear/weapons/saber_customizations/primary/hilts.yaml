@@ -456,7 +456,16 @@
   item_type: 25
   category: 64
   members: true
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 514
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Ermi Jedi Lightsaber
 - guid: 789
