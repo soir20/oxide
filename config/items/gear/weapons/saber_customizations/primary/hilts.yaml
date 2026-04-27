@@ -879,7 +879,16 @@
   texture_alias: PreVizsla
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3791
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Darth Maul's Lightsaber
 - guid: 110013
