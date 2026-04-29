@@ -499,7 +499,16 @@
   texture_alias: SpringFever
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 1935
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Balnab Hunter Rifle
 - guid: 1637
@@ -976,7 +985,16 @@
   texture_alias: Plasma
   item_type: 1
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2679
+        name_id: 60026
+      # Deflector Shield
+      - icon_set_id: 3178
+        name_id: 52684
+      # Rapid Fire
+      - icon_set_id: 3755
+        name_id: 60326
 
 # Ion Blaster
 - guid: 3371
