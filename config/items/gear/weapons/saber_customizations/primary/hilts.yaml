@@ -191,7 +191,16 @@
   texture_alias: KitFisto
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 229
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Luminara Unduli's Lightsaber
 - guid: 534
@@ -629,7 +638,16 @@
   texture_alias: SaeseeTiin
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 1792
+        name_id: 60026
+      # Force Valor
+      - icon_set_id: 3176
+        name_id: 53516
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Kashyyyk Lightsaber
 - guid: 2801
@@ -665,7 +683,16 @@
   texture_alias: DarkForcePhaseIII
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3044
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Nelona Lightsaber
 - guid: 110001
@@ -722,7 +749,16 @@
   texture_alias: DarkForcePhaseII
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2938
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Forgotten Jedi Reverse Lightsaber
 - guid: 110004
@@ -781,7 +817,16 @@
   texture_alias: Samurai
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2862
+        name_id: 60026
+      # Force Heal
+      - icon_set_id: 3173
+        name_id: 53518
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Aayla Secura's Lightsaber
 - guid: 110007
@@ -844,7 +889,16 @@
   texture_alias: DarkForcePhaseI
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 3045
+        name_id: 60026
+      # Force Lightning
+      - icon_set_id: 3174
+        name_id: 10641
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Dolovite Darksaber
 - guid: 110011
@@ -1189,7 +1243,16 @@
   texture_alias: Talz
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    abilities:
+      - icon_set_id: 2863
+        name_id: 60026
+      # Force Heal
+      - icon_set_id: 3173
+        name_id: 53518
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Yoda's Lightsaber
 - guid: 110028
