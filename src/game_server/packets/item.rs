@@ -55,9 +55,9 @@ pub enum EquipmentSlot {
 impl EquipmentSlot {
     pub fn action_bar_priority(self) -> u32 {
         match self {
-            EquipmentSlot::PrimaryWeapon => 0,
             EquipmentSlot::SecondaryWeapon => 1,
-            _ => 2,
+            EquipmentSlot::PrimaryWeapon => 2,
+            _ => 0,
         }
     }
 

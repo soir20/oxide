@@ -310,15 +310,22 @@ fn process_unequip_slot(
                 player.action_bar.weapon_abilities.abilities.retain(|pa| pa.source_item_id != item_guid);
                 player.action_bar.weapon_abilities.abilities.sort_by_key(|a| a.priority);
 
-                let mut abilities = player.action_bar.weapon_abilities.abilities.iter().flat_map(|ab| {
-                    game_server.items().get(&ab.source_item_id).into_iter().flat_map(|item| item.action_bar.abilities.iter())
-                });
+                let assignments: Vec<(u32, Option<&ItemAbilityConfig>)> = (0..4)
+                    .map(|i| {
+                        let mut prioritized_ability = None;
 
-                let mut assignments = Vec::new();
+                        for group in &player.action_bar.weapon_abilities.abilities {
+                            if let Some(item) = game_server.items().get(&group.source_item_id) {
+                                if let Some(ability) = item.action_bar.abilities.get(i as usize) {
+                                    prioritized_ability = Some(ability);
+                                    break;
+                                }
+                            }
+                        }
 
-                for i in 0..4 {
-                    assignments.push((i as u32, abilities.next()));
-                }
+                        (i as u32, prioritized_ability)
+                    })
+                .collect();
 
                 packets_for_sender.extend(build_action_bar_packets(ActionBarType::Weapon, &assignments));
             }
@@ -1230,23 +1237,22 @@ fn equip_item_in_slot<'a>(
         .abilities
         .sort_by_key(|a| a.priority);
 
-    let mut abilities = player
-        .action_bar
-        .weapon_abilities
-        .abilities
-        .iter()
-        .flat_map(|ab| {
-            game_server
-                .items()
-                .get(&ab.source_item_id)
-                .into_iter()
-                .flat_map(|item| item.action_bar.abilities.iter())
-        });
+    let assignments: Vec<(u32, Option<&ItemAbilityConfig>)> = (0..4)
+        .map(|i| {
+            let mut prioritized_ability = None;
 
-    let mut assignments = Vec::new();
-    for i in 0..4 {
-        assignments.push((i as u32, abilities.next()));
-    }
+            for group in &player.action_bar.weapon_abilities.abilities {
+                if let Some(item) = game_server.items().get(&group.source_item_id) {
+                    if let Some(ability) = item.action_bar.abilities.get(i as usize) {
+                        prioritized_ability = Some(ability);
+                        break;
+                    }
+                }
+            }
+
+            (i as u32, prioritized_ability)
+        })
+        .collect();
 
     sender_only_packets.extend(build_action_bar_packets(
         ActionBarType::Weapon,
