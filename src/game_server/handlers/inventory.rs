@@ -8,7 +8,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            character::{PlayerAbilityGroup, PlayerInventory},
+            character::{Player, PlayerAbilityGroup, PlayerInventory},
             item::{ItemAbilityConfig, ItemConfig, SABER_ITEM_TYPE},
         },
         packets::{
@@ -248,6 +248,53 @@ fn build_action_bar_packets(
     packets
 }
 
+fn build_weapon_slot_assignments(
+    sender: u32,
+    player: &mut Player,
+    game_server: &GameServer,
+) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    let ability_groups = &mut player.action_bar.weapon_abilities.abilities;
+
+    // Sort ability groups by priority
+    ability_groups.sort_by_key(|a| a.priority);
+
+    let resolved_ability_groups: Vec<&[ItemAbilityConfig]> = ability_groups
+    .iter()
+    .map(|ability_group| {
+        game_server
+            .items()
+            .get(&ability_group.source_item_id)
+            .map(|item| item.action_bar.abilities.as_slice())
+            .ok_or_else(|| {
+                ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!(
+                        "Requester {} contained unknown item {} in their weapon ability groups during slot assignment",
+                        ability_group.source_item_id,
+                        sender
+                    ),
+                )
+            })
+    })
+    .collect::<Result<_, _>>()?;
+
+    // Assign each slot by checking groups in priority order
+    // and selecting the first ability present at the current slot index
+    let assignments: Vec<_> = (0..4)
+        .map(|slot| {
+            let ability = resolved_ability_groups
+                .iter()
+                .find_map(|group_abilities| group_abilities.get(slot));
+            (slot as u32, ability)
+        })
+        .collect();
+
+    Ok(build_action_bar_packets(
+        ActionBarType::Weapon,
+        &assignments,
+    ))
+}
+
 fn process_unequip_slot(
     game_server: &GameServer,
     cursor: &mut Cursor<&[u8]>,
@@ -307,27 +354,9 @@ fn process_unequip_slot(
             let mut packets_for_sender = Vec::new();
 
             if !item_def.action_bar.abilities.is_empty() {
-                player.action_bar.weapon_abilities.abilities.retain(|pa| pa.source_item_id != item_guid);
-                player.action_bar.weapon_abilities.abilities.sort_by_key(|a| a.priority);
+                player.action_bar.weapon_abilities.abilities.retain(|ability_group| ability_group.source_item_id != item_guid);
 
-                let assignments: Vec<(u32, Option<&ItemAbilityConfig>)> = (0..4)
-                    .map(|i| {
-                        let mut prioritized_ability = None;
-
-                        for group in &player.action_bar.weapon_abilities.abilities {
-                            if let Some(item) = game_server.items().get(&group.source_item_id) {
-                                if let Some(ability) = item.action_bar.abilities.get(i as usize) {
-                                    prioritized_ability = Some(ability);
-                                    break;
-                                }
-                            }
-                        }
-
-                        (i as u32, prioritized_ability)
-                    })
-                .collect();
-
-                packets_for_sender.extend(build_action_bar_packets(ActionBarType::Weapon, &assignments));
+                packets_for_sender.extend(build_weapon_slot_assignments(sender, player, game_server)?);
             }
 
             if unequip_slot.slot.is_weapon() {
@@ -1102,7 +1131,7 @@ fn equip_item_in_slot<'a>(
                 .action_bar
                 .weapon_abilities
                 .abilities
-                .retain(|ab| ab.source_item_id != previous_item.guid);
+                .retain(|ability_group| ability_group.source_item_id != previous_item.guid);
         }
     }
 
@@ -1169,7 +1198,9 @@ fn equip_item_in_slot<'a>(
                             .action_bar
                             .weapon_abilities
                             .abilities
-                            .retain(|ab| ab.source_item_id != unequipped_def.guid);
+                            .retain(|ability_group| {
+                                ability_group.source_item_id != unequipped_def.guid
+                            });
                     }
                 }
 
@@ -1231,33 +1262,7 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    player
-        .action_bar
-        .weapon_abilities
-        .abilities
-        .sort_by_key(|a| a.priority);
-
-    let assignments: Vec<(u32, Option<&ItemAbilityConfig>)> = (0..4)
-        .map(|i| {
-            let mut prioritized_ability = None;
-
-            for group in &player.action_bar.weapon_abilities.abilities {
-                if let Some(item) = game_server.items().get(&group.source_item_id) {
-                    if let Some(ability) = item.action_bar.abilities.get(i as usize) {
-                        prioritized_ability = Some(ability);
-                        break;
-                    }
-                }
-            }
-
-            (i as u32, prioritized_ability)
-        })
-        .collect();
-
-    sender_only_packets.extend(build_action_bar_packets(
-        ActionBarType::Weapon,
-        &assignments,
-    ));
+    sender_only_packets.extend(build_weapon_slot_assignments(sender, player, game_server)?);
 
     let (_, instance_guid, chunk) = character_write_handle.index1();
     let mut nearby_players = ZoneInstance::other_players_nearby(
