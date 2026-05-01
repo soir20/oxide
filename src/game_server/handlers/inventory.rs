@@ -254,9 +254,7 @@ fn build_weapon_slot_assignments(
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
     let ability_groups = &mut player.action_bar.weapon_abilities.abilities;
-
-    // Sort ability groups by priority
-    ability_groups.sort_by_key(|a| a.priority);
+    ability_groups.sort_by_key(|ability_group| ability_group.priority);
 
     let resolved_ability_groups: Vec<&[ItemAbilityConfig]> = ability_groups
     .iter()
@@ -278,8 +276,6 @@ fn build_weapon_slot_assignments(
     })
     .collect::<Result<_, _>>()?;
 
-    // Assign each slot by checking groups in priority order
-    // and selecting the first ability present at the current slot index
     let assignments: Vec<_> = (0..4)
         .map(|slot| {
             let ability = resolved_ability_groups
