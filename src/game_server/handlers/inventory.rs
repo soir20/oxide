@@ -253,7 +253,7 @@ fn build_weapon_slot_assignments(
     player: &mut Player,
     game_server: &GameServer,
 ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
-    let ability_groups = &mut player.action_bar.weapon_abilities.abilities;
+    let ability_groups = &mut player.action_bar.weapon_abilities;
     ability_groups.sort_by_key(|ability_group| ability_group.priority);
 
     let resolved_ability_groups: Vec<&[ItemAbilityConfig]> = ability_groups
@@ -350,7 +350,7 @@ fn process_unequip_slot(
             let mut packets_for_sender = Vec::new();
 
             if !item_def.action_bar.abilities.is_empty() {
-                player.action_bar.weapon_abilities.abilities.retain(|ability_group| ability_group.source_item_id != item_guid);
+                player.action_bar.weapon_abilities.retain(|ability_group| ability_group.source_item_id != item_guid);
 
                 packets_for_sender.extend(build_weapon_slot_assignments(sender, player, game_server)?);
             }
@@ -1126,7 +1126,6 @@ fn equip_item_in_slot<'a>(
             player
                 .action_bar
                 .weapon_abilities
-                .abilities
                 .retain(|ability_group| ability_group.source_item_id != previous_item.guid);
         }
     }
@@ -1137,14 +1136,10 @@ fn equip_item_in_slot<'a>(
             .action_bar_priority_override
             .unwrap_or_else(|| equip_guid.slot.action_bar_priority());
 
-        player
-            .action_bar
-            .weapon_abilities
-            .abilities
-            .push(PlayerAbilityGroup {
-                source_item_id: item_def.guid,
-                priority,
-            });
+        player.action_bar.weapon_abilities.push(PlayerAbilityGroup {
+            source_item_id: item_def.guid,
+            priority,
+        });
     }
 
     if let Some(item_class) = game_server
@@ -1190,13 +1185,9 @@ fn equip_item_in_slot<'a>(
                         })?;
 
                     if !unequipped_def.action_bar.abilities.is_empty() {
-                        player
-                            .action_bar
-                            .weapon_abilities
-                            .abilities
-                            .retain(|ability_group| {
-                                ability_group.source_item_id != unequipped_def.guid
-                            });
+                        player.action_bar.weapon_abilities.retain(|ability_group| {
+                            ability_group.source_item_id != unequipped_def.guid
+                        });
                     }
                 }
 

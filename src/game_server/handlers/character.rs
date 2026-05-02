@@ -1886,16 +1886,10 @@ pub struct PlayerAbilityGroup {
     pub priority: u32,
 }
 
-#[derive(Clone)]
-pub struct PlayerItemAbilities {
-    pub abilities: Vec<PlayerAbilityGroup>,
-}
-
 #[allow(dead_code)]
 #[derive(Clone)]
 pub struct PlayerActionBar {
-    pub weapon_abilities: PlayerItemAbilities,
-    pub consumables: PlayerItemAbilities,
+    pub weapon_abilities: Vec<PlayerAbilityGroup>,
 }
 
 #[derive(Clone)]
