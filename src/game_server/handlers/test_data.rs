@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use packet_serialize::LengthlessVec;
 
 use crate::game_server::{
-    handlers::item::ItemConfig,
+    handlers::{character::PlayerAbilityGroup, item::ItemConfig},
     packets::{
         item::{EquipmentSlot, Item, MarketData},
         player_data::{
@@ -274,16 +274,16 @@ pub fn make_test_player(
                     action_bar_type: ActionBarType::Weapon,
                     slots: vec![
                         ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
+                            is_empty: false,
+                            icon_id: 2312,
                             icon_tint_id: 0,
-                            name_id: 0,
+                            name_id: 60026,
                             ability_type: 0,
                             ability_sub_type: AbilitySubType::CastableSingleTarget,
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -292,16 +292,16 @@ pub fn make_test_player(
                             millis_since_last_use: 0,
                         },
                         ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
+                            is_empty: false,
+                            icon_id: 3179,
                             icon_tint_id: 0,
-                            name_id: 0,
+                            name_id: 7,
                             ability_type: 0,
                             ability_sub_type: AbilitySubType::CastableSingleTarget,
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -310,16 +310,16 @@ pub fn make_test_player(
                             millis_since_last_use: 0,
                         },
                         ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
+                            is_empty: false,
+                            icon_id: 3754,
                             icon_tint_id: 0,
-                            name_id: 0,
+                            name_id: 60323,
                             ability_type: 0,
                             ability_sub_type: AbilitySubType::CastableSingleTarget,
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -438,6 +438,15 @@ pub fn make_test_player(
             effects: vec![],
         },
     }
+}
+
+pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
+    let mut abilities = Vec::new();
+    abilities.push(PlayerAbilityGroup {
+        source_item_id: 2909,
+        priority: 2,
+    });
+    abilities
 }
 
 pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {

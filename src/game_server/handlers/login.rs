@@ -25,7 +25,7 @@ use super::{
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
-    test_data::{make_test_customizations, make_test_player},
+    test_data::{make_test_customizations, make_test_player, make_test_weapon_abilities},
     unique_guid::player_guid,
     zone::{clean_up_zone_if_no_players, ZoneInstance},
 };
@@ -162,7 +162,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     },
                     role: Role::Admin,
                     action_bar: PlayerActionBar {
-                        weapon_abilities: Vec::new(),
+                        weapon_abilities: make_test_weapon_abilities(),
                     },
                 },
                 game_server,
