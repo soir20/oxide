@@ -22,10 +22,6 @@ const fn default_stack_size() -> i32 {
     1
 }
 
-const fn default_ability_uses() -> u32 {
-    1
-}
-
 const fn default_ability_subtype() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
 }
@@ -42,8 +38,6 @@ pub struct ItemAbilityConfig {
     pub use_cooldown_millis: u32,
     #[serde(default)]
     pub init_cooldown_millis: u32,
-    #[serde(default = "default_ability_uses")]
-    pub quantity: u32,
     #[serde(default)]
     pub area_of_effect_radius: f32,
     #[serde(default)]

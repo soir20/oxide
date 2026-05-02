@@ -211,8 +211,8 @@ fn build_action_bar_packets(
                 use_cooldown_millis: cfg.use_cooldown_millis,
                 init_cooldown_millis: cfg.init_cooldown_millis,
                 unknown13: 0,
-                quantity: cfg.quantity,
-                is_consumable: bar_type == ActionBarType::Consumable,
+                quantity: 0,
+                is_consumable: false,
                 millis_since_last_use: 0,
             },
             None => ActionBarSlot {
@@ -230,7 +230,7 @@ fn build_action_bar_packets(
                 init_cooldown_millis: 0,
                 unknown13: 0,
                 quantity: 0,
-                is_consumable: bar_type == ActionBarType::Consumable,
+                is_consumable: false,
                 millis_since_last_use: 0,
             },
         };
