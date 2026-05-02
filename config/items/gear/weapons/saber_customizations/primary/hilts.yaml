@@ -839,7 +839,17 @@
   texture_alias: AaylaSecura
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    # Placeholder
+    abilities:
+      - icon_set_id: 221
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Barriss Offee's Lightsaber
 - guid: 110008
@@ -853,7 +863,17 @@
   item_type: 25
   category: 64
   members: true
-  # MISSING ABILITIES
+  action_bar:
+    # Placeholder
+    abilities:
+      - icon_set_id: 508
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Byph's Lightsaber
 - guid: 110009
@@ -978,7 +998,17 @@
   texture_alias: EethKoth
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    # Placeholder
+    abilities:
+      - icon_set_id: 226
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Jedi Exile Lightsaber
 - guid: 110015
@@ -1127,7 +1157,17 @@
   texture_alias: KiAdiMundi
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    # Placeholder
+    abilities:
+      - icon_set_id: 228
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Sulon Jedi Lightsaber
 - guid: 110022
@@ -1140,7 +1180,17 @@
   texture_alias: KyleKatarn
   item_type: 25
   category: 64
-  # MISSING ABILITIES
+  action_bar:
+    # Placeholder
+    abilities:
+      - icon_set_id: 511
+        name_id: 60026
+      # Force Push
+      - icon_set_id: 3175
+        name_id: 50564
+      # Slashing Strike
+      - icon_set_id: 3752
+        name_id: 60321
 
 # Luke Skywalker's Lightsaber
 - guid: 110023
@@ -1154,8 +1204,8 @@
   item_type: 25
   category: 64
   action_bar:
+    # Placeholder
     abilities:
-      # Abilities unconfirmed
       - icon_set_id: 230
         name_id: 60026
       # Force Push
