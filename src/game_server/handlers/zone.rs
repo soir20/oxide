@@ -917,15 +917,13 @@ type LoadedZones = (
 );
 pub fn load_zones(config_dir: &Path) -> Result<LoadedZones, ConfigError> {
     let zones_dir = config_dir.join("zones");
-    let root_config = merge_config_dir(&zones_dir)?;
+    let root_config: HashMap<String, ZoneConfig> = merge_config_dir(&zones_dir)?;
 
     let mut templates = BTreeMap::new();
     let zones = GuidTable::new();
     let mut points_of_interest = BTreeMap::new();
 
-    for (_, zone_value) in root_config {
-        let zone_config: ZoneConfig = serde_yaml::from_value(zone_value)?;
-
+    for (_, zone_config) in root_config.into_iter() {
         for point_of_interest in zone_config
             .other_points_of_interest
             .iter()

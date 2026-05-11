@@ -4,6 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use serde::de::DeserializeOwned;
 use serde_yaml::{Mapping, Value};
 
 #[allow(dead_code)]
@@ -82,12 +83,12 @@ fn merge_yaml_values(
     Ok(accumulated_map)
 }
 
-pub fn merge_config_dir(root: &Path) -> Result<Mapping, ConfigError> {
+pub fn merge_config_dir<T: DeserializeOwned>(root: &Path) -> Result<T, ConfigError> {
     let mut accumulated_map = Mapping::new();
     for path in list_config_yamls(root)? {
         let file = File::open(&path)?;
         accumulated_map = merge_yaml_values("", accumulated_map, serde_yaml::from_reader(file)?)?;
     }
 
-    Ok(accumulated_map)
+    Ok(serde_yaml::from_value(Value::Mapping(accumulated_map))?)
 }
