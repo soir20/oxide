@@ -10,7 +10,7 @@ use crate::game_server::packets::{
     Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
 )]
 #[repr(i32)]
-pub enum AttackCruiserOpCode {
+pub enum AttackCruiserInitOpCode {
     ClientConfig = 0x1,
 }
 
