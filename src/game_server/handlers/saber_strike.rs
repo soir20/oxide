@@ -8,6 +8,7 @@ use crate::game_server::{
         inventory::player_has_saber_equipped,
     },
     packets::{
+        attack_cruiser::{AttackCruiserConfig, AttackCruiserGameConfig, AttackCruiserInitOpCode},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
@@ -30,18 +31,28 @@ pub fn start_saber_strike(
 ) -> Vec<Vec<u8>> {
     vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
-        inner: SaberStrikeStageData {
+        inner: AttackCruiserGameConfig {
             minigame_header: MinigameHeader {
                 stage_guid: minigame_status.group.stage_guid,
-                sub_op_code: SaberStrikeOpCode::StageData as i32,
+                sub_op_code: AttackCruiserInitOpCode::ClientConfig as i32,
                 stage_group_guid: minigame_status.group.stage_group_guid,
             },
-            saber_strike_stage_id,
-            use_player_weapon: player_has_saber_equipped(
-                &player.inventory,
-                player.inventory.active_battle_class,
-                game_server.items(),
-            ),
+            config1: AttackCruiserConfig {
+                unknown1: 100,
+                unknown2: 200,
+                unknown3: "blah".to_string(),
+            },
+            config2: AttackCruiserConfig {
+                unknown1: 300,
+                unknown2: 400,
+                unknown3: "testing".to_string(),
+            },
+            config3: AttackCruiserConfig {
+                unknown1: 0,
+                unknown2: 0,
+                unknown3: "".to_string(),
+            },
+            configs: Vec::new(),
         },
     })]
 }

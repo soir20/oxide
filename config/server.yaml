@@ -24,4 +24,4 @@ matchmaking_tick_period_millis: 1000
 minigame_tick_period_millis: 100
 minigame_tick_threads: 2
 channel_cleanup_period_millis: 1000
-channel_inactive_timeout_millis: 60000
+channel_inactive_timeout_millis: 60000000
