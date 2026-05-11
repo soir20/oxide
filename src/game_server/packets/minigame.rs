@@ -28,6 +28,7 @@ pub enum MinigameOpCode {
     TowerDefense = 0x36,
     SaberStrike = 0x39,
     SaberDuel = 0x3a,
+    AttackCruiser = 0x3d,
     ActiveMinigameCreationResult = 0x44,
 }
 

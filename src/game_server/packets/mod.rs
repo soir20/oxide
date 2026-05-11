@@ -1,3 +1,4 @@
+pub mod attack_cruiser;
 pub mod chat;
 pub mod clicked_location;
 pub mod client_update;
