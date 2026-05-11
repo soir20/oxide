@@ -7,6 +7,7 @@ use polyanya::{Layer, Mesh, Triangulation};
 use serde::Deserialize;
 
 use crate::{
+    config::merge_config_dir,
     game_server::navmesh::{Collision, Navmesh},
     info, ConfigError,
 };
@@ -95,8 +96,8 @@ fn load_bvh(config_dir: &Path, name: &str) -> Result<Bvh, ConfigError> {
 pub fn load_navmeshes(
     config_dir: &Path,
 ) -> Result<HashMap<String, (Navmesh, Collision)>, ConfigError> {
-    let mut file = File::open(config_dir.join("navmeshes.yaml"))?;
-    let configs: NavmeshConfigs = serde_yaml::from_reader(&mut file)?;
+    let navmeshes_dir = config_dir.join("navmeshes");
+    let configs: NavmeshConfigs = merge_config_dir(&navmeshes_dir)?;
 
     if configs
         .iter()
