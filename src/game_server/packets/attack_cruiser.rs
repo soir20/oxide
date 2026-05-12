@@ -16,8 +16,8 @@ pub enum AttackCruiserInitOpCode {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserConfig {
-    pub unknown1: u32,
-    pub unknown2: u32,
+    pub unknown1: i32,
+    pub unknown2: i32,
     pub unknown3: String,
 }
 
