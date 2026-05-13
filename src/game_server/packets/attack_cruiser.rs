@@ -60,3 +60,38 @@ impl GamePacket for AttackCruiserGameConfig {
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(i32)]
+pub enum AttackCruiserClientOpCode {
+    UpdatePlayerStates = 0x6,
+    UpdateAcotrs = 0x8,
+    ClickOnLocation = 0xa,
+    RoundTrip = 0x13,
+}
+
+#[derive(
+    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+)]
+#[repr(i32)]
+pub enum AttackCruiserServerOpCode {
+    UpdateGameState = 0x0,
+    AddPlayer = 0x1,
+    RemovePlayer = 0x2,
+    ConfigPlayer = 0x3,
+    UpdatePlayers = 0x5,
+    UpdateActors = 0x6,
+    AddProjectile = 0x9,
+    RemoveProjectile = 0xa,
+    AddActor = 0xb,
+    RemoveActor = 0xc,
+    WorldEffect = 0xd,
+    AddScore = 0xe,
+    DebugRender = 0xf,
+    DebugDrawData = 0x10,
+    RoundTrip = 0x11,
+    QueueCommand = 0x12,
+    UpdateBossCount = 0x13,
+}
