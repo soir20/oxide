@@ -3,17 +3,25 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType, handlers::{
+    handlers::{
         character::{MinigameStatus, Player},
         inventory::player_has_saber_equipped,
-    }, packets::{
-        GamePacket, attack_cruiser::{
-            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserOpCode,
-        }, minigame::{MinigameHeader, ScoreEntry, ScoreType}, saber_strike::{
+    },
+    packets::{
+        attack_cruiser::{
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
+            AttackCruiserOpCode,
+        },
+        minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
-        }, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams
-    }
+        },
+        tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
+        GamePacket,
+    },
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::minigame::{handle_minigame_packet_write, MinigameTypeData};
