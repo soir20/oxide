@@ -14,11 +14,24 @@ pub enum AttackCruiserInitOpCode {
     ClientConfig = 0x1,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct AttackCruiserConfig {
     pub unknown1: i32,
     pub unknown2: i32,
     pub unknown3: String,
+    pub config_type: AttackCruiserConfigType,
+}
+
+pub enum AttackCruiserConfigType {
+    Global {},
+}
+
+impl SerializePacket for AttackCruiserConfigType {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        match self {
+            AttackCruiserConfigType::Global { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
+        }
+    }
 }
 
 pub struct AttackCruiserGameConfig {

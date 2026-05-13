@@ -8,7 +8,10 @@ use crate::game_server::{
         inventory::player_has_saber_equipped,
     },
     packets::{
-        attack_cruiser::{AttackCruiserConfig, AttackCruiserGameConfig, AttackCruiserInitOpCode},
+        attack_cruiser::{
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
+            AttackCruiserInitOpCode,
+        },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
@@ -41,16 +44,19 @@ pub fn start_saber_strike(
                 unknown1: 0,
                 unknown2: 0x79243a4c,
                 unknown3: "1234567890123456789012345678901234567890".to_string(),
+                config_type: AttackCruiserConfigType::Global {},
             },
             config2: AttackCruiserConfig {
                 unknown1: 1,
-                unknown2: 0x62cf45ee,
+                unknown2: 0x79243a4c,
                 unknown3: "testing".to_string(),
+                config_type: AttackCruiserConfigType::Global {},
             },
             config3: AttackCruiserConfig {
                 unknown1: 2,
-                unknown2: 0x4c61446a,
+                unknown2: 0x79243a4c,
                 unknown3: "".to_string(),
+                config_type: AttackCruiserConfigType::Global {},
             },
             configs: Vec::new(),
         },
