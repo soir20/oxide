@@ -10,8 +10,27 @@ use crate::game_server::packets::{
     Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
 )]
 #[repr(i32)]
-pub enum AttackCruiserInitOpCode {
+pub enum AttackCruiserOpCode {
     ClientConfig = 0x1,
+    UpdateGameState = 0x2,
+    AddPlayer = 0x3,
+    RemovePlayer = 0x4,
+    ConfigPlayer = 0x5,
+    UpdatePlayerStates = 0x6,
+    UpdatePlayers = 0x7,
+    UpdateActors = 0x8,
+    ClickOnLocation = 0xa,
+    AddProjectile = 0xb,
+    RemoveProjectile = 0xc,
+    AddActor = 0xd,
+    RemoveActor = 0xe,
+    WorldEffect = 0xf,
+    AddScore = 0x10,
+    DebugRender = 0x11,
+    DebugDrawData = 0x12,
+    RoundTrip = 0x13,
+    QueueCommand = 0x14,
+    UpdateBossCount = 0x15,
 }
 
 #[derive(SerializePacket)]
@@ -61,37 +80,15 @@ impl GamePacket for AttackCruiserGameConfig {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
-)]
-#[repr(i32)]
-pub enum AttackCruiserClientOpCode {
-    UpdatePlayerStates = 0x6,
-    UpdateAcotrs = 0x8,
-    ClickOnLocation = 0xa,
-    RoundTrip = 0x13,
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserRoundTrip {
+    pub minigame_header: MinigameHeader,
+    pub unknown1: u64,
+    pub unknown2: u64,
 }
 
-#[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
-)]
-#[repr(i32)]
-pub enum AttackCruiserServerOpCode {
-    UpdateGameState = 0x0,
-    AddPlayer = 0x1,
-    RemovePlayer = 0x2,
-    ConfigPlayer = 0x3,
-    UpdatePlayers = 0x5,
-    UpdateActors = 0x6,
-    AddProjectile = 0x9,
-    RemoveProjectile = 0xa,
-    AddActor = 0xb,
-    RemoveActor = 0xc,
-    WorldEffect = 0xd,
-    AddScore = 0xe,
-    DebugRender = 0xf,
-    DebugDrawData = 0x10,
-    RoundTrip = 0x11,
-    QueueCommand = 0x12,
-    UpdateBossCount = 0x13,
+impl GamePacket for AttackCruiserRoundTrip {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }

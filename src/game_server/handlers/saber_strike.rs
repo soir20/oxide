@@ -3,25 +3,17 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::{
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType, handlers::{
         character::{MinigameStatus, Player},
         inventory::player_has_saber_equipped,
-    },
-    packets::{
-        attack_cruiser::{
-            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
-            AttackCruiserInitOpCode,
-        },
-        minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        saber_strike::{
+    }, packets::{
+        GamePacket, attack_cruiser::{
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserOpCode,
+        }, minigame::{MinigameHeader, ScoreEntry, ScoreType}, saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
-        },
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
-        GamePacket,
-    },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        }, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams
+    }
 };
 
 use super::minigame::{handle_minigame_packet_write, MinigameTypeData};
@@ -37,7 +29,7 @@ pub fn start_saber_strike(
         inner: AttackCruiserGameConfig {
             minigame_header: MinigameHeader {
                 stage_guid: minigame_status.group.stage_guid,
-                sub_op_code: AttackCruiserInitOpCode::ClientConfig as i32,
+                sub_op_code: AttackCruiserOpCode::ClientConfig as i32,
                 stage_group_guid: minigame_status.group.stage_group_guid,
             },
             config1: AttackCruiserConfig {

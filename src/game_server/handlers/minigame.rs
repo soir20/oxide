@@ -35,6 +35,7 @@ use crate::{
             zone::ZoneInstance,
         },
         packets::{
+            attack_cruiser::{AttackCruiserOpCode, AttackCruiserRoundTrip},
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
             command::StartFlashGame,
@@ -1893,6 +1894,26 @@ pub fn process_minigame_packet(
             }
             MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
             MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
+            MinigameOpCode::AttackCruiser => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                info!("Attack Cruiser packet: {op_code:?} {buffer:x?}");
+                Ok(vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserRoundTrip {
+                            minigame_header: MinigameHeader {
+                                stage_guid: 27001,
+                                sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
+                                stage_group_guid: 13,
+                            },
+                            unknown1: 500,
+                            unknown2: 1000,
+                        },
+                    })],
+                )])
+            }
             // Ignore this unused packet to reduce log spam
             MinigameOpCode::LeaveInstance => Ok(Vec::new()),
             _ => {
