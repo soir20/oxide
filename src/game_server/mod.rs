@@ -207,8 +207,8 @@ impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
-        let (item_definitions, costs) = load_item_definitions(config_dir)?;
-        let item_groups = load_item_groups(config_dir)?;
+        let (item_definitions, mut costs) = load_item_definitions(config_dir)?;
+        let item_groups = load_item_groups(config_dir, &mut costs)?;
         Ok(GameServer {
             categories: load_categories(config_dir)?,
             costs,

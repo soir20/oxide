@@ -1,11 +1,14 @@
-use std::{fs::File, path::Path};
+use std::{collections::HashSet, fs::File, path::Path};
 
 use serde::Deserialize;
 
 use crate::{
-    game_server::packets::reference_data::{
-        CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
-        ItemGroupItem,
+    game_server::{
+        handlers::store::ItemCostMap,
+        packets::reference_data::{
+            CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
+            ItemGroupItem,
+        },
     },
     ConfigError,
 };
@@ -51,6 +54,8 @@ pub struct ItemGroupConfig {
     #[serde(default)]
     pub members_only: bool,
     #[serde(default)]
+    pub for_sale: bool,
+    #[serde(default)]
     pub items: Vec<ItemGroupItem>,
 }
 
@@ -78,8 +83,19 @@ impl From<ItemGroupConfig> for ItemGroupDefinition {
     }
 }
 
-pub fn load_item_groups(config_dir: &Path) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
+pub fn load_item_groups(
+    config_dir: &Path,
+    costs: &mut ItemCostMap,
+) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
     let mut file = File::open(config_dir.join("item_groups.yaml"))?;
     let groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
+
+    let items_for_sale: HashSet<u32> = groups
+        .iter()
+        .filter(|group| group.for_sale)
+        .flat_map(|group| group.items.iter().map(|item| item.guid))
+        .collect();
+    costs.retain(|item_guid, _| items_for_sale.contains(item_guid));
+
     Ok(groups.into_iter().map(|group| group.into()).collect())
 }

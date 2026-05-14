@@ -382,6 +382,7 @@
 # Hair Style
 - guid: 122
   page: 8
+  for_sale: true
   items:
     - guid: 40118
       unknown: 0
@@ -624,6 +625,7 @@
 # Hair Color
 - guid: 123
   page: 8
+  for_sale: true
   items:
     - guid: 30021
       unknown: 0
@@ -672,6 +674,7 @@
 # Eye Color
 - guid: 124
   page: 8
+  for_sale: true
   items:
     - guid: 10012
       unknown: 0
@@ -702,6 +705,7 @@
 # Skin Tone
 - guid: 125
   page: 8
+  for_sale: true
   items:
     - guid: 60029
       unknown: 0
@@ -766,6 +770,7 @@
 # Face Design
 - guid: 126
   page: 8
+  for_sale: true
   items:
     - guid: 50062
       unknown: 0
@@ -896,6 +901,7 @@
 # Facial Hair
 - guid: 139
   page: 8
+  for_sale: true
   items:
     - guid: 20014
       unknown: 0
@@ -930,6 +936,7 @@
 # Species
 - guid: 127
   page: 9
+  for_sale: true
   items:
     - guid: 70012
       unknown: 0
@@ -959,6 +966,7 @@
       unknown: 0
 # Boosts
 - guid: 10000
+  for_sale: true
   items:
     - guid: 2240
       unknown: 0
