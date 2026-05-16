@@ -1900,7 +1900,10 @@ pub fn process_minigame_packet(
 
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!("Attack Cruiser packet: {:x} {buffer:x?}", header.sub_op_code);
+                info!(
+                    "Attack Cruiser packet: {:x} {buffer:x?}",
+                    header.sub_op_code
+                );
 
                 match AttackCruiserOpCode::try_from(header.sub_op_code) {
                     Ok(op_code) => match op_code {
@@ -1919,7 +1922,10 @@ pub fn process_minigame_packet(
                                             stage_group_guid: 13,
                                         },
                                         client_timestamp: round_trip.client_timestamp,
-                                        server_timestamp: Instant::now().elapsed().as_millis()
+                                        server_timestamp: game_server
+                                            .start_time()
+                                            .elapsed()
+                                            .as_millis()
                                             as u64,
                                     },
                                 })],
