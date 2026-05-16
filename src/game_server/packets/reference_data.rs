@@ -117,8 +117,7 @@ impl SerializePacket for ItemGroupItem {
     }
 }
 
-#[derive(Deserialize, SerializePacket)]
-#[serde(deny_unknown_fields)]
+#[derive(SerializePacket)]
 pub struct ItemGroupDefinition {
     pub guid: i32,
     pub unknown2: i32,

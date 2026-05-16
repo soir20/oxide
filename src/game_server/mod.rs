@@ -35,7 +35,7 @@ use handlers::minigame::{
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
-use handlers::store::{load_cost_map, CostEntry};
+use handlers::store::CostEntry;
 use handlers::test_data::make_test_nameplate_image;
 use handlers::tick::{
     enqueue_tickable_chunks, enqueue_tickable_minigames, tick_matchmaking_groups, tick_minigame,
@@ -207,11 +207,11 @@ impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
-        let item_definitions = load_item_definitions(config_dir)?;
-        let item_groups = load_item_groups(config_dir)?;
+        let (item_definitions, mut costs) = load_item_definitions(config_dir)?;
+        let item_groups = load_item_groups(config_dir, &mut costs)?;
         Ok(GameServer {
             categories: load_categories(config_dir)?,
-            costs: load_cost_map(config_dir, &item_definitions, &item_groups)?,
+            costs,
             customizations: load_customizations(config_dir)?,
             customization_item_mappings: load_customization_item_mappings(config_dir)?,
             default_sabers: load_default_sabers(config_dir)?,
