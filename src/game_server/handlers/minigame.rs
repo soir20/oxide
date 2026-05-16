@@ -1895,24 +1895,40 @@ pub fn process_minigame_packet(
             MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
             MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
             MinigameOpCode::AttackCruiser => {
+                let offset = cursor.position();
+                let header = MinigameHeader::deserialize(cursor)?;
+
                 let mut buffer = Vec::new();
                 cursor.read_to_end(&mut buffer)?;
-                info!("Attack Cruiser packet: {op_code:?} {buffer:x?}");
-                Ok(vec![Broadcast::Single(
-                    sender,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AttackCruiserRoundTrip {
-                            minigame_header: MinigameHeader {
-                                stage_guid: 27001,
-                                sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
-                                stage_group_guid: 13,
-                            },
-                            unknown1: 500,
-                            unknown2: 1000,
-                        },
-                    })],
-                )])
+                info!("Attack Cruiser packet: {:x} {buffer:x?}", header.sub_op_code);
+
+                match AttackCruiserOpCode::try_from(header.sub_op_code) {
+                    Ok(op_code) => match op_code {
+                        AttackCruiserOpCode::RoundTrip => {
+                            cursor.set_position(offset);
+                            let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
+
+                            Ok(vec![Broadcast::Single(
+                                sender,
+                                vec![GamePacket::serialize(&TunneledPacket {
+                                    unknown1: true,
+                                    inner: AttackCruiserRoundTrip {
+                                        minigame_header: MinigameHeader {
+                                            stage_guid: 27001,
+                                            sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
+                                            stage_group_guid: 13,
+                                        },
+                                        client_timestamp: round_trip.client_timestamp,
+                                        server_timestamp: Instant::now().elapsed().as_millis()
+                                            as u64,
+                                    },
+                                })],
+                            )])
+                        }
+                        _ => Ok(Vec::new()),
+                    },
+                    Err(_) => Ok(Vec::new()),
+                }
             }
             // Ignore this unused packet to reduce log spam
             MinigameOpCode::LeaveInstance => Ok(Vec::new()),

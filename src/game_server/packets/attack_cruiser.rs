@@ -83,8 +83,8 @@ impl GamePacket for AttackCruiserGameConfig {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserRoundTrip {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u64,
-    pub unknown2: u64,
+    pub client_timestamp: u64,
+    pub server_timestamp: u64,
 }
 
 impl GamePacket for AttackCruiserRoundTrip {
