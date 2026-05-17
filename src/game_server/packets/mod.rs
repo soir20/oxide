@@ -242,6 +242,136 @@ impl DivAssign for Pos {
     }
 }
 
+#[derive(
+    Copy, Clone, Debug, SerializePacket, DeserializePacket, Deserialize, Default, PartialEq,
+)]
+#[serde(deny_unknown_fields)]
+pub struct Pos3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+impl Add for Pos3 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Sub for Pos3 {
+    type Output = Pos3;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Mul for Pos3 {
+    type Output = Pos3;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl Div for Pos3 {
+    type Output = Pos3;
+
+    fn div(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z,
+        }
+    }
+}
+
+impl Add<f32> for Pos3 {
+    type Output = Self;
+
+    fn add(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs,
+        }
+    }
+}
+
+impl Sub<f32> for Pos3 {
+    type Output = Self;
+
+    fn sub(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x - rhs,
+            y: self.y - rhs,
+            z: self.z - rhs,
+        }
+    }
+}
+
+impl Mul<f32> for Pos3 {
+    type Output = Pos3;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Div<f32> for Pos3 {
+    type Output = Pos3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+impl AddAssign for Pos3 {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl SubAssign for Pos3 {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl MulAssign for Pos3 {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
+impl DivAssign for Pos3 {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
+}
+
 #[derive(Clone, Copy, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CharacterStateFlags {
