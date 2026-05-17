@@ -10,7 +10,7 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::item::ItemConfig,
+        handlers::item::PlayerItem,
         packets::{
             reference_data::ItemGroupDefinition,
             store::{StoreItem, StoreItemList},
@@ -42,7 +42,7 @@ pub struct CostEntry {
 
 pub fn load_cost_map(
     config_dir: &Path,
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<u32, PlayerItem>,
     item_groups: &[ItemGroupDefinition],
 ) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
     let mut file = File::open(config_dir.join("sales.yaml"))?;
@@ -77,7 +77,7 @@ impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
 }
 
 fn cost_map_from_sales(
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<u32, PlayerItem>,
     item_groups: &[ItemGroupDefinition],
     sales: Vec<Sale>,
 ) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {

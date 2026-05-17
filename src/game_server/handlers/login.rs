@@ -85,7 +85,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             let item_defs: BTreeMap<u32, ItemDefinition> = game_server
             .items()
             .iter()
-            .map(|(id, cfg)| (*id, ItemDefinition::from(cfg)))
+            .map(|(id, config)| (*id, ItemDefinition::from_player_item(config, game_server.abilities())))
             .collect();
 
             let item_defs_reply = TunneledPacket {

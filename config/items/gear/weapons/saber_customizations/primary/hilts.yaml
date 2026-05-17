@@ -12,15 +12,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 232
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Plo Koon's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Dahgee Jedi Lightsaber
 - guid: 227
@@ -35,15 +30,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 1148
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Dahgee Jedi Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Ahsoka Tano's Reverse Lightsaber
 - guid: 422
@@ -58,15 +48,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 220
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ahsoka Tano's Reverse Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Anakin Skywalker's Lightsaber
 - guid: 435
@@ -80,15 +65,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 223
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Anakin Skywalker's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Zabrak Sith Lightsaber
 - guid: 437
@@ -103,15 +83,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 219
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Zabrak Sith Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Adi Gallia's Lightsaber
 - guid: 526
@@ -126,15 +101,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 222
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Adi Gallia's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Pre Vizsla's Darksaber
 - guid: 527
@@ -148,15 +118,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 224
-        name_id: 60026
-      # Proximity Mine
-      - icon_set_id: 3177
-        name_id: 53514
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Pre Vizsla's Darksaber"
+      - "Proximity Mine"
+      - "Slashing Strike"
 
 # Count Dooku's Lightsaber
 - guid: 528
@@ -170,15 +135,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 225
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Count Dooku's Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Kit Fisto's Lightsaber
 - guid: 532
@@ -192,15 +152,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 229
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Kit Fisto's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Luminara Unduli's Lightsaber
 - guid: 534
@@ -215,15 +170,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 231
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Luminara Unduli's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Mace Windu's Lightsaber
 - guid: 535
@@ -237,15 +187,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 233
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Mace Windu's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Obi-Wan Kenobi's Lightsaber
 - guid: 536
@@ -260,15 +205,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 234
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Obi-Wan Kenobi's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Darth Sidious' Lightsaber
 - guid: 537
@@ -282,15 +222,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 235
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Darth Sidious' Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Training Lightsaber
 - guid: 538
@@ -304,15 +239,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 236
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Training Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Asajj Ventress' Right Lightsaber
 - guid: 539
@@ -327,15 +257,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 237
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Asajj Ventress' Right Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Miko Jedi Lightsaber
 - guid: 761
@@ -349,15 +274,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 509
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Miko Jedi Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Mestare Lightsaber
 - guid: 762
@@ -371,15 +291,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 510
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Mestare Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Shaak Ti's Lightsaber
 - guid: 763
@@ -394,15 +309,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 513
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Shaak Ti's Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Savek Lightsaber
 - guid: 764
@@ -417,15 +327,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 517
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Savek Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Kyle Katarn's Lightsaber
 - guid: 786
@@ -439,15 +344,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 511
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Kyle Katarn's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Shotem Jedi Lightsaber
 - guid: 787
@@ -461,15 +361,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 512
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Shotem Jedi Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Bravis Sith Lightsaber
 - guid: 788
@@ -484,15 +379,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 514
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Bravis Sith Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Ermi Jedi Lightsaber
 - guid: 789
@@ -507,15 +397,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 515
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ermi Jedi Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Ancient Cobal Lightsaber
 - guid: 790
@@ -529,15 +414,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 516
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ancient Cobal Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Ultimate FX Gungan Lightsaber
 - guid: 1992
@@ -551,15 +431,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 2136
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ultimate FX Gungan Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Quinlan Vos' Lightsaber
 - guid: 2134
@@ -573,15 +448,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 1436
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Quinlan Vos' Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Ahsoka Tano's Lightsaber
 - guid: 2141
@@ -595,15 +465,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 1459
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ahsoka Tano's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Savage Opress' Lightsaber
 - guid: 2363
@@ -617,15 +482,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 1656
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Savage Opress' Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Saesee Tiin's Lightsaber
 - guid: 2708
@@ -639,15 +499,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 1792
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Saesee Tiin's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Kashyyyk Lightsaber
 - guid: 2801
@@ -662,15 +517,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 1993
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Kashyyyk Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Sith Marauder Lightsaber
 - guid: 110000
@@ -684,15 +534,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3044
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Sith Marauder Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Nelona Lightsaber
 - guid: 110001
@@ -706,15 +551,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 2838
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Nelona Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Sith Warrior Lightsaber
 - guid: 110002
@@ -728,15 +568,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3118
-        name_id: 60026
-      # Force Drain
-      - icon_set_id: 3287
-        name_id: 53636
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Sith Warrior Lightsaber"
+      - "Force Drain"
+      - "Slashing Strike"
 
 # Sith Inquisitor Lightsaber
 - guid: 110003
@@ -750,15 +585,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 2938
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Sith Inquisitor Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Forgotten Jedi Reverse Lightsaber
 - guid: 110004
@@ -773,15 +603,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3735
-        name_id: 60026
-      # Emerald Lightning
-      - icon_set_id: 3174
-        name_id: 53664
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Forgotten Jedi Reverse Lightsaber"
+      - "Emerald Lightning"
+      - "Slashing Strike"
 
 # Jedi Champion Reverse Lightsaber
 - guid: 110005
@@ -796,15 +621,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3133
-        name_id: 60026
-      # Emerald Lightning
-      - icon_set_id: 3174
-        name_id: 53664
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Jedi Champion Reverse Lightsaber"
+      - "Emerald Lightning"
+      - "Slashing Strike"
 
 # Kofun Lightsaber
 - guid: 110006
@@ -818,15 +638,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 2862
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Kofun Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Aayla Secura's Lightsaber
 - guid: 110007
@@ -840,16 +655,11 @@
   item_type: 25
   category: 64
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 221
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Aayla Secura's Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Barriss Offee's Lightsaber
 - guid: 110008
@@ -864,16 +674,11 @@
   category: 64
   members: true
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 508
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Barriss Offee's Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Byph's Lightsaber
 - guid: 110009
@@ -888,15 +693,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3207
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Byph's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Sith Infiltrator Lightsaber
 - guid: 110010
@@ -910,15 +710,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3045
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Sith Infiltrator Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Dolovite Darksaber
 - guid: 110011
@@ -932,15 +727,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3829
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Dolovite Darksaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Phrik Darksaber
 - guid: 110012
@@ -954,15 +744,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3791
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Phrik Darksaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Darth Maul's Lightsaber
 - guid: 110013
@@ -977,15 +762,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 2764
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Darth Maul's Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Eeth Koth's Lightsaber
 - guid: 110014
@@ -999,16 +779,11 @@
   item_type: 25
   category: 64
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 226
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Eeth Koth's Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Jedi Exile Lightsaber
 - guid: 110015
@@ -1022,15 +797,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3835
-        name_id: 60026
-      # Emerald Lightning
-      - icon_set_id: 3174
-        name_id: 53664
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Jedi Exile Lightsaber"
+      - "Emerald Lightning"
+      - "Slashing Strike"
 
 # Forked Lightsaber
 - guid: 110016
@@ -1044,15 +814,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3828
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Forked Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Ganodi's Lightsaber
 - guid: 110017
@@ -1067,15 +832,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3212
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ganodi's Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Gungi's Lightsaber
 - guid: 110018
@@ -1090,15 +850,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3208
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Gungi's Lightsaber"
+      - "Force Push"
+      - "Slashing Strike"
 
 # Jocasta Nu's Lightsaber
 - guid: 110019
@@ -1113,15 +868,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 227
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Jocasta Nu's Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Katooni's Lightsaber
 - guid: 110020
@@ -1136,15 +886,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3213
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Katooni's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Ki-Adi-Mundi's Lightsaber
 - guid: 110021
@@ -1158,16 +903,11 @@
   item_type: 25
   category: 64
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 228
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Ki-Adi-Mundi's Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Sulon Jedi Lightsaber
 - guid: 110022
@@ -1181,16 +921,11 @@
   item_type: 25
   category: 64
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 511
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Sulon Jedi Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Luke Skywalker's Lightsaber
 - guid: 110023
@@ -1204,16 +939,11 @@
   item_type: 25
   category: 64
   action_bar:
-    # Placeholder
-    abilities:
-      - icon_set_id: 230
-        name_id: 60026
-      # Force Push
-      - icon_set_id: 3175
-        name_id: 50564
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Luke Skywalker's Lightsaber"
+      # Placeholder abilities
+      - "Force Push"
+      - "Slashing Strike"
 
 # Petro's Lightsaber
 - guid: 110024
@@ -1228,15 +958,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3209
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Petro's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Shotem Master Lightsaber
 - guid: 110025
@@ -1250,15 +975,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3788
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Shotem Master Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Crimson Prowler Lightsaber
 - guid: 110026
@@ -1272,15 +992,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3721
-        name_id: 60026
-      # Force Lightning
-      - icon_set_id: 3174
-        name_id: 10641
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Crimson Prowler Lightsaber"
+      - "Force Lightning"
+      - "Slashing Strike"
 
 # Talz Lightsaber
 - guid: 110027
@@ -1294,15 +1009,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 2863
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Talz Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Yoda's Lightsaber
 - guid: 110028
@@ -1316,15 +1026,10 @@
   item_type: 25
   category: 64
   action_bar:
-    abilities:
-      - icon_set_id: 3169
-        name_id: 60026
-      # Force Valor
-      - icon_set_id: 3176
-        name_id: 53516
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Yoda's Lightsaber"
+      - "Force Valor"
+      - "Slashing Strike"
 
 # Zatt's Lightsaber
 - guid: 110029
@@ -1339,15 +1044,10 @@
   category: 64
   members: true
   action_bar:
-    abilities:
-      - icon_set_id: 3211
-        name_id: 60026
-      # Force Heal
-      - icon_set_id: 3173
-        name_id: 53518
-      # Slashing Strike
-      - icon_set_id: 3752
-        name_id: 60321
+    ability_keys:
+      - "Zatt's Lightsaber"
+      - "Force Heal"
+      - "Slashing Strike"
 
 # Yoda's Lightsaber (NPC only)
 - guid: 110030

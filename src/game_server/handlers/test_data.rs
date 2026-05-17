@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use packet_serialize::LengthlessVec;
 
 use crate::game_server::{
-    handlers::{character::PlayerAbilityGroup, item::ItemConfig},
+    handlers::{character::PlayerAbilityGroup, item::PlayerItem},
     packets::{
         item::{EquipmentSlot, Item, MarketData},
         player_data::{
@@ -26,7 +26,7 @@ use super::{
 pub fn make_test_player(
     guid: u32,
     mounts: &BTreeMap<u32, MountConfig>,
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<u32, PlayerItem>,
 ) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
@@ -444,6 +444,7 @@ pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
     let mut abilities = Vec::new();
     abilities.push(PlayerAbilityGroup {
         source_item_id: 2909,
+        ability_ids: vec![121, 157, 165],
         priority: 2,
     });
     abilities

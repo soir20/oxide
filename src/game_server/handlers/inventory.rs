@@ -8,8 +8,9 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
+            ability::AbilitySlotConfig,
             character::{Player, PlayerAbilityGroup, PlayerInventory},
-            item::{ItemAbilityConfig, ItemConfig, SABER_ITEM_TYPE},
+            item::{PlayerItem, SABER_ITEM_TYPE},
         },
         packets::{
             client_update::{EquipItem, UnequipItem, UpdateActionBarSlot, UpdateCredits},
@@ -191,25 +192,25 @@ pub fn customizations_from_item_guids(
 
 fn build_action_bar_packets(
     bar_type: ActionBarType,
-    assignments: &[(u32, Option<&ItemAbilityConfig>)],
+    assignments: &[(u32, Option<&AbilitySlotConfig>)],
 ) -> Vec<Vec<u8>> {
     let mut packets = Vec::new();
 
     for &(slot_index, ability) in assignments {
         let slot = match ability {
-            Some(cfg) => ActionBarSlot {
+            Some(config) => ActionBarSlot {
                 is_empty: false,
-                icon_id: cfg.icon_set_id,
-                icon_tint_id: cfg.icon_tint_id,
-                name_id: cfg.name_id,
+                icon_id: config.icon_set_id,
+                icon_tint_id: config.icon_tint_id,
+                name_id: config.name_id,
                 ability_type: 0,
-                ability_sub_type: cfg.ability_sub_type,
-                area_of_effect_radius: cfg.area_of_effect_radius,
-                max_distance_from_player: cfg.max_distance_from_player,
-                required_force_points: cfg.required_force_points,
+                ability_sub_type: config.ability_sub_type,
+                area_of_effect_radius: config.area_of_effect_radius,
+                max_distance_from_player: config.max_distance_from_player,
+                required_force_points: config.required_force_points,
                 is_enabled: true,
-                use_cooldown_millis: cfg.use_cooldown_millis,
-                init_cooldown_millis: cfg.init_cooldown_millis,
+                use_cooldown_millis: config.use_cooldown_millis,
+                init_cooldown_millis: config.init_cooldown_millis,
                 unknown13: 0,
                 quantity: 0,
                 is_consumable: false,
@@ -256,31 +257,30 @@ fn build_weapon_slot_assignments(
     let ability_groups = &mut player.action_bar.weapon_abilities;
     ability_groups.sort_by_key(|ability_group| ability_group.priority);
 
-    let resolved_ability_groups: Vec<&[ItemAbilityConfig]> = ability_groups
-    .iter()
-    .map(|ability_group| {
-        game_server
-            .items()
-            .get(&ability_group.source_item_id)
-            .map(|item| item.action_bar.abilities.as_slice())
-            .ok_or_else(|| {
-                ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!(
-                        "Requester {} contained unknown item {} in their weapon ability groups during slot assignment",
-                        ability_group.source_item_id,
-                        sender
-                    ),
-                )
-            })
-    })
-    .collect::<Result<_, _>>()?;
+    let mut resolved_abilities: Vec<&AbilitySlotConfig> = Vec::new();
+
+    for group in ability_groups {
+        for ability_id in &group.ability_ids {
+            let ability = game_server
+                .abilities()
+                .get(ability_id)
+                .ok_or_else(|| {
+                    ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Requester {} contained unknown ability {} in their weapon ability groups during slot assignment",
+                            sender, ability_id
+                        ),
+                    )
+                })?;
+
+            resolved_abilities.push(&ability.slot_info);
+        }
+    }
 
     let assignments: Vec<_> = (0..4)
         .map(|slot| {
-            let ability = resolved_ability_groups
-                .iter()
-                .find_map(|group_abilities| group_abilities.get(slot));
+            let ability = resolved_abilities.get(slot).copied();
             (slot as u32, ability)
         })
         .collect();
@@ -349,8 +349,11 @@ fn process_unequip_slot(
             let mut packets_for_all = Vec::new();
             let mut packets_for_sender = Vec::new();
 
-            if !item_def.action_bar.abilities.is_empty() {
-                player.action_bar.weapon_abilities.retain(|ability_group| ability_group.source_item_id != item_guid);
+            if !item_def.action_bar.ability_ids.is_empty() {
+                player
+                    .action_bar
+                    .weapon_abilities
+                    .retain(|ability_group| ability_group.source_item_id != item_guid);
 
                 packets_for_sender.extend(build_weapon_slot_assignments(sender, player, game_server)?);
             }
@@ -698,7 +701,7 @@ fn item_def_from_slot<'a>(
     items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &'a GameServer,
-) -> Option<&'a ItemConfig> {
+) -> Option<&'a PlayerItem> {
     items
         .get(&slot)
         .and_then(|item_guid| game_server.items().get(item_guid))
@@ -835,7 +838,7 @@ pub fn update_saber_tints<'a>(
 pub fn player_has_saber_equipped(
     inventory: &PlayerInventory,
     battle_class: u32,
-    item_definitions: &BTreeMap<u32, ItemConfig>,
+    item_definitions: &BTreeMap<u32, PlayerItem>,
 ) -> bool {
     inventory
         .equipped_item(battle_class, EquipmentSlot::PrimaryWeapon)
@@ -870,7 +873,7 @@ impl From<ExtendedAttachment> for Attachment {
 
 pub fn attachments_from_equipped_items(
     equipped_items: &BTreeMap<EquipmentSlot, u32>,
-    item_definitions: &BTreeMap<u32, ItemConfig>,
+    item_definitions: &BTreeMap<u32, PlayerItem>,
 ) -> Vec<ExtendedAttachment> {
     equipped_items
         .iter()
@@ -1122,7 +1125,7 @@ fn equip_item_in_slot<'a>(
     })];
 
     if let Some(previous_item) = previous_item_def {
-        if !previous_item.action_bar.abilities.is_empty() {
+        if !previous_item.action_bar.ability_ids.is_empty() {
             player
                 .action_bar
                 .weapon_abilities
@@ -1130,15 +1133,11 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    if !item_def.action_bar.abilities.is_empty() {
-        let priority = item_def
-            .action_bar
-            .action_bar_priority_override
-            .unwrap_or_else(|| equip_guid.slot.action_bar_priority());
-
+    if !item_def.action_bar.ability_ids.is_empty() {
         player.action_bar.weapon_abilities.push(PlayerAbilityGroup {
             source_item_id: item_def.guid,
-            priority,
+            ability_ids: item_def.action_bar.ability_ids.clone(),
+            priority: item_def.action_bar.priority,
         });
     }
 
@@ -1184,7 +1183,7 @@ fn equip_item_in_slot<'a>(
                             )
                         })?;
 
-                    if !unequipped_def.action_bar.abilities.is_empty() {
+                    if !unequipped_def.action_bar.ability_ids.is_empty() {
                         player.action_bar.weapon_abilities.retain(|ability_group| {
                             ability_group.source_item_id != unequipped_def.guid
                         });

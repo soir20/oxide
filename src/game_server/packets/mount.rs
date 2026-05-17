@@ -12,7 +12,7 @@ pub enum MountOpCode {
     DismountReply = 0x4,
     MountList = 0x5,
     MountSpawn = 0x6,
-    MountSpawnByItemDef = 0x8,
+    MountSpawnByPlayerItem = 0x8,
     MountListShowMarket = 0x9,
     SetAutoMount = 0xa,
 }
