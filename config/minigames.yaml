@@ -5093,7 +5093,7 @@ categories:
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 11
-              zone_template_guid: 200
+              zone_template_guid: 250
               score_to_credits_expression: x / 129
               challenges:
                 # Use base level's credit ratio as a placeholder
