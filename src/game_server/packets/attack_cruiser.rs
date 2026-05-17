@@ -81,6 +81,18 @@ impl GamePacket for AttackCruiserGameConfig {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserUpdateGameState {
+    pub minigame_header: MinigameHeader,
+    pub game_state: u32,
+}
+
+impl GamePacket for AttackCruiserUpdateGameState {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserRoundTrip {
     pub minigame_header: MinigameHeader,
     pub client_timestamp: u64,

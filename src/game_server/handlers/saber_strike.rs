@@ -10,7 +10,7 @@ use crate::game_server::{
     packets::{
         attack_cruiser::{
             AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
-            AttackCruiserOpCode,
+            AttackCruiserOpCode, AttackCruiserUpdateGameState,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -32,35 +32,48 @@ pub fn start_saber_strike(
     minigame_status: &MinigameStatus,
     game_server: &GameServer,
 ) -> Vec<Vec<u8>> {
-    vec![GamePacket::serialize(&TunneledPacket {
-        unknown1: true,
-        inner: AttackCruiserGameConfig {
-            minigame_header: MinigameHeader {
-                stage_guid: minigame_status.group.stage_guid,
-                sub_op_code: AttackCruiserOpCode::ClientConfig as i32,
-                stage_group_guid: minigame_status.group.stage_group_guid,
+    vec![
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserGameConfig {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::ClientConfig as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                config1: AttackCruiserConfig {
+                    unknown1: 0,
+                    unknown2: 0x79243a4c,
+                    unknown3: "1234567890123456789012345678901234567890".to_string(),
+                    config_type: AttackCruiserConfigType::Global {},
+                },
+                config2: AttackCruiserConfig {
+                    unknown1: 1,
+                    unknown2: 0x79243a4c,
+                    unknown3: "testing".to_string(),
+                    config_type: AttackCruiserConfigType::Global {},
+                },
+                config3: AttackCruiserConfig {
+                    unknown1: 2,
+                    unknown2: 0x79243a4c,
+                    unknown3: "".to_string(),
+                    config_type: AttackCruiserConfigType::Global {},
+                },
+                configs: Vec::new(),
             },
-            config1: AttackCruiserConfig {
-                unknown1: 0,
-                unknown2: 0x79243a4c,
-                unknown3: "1234567890123456789012345678901234567890".to_string(),
-                config_type: AttackCruiserConfigType::Global {},
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserUpdateGameState {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                game_state: 4,
             },
-            config2: AttackCruiserConfig {
-                unknown1: 1,
-                unknown2: 0x79243a4c,
-                unknown3: "testing".to_string(),
-                config_type: AttackCruiserConfigType::Global {},
-            },
-            config3: AttackCruiserConfig {
-                unknown1: 2,
-                unknown2: 0x79243a4c,
-                unknown3: "".to_string(),
-                config_type: AttackCruiserConfigType::Global {},
-            },
-            configs: Vec::new(),
-        },
-    })]
+        }),
+    ]
 }
 
 pub fn process_saber_strike_packet(
