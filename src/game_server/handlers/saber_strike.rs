@@ -9,8 +9,9 @@ use crate::game_server::{
     },
     packets::{
         attack_cruiser::{
-            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
-            AttackCruiserOpCode, AttackCruiserUpdateGameState,
+            AttackCruiserAddPlayer, AttackCruiserConfig, AttackCruiserConfigType,
+            AttackCruiserGameConfig, AttackCruiserOpCode, AttackCruiserPlayerUpdate,
+            AttackCruiserUpdateGameState,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -60,6 +61,24 @@ pub fn start_saber_strike(
                     config_type: AttackCruiserConfigType::Global {},
                 },
                 configs: Vec::new(),
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserAddPlayer {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                guid: 1,
+                update: AttackCruiserPlayerUpdate {
+                    unknown1: None,
+                    unknown2: None,
+                    unknown3: None,
+                    unknown4: None,
+                    unknown5: None,
+                },
             },
         }),
         GamePacket::serialize(&TunneledPacket {
