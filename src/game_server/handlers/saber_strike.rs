@@ -9,8 +9,9 @@ use crate::game_server::{
     },
     packets::{
         attack_cruiser::{
-            AttackCruiserAddPlayer, AttackCruiserConfig, AttackCruiserConfigType,
-            AttackCruiserGameConfig, AttackCruiserOpCode, AttackCruiserPlayerUpdate,
+            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserConfig,
+            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserOpCode,
+            AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
             AttackCruiserUpdateGameState,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
@@ -20,7 +21,7 @@ use crate::game_server::{
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        GamePacket,
+        GamePacket, Pos3,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -65,6 +66,23 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
+            inner: AttackCruiserAddActor {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::AddActor as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                actor_id: 500,
+                unknown2: 2,
+                unknown3: 3,
+                unknown4: Pos3::default(),
+                unknown5: Pos3::default(),
+                unknown6: 4,
+                unknown7: 5,
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
             inner: AttackCruiserAddPlayer {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
@@ -73,7 +91,13 @@ pub fn start_saber_strike(
                 },
                 guid: 1,
                 update: AttackCruiserPlayerUpdate {
-                    unknown1: None,
+                    unknown1: Some(AttackCruiserPlayerUpdateUnknown1 {
+                        unknown1: 1,
+                        actor_id: 500,
+                        unknown3: 3,
+                        unknown4: "test".to_string(),
+                        unknown5: "hello world".to_string(),
+                    }),
                     unknown2: None,
                     unknown3: None,
                     unknown4: None,

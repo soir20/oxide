@@ -220,7 +220,7 @@ impl GamePacket for AttackCruiserAddPlayer {
 #[derive(SerializePacket)]
 pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
+    pub actor_id: u32,
     pub unknown2: u32,
     pub unknown3: u64,
     pub unknown4: Pos3,
