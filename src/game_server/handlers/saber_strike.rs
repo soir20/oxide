@@ -74,7 +74,7 @@ pub fn start_saber_strike(
                 },
                 actor_id: 500,
                 unknown2: 2,
-                unknown3: 3,
+                actor_pool_id: 1000,
                 unknown4: Pos3::default(),
                 unknown5: Pos3::default(),
                 unknown6: 4,
