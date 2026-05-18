@@ -34,7 +34,7 @@ pub enum AttackCruiserOpCode {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerDeathSpawnConfig {
+pub struct AttackCruiserAnyConfig {
     pub class: String,
     pub value: String,
 }
@@ -107,15 +107,9 @@ pub struct AttackCruiserGlobalConfig {
     pub health_foreground_internal_id: i32,
     pub health_background_internal_id: i32,
     pub enable_weapon_tiers: bool,
-    pub player_death_spawn_config: AttackCruiserPlayerDeathSpawnConfig,
+    pub player_death_spawn_config: AttackCruiserAnyConfig,
     pub hud_message: AttackCruiserHudMessageConfig,
 }
-
-#[derive(SerializePacket)]
-pub struct AttackCruiserEndConditionConfig {}
-
-#[derive(SerializePacket)]
-pub struct AttackCruiserWinConditionConfig {}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlanetConfig {
@@ -128,7 +122,27 @@ pub struct AttackCruiserPlanetConfig {
 pub struct AttackCruiserShipConfig {}
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserCameraConfig {}
+pub struct AttackCruiserCameraConfig {
+    pub distance: f32,
+    pub min_distance: f32,
+    pub max_distance: f32,
+    pub pitch: f32,
+    pub min_pitch: f32,
+    pub max_pitch: f32,
+    pub z_offset: f32,
+    pub target_tracking_hlq: f32,
+    pub zoom_step_q: f32,
+    pub zoom_step_hlq: f32,
+    pub forward_tether: bool,
+    pub forward_tether_seconds: f32,
+    pub near_clip_distance: f32,
+    pub particle_update_distance: f32,
+    pub actor_update_radius: f32,
+    pub shadow_quality: i32,
+    pub shadow_draw_distance: f32,
+    pub shadow_blob_render_distance: f32,
+    pub overhead_render_distance: f32,
+}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventCinematicConfig {
@@ -175,16 +189,10 @@ pub struct AttackCruiserActorPoolConfig {
 pub struct AttackCruiserWaveConfig {}
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserLaunchConditionConfig {}
-
-#[derive(SerializePacket)]
-pub struct AttackCruiserCompleteConditionConfig {}
-
-#[derive(SerializePacket)]
 pub struct AttackCruiserGameWaveConfig {
     pub wave_config: AttackCruiserWaveConfig,
-    pub launch_condition_config: AttackCruiserLaunchConditionConfig,
-    pub complete_condition_config: AttackCruiserCompleteConditionConfig,
+    pub launch_condition_config: AttackCruiserAnyConfig,
+    pub complete_condition_config: AttackCruiserAnyConfig,
     pub remove_actors_on_completion: bool,
 }
 
@@ -195,8 +203,8 @@ pub struct AttackCruiserGameConfig {
     pub sound_id: i32,
     pub mode: i32,
     pub global_config: AttackCruiserGlobalConfig,
-    pub end_condition_config: AttackCruiserEndConditionConfig,
-    pub win_condition_config: AttackCruiserWinConditionConfig,
+    pub end_condition_config: AttackCruiserAnyConfig,
+    pub win_condition_config: AttackCruiserAnyConfig,
     pub target_value1: u32,
     pub target_value2: u32,
     pub playfield_height: f32,
