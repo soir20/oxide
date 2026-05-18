@@ -33,14 +33,6 @@ pub enum AttackCruiserOpCode {
     UpdateBossCount = 0x15,
 }
 
-#[derive(SerializePacket)]
-pub struct AttackCruiserConfig {
-    pub unknown1: i32,
-    pub unknown2: i32,
-    pub unknown3: String,
-    pub config_type: AttackCruiserConfigType,
-}
-
 pub enum AttackCruiserConfigType {
     Global {},
 }
@@ -51,6 +43,14 @@ impl SerializePacket for AttackCruiserConfigType {
             AttackCruiserConfigType::Global { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
         }
     }
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserConfig {
+    pub unknown1: i32,
+    pub unknown2: i32,
+    pub unknown3: String,
+    pub config_type: AttackCruiserConfigType,
 }
 
 pub struct AttackCruiserGameConfig {
