@@ -34,7 +34,82 @@ pub enum AttackCruiserOpCode {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserGlobalConfig {}
+pub struct AttackCruiserPlayerDeathSpawnConfig {
+    pub class: String,
+    pub value: String,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserHudMessageConfig {
+    pub speaker_name_id: i32,
+    pub speaker_image_id: i32,
+    pub message_id: i32,
+    pub sound_id: i32,
+    pub duration_millis: u32,
+    pub delay_millis: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserGlobalConfig {
+    pub physics_speed: f32,
+    pub connect_timeout_seconds: f32,
+    pub ready_timeout_seconds: f32,
+    pub default_timeout_seconds: f32,
+    pub effects_preload_timeout_seconds: f32,
+    pub effects_ready_timeout_seconds: f32,
+    pub server_update_players_interval_seconds: f32,
+    pub server_update_actors_interval_seconds: f32,
+    pub server_draw_debug_data_interval_seconds: f32,
+    pub client_update_actors_interval_seconds: f32,
+    pub max_interpolation_step: f32,
+    pub small_mass_threshold: f32,
+    pub dodge_prediction_time: f32,
+    pub dodge_separation: f32,
+    pub player_perfect_aim_radius: f32,
+    pub player_auto_aim_assistance: f32,
+    pub npc_auto_aim_assistance: f32,
+    pub player_blaster_trapezoid_width: f32,
+    pub player_auto_aim_range: f32,
+    pub npc_auto_aim_range: f32,
+    pub player_blaster_vertical_range: f32,
+    pub npc_blaster_vertical_range: f32,
+    pub min_blaster_speed: f32,
+    pub max_blaster_angle: f32,
+    pub projectile_ray_advance_seconds: f32,
+    pub projectile_ray_spacing: f32,
+    pub projectile_ray_iterations: i32,
+    pub advance_launch_seconds: f32,
+    pub advance_interception_time: f32,
+    pub collisionless_time: u32,
+    pub tractionless_time: u32,
+    pub screen_relative_turning: bool,
+    pub ship_to_ship_collision: bool,
+    pub player_death_animation_delay_seconds: f32,
+    pub respawn_damage_area: f32,
+    pub respawn_delay_seconds: f32,
+    pub respawn_invulnerable_seconds: f32,
+    pub enable_composite_effects: bool,
+    pub torpedo_reticule_effect_id: u32,
+    pub torpedo_reticule_effect_seconds: f32,
+    pub fighter_reticule_effect_id: u32,
+    pub fighter_reticule_effect_seconds: f32,
+    pub wave_end_sound_id: u32,
+    pub damage_warning_sound_id: u32,
+    pub damage_warning_interval_seconds: f32,
+    pub mine_deploy_sound_id: u32,
+    pub fighter_launch_sound_id: u32,
+    pub score_meter_tier1: u32,
+    pub score_decay_tier1: u32,
+    pub score_meter_exponent: f32,
+    pub score_decay_exponent: f32,
+    pub health_foreground_image_id: u32,
+    pub health_background_image_id: u32,
+    pub health_foreground_internal_id: i32,
+    pub health_background_internal_id: i32,
+    pub enable_weapon_tiers: bool,
+    pub player_death_spawn_config: AttackCruiserPlayerDeathSpawnConfig,
+    pub hud_message: AttackCruiserHudMessageConfig,
+}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserEndConditionConfig {}
