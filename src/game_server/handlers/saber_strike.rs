@@ -9,10 +9,10 @@ use crate::game_server::{
     },
     packets::{
         attack_cruiser::{
-            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserConfig,
-            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserOpCode,
+            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserClientConfig,
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserOpCode,
             AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
-            AttackCruiserUpdateGameState,
+            AttackCruiserPlayerUpdateUnknown2, AttackCruiserUpdateGameState,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -37,7 +37,7 @@ pub fn start_saber_strike(
     vec![
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: AttackCruiserGameConfig {
+            inner: AttackCruiserClientConfig {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
                     sub_op_code: AttackCruiserOpCode::ClientConfig as i32,
@@ -94,11 +94,18 @@ pub fn start_saber_strike(
                     unknown1: Some(AttackCruiserPlayerUpdateUnknown1 {
                         unknown1: 1,
                         actor_id: 500,
-                        unknown3: 3,
+                        unknown3: 200,
                         unknown4: "test".to_string(),
                         unknown5: "hello world".to_string(),
                     }),
-                    unknown2: None,
+                    unknown2: Some(AttackCruiserPlayerUpdateUnknown2 {
+                        unknown1: 10,
+                        unknown2: 11,
+                        unknown3: 12,
+                        unknown4: 13,
+                        unknown5: 14,
+                        unknown6: 15,
+                    }),
                     unknown3: None,
                     unknown4: None,
                     unknown5: None,
