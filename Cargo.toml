@@ -20,8 +20,10 @@ packet_serialize = { path = "crates/packet_serialize" }
 priority-queue = "2.7.0"
 miniz_oxide = "0.7.2"
 num_enum = "0.7.2"
+oxide_bvh = { path = "crates/bvh" }
 parking_lot = "0.12.1"
 polyanya = "0.16.1"
+pot = "3.0.1"
 rand = "0.8.5"
 rand_distr = "0.4.3"
 shlex = "1.3"

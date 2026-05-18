@@ -251,8 +251,8 @@ impl AuthenticatedChannelManager {
     ) -> Vec<(u32, Mutex<Channel>)> {
         let addrs_to_remove: Vec<SocketAddr> = self
             .channels
-            .iter()
-            .filter_map(|(_, channel)| {
+            .values()
+            .filter_map(|channel| {
                 let mut channel_handle = channel.lock();
                 if predicate(&mut channel_handle) {
                     Some(channel_handle.addr)

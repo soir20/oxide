@@ -1,21 +1,6 @@
 ---
 # Primary Hilts
 - guid: 3
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 63
       unknown: 0
@@ -145,21 +130,6 @@
       unknown: 0
 # Secondary Hilts
 - guid: 8
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 300
       unknown: 0
@@ -267,21 +237,6 @@
       unknown: 0
 # Primary Colors
 - guid: 4
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 100000
       unknown: 0
@@ -311,21 +266,6 @@
       unknown: 0
 # Secondary Colors
 - guid: 149
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 130000
       unknown: 0
@@ -355,21 +295,6 @@
       unknown: 0
 # Primary Shapes
 - guid: 5
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 90000
       unknown: 0
@@ -413,21 +338,6 @@
       unknown: 0
 # Secondary Shapes
 - guid: 9
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
   items:
     - guid: 120000
       unknown: 0
@@ -471,21 +381,8 @@
       unknown: 0
 # Hair Style
 - guid: 122
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 40118
       unknown: 0
@@ -727,21 +624,8 @@
       unknown: 0
 # Hair Color
 - guid: 123
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 30021
       unknown: 0
@@ -789,21 +673,8 @@
       unknown: 0
 # Eye Color
 - guid: 124
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 10012
       unknown: 0
@@ -833,21 +704,8 @@
       unknown: 0
 # Skin Tone
 - guid: 125
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 60029
       unknown: 0
@@ -911,21 +769,8 @@
       unknown: 0
 # Face Design
 - guid: 126
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 50062
       unknown: 0
@@ -1055,21 +900,8 @@
       unknown: 0
 # Facial Hair
 - guid: 139
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 8
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 20014
       unknown: 0
@@ -1103,21 +935,8 @@
       unknown: 0
 # Species
 - guid: 127
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
   page: 9
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 70012
       unknown: 0
@@ -1147,21 +966,7 @@
       unknown: 0
 # Boosts
 - guid: 10000
-  unknown2: 0
-  name_id: 0
-  description_id: 0
-  sort_order: 0
-  icon_set_id: 0
-  category: 0
-  page: 0
-  unknown9: 0
-  unknown10: 0
-  unknown11: false
-  unknown12: 0
-  unknown13: 0
-  unknown14: 0
-  unknown16: ''
-  unknown17: false
+  for_sale: true
   items:
     - guid: 2240
       unknown: 0

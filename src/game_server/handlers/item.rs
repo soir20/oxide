@@ -6,10 +6,13 @@ use std::{
 
 use crate::{
     game_server::{
-        handlers::ability::AbilityConfig,
+        handlers::{
+            ability::AbilityConfig,
+            store::{compute_costs, ItemCostMap},
+        },
         packets::{
-            item::{ItemDefinition, ItemType, SpecialItemAbility},
-            player_update::CustomizationSlot,
+        item::{ItemDefinition, ItemType, SpecialItemAbility},
+        player_update::CustomizationSlot,
         },
     },
     ConfigError,
@@ -19,6 +22,12 @@ use serde::Deserialize;
 use walkdir::WalkDir;
 
 pub const SABER_ITEM_TYPE: u32 = 25;
+
+const DEFAULT_COST_EXPRESSION: &str = "max(0.9*x - 1, 0.0)";
+
+fn default_members_cost_expression() -> String {
+    DEFAULT_COST_EXPRESSION.to_string()
+}
 
 const fn default_item_class() -> i32 {
     -1
@@ -48,6 +57,8 @@ pub struct ItemConfig {
     pub tint: u32,
     #[serde(default)]
     pub cost: u32,
+    #[serde(default = "default_members_cost_expression")]
+    pub members_cost_expression: String,
     #[serde(default = "default_item_class")]
     pub item_class: i32,
     #[serde(default)]
@@ -176,10 +187,12 @@ impl ItemConfig {
     }
 }
 
+pub type ItemConfigMap = BTreeMap<u32, ItemConfig>;
+
 pub fn load_item_definitions(
     config_dir: &Path,
     abilities: &HashMap<String, AbilityConfig>,
-) -> Result<BTreeMap<u32, ItemConfig>, ConfigError> {
+) -> Result<(ItemConfigMap, ItemCostMap), ConfigError> {
     let items_dir = config_dir.join("items");
 
     let yaml_files = WalkDir::new(&items_dir)
@@ -193,10 +206,12 @@ pub fn load_item_definitions(
 
     let mut items = BTreeMap::new();
     let mut item_paths = HashMap::new();
+    let mut costs = BTreeMap::new();
 
     for file_path in yaml_files {
         let file = File::open(&file_path)?;
         let configs: Vec<ItemConfig> = serde_yaml::from_reader(file)?;
+        costs.extend(compute_costs(&configs)?);
 
         for config in configs {
             let ability_count = config.action_bar.ability_keys.len();
@@ -232,5 +247,5 @@ pub fn load_item_definitions(
         }
     }
 
-    Ok(items)
+    Ok((items, costs))
 }
