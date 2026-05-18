@@ -17,7 +17,7 @@ use crate::{
             character::BaseNpcConfig,
             dialog::{DialogChoiceConfig, DialogChoiceInstance, DialogChoiceTemplate},
             distance3_pos,
-            item::PlayerItem,
+            item::ItemConfig,
             offset_destination,
         },
         packets::{
@@ -675,7 +675,7 @@ impl ZoneInstance {
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
         moved_character_handle: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();

@@ -10,7 +10,7 @@ use crate::{
         handlers::{
             ability::AbilitySlotConfig,
             character::{Player, PlayerAbilityGroup, PlayerInventory},
-            item::{PlayerItem, SABER_ITEM_TYPE},
+            item::{ItemConfig, SABER_ITEM_TYPE},
         },
         packets::{
             client_update::{EquipItem, UnequipItem, UpdateActionBarSlot, UpdateCredits},
@@ -260,16 +260,16 @@ fn build_weapon_slot_assignments(
     let mut resolved_abilities: Vec<&AbilitySlotConfig> = Vec::new();
 
     for group in ability_groups {
-        for ability_id in &group.ability_ids {
+        for ability_key in &group.ability_keys {
             let ability = game_server
                 .abilities()
-                .get(ability_id)
+                .get(ability_key)
                 .ok_or_else(|| {
                     ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Requester {} contained unknown ability {} in their weapon ability groups during slot assignment",
-                            sender, ability_id
+                            "Requester {} contained unknown ability key {} in their weapon ability groups during slot assignment",
+                            sender, ability_key
                         ),
                     )
                 })?;
@@ -349,7 +349,7 @@ fn process_unequip_slot(
             let mut packets_for_all = Vec::new();
             let mut packets_for_sender = Vec::new();
 
-            if !item_def.action_bar.ability_ids.is_empty() {
+            if !item_def.action_bar.ability_keys.is_empty() {
                 player
                     .action_bar
                     .weapon_abilities
@@ -701,7 +701,7 @@ fn item_def_from_slot<'a>(
     items: &BTreeMap<EquipmentSlot, u32>,
     slot: EquipmentSlot,
     game_server: &'a GameServer,
-) -> Option<&'a PlayerItem> {
+) -> Option<&'a ItemConfig> {
     items
         .get(&slot)
         .and_then(|item_guid| game_server.items().get(item_guid))
@@ -838,7 +838,7 @@ pub fn update_saber_tints<'a>(
 pub fn player_has_saber_equipped(
     inventory: &PlayerInventory,
     battle_class: u32,
-    item_definitions: &BTreeMap<u32, PlayerItem>,
+    item_definitions: &BTreeMap<u32, ItemConfig>,
 ) -> bool {
     inventory
         .equipped_item(battle_class, EquipmentSlot::PrimaryWeapon)
@@ -873,7 +873,7 @@ impl From<ExtendedAttachment> for Attachment {
 
 pub fn attachments_from_equipped_items(
     equipped_items: &BTreeMap<EquipmentSlot, u32>,
-    item_definitions: &BTreeMap<u32, PlayerItem>,
+    item_definitions: &BTreeMap<u32, ItemConfig>,
 ) -> Vec<ExtendedAttachment> {
     equipped_items
         .iter()
@@ -1125,7 +1125,7 @@ fn equip_item_in_slot<'a>(
     })];
 
     if let Some(previous_item) = previous_item_def {
-        if !previous_item.action_bar.ability_ids.is_empty() {
+        if !previous_item.action_bar.ability_keys.is_empty() {
             player
                 .action_bar
                 .weapon_abilities
@@ -1133,11 +1133,14 @@ fn equip_item_in_slot<'a>(
         }
     }
 
-    if !item_def.action_bar.ability_ids.is_empty() {
+    if !item_def.action_bar.ability_keys.is_empty() {
         player.action_bar.weapon_abilities.push(PlayerAbilityGroup {
             source_item_id: item_def.guid,
-            ability_ids: item_def.action_bar.ability_ids.clone(),
-            priority: item_def.action_bar.priority,
+            ability_keys: item_def.action_bar.ability_keys.clone(),
+            priority: item_def
+                .action_bar
+                .priority_override
+                .unwrap_or_else(|| equip_guid.slot.action_bar_priority()),
         });
     }
 
@@ -1183,7 +1186,7 @@ fn equip_item_in_slot<'a>(
                             )
                         })?;
 
-                    if !unequipped_def.action_bar.ability_ids.is_empty() {
+                    if !unequipped_def.action_bar.ability_keys.is_empty() {
                         player.action_bar.weapon_abilities.retain(|ability_group| {
                             ability_group.source_item_id != unequipped_def.guid
                         });

@@ -1,738 +1,738 @@
 ---
-# Primary Abilities
-- ability_key: "Plo Koon's Lightsaber"
+# Primary abilities
+plo_koon_lightsaber:
   slot_info:
     icon_set_id: 232
     name_id: 60026
 
-- ability_key: "Dahgee Jedi Lightsaber"
+dahgee_jedi_lightsaber:
   slot_info:
     icon_set_id: 1148
     name_id: 60026
 
-- ability_key: "Ahsoka Tano's Reverse Lightsaber"
+ahsoka_tano_reverse_lightsaber:
   slot_info:
     icon_set_id: 220
     name_id: 60026
 
-- ability_key: "Anakin Skywalker's Lightsaber"
+anakin_skywalker_lightsaber:
   slot_info:
     icon_set_id: 223
     name_id: 60026
 
-- ability_key: "Zabrak Sith Lightsaber"
+zabrak_sith_lightsaber:
   slot_info:
     icon_set_id: 219
     name_id: 60026
 
-- ability_key: "Adi Gallia's Lightsaber"
+adi_gallia_lightsaber:
   slot_info:
     icon_set_id: 222
     name_id: 60026
 
-- ability_key: "Pre Vizsla's Darksaber"
+pre_vizsla_darksaber:
   slot_info:
     icon_set_id: 224
     name_id: 60026
 
-- ability_key: "Count Dooku's Lightsaber"
+count_dooku_lightsaber:
   slot_info:
     icon_set_id: 225
     name_id: 60026
 
-- ability_key: "Kit Fisto's Lightsaber"
+kit_fisto_lightsaber:
   slot_info:
     icon_set_id: 229
     name_id: 60026
 
-- ability_key: "Luminara Unduli's Lightsaber"
+luminara_unduli_lightsaber:
   slot_info:
     icon_set_id: 231
     name_id: 60026
 
-- ability_key: "Mace Windu's Lightsaber"
+mace_windu_lightsaber:
   slot_info:
     icon_set_id: 233
     name_id: 60026
 
-- ability_key: "Obi-Wan Kenobi's Lightsaber"
+obi_wan_kenobi_lightsaber:
   slot_info:
     icon_set_id: 234
     name_id: 60026
 
-- ability_key: "Darth Sidious' Lightsaber"
+darth_sidious_lightsaber:
   slot_info:
     icon_set_id: 235
     name_id: 60026
 
-- ability_key: "Training Lightsaber"
+training_lightsaber:
   slot_info:
     icon_set_id: 236
     name_id: 60026
 
-- ability_key: "Asajj Ventress' Right Lightsaber"
+asajj_ventress_right_lightsaber:
   slot_info:
     icon_set_id: 237
     name_id: 60026
 
-- ability_key: "Miko Jedi Lightsaber"
+miko_jedi_lightsaber:
   slot_info:
     icon_set_id: 509
     name_id: 60026
 
-- ability_key: "Mestare Lightsaber"
+mestare_lightsaber:
   slot_info:
     icon_set_id: 510
     name_id: 60026
 
-- ability_key: "Shaak Ti's Lightsaber"
+shaak_ti_lightsaber:
   slot_info:
     icon_set_id: 513
     name_id: 60026
 
-- ability_key: "Savek Lightsaber"
+savek_lightsaber:
   slot_info:
     icon_set_id: 517
     name_id: 60026
 
-- ability_key: "Kyle Katarn's Lightsaber"
+kyle_katarn_lightsaber:
   slot_info:
     icon_set_id: 511
     name_id: 60026
 
-- ability_key: "Shotem Jedi Lightsaber"
+shotem_jedi_lightsaber:
   slot_info:
     icon_set_id: 512
     name_id: 60026
 
-- ability_key: "Bravis Sith Lightsaber"
+bravis_sith_lightsaber:
   slot_info:
     icon_set_id: 514
     name_id: 60026
 
-- ability_key: "Ermi Jedi Lightsaber"
+ermi_jedi_lightsaber:
   slot_info:
     icon_set_id: 515
     name_id: 60026
 
-- ability_key: "Ancient Cobal Lightsaber"
+ancient_cobal_lightsaber:
   slot_info:
     icon_set_id: 516
     name_id: 60026
 
-- ability_key: "Ultimate FX Gungan Lightsaber"
+ultimate_fx_gungan_lightsaber:
   slot_info:
     icon_set_id: 2136
     name_id: 60026
 
-- ability_key: "Quinlan Vos' Lightsaber"
+quinlan_vos_lightsaber:
   slot_info:
     icon_set_id: 1436
     name_id: 60026
 
-- ability_key: "Ahsoka Tano's Lightsaber"
+ahsoka_tano_lightsaber:
   slot_info:
     icon_set_id: 1459
     name_id: 60026
 
-- ability_key: "Savage Opress' Lightsaber"
+savage_opress_lightsaber:
   slot_info:
     icon_set_id: 1656
     name_id: 60026
 
-- ability_key: "Saesee Tiin's Lightsaber"
+saesee_tiin_lightsaber:
   slot_info:
     icon_set_id: 1792
     name_id: 60026
 
-- ability_key: "Kashyyyk Lightsaber"
+kashyyyk_lightsaber:
   slot_info:
     icon_set_id: 1993
     name_id: 60026
 
-- ability_key: "Sith Marauder Lightsaber"
+sith_marauder_lightsaber:
   slot_info:
     icon_set_id: 3044
     name_id: 60026
 
-- ability_key: "Nelona Lightsaber"
+nelona_lightsaber:
   slot_info:
     icon_set_id: 2838
     name_id: 60026
 
-- ability_key: "Sith Warrior Lightsaber"
+sith_warrior_lightsaber:
   slot_info:
     icon_set_id: 3118
     name_id: 60026
 
-- ability_key: "Sith Inquisitor Lightsaber"
+sith_inquisitor_lightsaber:
   slot_info:
     icon_set_id: 2938
     name_id: 60026
 
-- ability_key: "Forgotten Jedi Reverse Lightsaber"
+forgotten_jedi_reverse_lightsaber:
   slot_info:
     icon_set_id: 3735
     name_id: 60026
 
-- ability_key: "Jedi Champion Reverse Lightsaber"
+jedi_champion_reverse_lightsaber:
   slot_info:
     icon_set_id: 3133
     name_id: 60026
 
-- ability_key: "Kofun Lightsaber"
+kofun_lightsaber:
   slot_info:
     icon_set_id: 2862
     name_id: 60026
 
-- ability_key: "Aayla Secura's Lightsaber"
+aayla_secura_lightsaber:
   slot_info:
     icon_set_id: 221
     name_id: 60026
 
-- ability_key: "Barriss Offee's Lightsaber"
+barriss_offee_lightsaber:
   slot_info:
     icon_set_id: 508
     name_id: 60026
 
-- ability_key: "Byph's Lightsaber"
+byph_lightsaber:
   slot_info:
     icon_set_id: 3207
     name_id: 60026
 
-- ability_key: "Sith Infiltrator Lightsaber"
+sith_infiltrator_lightsaber:
   slot_info:
     icon_set_id: 3045
     name_id: 60026
 
-- ability_key: "Dolovite Darksaber"
+dolovite_darksaber:
   slot_info:
     icon_set_id: 3829
     name_id: 60026
 
-- ability_key: "Phrik Darksaber"
+phrik_darksaber:
   slot_info:
     icon_set_id: 3791
     name_id: 60026
 
-- ability_key: "Darth Maul's Lightsaber"
+darth_maul_lightsaber:
   slot_info:
     icon_set_id: 2764
     name_id: 60026
 
-- ability_key: "Eeth Koth's Lightsaber"
+eeth_koth_lightsaber:
   slot_info:
     icon_set_id: 226
     name_id: 60026
 
-- ability_key: "Jedi Exile Lightsaber"
+jedi_exile_lightsaber:
   slot_info:
     icon_set_id: 3835
     name_id: 60026
 
-- ability_key: "Forked Lightsaber"
+forked_lightsaber:
   slot_info:
     icon_set_id: 3828
     name_id: 60026
 
-- ability_key: "Ganodi's Lightsaber"
+ganodi_lightsaber:
   slot_info:
     icon_set_id: 3212
     name_id: 60026
 
-- ability_key: "Gungi's Lightsaber"
+gungi_lightsaber:
   slot_info:
     icon_set_id: 3208
     name_id: 60026
 
-- ability_key: "Jocasta Nu's Lightsaber"
+jocasta_nu_lightsaber:
   slot_info:
     icon_set_id: 227
     name_id: 60026
 
-- ability_key: "Katooni's Lightsaber"
+katooni_lightsaber:
   slot_info:
     icon_set_id: 3213
     name_id: 60026
 
-- ability_key: "Ki-Adi-Mundi's Lightsaber"
+ki_adi_mundi_lightsaber:
   slot_info:
     icon_set_id: 228
     name_id: 60026
 
-- ability_key: "Sulon Jedi Lightsaber"
+sulon_jedi_lightsaber:
   slot_info:
     icon_set_id: 511
     name_id: 60026
 
-- ability_key: "Luke Skywalker's Lightsaber"
+luke_skywalker_lightsaber:
   slot_info:
     icon_set_id: 230
     name_id: 60026
 
-- ability_key: "Petro's Lightsaber"
+petro_lightsaber:
   slot_info:
     icon_set_id: 3209
     name_id: 60026
 
-- ability_key: "Shotem Master Lightsaber"
+shotem_master_lightsaber:
   slot_info:
     icon_set_id: 3788
     name_id: 60026
 
-- ability_key: "Crimson Prowler Lightsaber"
+crimson_prowler_lightsaber:
   slot_info:
     icon_set_id: 3721
     name_id: 60026
 
-- ability_key: "Talz Lightsaber"
+talz_lightsaber:
   slot_info:
     icon_set_id: 2863
     name_id: 60026
 
-- ability_key: "Yoda's Lightsaber"
+yoda_lightsaber:
   slot_info:
     icon_set_id: 3169
     name_id: 60026
 
-- ability_key: "Zatt's Lightsaber"
+zatt_lightsaber:
   slot_info:
     icon_set_id: 3211
     name_id: 60026
 
-- ability_key: "Pink Gaffi Stick"
+pink_gaffi_stick:
   slot_info:
     icon_set_id: 518
     name_id: 60026
 
-- ability_key: "Blinged-Out Trooper Rifle"
+blinged_out_trooper_rifle:
   slot_info:
     icon_set_id: 239
     name_id: 60026
 
-- ability_key: "Clone Trooper Blaster"
+clone_trooper_blaster:
   slot_info:
     icon_set_id: 213
     name_id: 60026
 
-- ability_key: "Boba Fett's Blaster Rifle"
+boba_fett_blaster_rifle:
   slot_info:
     icon_set_id: 215
     name_id: 60026
 
-- ability_key: "Naboo Security Blaster Pistol"
+naboo_security_blaster_pistol:
   slot_info:
     icon_set_id: 250
     name_id: 60026
 
-- ability_key: "Gaffi Stick"
+gaffi_stick:
   slot_info:
     icon_set_id: 253
     name_id: 60026
 
-- ability_key: "Clone Trooper Blaster Rifle"
+clone_trooper_blaster_rifle:
   slot_info:
     icon_set_id: 240
     name_id: 60026
 
-- ability_key: "Cad Bane's Right Blaster"
+cad_bane_right_blaster:
   slot_info:
     icon_set_id: 248
     name_id: 60026
 
-- ability_key: "Aurra Sing's Hunting Rifle"
+aurra_sing_hunting_rifle:
   slot_info:
     icon_set_id: 238
     name_id: 60026
 
-- ability_key: "Captain Rex's Right Blaster"
+captain_rex_right_blaster:
   slot_info:
     icon_set_id: 244
     name_id: 60026
 
-- ability_key: "Han Solo's Blaster Pistol"
+han_solo_blaster_pistol:
   slot_info:
     icon_set_id: 246
     name_id: 60026
 
-- ability_key: "Republic Flamethrower"
+republic_flamethrower:
   slot_info:
     icon_set_id: 216
     name_id: 60026
 
-- ability_key: "Republic Missile Launcher"
+republic_missile_launcher:
   slot_info:
     icon_set_id: 218
     name_id: 60026
 
-- ability_key: "Rotary Blaster Cannon"
+rotary_blaster_cannon:
   slot_info:
     icon_set_id: 217
     name_id: 60026
 
-- ability_key: "Mandalorian Blaster Rifle"
+mandalorian_blaster_rifle:
   slot_info:
     icon_set_id: 507
     name_id: 60026
 
-- ability_key: "Bowcaster"
+bowcaster:
   slot_info:
     icon_set_id: 506
     name_id: 60026
 
-- ability_key: "Papanoida Blaster"
+papanoida_blaster:
   slot_info:
     icon_set_id: 1327
     name_id: 60026
 
-- ability_key: "Assassin Aurra Sing's Right Blaster"
+assassin_aurra_sing_right_blaster:
   slot_info:
     icon_set_id: 1409
     name_id: 60026
 
-- ability_key: "Satine's Royal Guard Staff"
+satine_royal_guard_staff:
   slot_info:
     icon_set_id: 251
     name_id: 60026
 
-- ability_key: "Gungan Double-headed Spear"
+gungan_double_headed_spear:
   slot_info:
     icon_set_id: 2337
     name_id: 60026
 
-- ability_key: "Spring Fever"
+spring_fever:
   slot_info:
     icon_set_id: 1935
     name_id: 60026
 
-- ability_key: "Balnab Hunter Rifle"
+balnab_hunter_rifle:
   slot_info:
     icon_set_id: 2391
     name_id: 60026
 
-- ability_key: "Nightsister's Bow"
+nightsister_bow:
   slot_info:
     icon_set_id: 1624
     name_id: 60026
 
-- ability_key: "Savage Opress' Pike"
+savage_opress_pike:
   slot_info:
     icon_set_id: 1632
     name_id: 60026
 
-- ability_key: "Cupid Clone's Bow"
+cupid_clone_bow:
   slot_info:
     icon_set_id: 1674
     name_id: 60026
 
-- ability_key: "Blue Sparkler"
+blue_sparkler:
   slot_info:
     icon_set_id: 2001
     name_id: 60026
 
-- ability_key: "Green Sparkler"
+green_sparkler:
   slot_info:
     icon_set_id: 2002
     name_id: 60026
 
-- ability_key: "Orange Sparkler"
+orange_sparkler:
   slot_info:
     icon_set_id: 2003
     name_id: 60026
 
-- ability_key: "Purple Sparkler"
+purple_sparkler:
   slot_info:
     icon_set_id: 2004
     name_id: 60026
 
-- ability_key: "Red Sparkler"
+red_sparkler:
   slot_info:
     icon_set_id: 2005
     name_id: 60026
 
-- ability_key: "White Sparkler"
+white_sparkler:
   slot_info:
     icon_set_id: 2006
     name_id: 60026
 
-- ability_key: "Yellow Sparkler"
+yellow_sparkler:
   slot_info:
     icon_set_id: 2007
     name_id: 60026
 
-- ability_key: "Vigilance"
+vigilance:
   slot_info:
     icon_set_id: 2312
     name_id: 60026
 
-- ability_key: "Skeletal Clone Trooper Scythe"
+skeletal_clone_trooper_scythe:
   slot_info:
     icon_set_id: 2399
     name_id: 60026
 
-- ability_key: "Umbaran Blaster Rifle"
+umbaran_blaster_rifle:
   slot_info:
     icon_set_id: 2448
     name_id: 60026
 
-- ability_key: "Zygerrian Blaster Rifle"
+zygerrian_blaster_rifle:
   slot_info:
     icon_set_id: 2513
     name_id: 60026
 
-- ability_key: "Captain Rex's Zygerrian Electrostaff"
+captain_rex_zygerrian_electrostaff:
   slot_info:
     icon_set_id: 2518
     name_id: 60026
 
-- ability_key: "Shadow Tech Rifle"
+shadow_tech_rifle:
   slot_info:
     icon_set_id: 2571
     name_id: 60026
 
-- ability_key: "Rako Hardeen's Sniper Rifle"
+rako_hardeen_sniper_rifle:
   slot_info:
     icon_set_id: 2659
     name_id: 60026
 
-- ability_key: "Cad Bane's Blaster Rifle"
+cad_bane_blaster_rifle:
   slot_info:
     icon_set_id: 2654
     name_id: 60026
 
-- ability_key: "Cryo-Cannon"
+cryo_cannon:
   slot_info:
     icon_set_id: 2678
     name_id: 60026
 
-- ability_key: "Plasma Thrower"
+plasma_thrower:
   slot_info:
     icon_set_id: 2679
     name_id: 60026
 
-- ability_key: "Ion Blaster"
+ion_blaster:
   slot_info:
     icon_set_id: 2680
     name_id: 60026
 
-- ability_key: "Quarzite Boba Fett's Blaster"
+quarzite_boba_fett_blaster:
   slot_info:
     icon_set_id: 2734
     name_id: 60026
 
-- ability_key: "Cold Warrior Rifle"
+cold_warrior_rifle:
   slot_info:
     icon_set_id: 2976
     name_id: 60026
 
-- ability_key: "Ming Po Militia Rifle"
+ming_po_militia_rifle:
   slot_info:
     icon_set_id: 3085
     name_id: 60026
 
-- ability_key: "Usk Bunker General Blaster Rifle"
+usk_bunker_general_blaster_rifle:
   slot_info:
     icon_set_id: 2819
     name_id: 60026
 
-- ability_key: "Grek Bunker General Blaster Rifle"
+grek_bunker_general_blaster_rifle:
   slot_info:
     icon_set_id: 2815
     name_id: 60026
 
-- ability_key: "Republic Grenade Launcher"
+republic_grenade_launcher:
   slot_info:
     icon_set_id: 2809
     name_id: 60026
 
-- ability_key: "Accelerated Thermal Carbine"
+accelerated_thermal_carbine:
   slot_info:
     icon_set_id: 2882
     name_id: 60026
 
-- ability_key: "Rail Cannon"
+rail_cannon:
   slot_info:
     icon_set_id: 3771
     name_id: 60026
 
-- ability_key: "Hip-Mounted Cannon"
+hip_mounted_cannon:
   slot_info:
     icon_set_id: 2810
     name_id: 60026
 
-- ability_key: "Mandalorian Repeater"
+mandalorian_repeater:
   slot_info:
     icon_set_id: 3790
     name_id: 60026
 
-- ability_key: "Repeater Cannon"
+repeater_cannon:
   slot_info:
     icon_set_id: 3827
     name_id: 60026
 
-- ability_key: "Turbolaser"
+turbolaser:
   slot_info:
     icon_set_id: 2811
     name_id: 60026
 
-- ability_key: "Bossk's Long Rifle"
+bossk_long_rifle:
   slot_info:
     icon_set_id: 2789
     name_id: 60026
 
-- ability_key: "Grand Officer Rifle"
+grand_officer_rifle:
   slot_info:
     icon_set_id: 3108
     name_id: 60026
 
-- ability_key: "Felucian Commando Rifle"
+felucian_commando_rifle:
   slot_info:
     icon_set_id: 3726
     name_id: 60026
 
-- ability_key: "Onderon Long Rifle"
+onderon_long_rifle:
   slot_info:
     icon_set_id: 3158
     name_id: 60026
 
-- ability_key: "Energized Disruptor"
+energized_disruptor:
   slot_info:
     icon_set_id: 2680
     name_id: 60026
 
-- ability_key: "Light Plasma Pistol"
+light_plasma_pistol:
   slot_info:
     icon_set_id: 2925
     name_id: 60026
 
-- ability_key: "Major Rigosso's Quarzite Pistol"
+major_rigosso_quarzite_pistol:
   slot_info:
     icon_set_id: 2808
     name_id: 60026
 
-- ability_key: "Black Sun Blaster Pistol"
+black_sun_blaster_pistol:
   slot_info:
     icon_set_id: 3637
     name_id: 60026
 
-- ability_key: "Subtram Hunter Blaster"
+subtram_hunter_blaster:
   slot_info:
     icon_set_id: 3783
     name_id: 60026
 
-- ability_key: "Royal Hold-out Blaster Pistol"
+royal_hold_out_blaster_pistol:
   slot_info:
     icon_set_id: 247
     name_id: 60026
 
-- ability_key: "Corrupt Warlord Right Pistol"
+corrupt_warlord_right_pistol:
   slot_info:
     icon_set_id: 3143
     name_id: 60026
 
-- ability_key: "Pyke Blaster Pistol"
+pyke_blaster_pistol:
   slot_info:
     icon_set_id: 3638
     name_id: 60026
 
-- ability_key: "Onderon Blaster Pistol"
+onderon_blaster_pistol:
   slot_info:
     icon_set_id: 3159
     name_id: 60026
 
-- ability_key: "IG-113's Electrostaff"
+ig_113_electrostaff:
   slot_info:
     icon_set_id: 3002
     name_id: 60026
 
-- ability_key: "Renegade Heavy Blaster Pistol (Right)"
+renegade_heavy_blaster_pistol_right:
   slot_info:
     icon_set_id: 3792
     name_id: 60026
 
 # Secondary Abilities
-- ability_key: "Force Push"
+force_push:
   slot_info:
     icon_set_id: 3175
     name_id: 50564
 
-- ability_key: "Force Valor"
+force_valor:
   slot_info:
     icon_set_id: 3176
     name_id: 53516
 
-- ability_key: "Force Lightning"
+force_lightning:
   slot_info:
     icon_set_id: 3174
     name_id: 10641
 
-- ability_key: "Force Heal"
+force_heal:
   slot_info:
     icon_set_id: 3173
     name_id: 53518
 
-- ability_key: "Emerald Lightning"
+emerald_lightning:
   slot_info:
     icon_set_id: 3174
     name_id: 53664
 
-- ability_key: "Force Drain"
+force_drain:
   slot_info:
     icon_set_id: 3287
     name_id: 53636
 
-- ability_key: "Thermal Grenade"
+thermal_grenade:
   slot_info:
     icon_set_id: 3179
     name_id: 7
 
-- ability_key: "Deflector Shield"
+deflector_shield:
   slot_info:
     icon_set_id: 3178
     name_id: 52684
 
-- ability_key: "Proximity Mine"
+proximity_mine:
   slot_info:
     icon_set_id: 3177
     name_id: 53514
 
-- ability_key: "Cryo Grenade"
+cryo_grenade:
   slot_info:
     icon_set_id: 3286
     name_id: 18103
 
-- ability_key: "Deploy Turret"
+deploy_turret:
   slot_info:
     icon_set_id: 3288
     name_id: 54056
 
 # Tertiary abilities
-- ability_key: "Slashing Strike"
+slashing_strike:
   slot_info:
     icon_set_id: 3752
     name_id: 60321
 
-- ability_key: "Chopping Lunge"
+chopping_lunge:
   slot_info:
     icon_set_id: 3752
     name_id: 60321
 
-- ability_key: "Aimed Shot"
+aimed_shot:
   slot_info:
     icon_set_id: 3750
     name_id: 60324
 
-- ability_key: "Focused Shot"
+focused_shot:
   slot_info:
     icon_set_id: 3754
     name_id: 60323
 
-- ability_key: "Charged Shot"
+charged_shot:
   slot_info:
     icon_set_id: 3751
     name_id: 60327
 
-- ability_key: "Rapid Fire"
+rapid_fire:
   slot_info:
     icon_set_id: 3755
     name_id: 60326

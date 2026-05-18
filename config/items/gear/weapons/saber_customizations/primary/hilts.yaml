@@ -13,9 +13,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Plo Koon's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "plo_koon_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Dahgee Jedi Lightsaber
 - guid: 227
@@ -31,9 +31,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Dahgee Jedi Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "dahgee_jedi_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Ahsoka Tano's Reverse Lightsaber
 - guid: 422
@@ -49,9 +49,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Ahsoka Tano's Reverse Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "ahsoka_tano_reverse_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Anakin Skywalker's Lightsaber
 - guid: 435
@@ -66,9 +66,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Anakin Skywalker's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "anakin_skywalker_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Zabrak Sith Lightsaber
 - guid: 437
@@ -84,9 +84,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Zabrak Sith Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "zabrak_sith_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Adi Gallia's Lightsaber
 - guid: 526
@@ -102,9 +102,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Adi Gallia's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "adi_gallia_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Pre Vizsla's Darksaber
 - guid: 527
@@ -119,9 +119,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Pre Vizsla's Darksaber"
-      - "Proximity Mine"
-      - "Slashing Strike"
+      - "pre_vizsla_darksaber"
+      - "proximity_mine"
+      - "slashing_strike"
 
 # Count Dooku's Lightsaber
 - guid: 528
@@ -136,9 +136,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Count Dooku's Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "count_dooku_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Kit Fisto's Lightsaber
 - guid: 532
@@ -153,9 +153,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Kit Fisto's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "kit_fisto_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Luminara Unduli's Lightsaber
 - guid: 534
@@ -171,9 +171,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Luminara Unduli's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "luminara_unduli_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Mace Windu's Lightsaber
 - guid: 535
@@ -188,9 +188,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Mace Windu's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "mace_windu_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Obi-Wan Kenobi's Lightsaber
 - guid: 536
@@ -206,9 +206,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Obi-Wan Kenobi's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "obi_wan_kenobi_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Darth Sidious' Lightsaber
 - guid: 537
@@ -223,9 +223,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Darth Sidious' Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "darth_sidious_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Training Lightsaber
 - guid: 538
@@ -240,9 +240,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Training Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "training_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Asajj Ventress' Right Lightsaber
 - guid: 539
@@ -258,9 +258,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Asajj Ventress' Right Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "asajj_ventress_right_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Miko Jedi Lightsaber
 - guid: 761
@@ -275,9 +275,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Miko Jedi Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "miko_jedi_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Mestare Lightsaber
 - guid: 762
@@ -292,9 +292,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Mestare Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "mestare_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Shaak Ti's Lightsaber
 - guid: 763
@@ -310,9 +310,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Shaak Ti's Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "shaak_ti_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Savek Lightsaber
 - guid: 764
@@ -328,9 +328,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Savek Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "savek_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Kyle Katarn's Lightsaber
 - guid: 786
@@ -345,9 +345,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Kyle Katarn's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "kyle_katarn_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Shotem Jedi Lightsaber
 - guid: 787
@@ -362,9 +362,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Shotem Jedi Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "shotem_jedi_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Bravis Sith Lightsaber
 - guid: 788
@@ -380,9 +380,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Bravis Sith Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "bravis_sith_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Ermi Jedi Lightsaber
 - guid: 789
@@ -398,9 +398,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Ermi Jedi Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "ermi_jedi_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Ancient Cobal Lightsaber
 - guid: 790
@@ -415,9 +415,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Ancient Cobal Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "ancient_cobal_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Ultimate FX Gungan Lightsaber
 - guid: 1992
@@ -432,9 +432,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Ultimate FX Gungan Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "ultimate_fx_gungan_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Quinlan Vos' Lightsaber
 - guid: 2134
@@ -449,9 +449,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Quinlan Vos' Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "quinlan_vos_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Ahsoka Tano's Lightsaber
 - guid: 2141
@@ -466,9 +466,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Ahsoka Tano's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "ahsoka_tano_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Savage Opress' Lightsaber
 - guid: 2363
@@ -483,9 +483,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Savage Opress' Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "savage_opress_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Saesee Tiin's Lightsaber
 - guid: 2708
@@ -500,9 +500,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Saesee Tiin's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "saesee_tiin_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Kashyyyk Lightsaber
 - guid: 2801
@@ -518,9 +518,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Kashyyyk Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "kashyyyk_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Sith Marauder Lightsaber
 - guid: 110000
@@ -535,9 +535,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Sith Marauder Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "sith_marauder_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Nelona Lightsaber
 - guid: 110001
@@ -552,9 +552,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Nelona Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "nelona_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Sith Warrior Lightsaber
 - guid: 110002
@@ -569,9 +569,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Sith Warrior Lightsaber"
-      - "Force Drain"
-      - "Slashing Strike"
+      - "sith_warrior_lightsaber"
+      - "force_drain"
+      - "slashing_strike"
 
 # Sith Inquisitor Lightsaber
 - guid: 110003
@@ -586,9 +586,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Sith Inquisitor Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "sith_inquisitor_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Forgotten Jedi Reverse Lightsaber
 - guid: 110004
@@ -604,9 +604,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Forgotten Jedi Reverse Lightsaber"
-      - "Emerald Lightning"
-      - "Slashing Strike"
+      - "forgotten_jedi_reverse_lightsaber"
+      - "emerald_lightning"
+      - "slashing_strike"
 
 # Jedi Champion Reverse Lightsaber
 - guid: 110005
@@ -622,9 +622,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Jedi Champion Reverse Lightsaber"
-      - "Emerald Lightning"
-      - "Slashing Strike"
+      - "jedi_champion_reverse_lightsaber"
+      - "emerald_lightning"
+      - "slashing_strike"
 
 # Kofun Lightsaber
 - guid: 110006
@@ -639,9 +639,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Kofun Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "kofun_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Aayla Secura's Lightsaber
 - guid: 110007
@@ -656,10 +656,10 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Aayla Secura's Lightsaber"
+      - "aayla_secura_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Barriss Offee's Lightsaber
 - guid: 110008
@@ -675,10 +675,10 @@
   members: true
   action_bar:
     ability_keys:
-      - "Barriss Offee's Lightsaber"
+      - "barriss_offee_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Byph's Lightsaber
 - guid: 110009
@@ -694,9 +694,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Byph's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "byph_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Sith Infiltrator Lightsaber
 - guid: 110010
@@ -711,9 +711,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Sith Infiltrator Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "sith_infiltrator_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Dolovite Darksaber
 - guid: 110011
@@ -728,9 +728,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Dolovite Darksaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "dolovite_darksaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Phrik Darksaber
 - guid: 110012
@@ -745,9 +745,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Phrik Darksaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "phrik_darksaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Darth Maul's Lightsaber
 - guid: 110013
@@ -763,9 +763,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Darth Maul's Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "darth_maul_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Eeth Koth's Lightsaber
 - guid: 110014
@@ -780,10 +780,10 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Eeth Koth's Lightsaber"
+      - "eeth_koth_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Jedi Exile Lightsaber
 - guid: 110015
@@ -798,9 +798,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Jedi Exile Lightsaber"
-      - "Emerald Lightning"
-      - "Slashing Strike"
+      - "jedi_exile_lightsaber"
+      - "emerald_lightning"
+      - "slashing_strike"
 
 # Forked Lightsaber
 - guid: 110016
@@ -815,9 +815,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Forked Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "forked_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Ganodi's Lightsaber
 - guid: 110017
@@ -833,9 +833,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Ganodi's Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "ganodi_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Gungi's Lightsaber
 - guid: 110018
@@ -851,9 +851,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Gungi's Lightsaber"
-      - "Force Push"
-      - "Slashing Strike"
+      - "gungi_lightsaber"
+      - "force_push"
+      - "slashing_strike"
 
 # Jocasta Nu's Lightsaber
 - guid: 110019
@@ -869,9 +869,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Jocasta Nu's Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "jocasta_nu_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Katooni's Lightsaber
 - guid: 110020
@@ -887,9 +887,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Katooni's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "katooni_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Ki-Adi-Mundi's Lightsaber
 - guid: 110021
@@ -904,10 +904,10 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Ki-Adi-Mundi's Lightsaber"
+      - "ki_adi_mundi_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Sulon Jedi Lightsaber
 - guid: 110022
@@ -922,10 +922,10 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Sulon Jedi Lightsaber"
+      - "sulon_jedi_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Luke Skywalker's Lightsaber
 - guid: 110023
@@ -940,10 +940,10 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Luke Skywalker's Lightsaber"
+      - "luke_skywalker_lightsaber"
       # Placeholder abilities
-      - "Force Push"
-      - "Slashing Strike"
+      - "force_push"
+      - "slashing_strike"
 
 # Petro's Lightsaber
 - guid: 110024
@@ -959,9 +959,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Petro's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "petro_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Shotem Master Lightsaber
 - guid: 110025
@@ -976,9 +976,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Shotem Master Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "shotem_master_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Crimson Prowler Lightsaber
 - guid: 110026
@@ -993,9 +993,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Crimson Prowler Lightsaber"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "crimson_prowler_lightsaber"
+      - "force_lightning"
+      - "slashing_strike"
 
 # Talz Lightsaber
 - guid: 110027
@@ -1010,9 +1010,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Talz Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "talz_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Yoda's Lightsaber
 - guid: 110028
@@ -1027,9 +1027,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Yoda's Lightsaber"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "yoda_lightsaber"
+      - "force_valor"
+      - "slashing_strike"
 
 # Zatt's Lightsaber
 - guid: 110029
@@ -1045,9 +1045,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Zatt's Lightsaber"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "zatt_lightsaber"
+      - "force_heal"
+      - "slashing_strike"
 
 # Yoda's Lightsaber (NPC only)
 - guid: 110030

@@ -15,7 +15,7 @@ use crate::{
             combat::ThreatTable,
             dialog::handle_dialog_buttons,
             inventory::{attachments_from_equipped_items, wield_type_from_inventory},
-            item::PlayerItem,
+            item::ItemConfig,
             lock_enforcer::CharacterWriteGuard,
             unique_guid::AMBIENT_NPC_DISCRIMINANT,
         },
@@ -941,7 +941,7 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> (Vec<Broadcast>, Option<NavmeshWaypoint>) {
         let mut packets_for_all = Vec::new();
@@ -1391,7 +1391,7 @@ impl TickableProcedure {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -1608,7 +1608,7 @@ impl TickableProcedureTracker {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -1883,7 +1883,7 @@ pub struct PreviousLocation {
 #[derive(Clone)]
 pub struct PlayerAbilityGroup {
     pub source_item_id: u32,
-    pub ability_ids: Vec<u32>,
+    pub ability_keys: Vec<String>,
     pub priority: u32,
 }
 
@@ -1916,7 +1916,7 @@ impl Player {
         &self,
         character: &CharacterStats,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         if !self.ready {
@@ -2428,7 +2428,7 @@ impl CharacterStats {
         &self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         let mut packets = match &self.character_type {
@@ -2778,7 +2778,7 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, PlayerItem>,
+        item_definitions: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,

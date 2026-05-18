@@ -1,8 +1,4 @@
-use std::{
-    collections::{BTreeMap, HashMap},
-    fs::File,
-    path::Path,
-};
+use std::{collections::HashMap, fs::File, path::Path};
 
 use serde::Deserialize;
 
@@ -33,49 +29,15 @@ pub struct AbilitySlotConfig {
     pub ability_sub_type: AbilitySubType,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AbilityConfig {
-    pub ability_key: String,
     pub slot_info: AbilitySlotConfig,
 }
 
-pub struct PlayerAbility {
-    #[allow(dead_code)]
-    pub ability_id: u32,
-    pub slot_info: AbilitySlotConfig,
-}
-
-impl PlayerAbility {
-    pub fn from_config(config: AbilityConfig, id: u32) -> Self {
-        Self {
-            ability_id: id,
-            slot_info: config.slot_info,
-        }
-    }
-}
-
-pub fn load_abilities(
-    config_dir: &Path,
-) -> Result<(BTreeMap<u32, PlayerAbility>, HashMap<String, u32>), ConfigError> {
+pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig>, ConfigError> {
     let file = File::open(config_dir.join("abilities.yaml"))?;
-    let ability_configs: Vec<AbilityConfig> = serde_yaml::from_reader(file)?;
+    let abilities: HashMap<String, AbilityConfig> = serde_yaml::from_reader(file)?;
 
-    let mut abilities = BTreeMap::new();
-    let ability_count = ability_configs.len();
-    let mut keys_to_id = HashMap::with_capacity(ability_count);
-
-    for (index, config) in ability_configs.into_iter().enumerate() {
-        let id = (index + 1) as u32;
-        if keys_to_id.insert(config.ability_key.clone(), id).is_some() {
-            return Err(ConfigError::ConstraintViolated(format!(
-                "Duplicate (Ability Key: {}) found in abilities.yaml",
-                config.ability_key
-            )));
-        }
-
-        abilities.insert(id, PlayerAbility::from_config(config, id));
-    }
-
-    Ok((abilities, keys_to_id))
+    Ok(abilities)
 }

@@ -13,9 +13,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Pink Gaffi Stick"
-      - "Force Heal"
-      - "Chopping Lunge"
+      - "pink_gaffi_stick"
+      - "force_heal"
+      - "chopping_lunge"
 
 # Blinged-Out Trooper Rifle
 - guid: 54
@@ -30,9 +30,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Blinged-Out Trooper Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "blinged_out_trooper_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Clone Trooper Blaster
 - guid: 55
@@ -47,9 +47,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Clone Trooper Blaster"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "clone_trooper_blaster"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Boba Fett's Blaster Rifle
 - guid: 57
@@ -64,9 +64,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Boba Fett's Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "boba_fett_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Naboo Security Blaster Pistol
 - guid: 58
@@ -82,9 +82,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Naboo Security Blaster Pistol"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "naboo_security_blaster_pistol"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Gaffi Stick
 - guid: 59
@@ -100,9 +100,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Gaffi Stick"
-      - "Proximity Mine"
-      - "Chopping Lunge"
+      - "gaffi_stick"
+      - "proximity_mine"
+      - "chopping_lunge"
 
 # Captain Rex's Left Blaster
 - guid: 141
@@ -143,9 +143,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Clone Trooper Blaster Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "clone_trooper_blaster_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Cad Bane's Right Blaster
 - guid: 512
@@ -160,9 +160,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Cad Bane's Right Blaster"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "cad_bane_right_blaster"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Aurra Sing's Hunting Rifle
 - guid: 513
@@ -178,9 +178,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Aurra Sing's Hunting Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "aurra_sing_hunting_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Captain Rex's Right Blaster
 - guid: 514
@@ -196,9 +196,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Captain Rex's Right Blaster"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "captain_rex_right_blaster"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Han Solo's Blaster Pistol
 - guid: 516
@@ -213,9 +213,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Han Solo's Blaster Pistol"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "han_solo_blaster_pistol"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Republic Flamethrower
 - guid: 520
@@ -230,9 +230,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Republic Flamethrower"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "republic_flamethrower"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Republic Missile Launcher
 - guid: 521
@@ -248,9 +248,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Republic Missile Launcher"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "republic_missile_launcher"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Rotary Blaster Cannon
 - guid: 522
@@ -265,9 +265,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Rotary Blaster Cannon"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "rotary_blaster_cannon"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Mandalorian Blaster Rifle
 - guid: 758
@@ -283,9 +283,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Mandalorian Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "mandalorian_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Bowcaster
 - guid: 759
@@ -301,9 +301,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Bowcaster"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "bowcaster"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Papanoida Blaster
 - guid: 1144
@@ -319,9 +319,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Papanoida Blaster"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "papanoida_blaster"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Assassin Aurra Sing's Right Blaster
 - guid: 1165
@@ -337,9 +337,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Assassin Aurra Sing's Right Blaster"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "assassin_aurra_sing_right_blaster"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Assassin Aurra Sing's Left Blaster
 - guid: 1166
@@ -367,9 +367,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Satine's Royal Guard Staff"
-      - "Thermal Grenade"
-      - "Chopping Lunge"
+      - "satine_royal_guard_staff"
+      - "thermal_grenade"
+      - "chopping_lunge"
 
 # Gungan Double-headed Spear
 - guid: 1322
@@ -384,9 +384,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Gungan Double-headed Spear"
-      - "Thermal Grenade"
-      - "Chopping Lunge"
+      - "gungan_double_headed_spear"
+      - "thermal_grenade"
+      - "chopping_lunge"
 
 # Spring Fever
 - guid: 1415
@@ -401,9 +401,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Spring Fever"
-      - "Force Heal"
-      - "Rapid Fire"
+      - "spring_fever"
+      - "force_heal"
+      - "rapid_fire"
 
 # Balnab Hunter Rifle
 - guid: 1637
@@ -419,9 +419,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Balnab Hunter Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "balnab_hunter_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Nightsister's Bow
 - guid: 2254
@@ -437,9 +437,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Nightsister's Bow"
-      - "Force Lightning"
-      - "Focused Shot"
+      - "nightsister_bow"
+      - "force_lightning"
+      - "focused_shot"
 
 # Savage Opress' Pike
 - guid: 2266
@@ -454,9 +454,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Savage Opress' Pike"
-      - "Force Lightning"
-      - "Chopping Lunge"
+      - "savage_opress_pike"
+      - "force_lightning"
+      - "chopping_lunge"
 
 # Cupid Clone's Bow
 - guid: 2392
@@ -471,9 +471,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Cupid Clone's Bow"
-      - "Force Heal"
-      - "Focused Shot"
+      - "cupid_clone_bow"
+      - "force_heal"
+      - "focused_shot"
 
 # Blue Sparkler
 - guid: 2809
@@ -489,9 +489,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Blue Sparkler"
-      - "Force Push"
-      - "Slashing Strike"
+      - "blue_sparkler"
+      - "force_push"
+      - "slashing_strike"
 
 # Green Sparkler
 - guid: 2810
@@ -507,9 +507,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Green Sparkler"
-      - "Force Push"
-      - "Slashing Strike"
+      - "green_sparkler"
+      - "force_push"
+      - "slashing_strike"
 
 # Orange Sparkler
 - guid: 2811
@@ -525,9 +525,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Orange Sparkler"
-      - "Force Push"
-      - "Slashing Strike"
+      - "orange_sparkler"
+      - "force_push"
+      - "slashing_strike"
 
 # Purple Sparkler
 - guid: 2812
@@ -543,9 +543,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Purple Sparkler"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "purple_sparkler"
+      - "force_valor"
+      - "slashing_strike"
 
 # Red Sparkler
 - guid: 2813
@@ -561,9 +561,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Red Sparkler"
-      - "Force Lightning"
-      - "Slashing Strike"
+      - "red_sparkler"
+      - "force_lightning"
+      - "slashing_strike"
 
 # White Sparkler
 - guid: 2814
@@ -579,9 +579,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "White Sparkler"
-      - "Force Heal"
-      - "Slashing Strike"
+      - "white_sparkler"
+      - "force_heal"
+      - "slashing_strike"
 
 # Yellow Sparkler
 - guid: 2815
@@ -597,9 +597,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Yellow Sparkler"
-      - "Force Valor"
-      - "Slashing Strike"
+      - "yellow_sparkler"
+      - "force_valor"
+      - "slashing_strike"
 
 # Vigilance
 - guid: 2909
@@ -614,9 +614,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Vigilance"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "vigilance"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Negotiator
 - guid: 2910
@@ -644,9 +644,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Skeletal Clone Trooper Scythe"
-      - "Thermal Grenade"
-      - "Chopping Lunge"
+      - "skeletal_clone_trooper_scythe"
+      - "thermal_grenade"
+      - "chopping_lunge"
 
 # Umbaran Blaster Rifle
 - guid: 3172
@@ -662,9 +662,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Umbaran Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "umbaran_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Zygerrian Blaster Rifle
 - guid: 3254
@@ -680,9 +680,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Zygerrian Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "zygerrian_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Captain Rex's Zygerrian Electrostaff
 - guid: 3262
@@ -696,9 +696,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Captain Rex's Zygerrian Electrostaff"
-      - "Thermal Grenade"
-      - "Chopping Lunge"
+      - "captain_rex_zygerrian_electrostaff"
+      - "thermal_grenade"
+      - "chopping_lunge"
 
 # Shadow Tech Rifle
 - guid: 3280
@@ -714,9 +714,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Shadow Tech Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "shadow_tech_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Rako Hardeen's Sniper Rifle
 - guid: 3327
@@ -731,9 +731,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Rako Hardeen's Sniper Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "rako_hardeen_sniper_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Cad Bane's Blaster Rifle
 - guid: 3328
@@ -748,9 +748,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Cad Bane's Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "cad_bane_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Cryo-Cannon
 - guid: 3369
@@ -765,9 +765,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Cryo-Cannon"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "cryo_cannon"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Plasma Thrower
 - guid: 3370
@@ -782,9 +782,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Plasma Thrower"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "plasma_thrower"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Ion Blaster
 - guid: 3371
@@ -799,9 +799,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Ion Blaster"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "ion_blaster"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Quarzite Boba Fett's Blaster
 - guid: 3413
@@ -816,9 +816,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Quarzite Boba Fett's Blaster"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "quarzite_boba_fett_blaster"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Quarzite Boba Fett's Offhand Blaster
 - guid: 3414
@@ -846,9 +846,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Cold Warrior Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "cold_warrior_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Ming Po Militia Rifle
 - guid: 80001
@@ -864,9 +864,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Ming Po Militia Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "ming_po_militia_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Usk Bunker General Blaster Rifle
 - guid: 80002
@@ -882,9 +882,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Usk Bunker General Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "usk_bunker_general_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Grek Bunker General Blaster Rifle
 - guid: 80003
@@ -900,9 +900,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Grek Bunker General Blaster Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "grek_bunker_general_blaster_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Republic Grenade Launcher
 - guid: 80004
@@ -917,9 +917,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Republic Grenade Launcher"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "republic_grenade_launcher"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Accelerated Thermal Carbine
 - guid: 80005
@@ -934,9 +934,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Accelerated Thermal Carbine"
-      - "Deflector Shield"
-      - "Charged Shot"
+      - "accelerated_thermal_carbine"
+      - "deflector_shield"
+      - "charged_shot"
 
 # Rail Cannon
 - guid: 80006
@@ -951,9 +951,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Rail Cannon"
-      - "Deflector Shield"
-      - "Charged Shot"
+      - "rail_cannon"
+      - "deflector_shield"
+      - "charged_shot"
 
 # Hip-Mounted Cannon
 - guid: 80007
@@ -968,9 +968,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Hip-Mounted Cannon"
-      - "Deflector Shield"
-      - "Charged Shot"
+      - "hip_mounted_cannon"
+      - "deflector_shield"
+      - "charged_shot"
 
 # Mandalorian Repeater
 - guid: 80008
@@ -985,9 +985,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Mandalorian Repeater"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "mandalorian_repeater"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Repeater Cannon
 - guid: 80009
@@ -1002,9 +1002,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Repeater Cannon"
-      - "Deflector Shield"
-      - "Rapid Fire"
+      - "repeater_cannon"
+      - "deflector_shield"
+      - "rapid_fire"
 
 # Turbolaser
 - guid: 80010
@@ -1019,9 +1019,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Turbolaser"
-      - "Deflector Shield"
-      - "Charged Shot"
+      - "turbolaser"
+      - "deflector_shield"
+      - "charged_shot"
 
 # Bossk's Long Rifle
 - guid: 80011
@@ -1036,9 +1036,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Bossk's Long Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "bossk_long_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Grand Officer Rifle
 - guid: 80012
@@ -1053,9 +1053,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Grand Officer Rifle"
-      - "Cryo Grenade"
-      - "Aimed Shot"
+      - "grand_officer_rifle"
+      - "cryo_grenade"
+      - "aimed_shot"
 
 # Felucian Commando Rifle
 - guid: 80013
@@ -1070,9 +1070,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Felucian Commando Rifle"
-      - "Thermal Grenade"
-      - "Aimed Shot"
+      - "felucian_commando_rifle"
+      - "thermal_grenade"
+      - "aimed_shot"
 
 # Onderon Long Rifle
 - guid: 80014
@@ -1088,9 +1088,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Onderon Long Rifle"
-      - "Proximity Mine"
-      - "Aimed Shot"
+      - "onderon_long_rifle"
+      - "proximity_mine"
+      - "aimed_shot"
 
 # Energized Disruptor
 - guid: 80015
@@ -1106,9 +1106,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Energized Disruptor"
-      - "Deflector Shield"
-      - "Focused Shot"
+      - "energized_disruptor"
+      - "deflector_shield"
+      - "focused_shot"
 
 # Light Plasma Pistol
 - guid: 80016
@@ -1124,9 +1124,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Light Plasma Pistol"
-      - "Deflector Shield"
-      - "Focused Shot"
+      - "light_plasma_pistol"
+      - "deflector_shield"
+      - "focused_shot"
 
 # Major Rigosso's Quarzite Pistol
 - guid: 80017
@@ -1142,9 +1142,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Major Rigosso's Quarzite Pistol"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "major_rigosso_quarzite_pistol"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Major Rigosso's Offhand Quarzite Pistol
 - guid: 80018
@@ -1172,9 +1172,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Black Sun Blaster Pistol"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "black_sun_blaster_pistol"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Subtram Hunter Blaster
 - guid: 80020
@@ -1189,9 +1189,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Subtram Hunter Blaster"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "subtram_hunter_blaster"
+      - "proximity_mine"
+      - "focused_shot"
 
 # Subtram Hunter Offhand Blaster
 - guid: 80021
@@ -1219,9 +1219,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Royal Hold-out Blaster Pistol"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "royal_hold_out_blaster_pistol"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Corrupt Warlord Right Pistol
 - guid: 80023
@@ -1236,9 +1236,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Corrupt Warlord Right Pistol"
-      - "Deploy Turret"
-      - "Focused Shot"
+      - "corrupt_warlord_right_pistol"
+      - "deploy_turret"
+      - "focused_shot"
 
 # Corrupt Warlord Left Pistol
 - guid: 80024
@@ -1265,9 +1265,9 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Pyke Blaster Pistol"
-      - "Thermal Grenade"
-      - "Focused Shot"
+      - "pyke_blaster_pistol"
+      - "thermal_grenade"
+      - "focused_shot"
 
 # Onderon Blaster Pistol
 - guid: 80026
@@ -1283,9 +1283,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "Onderon Blaster Pistol"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "onderon_blaster_pistol"
+      - "proximity_mine"
+      - "focused_shot"
 
 # IG-113's Electrostaff
 - guid: 80027
@@ -1301,9 +1301,9 @@
   members: true
   action_bar:
     ability_keys:
-      - "IG-113's Electrostaff"
-      - "Force Lightning"
-      - "Chopping Lunge"
+      - "ig_113_electrostaff"
+      - "force_lightning"
+      - "chopping_lunge"
 
 # Renegade Heavy Blaster Pistol (Right)
 - guid: 80028
@@ -1318,6 +1318,6 @@
   category: 64
   action_bar:
     ability_keys:
-      - "Renegade Heavy Blaster Pistol (Right)"
-      - "Proximity Mine"
-      - "Focused Shot"
+      - "renegade_heavy_blaster_pistol_right"
+      - "proximity_mine"
+      - "focused_shot"

@@ -10,7 +10,7 @@ use std::vec;
 
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
-use handlers::ability::{load_abilities, PlayerAbility};
+use handlers::ability::{load_abilities, AbilityConfig};
 use handlers::character::{
     Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
@@ -24,7 +24,7 @@ use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
     load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
 };
-use handlers::item::{load_item_definitions, PlayerItem};
+use handlers::item::{load_item_definitions, ItemConfig};
 use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
@@ -184,7 +184,7 @@ pub enum TickableNpcSynchronization {
 }
 
 pub struct GameServer {
-    abilities: BTreeMap<u32, PlayerAbility>,
+    abilities: HashMap<String, AbilityConfig>,
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
     customizations: BTreeMap<u32, Customization>,
@@ -192,7 +192,7 @@ pub struct GameServer {
     default_sabers: BTreeMap<u32, DefaultSaber>,
     enemy_types: EnemyTypeConfig,
     lock_enforcer_source: LockEnforcerSource,
-    items: BTreeMap<u32, PlayerItem>,
+    items: BTreeMap<u32, ItemConfig>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
@@ -206,10 +206,10 @@ pub struct GameServer {
 
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
-        let (abilities, ability_keys_to_id) = load_abilities(config_dir)?;
+        let abilities = load_abilities(config_dir)?;
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
-        let item_definitions = load_item_definitions(config_dir, &ability_keys_to_id)?;
+        let item_definitions = load_item_definitions(config_dir, &abilities)?;
         let item_groups = load_item_groups(config_dir)?;
         Ok(GameServer {
             abilities,
@@ -820,7 +820,7 @@ impl GameServer {
         Ok(broadcasts)
     }
 
-    pub fn abilities(&self) -> &BTreeMap<u32, PlayerAbility> {
+    pub fn abilities(&self) -> &HashMap<String, AbilityConfig> {
         &self.abilities
     }
 
@@ -844,7 +844,7 @@ impl GameServer {
         &self.enemy_types
     }
 
-    pub fn items(&self) -> &BTreeMap<u32, PlayerItem> {
+    pub fn items(&self) -> &BTreeMap<u32, ItemConfig> {
         &self.items
     }
 
