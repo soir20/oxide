@@ -33,6 +33,119 @@ pub enum AttackCruiserOpCode {
     UpdateBossCount = 0x15,
 }
 
+#[derive(SerializePacket)]
+pub struct AttackCruiserGlobalConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserEndConditionConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserWinConditionConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserPlanetConfig {
+    pub model_id: u32,
+    pub pos: Pos3,
+    pub rotation_speed: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserShipConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserCameraConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserEventCinematicConfig {
+    pub total_seconds: f32,
+    pub animation_id: i32,
+    pub camera_heading: f32,
+    pub camera_fov: f32,
+    pub flip_camera_z: bool,
+    pub pre_wipe_style: i32,
+    pub post_wipe_style: i32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserEventActorConfig {
+    pub model_id: u32,
+    pub animation_id: i32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserPlayerConfig {
+    pub ship_config: AttackCruiserShipConfig,
+    pub camera_config: AttackCruiserCameraConfig,
+    pub lives: u32,
+    pub spawn_pos: Pos3,
+    pub spawn_heading: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserEventConfig {
+    pub cinematics: Vec<AttackCruiserEventCinematicConfig>,
+    pub event_actors: Vec<AttackCruiserEventActorConfig>,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorPoolConfig {
+    pub actor_config: AttackCruiserActorConfig,
+    pub size: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserWaveConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserLaunchConditionConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserCompleteConditionConfig {}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserGameWaveConfig {
+    pub wave_config: AttackCruiserWaveConfig,
+    pub launch_condition_config: AttackCruiserLaunchConditionConfig,
+    pub complete_condition_config: AttackCruiserCompleteConditionConfig,
+    pub remove_actors_on_completion: bool,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserGameConfig {
+    pub id: i32,
+    pub encounter_id: i32,
+    pub sound_id: i32,
+    pub mode: i32,
+    pub global_config: AttackCruiserGlobalConfig,
+    pub end_condition_config: AttackCruiserEndConditionConfig,
+    pub win_condition_config: AttackCruiserWinConditionConfig,
+    pub target_value1: u32,
+    pub target_value2: u32,
+    pub playfield_height: f32,
+    pub playfield_length: f32,
+    pub playfield_width: f32,
+    pub playfield_warning_length: f32,
+    pub playfield_warning_width: f32,
+    pub playfield_center_x: f32,
+    pub playfield_center_z: f32,
+    pub kill_zone_height: f32,
+    pub enemy_attack_radius: f32,
+    pub endless_waves: bool,
+    pub debugged_actors: i32,
+    pub planet_tilt_init_x: f32,
+    pub planet_tilt_init_z: f32,
+    pub planet_tilt_rate_x: f32,
+    pub planet_tilt_rate_z: f32,
+    pub planet: AttackCruiserPlanetConfig,
+    pub players: Vec<AttackCruiserPlayerConfig>,
+    pub events: Vec<AttackCruiserEventConfig>,
+    pub actor_pools: Vec<AttackCruiserActorPoolConfig>,
+    pub waves: Vec<AttackCruiserGameWaveConfig>,
+}
+
 pub enum AttackCruiserConfigType {
     Global {},
 }
@@ -53,7 +166,7 @@ pub struct AttackCruiserConfig {
     pub config_type: AttackCruiserConfigType,
 }
 
-pub struct AttackCruiserGameConfig {
+pub struct AttackCruiserClientConfig {
     pub minigame_header: MinigameHeader,
     pub config1: AttackCruiserConfig,
     pub config2: AttackCruiserConfig,
@@ -61,7 +174,7 @@ pub struct AttackCruiserGameConfig {
     pub configs: Vec<AttackCruiserConfig>,
 }
 
-impl SerializePacket for AttackCruiserGameConfig {
+impl SerializePacket for AttackCruiserClientConfig {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.minigame_header.serialize(buffer);
         (self.configs.len() as u32).serialize(buffer);
@@ -74,7 +187,7 @@ impl SerializePacket for AttackCruiserGameConfig {
     }
 }
 
-impl GamePacket for AttackCruiserGameConfig {
+impl GamePacket for AttackCruiserClientConfig {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
