@@ -441,8 +441,7 @@ pub fn make_test_player(
 }
 
 pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
-    let mut abilities = Vec::new();
-    abilities.push(PlayerAbilityGroup {
+    vec![PlayerAbilityGroup {
         source_item_id: 2909,
         ability_keys: vec![
             "vigilance".to_string(),
@@ -450,8 +449,7 @@ pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
             "focused_shot".to_string(),
         ],
         priority: 2,
-    });
-    abilities
+    }]
 }
 
 pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
