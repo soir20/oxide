@@ -32,7 +32,7 @@ pub struct AbilitySlotConfig {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AbilityConfig {
-    pub slot_info: AbilitySlotConfig,
+    pub slot_config: AbilitySlotConfig,
 }
 
 pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig>, ConfigError> {
