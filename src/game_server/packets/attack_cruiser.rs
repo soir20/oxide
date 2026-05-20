@@ -119,7 +119,31 @@ pub struct AttackCruiserPlanetConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserShipConfig {}
+pub struct AttackCruiserShipWeaponConfig {
+    pub weapon_bag_config: AttackCruiserAnyConfig,
+    pub group: u32,
+    pub tier: i32,
+    pub special_weapon: bool,
+    pub exit_offset_x: f32,
+    pub exit_offset_y: f32,
+    pub exit_offset_z: f32,
+    pub exit_offset_angle: f32,
+    pub exit_min_angle: f32,
+    pub exit_max_angle: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserShipConfig {
+    pub actor_config: AttackCruiserActorConfig,
+    pub thruster_effect_id: u32,
+    pub invulnerable_effect_id: u32,
+    pub stun_effect_id: u32,
+    pub weapons: Vec<AttackCruiserShipWeaponConfig>,
+    pub roll_max_angle: f32,
+    pub pitch_max_angle: f32,
+    pub continuous_fire_seconds: f32,
+    pub fire_cooldown_seconds: f32,
+}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserCameraConfig {
@@ -177,7 +201,59 @@ pub struct AttackCruiserEventConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserActorConfig {}
+pub struct AttackCruiserActorAnimationConfig {
+    pub animation_type: i32,
+    pub slot_id: u32,
+    pub loops: bool,
+    pub play_time_seconds: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorCinematicConfig {
+    pub cinematic_type: i32,
+    pub play_time_seconds: f32,
+    pub animation_id: u32,
+    pub pre_wipe_style: i32,
+    pub post_wipe_style: i32,
+    pub post_camera_ease_in_seconds: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorDamageStateEffectConfig {
+    pub effect_id: u32,
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub offset_z: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorDamageStateConfig {
+    pub min_health_percent: f32,
+    pub texture_alias: String,
+    pub effects: Vec<AttackCruiserActorDamageStateEffectConfig>,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserActorConfig {
+    pub model_id: u32,
+    pub effect_id: u32,
+    pub death_effect_id: u32,
+    pub despawn_effect_id: u32,
+    pub explode_offset: f32,
+    pub collision_asset_name: String,
+    pub physics_config: AttackCruiserAnyConfig,
+    pub max_health: u32,
+    pub explosive_collision: f32,
+    pub collision_damage: u32,
+    pub score: u32,
+    pub bonus_score: u32,
+    pub bonus_max_age_seconds: f32,
+    pub overhead_offset_y: f32,
+    pub overhead_health_scale: f32,
+    pub animations: Vec<AttackCruiserActorAnimationConfig>,
+    pub cinematics: Vec<AttackCruiserActorCinematicConfig>,
+    pub damage_states: Vec<AttackCruiserActorDamageStateConfig>,
+}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorPoolConfig {
