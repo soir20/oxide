@@ -189,7 +189,7 @@ impl ItemConfig {
 
 pub type ItemConfigMap = BTreeMap<u32, ItemConfig>;
 
-pub fn load_item_definitions(
+pub fn load_items(
     config_dir: &Path,
     abilities: &HashMap<String, AbilityConfig>,
 ) -> Result<(ItemConfigMap, ItemCostMap), ConfigError> {

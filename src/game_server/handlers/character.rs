@@ -947,7 +947,7 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> (Vec<Broadcast>, Option<NavmeshWaypoint>) {
         let mut packets_for_all = Vec::new();
@@ -961,7 +961,7 @@ impl TickableStep {
                     packets_for_all.extend(character.add_packets(
                         false,
                         mount_configs,
-                        item_definitions,
+                        item_configs,
                         customizations,
                     ));
                 }
@@ -974,7 +974,7 @@ impl TickableStep {
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
                         mount_configs,
-                        item_definitions,
+                        item_configs,
                         customizations,
                     ));
                 }
@@ -1397,7 +1397,7 @@ impl TickableProcedure {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -1458,7 +1458,7 @@ impl TickableProcedure {
                     nearby_player_guids,
                     nearby_characters,
                     mount_configs,
-                    item_definitions,
+                    item_configs,
                     customizations,
                 );
 
@@ -1620,7 +1620,7 @@ impl TickableProcedureTracker {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -1640,7 +1640,7 @@ impl TickableProcedureTracker {
                 nearby_player_guids,
                 nearby_characters,
                 mount_configs,
-                item_definitions,
+                item_configs,
                 customizations,
                 tick_duration,
                 navmesh,
@@ -1928,7 +1928,7 @@ impl Player {
         &self,
         character: &CharacterStats,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         if !self.ready {
@@ -1981,7 +1981,7 @@ impl Player {
                     &self
                         .inventory
                         .equipped_items(self.inventory.active_battle_class),
-                    item_definitions,
+                    item_configs,
                 )
                 .into_iter()
                 .map(|attachment| attachment.into())
@@ -2444,7 +2444,7 @@ impl CharacterStats {
         &self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
         let mut packets = match &self.character_type {
@@ -2452,7 +2452,7 @@ impl CharacterStats {
                 ambient_npc.add_packets(self, override_is_spawned)
             }
             CharacterType::Player(player) => {
-                player.add_packets(self, mount_configs, item_definitions, customizations)
+                player.add_packets(self, mount_configs, item_configs, customizations)
             }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
                 *house_guid,
@@ -2796,7 +2796,7 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -2809,7 +2809,7 @@ impl Character {
             nearby_player_guids,
             nearby_characters,
             mount_configs,
-            item_definitions,
+            item_configs,
             customizations,
             tick_duration,
             navmesh,
@@ -2996,7 +2996,7 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
@@ -3010,7 +3010,7 @@ impl Character {
                 nearby_player_guids,
                 nearby_characters,
                 mount_configs,
-                item_definitions,
+                item_configs,
                 customizations,
                 tick_duration,
                 navmesh,

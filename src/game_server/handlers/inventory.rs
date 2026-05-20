@@ -838,11 +838,11 @@ pub fn update_saber_tints<'a>(
 pub fn player_has_saber_equipped(
     inventory: &PlayerInventory,
     battle_class: u32,
-    item_definitions: &BTreeMap<u32, ItemConfig>,
+    item_configs: &BTreeMap<u32, ItemConfig>,
 ) -> bool {
     inventory
         .equipped_item(battle_class, EquipmentSlot::PrimaryWeapon)
-        .and_then(|item_guid| item_definitions.get(&item_guid))
+        .and_then(|item_guid| item_configs.get(&item_guid))
         .map(|item| item.item_type == SABER_ITEM_TYPE)
         .unwrap_or(false)
 }
@@ -873,7 +873,7 @@ impl From<ExtendedAttachment> for Attachment {
 
 pub fn attachments_from_equipped_items(
     equipped_items: &BTreeMap<EquipmentSlot, u32>,
-    item_definitions: &BTreeMap<u32, ItemConfig>,
+    item_configs: &BTreeMap<u32, ItemConfig>,
 ) -> Vec<ExtendedAttachment> {
     equipped_items
         .iter()
@@ -881,16 +881,16 @@ pub fn attachments_from_equipped_items(
             let tint_override = match slot {
                 EquipmentSlot::PrimarySaberShape => equipped_items
                     .get(&EquipmentSlot::PrimarySaberColor)
-                    .and_then(|item_guid| item_definitions.get(item_guid))
+                    .and_then(|item_guid| item_configs.get(item_guid))
                     .map(|item_def| item_def.tint),
                 EquipmentSlot::SecondarySaberShape => equipped_items
                     .get(&EquipmentSlot::SecondarySaberColor)
-                    .and_then(|item_guid| item_definitions.get(item_guid))
+                    .and_then(|item_guid| item_configs.get(item_guid))
                     .map(|item_def| item_def.tint),
                 _ => None,
             };
 
-            item_definitions
+            item_configs
                 .get(item_guid)
                 .map(|item_definition| ExtendedAttachment {
                     model_name: item_definition.model_name.clone(),

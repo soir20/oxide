@@ -671,7 +671,7 @@ impl ZoneInstance {
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
         moved_character_handle: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_definitions: &BTreeMap<u32, ItemConfig>,
+        item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
@@ -685,7 +685,7 @@ impl ZoneInstance {
                         diff_packets.append(&mut character.stats.add_packets(
                             false,
                             mount_configs,
-                            item_definitions,
+                            item_configs,
                             customizations,
                         ));
                     } else {
@@ -703,7 +703,7 @@ impl ZoneInstance {
             moved_character_handle.stats.add_packets(
                 false,
                 mount_configs,
-                item_definitions,
+                item_configs,
                 customizations,
             ),
         ));

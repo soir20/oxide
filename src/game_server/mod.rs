@@ -24,7 +24,7 @@ use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
     load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
 };
-use handlers::item::{load_item_definitions, ItemConfig};
+use handlers::item::{load_items, ItemConfig};
 use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
@@ -209,7 +209,7 @@ impl GameServer {
         let abilities = load_abilities(config_dir)?;
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
-        let (item_definitions, mut costs) = load_item_definitions(config_dir, &abilities)?;
+        let (items, mut costs) = load_items(config_dir, &abilities)?;
         let item_groups = load_item_groups(config_dir, &mut costs)?;
         Ok(GameServer {
             abilities,
@@ -220,7 +220,7 @@ impl GameServer {
             default_sabers: load_default_sabers(config_dir)?,
             enemy_types: load_enemy_types(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones, GuidTable::new()),
-            items: item_definitions,
+            items,
             item_classes: load_item_classes(config_dir)?,
             item_groups: ItemGroupDefinitions {
                 definitions: item_groups,
