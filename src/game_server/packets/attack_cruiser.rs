@@ -262,7 +262,33 @@ pub struct AttackCruiserActorPoolConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserWaveConfig {}
+pub struct AttackCruiserWaveActorConfig {
+    pub actor_config: AttackCruiserAnyConfig,
+    pub ai_config: AttackCruiserAnyConfig,
+    pub squadron_config: AttackCruiserAnyConfig,
+    pub spawn_condition_config: AttackCruiserAnyConfig,
+    pub launch_time_seconds: f32,
+    pub life_time_seconds: f32,
+    pub spawn_pos: Pos3,
+    pub spawn_heading: f32,
+    pub spawn_speed: f32,
+    pub is_hidden: bool,
+    pub has_boss: bool,
+    pub death_spawn_condition_config: AttackCruiserAnyConfig,
+    pub death_spawn_config: AttackCruiserAnyConfig,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserWaveHudMessageConfig {
+    pub display_condition_config: AttackCruiserAnyConfig,
+    pub hud_message_config: AttackCruiserHudMessageConfig,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserWaveConfig {
+    pub actors: Vec<AttackCruiserWaveActorConfig>,
+    pub hud_messages: Vec<AttackCruiserWaveHudMessageConfig>,
+}
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserGameWaveConfig {
