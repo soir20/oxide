@@ -33,6 +33,14 @@ pub enum AttackCruiserOpCode {
     UpdateBossCount = 0x15,
 }
 
+pub struct AttackCruiserBool(pub bool);
+
+impl SerializePacket for AttackCruiserBool {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.0.to_string().serialize(buffer);
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserAnyConfig {
     pub class: String,
@@ -82,13 +90,13 @@ pub struct AttackCruiserGlobalConfig {
     pub advance_interception_time: f32,
     pub collisionless_time: u32,
     pub tractionless_time: u32,
-    pub screen_relative_turning: bool,
-    pub ship_to_ship_collision: bool,
+    pub screen_relative_turning: AttackCruiserBool,
+    pub ship_to_ship_collision: AttackCruiserBool,
     pub player_death_animation_delay_seconds: f32,
     pub respawn_damage_area: f32,
     pub respawn_delay_seconds: f32,
     pub respawn_invulnerable_seconds: f32,
-    pub enable_composite_effects: bool,
+    pub enable_composite_effects: AttackCruiserBool,
     pub torpedo_reticule_effect_id: u32,
     pub torpedo_reticule_effect_seconds: f32,
     pub fighter_reticule_effect_id: u32,
@@ -106,7 +114,7 @@ pub struct AttackCruiserGlobalConfig {
     pub health_background_image_id: u32,
     pub health_foreground_internal_id: i32,
     pub health_background_internal_id: i32,
-    pub enable_weapon_tiers: bool,
+    pub enable_weapon_tiers: AttackCruiserBool,
     pub player_death_spawn_config: AttackCruiserAnyConfig,
     pub hud_message: AttackCruiserHudMessageConfig,
 }
@@ -123,7 +131,7 @@ pub struct AttackCruiserShipWeaponConfig {
     pub weapon_bag_config: AttackCruiserAnyConfig,
     pub group: u32,
     pub tier: i32,
-    pub special_weapon: bool,
+    pub special_weapon: AttackCruiserBool,
     pub exit_offset_x: f32,
     pub exit_offset_y: f32,
     pub exit_offset_z: f32,
@@ -157,7 +165,7 @@ pub struct AttackCruiserCameraConfig {
     pub target_tracking_hlq: f32,
     pub zoom_step_q: f32,
     pub zoom_step_hlq: f32,
-    pub forward_tether: bool,
+    pub forward_tether: AttackCruiserBool,
     pub forward_tether_seconds: f32,
     pub near_clip_distance: f32,
     pub particle_update_distance: f32,
@@ -174,7 +182,7 @@ pub struct AttackCruiserEventCinematicConfig {
     pub animation_id: i32,
     pub camera_heading: f32,
     pub camera_fov: f32,
-    pub flip_camera_z: bool,
+    pub flip_camera_z: AttackCruiserBool,
     pub pre_wipe_style: i32,
     pub post_wipe_style: i32,
 }
@@ -204,7 +212,7 @@ pub struct AttackCruiserEventConfig {
 pub struct AttackCruiserActorAnimationConfig {
     pub animation_type: i32,
     pub slot_id: u32,
-    pub loops: bool,
+    pub loops: AttackCruiserBool,
     pub play_time_seconds: f32,
 }
 
@@ -272,8 +280,8 @@ pub struct AttackCruiserWaveActorConfig {
     pub spawn_pos: Pos3,
     pub spawn_heading: f32,
     pub spawn_speed: f32,
-    pub is_hidden: bool,
-    pub has_boss: bool,
+    pub is_hidden: AttackCruiserBool,
+    pub has_boss: AttackCruiserBool,
     pub death_spawn_condition_config: AttackCruiserAnyConfig,
     pub death_spawn_config: AttackCruiserAnyConfig,
 }
@@ -295,7 +303,7 @@ pub struct AttackCruiserGameWaveConfig {
     pub wave_config: AttackCruiserWaveConfig,
     pub launch_condition_config: AttackCruiserAnyConfig,
     pub complete_condition_config: AttackCruiserAnyConfig,
-    pub remove_actors_on_completion: bool,
+    pub remove_actors_on_completion: AttackCruiserBool,
 }
 
 #[derive(SerializePacket)]
@@ -304,7 +312,7 @@ pub struct AttackCruiserGameConfig {
     pub encounter_id: i32,
     pub sound_id: i32,
     pub mode: i32,
-    pub global_config: AttackCruiserGlobalConfig,
+    pub global_config: AttackCruiserAnyConfig,
     pub end_condition_config: AttackCruiserAnyConfig,
     pub win_condition_config: AttackCruiserAnyConfig,
     pub target_value1: u32,
@@ -318,7 +326,7 @@ pub struct AttackCruiserGameConfig {
     pub playfield_center_z: f32,
     pub kill_zone_height: f32,
     pub enemy_attack_radius: f32,
-    pub endless_waves: bool,
+    pub endless_waves: AttackCruiserBool,
     pub debugged_actors: i32,
     pub planet_tilt_init_x: f32,
     pub planet_tilt_init_z: f32,
@@ -333,7 +341,7 @@ pub struct AttackCruiserGameConfig {
 
 pub enum AttackCruiserConfigType {
     Global {},
-    Game(AttackCruiserGameConfig),
+    Game(Box<AttackCruiserGameConfig>),
 }
 
 impl SerializePacket for AttackCruiserConfigType {
