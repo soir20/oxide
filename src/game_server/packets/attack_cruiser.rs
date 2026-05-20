@@ -333,12 +333,14 @@ pub struct AttackCruiserGameConfig {
 
 pub enum AttackCruiserConfigType {
     Global {},
+    Game(AttackCruiserGameConfig),
 }
 
 impl SerializePacket for AttackCruiserConfigType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
             AttackCruiserConfigType::Global { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
+            AttackCruiserConfigType::Game(config) => config.serialize(buffer),
         }
     }
 }
