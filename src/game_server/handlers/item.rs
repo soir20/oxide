@@ -11,8 +11,8 @@ use crate::{
             store::{compute_costs, ItemCostMap},
         },
         packets::{
-        item::{ItemDefinition, ItemType, SpecialItemAbility},
-        player_update::CustomizationSlot,
+            item::{ItemDefinition, ItemType, SpecialItemAbility},
+            player_update::CustomizationSlot,
         },
     },
     ConfigError,

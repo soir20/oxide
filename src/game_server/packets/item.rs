@@ -57,7 +57,15 @@ impl EquipmentSlot {
         match self {
             EquipmentSlot::SecondaryWeapon => 1,
             EquipmentSlot::PrimaryWeapon => 2,
-            _ => 0,
+            EquipmentSlot::PrimarySaberShape => 3,
+            EquipmentSlot::PrimarySaberColor => 3,
+            EquipmentSlot::SecondarySaberShape => 4,
+            EquipmentSlot::SecondarySaberColor => 4,
+            EquipmentSlot::Head => 5,
+            EquipmentSlot::Hands => 6,
+            EquipmentSlot::Body => 7,
+            EquipmentSlot::Feet => 8,
+            EquipmentSlot::None => 0,
         }
     }
 
