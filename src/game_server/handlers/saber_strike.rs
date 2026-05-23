@@ -9,13 +9,14 @@ use crate::game_server::{
     },
     packets::{
         attack_cruiser::{
-            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAnyConfig,
-            AttackCruiserBool, AttackCruiserClientConfig, AttackCruiserConfig,
-            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerUpdate,
-            AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
-            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
+            AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
+            AttackCruiserAnyConfig, AttackCruiserBool, AttackCruiserClientConfig,
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
+            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
+            AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
+            AttackCruiserPlayerUpdateUnknown2, AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserWaveConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -47,17 +48,17 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 config1: AttackCruiserConfig {
-                    unknown1: 0,
+                    unknown1: 1,
                     unknown2: 0x4c61446a,
-                    unknown3: "1234567890123456789012345678901234567890".to_string(),
+                    unknown3: "GameConfig".to_string(),
                     config_type: AttackCruiserConfigType::Game(Box::new(AttackCruiserGameConfig {
                         id: 27001,
                         encounter_id: 0,
                         sound_id: 0,
-                        mode: 1,
+                        mode: 4,
                         global_config: AttackCruiserAnyConfig {
-                            class: "".to_string(),
-                            value: "".to_string(),
+                            class: "global".to_string(),
+                            value: "configtest".to_string(),
                         },
                         end_condition_config: AttackCruiserAnyConfig {
                             class: "".to_string(),
@@ -89,9 +90,31 @@ pub fn start_saber_strike(
                             pos: Pos3::default(),
                             rotation_speed: 5.0,
                         },
-                        players: AttackCruiserVec::new(),
+                        players: AttackCruiserVec(vec![AttackCruiserPlayerConfig {
+                            ship_config: AttackCruiserAnyConfig {
+                                class: "ship config class".to_string(),
+                                value: "ship config value".to_string(),
+                            },
+                            camera_config: AttackCruiserAnyConfig {
+                                class: "camera config class".to_string(),
+                                value: "camera config value".to_string(),
+                            },
+                            lives: 5,
+                            spawn_pos: Pos3 {
+                                x: 120.0,
+                                y: 120.0,
+                                z: 120.0,
+                            },
+                            spawn_heading: 0.0,
+                        }]),
                         events: AttackCruiserVec::new(),
-                        actor_pools: AttackCruiserVec::new(),
+                        actor_pools: AttackCruiserVec(vec![AttackCruiserActorPoolConfig {
+                            actor_config: AttackCruiserAnyConfig {
+                                class: "actor config class".to_string(),
+                                value: "actor config value".to_string(),
+                            },
+                            size: 500,
+                        }]),
                         waves: AttackCruiserVec(vec![AttackCruiserGameWaveConfig {
                             wave_config: AttackCruiserAnyConfig {
                                 class: "hello".to_string(),
@@ -110,13 +133,13 @@ pub fn start_saber_strike(
                     })),
                 },
                 config2: AttackCruiserConfig {
-                    unknown1: 1,
+                    unknown1: 2,
                     unknown2: 0x79243a4c,
                     unknown3: "testing".to_string(),
                     config_type: AttackCruiserConfigType::Global {},
                 },
                 config3: AttackCruiserConfig {
-                    unknown1: 2,
+                    unknown1: 3,
                     unknown2: 0x79243a4c,
                     unknown3: "".to_string(),
                     config_type: AttackCruiserConfigType::Global {},
@@ -172,17 +195,17 @@ pub fn start_saber_strike(
                 },
             },
         }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserUpdateGameState {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                game_state: 4,
-            },
-        }),
+        // GamePacket::serialize(&TunneledPacket {
+        //     unknown1: true,
+        //     inner: AttackCruiserUpdateGameState {
+        //         minigame_header: MinigameHeader {
+        //             stage_guid: minigame_status.group.stage_guid,
+        //             sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+        //             stage_group_guid: minigame_status.group.stage_group_guid,
+        //         },
+        //         game_state: 4,
+        //     },
+        // }),
     ]
 }
 
