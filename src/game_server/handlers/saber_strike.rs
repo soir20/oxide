@@ -55,7 +55,7 @@ pub fn start_saber_strike(
                         id: 27001,
                         encounter_id: 0,
                         sound_id: 2413,
-                        mode: 4,
+                        mode: 1,
                         global_config: AttackCruiserAnyConfig {
                             class: "global".to_string(),
                             value: "configtest".to_string(),
