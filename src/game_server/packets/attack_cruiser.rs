@@ -41,6 +41,24 @@ impl SerializePacket for AttackCruiserBool {
     }
 }
 
+pub struct AttackCruiserVec<T>(pub Vec<T>);
+
+impl<T> AttackCruiserVec<T> {
+    pub fn new() -> Self {
+        AttackCruiserVec(Vec::new())
+    }
+}
+
+impl<T: SerializePacket> SerializePacket for AttackCruiserVec<T> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        (self.0.len() as u32).serialize(buffer);
+        for entry in self.0.iter() {
+            std::any::type_name::<T>().to_string().serialize(buffer);
+            entry.serialize(buffer);
+        }
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserAnyConfig {
     pub class: String,
@@ -146,7 +164,7 @@ pub struct AttackCruiserShipConfig {
     pub thruster_effect_id: u32,
     pub invulnerable_effect_id: u32,
     pub stun_effect_id: u32,
-    pub weapons: Vec<AttackCruiserShipWeaponConfig>,
+    pub weapons: AttackCruiserVec<AttackCruiserShipWeaponConfig>,
     pub roll_max_angle: f32,
     pub pitch_max_angle: f32,
     pub continuous_fire_seconds: f32,
@@ -204,8 +222,8 @@ pub struct AttackCruiserPlayerConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventConfig {
-    pub cinematics: Vec<AttackCruiserEventCinematicConfig>,
-    pub event_actors: Vec<AttackCruiserEventActorConfig>,
+    pub cinematics: AttackCruiserVec<AttackCruiserEventCinematicConfig>,
+    pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }
 
 #[derive(SerializePacket)]
@@ -238,7 +256,7 @@ pub struct AttackCruiserActorDamageStateEffectConfig {
 pub struct AttackCruiserActorDamageStateConfig {
     pub min_health_percent: f32,
     pub texture_alias: String,
-    pub effects: Vec<AttackCruiserActorDamageStateEffectConfig>,
+    pub effects: AttackCruiserVec<AttackCruiserActorDamageStateEffectConfig>,
 }
 
 #[derive(SerializePacket)]
@@ -258,9 +276,9 @@ pub struct AttackCruiserActorConfig {
     pub bonus_max_age_seconds: f32,
     pub overhead_offset_y: f32,
     pub overhead_health_scale: f32,
-    pub animations: Vec<AttackCruiserActorAnimationConfig>,
-    pub cinematics: Vec<AttackCruiserActorCinematicConfig>,
-    pub damage_states: Vec<AttackCruiserActorDamageStateConfig>,
+    pub animations: AttackCruiserVec<AttackCruiserActorAnimationConfig>,
+    pub cinematics: AttackCruiserVec<AttackCruiserActorCinematicConfig>,
+    pub damage_states: AttackCruiserVec<AttackCruiserActorDamageStateConfig>,
 }
 
 #[derive(SerializePacket)]
@@ -294,13 +312,13 @@ pub struct AttackCruiserWaveHudMessageConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveConfig {
-    pub actors: Vec<AttackCruiserWaveActorConfig>,
-    pub hud_messages: Vec<AttackCruiserWaveHudMessageConfig>,
+    pub actors: AttackCruiserVec<AttackCruiserWaveActorConfig>,
+    pub hud_messages: AttackCruiserVec<AttackCruiserWaveHudMessageConfig>,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserGameWaveConfig {
-    pub wave_config: AttackCruiserWaveConfig,
+    pub wave_config: AttackCruiserAnyConfig,
     pub launch_condition_config: AttackCruiserAnyConfig,
     pub complete_condition_config: AttackCruiserAnyConfig,
     pub remove_actors_on_completion: AttackCruiserBool,
@@ -333,10 +351,10 @@ pub struct AttackCruiserGameConfig {
     pub planet_tilt_rate_x: f32,
     pub planet_tilt_rate_z: f32,
     pub planet: AttackCruiserPlanetConfig,
-    pub players: Vec<AttackCruiserPlayerConfig>,
-    pub events: Vec<AttackCruiserEventConfig>,
-    pub actor_pools: Vec<AttackCruiserActorPoolConfig>,
-    pub waves: Vec<AttackCruiserGameWaveConfig>,
+    pub players: AttackCruiserVec<AttackCruiserPlayerConfig>,
+    pub events: AttackCruiserVec<AttackCruiserEventConfig>,
+    pub actor_pools: AttackCruiserVec<AttackCruiserActorPoolConfig>,
+    pub waves: AttackCruiserVec<AttackCruiserGameWaveConfig>,
 }
 
 pub enum AttackCruiserConfigType {

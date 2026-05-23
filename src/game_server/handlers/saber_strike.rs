@@ -11,10 +11,11 @@ use crate::game_server::{
         attack_cruiser::{
             AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAnyConfig,
             AttackCruiserBool, AttackCruiserClientConfig, AttackCruiserConfig,
-            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-            AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
-            AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
-            AttackCruiserPlayerUpdateUnknown2, AttackCruiserUpdateGameState,
+            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+            AttackCruiserPlanetConfig, AttackCruiserPlayerUpdate,
+            AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
+            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -88,10 +89,24 @@ pub fn start_saber_strike(
                             pos: Pos3::default(),
                             rotation_speed: 5.0,
                         },
-                        players: Vec::new(),
-                        events: Vec::new(),
-                        actor_pools: Vec::new(),
-                        waves: Vec::new(),
+                        players: AttackCruiserVec::new(),
+                        events: AttackCruiserVec::new(),
+                        actor_pools: AttackCruiserVec::new(),
+                        waves: AttackCruiserVec(vec![AttackCruiserGameWaveConfig {
+                            wave_config: AttackCruiserAnyConfig {
+                                class: "hello".to_string(),
+                                value: "world".to_string(),
+                            },
+                            launch_condition_config: AttackCruiserAnyConfig {
+                                class: "blaster".to_string(),
+                                value: "niceshot".to_string(),
+                            },
+                            complete_condition_config: AttackCruiserAnyConfig {
+                                class: "".to_string(),
+                                value: "".to_string(),
+                            },
+                            remove_actors_on_completion: AttackCruiserBool(false),
+                        }]),
                     })),
                 },
                 config2: AttackCruiserConfig {
