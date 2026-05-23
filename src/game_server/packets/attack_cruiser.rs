@@ -213,8 +213,8 @@ pub struct AttackCruiserEventActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerConfig {
-    pub ship_config: AttackCruiserShipConfig,
-    pub camera_config: AttackCruiserCameraConfig,
+    pub ship_config: AttackCruiserAnyConfig,
+    pub camera_config: AttackCruiserAnyConfig,
     pub lives: u32,
     pub spawn_pos: Pos3,
     pub spawn_heading: f32,
@@ -283,7 +283,7 @@ pub struct AttackCruiserActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorPoolConfig {
-    pub actor_config: AttackCruiserActorConfig,
+    pub actor_config: AttackCruiserAnyConfig,
     pub size: u32,
 }
 
