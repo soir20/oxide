@@ -19,6 +19,7 @@ attack_cruiser:
       y: 0
       z: 0
       w: 0
+  spawn_sky: sky_SD_twins_bbe.xml
   speed: 8
   jump_height_multiplier: 1
   gravity_multiplier: 1
