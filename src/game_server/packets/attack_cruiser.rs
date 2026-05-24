@@ -358,6 +358,7 @@ pub struct AttackCruiserGameConfig {
 }
 
 pub enum AttackCruiserConfigType {
+    Camera(Box<AttackCruiserCameraConfig>),
     Empty {},
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
@@ -366,6 +367,7 @@ pub enum AttackCruiserConfigType {
 impl SerializePacket for AttackCruiserConfigType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
+            AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigType::Empty { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
