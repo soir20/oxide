@@ -48,9 +48,9 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 config1: AttackCruiserConfig {
-                    unknown1: 3,
+                    unknown1: 1,
                     unknown2: 0x79243a4c,
-                    unknown3: "".to_string(),
+                    unknown3: "configtest".to_string(),
                     config_type: AttackCruiserConfigType::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
@@ -125,7 +125,7 @@ pub fn start_saber_strike(
                     )),
                 },
                 config2: AttackCruiserConfig {
-                    unknown1: 1,
+                    unknown1: 2,
                     unknown2: 0x4c61446a,
                     unknown3: "GameConfig".to_string(),
                     config_type: AttackCruiserConfigType::Game(Box::new(AttackCruiserGameConfig {
