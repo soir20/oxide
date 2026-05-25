@@ -10,6 +10,7 @@ use std::vec;
 
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
+use handlers::ability::{load_abilities, AbilityConfig};
 use handlers::character::{
     Character, CharacterCategory, CharacterType, Chunk, MinigameMatchmakingGroup,
 };
@@ -23,7 +24,7 @@ use handlers::inventory::{
     customizations_from_guids, load_customization_item_mappings, load_customizations,
     load_default_sabers, process_inventory_packet, update_saber_tints, DefaultSaber,
 };
-use handlers::item::load_item_definitions;
+use handlers::item::{load_items, ItemConfig};
 use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
@@ -35,7 +36,7 @@ use handlers::minigame::{
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
-use handlers::store::{load_cost_map, CostEntry};
+use handlers::store::CostEntry;
 use handlers::test_data::make_test_nameplate_image;
 use handlers::tick::{
     enqueue_tickable_chunks, enqueue_tickable_minigames, tick_matchmaking_groups, tick_minigame,
@@ -50,7 +51,6 @@ use handlers::zone::{
     PointOfInterestConfig, ZoneInstance, ZoneTemplate,
 };
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
-use packets::item::ItemDefinition;
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
 use packets::reference_data::{CategoryDefinitions, ItemClassDefinitions, ItemGroupDefinitions};
@@ -184,6 +184,7 @@ pub enum TickableNpcSynchronization {
 }
 
 pub struct GameServer {
+    abilities: HashMap<String, AbilityConfig>,
     categories: CategoryDefinitions,
     costs: BTreeMap<u32, CostEntry>,
     customizations: BTreeMap<u32, Customization>,
@@ -191,7 +192,7 @@ pub struct GameServer {
     default_sabers: BTreeMap<u32, DefaultSaber>,
     enemy_types: EnemyTypeConfig,
     lock_enforcer_source: LockEnforcerSource,
-    items: BTreeMap<u32, ItemDefinition>,
+    items: BTreeMap<u32, ItemConfig>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
@@ -205,19 +206,21 @@ pub struct GameServer {
 
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
+        let abilities = load_abilities(config_dir)?;
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
-        let item_definitions = load_item_definitions(config_dir)?;
-        let item_groups = load_item_groups(config_dir)?;
+        let (items, mut costs) = load_items(config_dir, &abilities)?;
+        let item_groups = load_item_groups(config_dir, &mut costs)?;
         Ok(GameServer {
+            abilities,
             categories: load_categories(config_dir)?,
-            costs: load_cost_map(config_dir, &item_definitions, &item_groups)?,
+            costs,
             customizations: load_customizations(config_dir)?,
             customization_item_mappings: load_customization_item_mappings(config_dir)?,
             default_sabers: load_default_sabers(config_dir)?,
             enemy_types: load_enemy_types(config_dir)?,
             lock_enforcer_source: LockEnforcerSource::from(characters, zones, GuidTable::new()),
-            items: item_definitions,
+            items,
             item_classes: load_item_classes(config_dir)?,
             item_groups: ItemGroupDefinitions {
                 definitions: item_groups,
@@ -817,6 +820,10 @@ impl GameServer {
         Ok(broadcasts)
     }
 
+    pub fn abilities(&self) -> &HashMap<String, AbilityConfig> {
+        &self.abilities
+    }
+
     pub fn costs(&self) -> &BTreeMap<u32, CostEntry> {
         &self.costs
     }
@@ -837,7 +844,7 @@ impl GameServer {
         &self.enemy_types
     }
 
-    pub fn items(&self) -> &BTreeMap<u32, ItemDefinition> {
+    pub fn items(&self) -> &BTreeMap<u32, ItemConfig> {
         &self.items
     }
 
