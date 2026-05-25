@@ -10,11 +10,9 @@ const fn default_ability_sub_type() -> AbilitySubType {
 
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AbilitySlotConfig {
+pub struct AbilityConfig {
     pub icon_set_id: u32,
     pub name_id: u32,
-    #[serde(default)]
-    pub icon_tint_id: u32,
     #[serde(default)]
     pub required_force_points: u32,
     #[serde(default)]
@@ -27,12 +25,6 @@ pub struct AbilitySlotConfig {
     pub max_distance_from_player: f32,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
-}
-
-#[derive(Clone, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct AbilityConfig {
-    pub slot_config: AbilitySlotConfig,
 }
 
 pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig>, ConfigError> {

@@ -8,7 +8,7 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{
-            ability::AbilitySlotConfig,
+            ability::AbilityConfig,
             character::{Player, PlayerAbilityGroup, PlayerInventory},
             item::{ItemConfig, SABER_ITEM_TYPE},
         },
@@ -192,7 +192,7 @@ pub fn customizations_from_item_guids(
 
 fn build_action_bar_packets(
     bar_type: ActionBarType,
-    assignments: &[(u32, Option<&AbilitySlotConfig>)],
+    assignments: &[(u32, Option<&AbilityConfig>)],
 ) -> Vec<Vec<u8>> {
     let mut packets = Vec::new();
 
@@ -201,7 +201,7 @@ fn build_action_bar_packets(
             Some(config) => ActionBarSlot {
                 is_empty: false,
                 icon_id: config.icon_set_id,
-                icon_tint_id: config.icon_tint_id,
+                icon_tint_id: 0,
                 name_id: config.name_id,
                 ability_type: 0,
                 ability_sub_type: config.ability_sub_type,
@@ -257,7 +257,7 @@ fn build_weapon_slot_assignments(
     let ability_groups = &mut player.action_bar.weapon_abilities;
     ability_groups.sort_by_key(|ability_group| ability_group.priority);
 
-    let mut resolved_abilities: Vec<&AbilitySlotConfig> = Vec::new();
+    let mut resolved_abilities: Vec<&AbilityConfig> = Vec::new();
 
     for group in ability_groups {
         for ability_key in &group.ability_keys {
@@ -274,7 +274,7 @@ fn build_weapon_slot_assignments(
                     )
                 })?;
 
-            resolved_abilities.push(&ability.slot_config);
+            resolved_abilities.push(&ability);
         }
     }
 

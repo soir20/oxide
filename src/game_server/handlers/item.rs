@@ -130,10 +130,10 @@ impl ItemConfig {
                     ability_id: 0,
                     ability_slot: index as u32,
                     unknown3: 0,
-                    ability_icon: ability.slot_config.icon_set_id,
+                    ability_icon: ability.icon_set_id,
                     unknown5: 0,
                     unknown6: 0,
-                    ability_name: ability.slot_config.name_id,
+                    ability_name: ability.name_id,
                 })
             })
             .collect()
