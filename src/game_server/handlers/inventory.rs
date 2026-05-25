@@ -274,7 +274,7 @@ fn build_weapon_slot_assignments(
                     )
                 })?;
 
-            resolved_abilities.push(&ability);
+            resolved_abilities.push(ability);
         }
     }
 
