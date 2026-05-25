@@ -269,7 +269,7 @@ pub struct AttackCruiserActorConfig {
     pub collision_asset_name: String,
     pub physics_config: AttackCruiserAnyConfig,
     pub max_health: u32,
-    pub explosive_collision: f32,
+    pub explosive_collision: AttackCruiserBool,
     pub collision_damage: u32,
     pub score: u32,
     pub bonus_score: u32,
@@ -358,6 +358,7 @@ pub struct AttackCruiserGameConfig {
 }
 
 pub enum AttackCruiserConfigType {
+    Actor(Box<AttackCruiserActorConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
     Empty {},
     Game(Box<AttackCruiserGameConfig>),
@@ -367,6 +368,7 @@ pub enum AttackCruiserConfigType {
 impl SerializePacket for AttackCruiserConfigType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
+            AttackCruiserConfigType::Actor(config) => config.serialize(buffer),
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigType::Empty { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
@@ -378,8 +380,8 @@ impl SerializePacket for AttackCruiserConfigType {
 #[derive(SerializePacket)]
 pub struct AttackCruiserConfig {
     pub unknown1: i32,
-    pub unknown2: i32,
-    pub unknown3: String,
+    pub config_type_hash: i32,
+    pub config_reference_name: String,
     pub config_type: AttackCruiserConfigType,
 }
 

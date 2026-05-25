@@ -9,12 +9,12 @@ use crate::game_server::{
     },
     packets::{
         attack_cruiser::{
-            AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
-            AttackCruiserAnyConfig, AttackCruiserBool, AttackCruiserCameraConfig,
-            AttackCruiserClientConfig, AttackCruiserConfig, AttackCruiserConfigType,
-            AttackCruiserGameConfig, AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig,
-            AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
-            AttackCruiserPlayerConfig, AttackCruiserPlayerUpdate,
+            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
+            AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBool,
+            AttackCruiserCameraConfig, AttackCruiserClientConfig, AttackCruiserConfig,
+            AttackCruiserConfigType, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerUpdate,
             AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
             AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
         },
@@ -49,8 +49,8 @@ pub fn start_saber_strike(
                 },
                 config1: AttackCruiserConfig {
                     unknown1: 1,
-                    unknown2: 0x79243a4c,
-                    unknown3: "configtest".to_string(),
+                    config_type_hash: 0x79243a4c,
+                    config_reference_name: "configtest".to_string(),
                     config_type: AttackCruiserConfigType::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
@@ -126,8 +126,8 @@ pub fn start_saber_strike(
                 },
                 config2: AttackCruiserConfig {
                     unknown1: 2,
-                    unknown2: 0x4c61446a,
-                    unknown3: "GameConfig".to_string(),
+                    config_type_hash: 0x4c61446a,
+                    config_reference_name: "GameConfig".to_string(),
                     config_type: AttackCruiserConfigType::Game(Box::new(AttackCruiserGameConfig {
                         id: 27001,
                         encounter_id: 0,
@@ -187,7 +187,7 @@ pub fn start_saber_strike(
                         events: AttackCruiserVec::new(),
                         actor_pools: AttackCruiserVec(vec![AttackCruiserActorPoolConfig {
                             actor_config: AttackCruiserAnyConfig {
-                                class: "actor config class".to_string(),
+                                class: "ActorConfig".to_string(),
                                 value: "actor config value".to_string(),
                             },
                             size: 500,
@@ -211,8 +211,8 @@ pub fn start_saber_strike(
                 },
                 config3: AttackCruiserConfig {
                     unknown1: 3,
-                    unknown2: 0x6dc7e02b,
-                    unknown3: "".to_string(),
+                    config_type_hash: 0x6dc7e02b,
+                    config_reference_name: "".to_string(),
                     config_type: AttackCruiserConfigType::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 100.0,
@@ -237,7 +237,36 @@ pub fn start_saber_strike(
                         },
                     )),
                 },
-                configs: Vec::new(),
+                configs: vec![AttackCruiserConfig {
+                    unknown1: 5,
+                    config_type_hash: 0x016fcdb9,
+                    config_reference_name: "actor config value".to_string(),
+                    config_type: AttackCruiserConfigType::Actor(Box::new(
+                        AttackCruiserActorConfig {
+                            model_id: 247,
+                            effect_id: 0,
+                            death_effect_id: 0,
+                            despawn_effect_id: 0,
+                            explode_offset: 1.0,
+                            collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
+                            physics_config: AttackCruiserAnyConfig {
+                                class: "physics config class".to_string(),
+                                value: "physics config value".to_string(),
+                            },
+                            max_health: 100,
+                            explosive_collision: AttackCruiserBool(true),
+                            collision_damage: 0,
+                            score: 123,
+                            bonus_score: 0,
+                            bonus_max_age_seconds: 10.0,
+                            overhead_offset_y: 0.0,
+                            overhead_health_scale: 1.0,
+                            animations: AttackCruiserVec::new(),
+                            cinematics: AttackCruiserVec::new(),
+                            damage_states: AttackCruiserVec::new(),
+                        },
+                    )),
+                }],
             },
         }),
         GamePacket::serialize(&TunneledPacket {
