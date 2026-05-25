@@ -391,6 +391,7 @@ pub enum AttackCruiserConfigType {
     Camera(Box<AttackCruiserCameraConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
+    Ship(Box<AttackCruiserShipConfig>),
     SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
 }
 
@@ -401,6 +402,7 @@ impl SerializePacket for AttackCruiserConfigType {
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
+            AttackCruiserConfigType::Ship(config) => config.serialize(buffer),
             AttackCruiserConfigType::SimplePhysics(config) => config.serialize(buffer),
         }
     }
