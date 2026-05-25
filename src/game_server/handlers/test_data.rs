@@ -7,9 +7,9 @@ use crate::game_server::{
     packets::{
         item::{EquipmentSlot, Item, ItemDefinition, MarketData},
         player_data::{
-            AbilityType, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
-            InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Unknown12,
-            Unknown13, Unknown2,
+            AbilityType, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10,
+            EquippedItem, InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData,
+            Unknown12, Unknown13, Unknown2,
         },
         player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
         tunnel::TunneledPacket,

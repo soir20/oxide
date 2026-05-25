@@ -5,14 +5,12 @@ use std::{
     path::Path,
 };
 
-use serde::Deserialize;
 use packet_serialize::DeserializePacket;
+use serde::Deserialize;
 
 use crate::{
     game_server::{
-        packets::{
-            ability::AbilityOpCode, AbilitySubType,
-        },
+        packets::{ability::AbilityOpCode, AbilitySubType},
         Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
     ConfigError,
