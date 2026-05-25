@@ -41,19 +41,19 @@ impl SerializePacket for AttackCruiserBool {
     }
 }
 
-pub struct AttackCruiserVec<T>(pub Vec<T>);
+pub struct AttackCruiserVec<T>(pub String, pub Vec<T>);
 
 impl<T> AttackCruiserVec<T> {
     pub fn new() -> Self {
-        AttackCruiserVec(Vec::new())
+        AttackCruiserVec("".to_string(), Vec::new())
     }
 }
 
 impl<T: SerializePacket> SerializePacket for AttackCruiserVec<T> {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        (self.0.len() as u32).serialize(buffer);
-        for entry in self.0.iter() {
-            std::any::type_name::<T>().to_string().serialize(buffer);
+        (self.1.len() as u32).serialize(buffer);
+        for (index, entry) in self.1.iter().enumerate() {
+            format!("{}[{index}]", self.0).serialize(buffer);
             entry.serialize(buffer);
         }
     }
@@ -260,6 +260,35 @@ pub struct AttackCruiserActorDamageStateConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserBasePhysicsConfig {
+    pub contact_response: AttackCruiserBool,
+    pub mass: f32,
+    pub length: f32,
+    pub width: f32,
+    pub height: f32,
+    pub center_of_mass_z: f32,
+    pub max_speed: f32,
+    pub vertical_speed: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserSimplePhysicsFlightConfig {
+    pub acceleration: f32,
+    pub deceleration: f32,
+    pub base_desceleration: f32,
+    pub max_speed: f32,
+    pub max_angular_speed: f32,
+    pub angular_acceleration: f32,
+    pub traction: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserSimplePhysicsConfig {
+    pub base_config: AttackCruiserBasePhysicsConfig,
+    pub flight_configs: AttackCruiserVec<AttackCruiserSimplePhysicsFlightConfig>,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserActorConfig {
     pub model_id: u32,
     pub effect_id: u32,
@@ -360,9 +389,9 @@ pub struct AttackCruiserGameConfig {
 pub enum AttackCruiserConfigType {
     Actor(Box<AttackCruiserActorConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
-    Empty {},
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
+    SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
 }
 
 impl SerializePacket for AttackCruiserConfigType {
@@ -370,9 +399,9 @@ impl SerializePacket for AttackCruiserConfigType {
         match self {
             AttackCruiserConfigType::Actor(config) => config.serialize(buffer),
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
-            AttackCruiserConfigType::Empty { .. } => (0..260).for_each(|_| 0u8.serialize(buffer)),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
+            AttackCruiserConfigType::SimplePhysics(config) => config.serialize(buffer),
         }
     }
 }
