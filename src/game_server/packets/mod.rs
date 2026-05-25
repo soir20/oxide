@@ -641,7 +641,14 @@ pub struct RewardBundle {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Debug,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    PartialEq,
 )]
 #[repr(u32)]
 pub enum ActionBarType {
@@ -651,7 +658,15 @@ pub enum ActionBarType {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    Deserialize,
+    DeserializePacket,
 )]
 #[repr(u32)]
 pub enum AbilitySubType {

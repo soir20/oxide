@@ -2,16 +2,19 @@ use std::collections::BTreeMap;
 
 use packet_serialize::LengthlessVec;
 
-use crate::game_server::packets::{
-    item::{EquipmentSlot, Item, ItemDefinition, MarketData},
-    player_data::{
-        Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
-        InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Unknown12,
-        Unknown13, Unknown2,
+use crate::game_server::{
+    handlers::{character::PlayerAbilityGroup, item::ItemConfig},
+    packets::{
+        item::{EquipmentSlot, Item, MarketData},
+        player_data::{
+            Ability, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10, EquippedItem,
+            InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData, Unknown12,
+            Unknown13, Unknown2,
+        },
+        player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
+        tunnel::TunneledPacket,
+        AbilitySubType, ActionBarSlot, ActionBarType, GamePacket, Name, Pos,
     },
-    player_update::{CustomizationSlot, NameplateImage, NameplateImageId},
-    tunnel::TunneledPacket,
-    AbilitySubType, ActionBarSlot, ActionBarType, GamePacket, Name, Pos,
 };
 
 use super::{
@@ -23,7 +26,7 @@ use super::{
 pub fn make_test_player(
     guid: u32,
     mounts: &BTreeMap<u32, MountConfig>,
-    items: &BTreeMap<u32, ItemDefinition>,
+    items: &BTreeMap<u32, ItemConfig>,
 ) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
@@ -271,21 +274,57 @@ pub fn make_test_player(
                     action_bar_type: ActionBarType::Weapon,
                     slots: vec![
                         ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
+                            is_empty: false,
+                            icon_id: 2312,
                             icon_tint_id: 0,
-                            name_id: 0,
+                            name_id: 60026,
                             ability_type: 0,
                             ability_sub_type: AbilitySubType::CastableSingleTarget,
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
                             quantity: 0,
-                            is_consumable: true,
+                            is_consumable: false,
+                            millis_since_last_use: 0,
+                        },
+                        ActionBarSlot {
+                            is_empty: false,
+                            icon_id: 3179,
+                            icon_tint_id: 0,
+                            name_id: 7,
+                            ability_type: 0,
+                            ability_sub_type: AbilitySubType::CastableSingleTarget,
+                            area_of_effect_radius: 0.0,
+                            max_distance_from_player: 0.0,
+                            required_force_points: 0,
+                            is_enabled: true,
+                            use_cooldown_millis: 0,
+                            init_cooldown_millis: 0,
+                            unknown13: 0,
+                            quantity: 0,
+                            is_consumable: false,
+                            millis_since_last_use: 0,
+                        },
+                        ActionBarSlot {
+                            is_empty: false,
+                            icon_id: 3754,
+                            icon_tint_id: 0,
+                            name_id: 60323,
+                            ability_type: 0,
+                            ability_sub_type: AbilitySubType::CastableSingleTarget,
+                            area_of_effect_radius: 0.0,
+                            max_distance_from_player: 0.0,
+                            required_force_points: 0,
+                            is_enabled: true,
+                            use_cooldown_millis: 0,
+                            init_cooldown_millis: 0,
+                            unknown13: 0,
+                            quantity: 0,
+                            is_consumable: false,
                             millis_since_last_use: 0,
                         },
                         ActionBarSlot {
@@ -303,43 +342,7 @@ pub fn make_test_player(
                             init_cooldown_millis: 0,
                             unknown13: 0,
                             quantity: 0,
-                            is_consumable: true,
-                            millis_since_last_use: 0,
-                        },
-                        ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
-                            icon_tint_id: 0,
-                            name_id: 0,
-                            ability_type: 0,
-                            ability_sub_type: AbilitySubType::CastableSingleTarget,
-                            area_of_effect_radius: 0.0,
-                            max_distance_from_player: 0.0,
-                            required_force_points: 0,
-                            is_enabled: false,
-                            use_cooldown_millis: 0,
-                            init_cooldown_millis: 0,
-                            unknown13: 0,
-                            quantity: 0,
-                            is_consumable: true,
-                            millis_since_last_use: 0,
-                        },
-                        ActionBarSlot {
-                            is_empty: true,
-                            icon_id: 0,
-                            icon_tint_id: 0,
-                            name_id: 0,
-                            ability_type: 0,
-                            ability_sub_type: AbilitySubType::CastableSingleTarget,
-                            area_of_effect_radius: 0.0,
-                            max_distance_from_player: 0.0,
-                            required_force_points: 0,
-                            is_enabled: false,
-                            use_cooldown_millis: 0,
-                            init_cooldown_millis: 0,
-                            unknown13: 0,
-                            quantity: 0,
-                            is_consumable: true,
+                            is_consumable: false,
                             millis_since_last_use: 0,
                         },
                     ],
@@ -357,7 +360,7 @@ pub fn make_test_player(
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -375,7 +378,7 @@ pub fn make_test_player(
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -393,7 +396,7 @@ pub fn make_test_player(
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -411,7 +414,7 @@ pub fn make_test_player(
                             area_of_effect_radius: 0.0,
                             max_distance_from_player: 0.0,
                             required_force_points: 0,
-                            is_enabled: false,
+                            is_enabled: true,
                             use_cooldown_millis: 0,
                             init_cooldown_millis: 0,
                             unknown13: 0,
@@ -435,6 +438,18 @@ pub fn make_test_player(
             effects: vec![],
         },
     }
+}
+
+pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
+    vec![PlayerAbilityGroup {
+        source_item_id: 2909,
+        ability_keys: vec![
+            "vigilance".to_string(),
+            "thermal_grenade".to_string(),
+            "focused_shot".to_string(),
+        ],
+        priority: 2,
+    }]
 }
 
 pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {

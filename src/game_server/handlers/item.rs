@@ -1,10 +1,17 @@
-use std::{collections::BTreeMap, fs::File, path::Path};
+use std::{
+    collections::{BTreeMap, HashMap},
+    fs::File,
+    path::Path,
+};
 
 use crate::{
     game_server::{
-        handlers::store::{compute_costs, ItemCostMap},
+        handlers::{
+            ability::AbilityConfig,
+            store::{compute_costs, ItemCostMap},
+        },
         packets::{
-            item::{ItemAbility, ItemDefinition, ItemType},
+            item::{ItemDefinition, ItemType, SpecialItemAbility},
             player_update::CustomizationSlot,
         },
     },
@@ -30,10 +37,10 @@ const fn default_stack_size() -> i32 {
     1
 }
 
-#[derive(Debug, Deserialize)]
-pub struct ItemAbilityConfig {
-    pub ability_icon: u32,
-    pub ability_name: u32,
+#[derive(PartialEq, Clone, Default, Debug, Deserialize)]
+pub struct ItemActionBarConfig {
+    pub priority_override: Option<u32>,
+    pub ability_keys: Vec<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -97,77 +104,95 @@ pub struct ItemConfig {
     #[serde(default)]
     pub customization_id: u32,
     #[serde(default)]
-    pub abilities: Vec<ItemAbilityConfig>,
+    pub action_bar: ItemActionBarConfig,
 }
 
-impl From<ItemAbilityConfig> for ItemAbility {
-    fn from(cfg: ItemAbilityConfig) -> Self {
-        ItemAbility {
-            ability_slot: 0,
-            ability_id: 0,
-            unknown3: 0,
-            ability_icon: cfg.ability_icon,
-            unknown5: 0,
-            unknown6: 0,
-            ability_name: cfg.ability_name,
-        }
+impl ItemConfig {
+    fn resolve_special_abilities(
+        &self,
+        abilities: &HashMap<String, AbilityConfig>,
+    ) -> Vec<SpecialItemAbility> {
+        self.action_bar
+            .ability_keys
+            .iter()
+            .enumerate()
+            .filter_map(|(index, key)| {
+                // Only indexes 1–3 are special
+                if index == 0 {
+                    return None;
+                }
+
+                let ability = abilities.get(key).unwrap_or_else(|| {
+                    panic!("Item {} references unknown ability key {}", self.guid, key)
+                });
+
+                Some(SpecialItemAbility {
+                    ability_id: 0,
+                    ability_slot: index as u32,
+                    unknown3: 0,
+                    ability_icon: ability.icon_set_id,
+                    unknown5: 0,
+                    unknown6: 0,
+                    ability_name: ability.name_id,
+                })
+            })
+            .collect()
     }
-}
 
-impl From<ItemConfig> for ItemDefinition {
-    fn from(cfg: ItemConfig) -> Self {
+    pub fn to_definition(&self, abilities: &HashMap<String, AbilityConfig>) -> ItemDefinition {
         ItemDefinition {
-            guid: cfg.guid,
-            name_id: cfg.name_id,
-            description_id: cfg.description_id,
-            icon_set_id: cfg.icon_set_id,
-            tint: cfg.tint,
+            guid: self.guid,
+            name_id: self.name_id,
+            description_id: self.description_id,
+            icon_set_id: self.icon_set_id,
+            tint: self.tint,
             unknown6: 0,
             unknown7: 0,
-            cost: cfg.cost,
-            item_class: cfg.item_class,
-            required_battle_class: cfg.required_battle_class,
-            slot: cfg.slot,
-            disable_trade: cfg.disable_trade,
-            disable_sale: cfg.disable_sale,
-            model_name: cfg.model_name,
-            texture_alias: cfg.texture_alias,
-            required_gender: cfg.required_gender,
-            item_type: cfg.item_type,
-            category: cfg.category,
-            members: cfg.members,
-            non_minigame: cfg.non_minigame,
-            weapon_trail_effect: cfg.weapon_trail_effect.unwrap_or_default(),
-            composite_effect: cfg.composite_effect.unwrap_or_default(),
-            power_rating: cfg.power_rating,
-            min_battle_class_level: cfg.min_battle_class_level,
-            rarity: cfg.rarity,
+            cost: self.cost,
+            item_class: self.item_class,
+            required_battle_class: self.required_battle_class,
+            slot: self.slot,
+            disable_trade: self.disable_trade,
+            disable_sale: self.disable_sale,
+            model_name: self.model_name.clone(),
+            texture_alias: self.texture_alias.clone(),
+            required_gender: self.required_gender,
+            item_type: self.item_type,
+            category: self.category,
+            members: self.members,
+            non_minigame: self.non_minigame,
+            weapon_trail_effect: self.weapon_trail_effect.unwrap_or_default(),
+            composite_effect: self.composite_effect.unwrap_or_default(),
+            power_rating: self.power_rating,
+            min_battle_class_level: self.min_battle_class_level,
+            rarity: self.rarity,
             activatable_ability_id: 0,
             passive_ability_id: 0,
-            single_use: cfg.single_use,
-            max_stack_size: cfg.max_stack_size,
-            is_tintable: !cfg.tint_alias.trim().is_empty(),
-            tint_alias: cfg.tint_alias,
-            disable_preview: cfg.disable_preview,
+            single_use: self.single_use,
+            max_stack_size: self.max_stack_size,
+            is_tintable: !self.tint_alias.trim().is_empty(),
+            tint_alias: self.tint_alias.clone(),
+            disable_preview: self.disable_preview,
             unknown33: false,
-            race_set_id: cfg.race_set_id,
+            race_set_id: self.race_set_id,
             unknown35: false,
             unknown36: 0,
             unknown37: 0,
-            customization_slot: cfg.customization_slot,
-            customization_id: cfg.customization_id,
+            customization_slot: self.customization_slot,
+            customization_id: self.customization_id,
             unknown40: 0,
             stats: vec![],
-            abilities: cfg.abilities.into_iter().map(ItemAbility::from).collect(),
+            special_abilities: self.resolve_special_abilities(abilities),
         }
     }
 }
 
-pub type ItemDefinitionMap = BTreeMap<u32, ItemDefinition>;
+pub type ItemConfigMap = BTreeMap<u32, ItemConfig>;
 
-pub fn load_item_definitions(
+pub fn load_items(
     config_dir: &Path,
-) -> Result<(ItemDefinitionMap, ItemCostMap), ConfigError> {
+    abilities: &HashMap<String, AbilityConfig>,
+) -> Result<(ItemConfigMap, ItemCostMap), ConfigError> {
     let items_dir = config_dir.join("items");
 
     let yaml_files = WalkDir::new(&items_dir)
@@ -180,6 +205,7 @@ pub fn load_item_definitions(
         .map(|entry| entry.into_path());
 
     let mut items = BTreeMap::new();
+    let mut item_paths = HashMap::new();
     let mut costs = BTreeMap::new();
 
     for file_path in yaml_files {
@@ -187,15 +213,37 @@ pub fn load_item_definitions(
         let configs: Vec<ItemConfig> = serde_yaml::from_reader(file)?;
         costs.extend(compute_costs(&configs)?);
 
-        for cfg in configs {
-            let def: ItemDefinition = cfg.into();
-
-            if let Some(previous) = items.insert(def.guid, def) {
+        for config in configs {
+            let ability_count = config.action_bar.ability_keys.len();
+            if ability_count > 4 {
                 return Err(ConfigError::ConstraintViolated(format!(
-                    "Two item definitions have ID {} (file: {:?})",
-                    previous.guid, file_path
+                    "Item {} has {} abilities in file {:?} (max 4)",
+                    config.guid, ability_count, file_path
                 )));
             }
+
+            for key in &config.action_bar.ability_keys {
+                if !abilities.contains_key(key) {
+                    return Err(ConfigError::ConstraintViolated(format!(
+                        "Item {} references unknown ability key {} in file {:?}",
+                        config.guid, key, file_path
+                    )));
+                }
+            }
+
+            let guid = config.guid;
+
+            if let Some(previous) = items.insert(guid, config) {
+                let first_path = item_paths.get(&previous.guid).unwrap();
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Item {} has conflicting definitions:\n  - first seen in: {:?}\n  - duplicate found in: {:?}",
+                    previous.guid,
+                    first_path,
+                    file_path
+                )));
+            }
+
+            item_paths.insert(guid, file_path.clone());
         }
     }
 
