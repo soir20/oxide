@@ -1,42 +1,47 @@
 use std::{
-    collections::{hash_map::IntoIter, HashMap},
+    collections::{btree_map::IntoIter, BTreeMap, HashMap},
     io::SeekFrom,
     path::{Path, PathBuf},
 };
 
-use tokio::{
-    fs::File,
-    io::{AsyncReadExt, AsyncSeekExt, BufReader},
+use serde::{Deserialize, Serialize};
+use tokio::io::AsyncReadExt;
+
+use crate::{
+    deserialize, deserialize_string, tell, u32_to_usize, Asset, AsyncReader, DeserializeAsset,
+    Error,
 };
 
-use crate::{deserialize, deserialize_string, tell, Asset, DeserializeAsset, Error};
-
+#[derive(Serialize, Deserialize)]
 pub struct PackAsset {
     pub offset: u64,
     pub size: u32,
     pub crc: u32,
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct Pack {
     path: PathBuf,
-    assets: HashMap<String, PackAsset>,
+    assets: BTreeMap<String, PackAsset>,
 }
 
 impl DeserializeAsset for Pack {
-    async fn deserialize<P: AsRef<Path> + Send>(path: P, file: &mut File) -> Result<Self, Error> {
-        let mut reader = BufReader::new(file);
-        let mut assets = HashMap::new();
+    async fn deserialize<R: AsyncReader, P: AsRef<Path> + Send>(
+        path: P,
+        file: &mut R,
+    ) -> Result<Self, Error> {
+        let mut assets = BTreeMap::new();
         loop {
-            let next_group_offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
-            let files_in_group = deserialize(&mut reader, BufReader::read_u32).await?;
+            let next_group_offset = deserialize(file, R::read_u32).await? as u64;
+            let files_in_group = deserialize(file, R::read_u32).await?;
 
             for _ in 0..files_in_group {
-                let name_len = deserialize(&mut reader, BufReader::read_u32).await?;
-                let (name, _) = deserialize_string(&mut reader, name_len as usize).await?;
+                let name_len = deserialize(file, R::read_u32).await?;
+                let (name, _) = deserialize_string(file, u32_to_usize(name_len)?).await?;
 
-                let offset = deserialize(&mut reader, BufReader::read_u32).await? as u64;
-                let size = deserialize(&mut reader, BufReader::read_u32).await?;
-                let crc = deserialize(&mut reader, BufReader::read_u32).await?;
+                let offset = deserialize(file, R::read_u32).await? as u64;
+                let size = deserialize(file, R::read_u32).await?;
+                let crc = deserialize(file, R::read_u32).await?;
 
                 assets.insert(name, PackAsset { offset, size, crc });
             }
@@ -45,8 +50,8 @@ impl DeserializeAsset for Pack {
                 break;
             }
 
-            let offset = tell(&mut reader).await;
-            if let Err(err) = reader.seek(SeekFrom::Start(next_group_offset)).await {
+            let offset = tell(file).await;
+            if let Err(err) = file.seek(SeekFrom::Start(next_group_offset)).await {
                 return Err(Error {
                     kind: err.into(),
                     offset,
@@ -81,6 +86,7 @@ impl Pack {
                     Asset {
                         path: self.path.clone(),
                         offset: asset.offset,
+                        size: Some(asset.size),
                     },
                 )
             })
@@ -89,5 +95,14 @@ impl Pack {
 
     pub fn iter(&self) -> impl Iterator<Item = (&String, &PackAsset)> + use<'_> {
         self.assets.iter()
+    }
+
+    pub fn iter_prefix<'a>(
+        &self,
+        prefix: &'a str,
+    ) -> impl Iterator<Item = (&String, &PackAsset)> + use<'a, '_> {
+        self.assets
+            .range(prefix.to_string()..)
+            .take_while(move |(name, _)| name.starts_with(prefix))
     }
 }

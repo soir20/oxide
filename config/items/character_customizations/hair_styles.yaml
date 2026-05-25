@@ -1,0 +1,1548 @@
+---
+# Anakin's Hairstyle
+- guid: 40000
+  name_id: 402
+  description_id: 14
+  icon_set_id: 531
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130000
+# Argyus' Hairstyle
+- guid: 40001
+  name_id: 2584
+  description_id: 14
+  icon_set_id: 542
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130001
+# Bald
+- guid: 40002
+  name_id: 1435
+  description_id: 14
+  icon_set_id: 532
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130002
+# Curly Hairstyle
+- guid: 40003
+  name_id: 15416
+  description_id: 14
+  icon_set_id: 533
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130003
+# Fauxhawk Hairstyle
+- guid: 40004
+  name_id: 404
+  description_id: 14
+  icon_set_id: 534
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130004
+# Forward Comb Hairstyle
+- guid: 40005
+  name_id: 406
+  description_id: 14
+  icon_set_id: 536
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130005
+# Forward Hairstyle
+- guid: 40006
+  name_id: 2996
+  description_id: 14
+  icon_set_id: 535
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130006
+# Han's Hairstyle
+- guid: 40007
+  name_id: 764
+  description_id: 14
+  icon_set_id: 537
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130007
+# Jaybo's Hairstyle
+- guid: 40008
+  name_id: 15417
+  description_id: 14
+  icon_set_id: 538
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130008
+# Kenobi's Hairstyle
+- guid: 40009
+  name_id: 2583
+  description_id: 14
+  icon_set_id: 539
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130009
+# Luke's Hairstyle
+- guid: 40010
+  name_id: 15418
+  description_id: 14
+  icon_set_id: 540
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130010
+# Lux Bonteri Hairstyle
+- guid: 40011
+  name_id: 54306
+  description_id: 14
+  icon_set_id: 3657
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130011
+# Qui-gon's Hairstyle
+- guid: 40012
+  name_id: 15419
+  description_id: 14
+  icon_set_id: 541
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130012
+# Saw Hairstyle
+- guid: 40013
+  name_id: 54174
+  description_id: 14
+  icon_set_id: 3596
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130013
+# Vos Hairstyle
+- guid: 40014
+  name_id: 19639
+  description_id: 14
+  icon_set_id: 1437
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130014
+# Aurra Sing's Hairstyle
+- guid: 40015
+  name_id: 15413
+  description_id: 14
+  icon_set_id: 519
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130015
+# Bald
+- guid: 40016
+  name_id: 1715
+  description_id: 14
+  icon_set_id: 520
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130016
+# Braid Hairstyle
+- guid: 40017
+  name_id: 390
+  description_id: 14
+  icon_set_id: 521
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130017
+# Buns Hairstyle
+- guid: 40018
+  name_id: 2588
+  description_id: 14
+  icon_set_id: 611
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130018
+# Cryar's Hairstyle
+- guid: 40019
+  name_id: 15414
+  description_id: 14
+  icon_set_id: 612
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130019
+# Dual Buns Hairstyle
+- guid: 40020
+  name_id: 392
+  description_id: 14
+  icon_set_id: 523
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130020
+# Flip Hairstyle
+- guid: 40021
+  name_id: 2589
+  description_id: 14
+  icon_set_id: 522
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130021
+# Luxury Bob Hairstyle
+- guid: 40022
+  name_id: 15415
+  description_id: 14
+  icon_set_id: 524
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130022
+# Mara's Hairstyle
+- guid: 40023
+  name_id: 13834
+  description_id: 14
+  icon_set_id: 525
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130023
+# Nabooian Headdress
+- guid: 40024
+  name_id: 54305
+  description_id: 14
+  icon_set_id: 3656
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130024
+# Padmé's Headpiece Hairstyle
+- guid: 40025
+  name_id: 19986
+  description_id: 14
+  icon_set_id: 1466
+  cost: 200
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130025
+# Ponytail Rings Hairstyle
+- guid: 40026
+  name_id: 2591
+  description_id: 14
+  icon_set_id: 526
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130026
+# Ponytails Hairstyle
+- guid: 40027
+  name_id: 2590
+  description_id: 14
+  icon_set_id: 613
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130027
+# Short Hairstyle
+- guid: 40028
+  name_id: 394
+  description_id: 14
+  icon_set_id: 527
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130028
+# Steela Hairstyle
+- guid: 40029
+  name_id: 54173
+  description_id: 14
+  icon_set_id: 3597
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130029
+# Updo Hairstyle
+- guid: 40030
+  name_id: 2592
+  description_id: 14
+  icon_set_id: 614
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: HairStyle
+  customization_id: 130030
+# Bald
+- guid: 40031
+  name_id: 1715
+  description_id: 14
+  icon_set_id: 588
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130031
+# Boomer's Hairstyle
+- guid: 40032
+  name_id: 396
+  description_id: 14
+  icon_set_id: 589
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130032
+# Boost's Hairstyle
+- guid: 40033
+  name_id: 398
+  description_id: 14
+  icon_set_id: 590
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130033
+# Business Hairstyle
+- guid: 40034
+  name_id: 13777
+  description_id: 14
+  icon_set_id: 591
+  cost: 30
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130034
+# Caesar Hairstyle
+- guid: 40035
+  name_id: 15409
+  description_id: 14
+  icon_set_id: 592
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130035
+# Cornrows Hairstyle
+- guid: 40036
+  name_id: 13778
+  description_id: 14
+  icon_set_id: 593
+  cost: 30
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130036
+# Curly Hairstyle
+- guid: 40037
+  name_id: 15410
+  description_id: 14
+  icon_set_id: 594
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130037
+# Flattop Hairstyle
+- guid: 40038
+  name_id: 400
+  description_id: 14
+  icon_set_id: 595
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130038
+# Icecold Hairstyle
+- guid: 40039
+  name_id: 13779
+  description_id: 14
+  icon_set_id: 596
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130039
+# Razorhawk Hairstyle
+- guid: 40040
+  name_id: 15411
+  description_id: 14
+  icon_set_id: 597
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130040
+# Rex's Hairstyle
+- guid: 40041
+  name_id: 766
+  description_id: 14
+  icon_set_id: 598
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130041
+# Ridges Hairstyle
+- guid: 40042
+  name_id: 15412
+  description_id: 14
+  icon_set_id: 599
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130042
+# Topknot Hairstyle
+- guid: 40043
+  name_id: 13780
+  description_id: 14
+  icon_set_id: 600
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: HairStyle
+  customization_id: 130043
+# Average Lekku
+- guid: 40044
+  name_id: 414
+  description_id: 14
+  icon_set_id: 567
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130044
+# Curled Lekku
+- guid: 40045
+  name_id: 15429
+  description_id: 14
+  icon_set_id: 564
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130045
+# Dual Lekku
+- guid: 40046
+  name_id: 13842
+  description_id: 14
+  icon_set_id: 563
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130046
+# Entwined Lekku
+- guid: 40047
+  name_id: 15432
+  description_id: 14
+  icon_set_id: 570
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130047
+# Left Lekku
+- guid: 40048
+  name_id: 13843
+  description_id: 14
+  icon_set_id: 566
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130048
+# Right Lekku
+- guid: 40049
+  name_id: 13844
+  description_id: 14
+  icon_set_id: 568
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130049
+# Thick Lekku
+- guid: 40050
+  name_id: 15430
+  description_id: 14
+  icon_set_id: 565
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130050
+# Twisted Lekku
+- guid: 40051
+  name_id: 15431
+  description_id: 14
+  icon_set_id: 569
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130051
+# Curled Lekku
+- guid: 40052
+  name_id: 15429
+  description_id: 14
+  icon_set_id: 556
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130052
+# Dual Lekku
+- guid: 40053
+  name_id: 13845
+  description_id: 14
+  icon_set_id: 555
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130053
+# Entwined Lekku
+- guid: 40054
+  name_id: 15432
+  description_id: 14
+  icon_set_id: 562
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130054
+# Left Lekku
+- guid: 40055
+  name_id: 13846
+  description_id: 14
+  icon_set_id: 558
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130055
+# Right Lekku
+- guid: 40056
+  name_id: 13847
+  description_id: 14
+  icon_set_id: 560
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130056
+# Slender Lekku
+- guid: 40057
+  name_id: 1441
+  description_id: 14
+  icon_set_id: 559
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130057
+# Thick Lekku
+- guid: 40058
+  name_id: 15430
+  description_id: 14
+  icon_set_id: 557
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130058
+# Twisted Lekku
+- guid: 40059
+  name_id: 15431
+  description_id: 14
+  icon_set_id: 561
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 3
+  customization_slot: HairStyle
+  customization_id: 130059
+# Crown
+- guid: 40060
+  name_id: 15435
+  description_id: 14
+  icon_set_id: 580
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130060
+# Dreads
+- guid: 40061
+  name_id: 13860
+  description_id: 14
+  icon_set_id: 1166
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130061
+# Emohawk
+- guid: 40062
+  name_id: 15434
+  description_id: 14
+  icon_set_id: 655
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130062
+# Four Corners
+- guid: 40063
+  name_id: 784
+  description_id: 14
+  icon_set_id: 578
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130063
+# Heavy Brow
+- guid: 40064
+  name_id: 13861
+  description_id: 14
+  icon_set_id: 579
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130064
+# Koth
+- guid: 40065
+  name_id: 15433
+  description_id: 14
+  icon_set_id: 654
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130065
+# Mohawk
+- guid: 40066
+  name_id: 786
+  description_id: 14
+  icon_set_id: 581
+  cost: 300
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130066
+# Savage's Seared Horn
+- guid: 40067
+  name_id: 54307
+  description_id: 14
+  icon_set_id: 3658
+  cost: 300
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130067
+# Spiky
+- guid: 40068
+  name_id: 15436
+  description_id: 14
+  icon_set_id: 582
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130068
+# Spiky Mohawk
+- guid: 40069
+  name_id: 15437
+  description_id: 14
+  icon_set_id: 583
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130069
+# Top Knot
+- guid: 40070
+  name_id: 788
+  description_id: 14
+  icon_set_id: 584
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130070
+# Crown
+- guid: 40071
+  name_id: 15435
+  description_id: 14
+  icon_set_id: 573
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130071
+# Dreads
+- guid: 40072
+  name_id: 13860
+  description_id: 14
+  icon_set_id: 1165
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130072
+# Emohawk
+- guid: 40073
+  name_id: 15434
+  description_id: 14
+  icon_set_id: 642
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130073
+# Four Corners
+- guid: 40074
+  name_id: 784
+  description_id: 14
+  icon_set_id: 571
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130074
+# Heavy Brow
+- guid: 40075
+  name_id: 13861
+  description_id: 14
+  icon_set_id: 572
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130075
+# Koth
+- guid: 40076
+  name_id: 15433
+  description_id: 14
+  icon_set_id: 641
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130076
+# Mohawk
+- guid: 40077
+  name_id: 786
+  description_id: 14
+  icon_set_id: 574
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130077
+# Savage's Seared Horn
+- guid: 40078
+  name_id: 54307
+  description_id: 14
+  icon_set_id: 3678
+  cost: 250
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130078
+# Spiky
+- guid: 40079
+  name_id: 15436
+  description_id: 14
+  icon_set_id: 575
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130079
+# Spiky Mohawk
+- guid: 40080
+  name_id: 15437
+  description_id: 14
+  icon_set_id: 576
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130080
+# Top Knot
+- guid: 40081
+  name_id: 788
+  description_id: 14
+  icon_set_id: 577
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 4
+  customization_slot: HairStyle
+  customization_id: 130081
+# Forktop Montrals
+- guid: 40082
+  name_id: 13839
+  description_id: 14
+  icon_set_id: 549
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130082
+# Padawan's Montrals
+- guid: 40083
+  name_id: 13841
+  description_id: 14
+  icon_set_id: 553
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130083
+# Spiketop Montrals
+- guid: 40084
+  name_id: 13840
+  description_id: 14
+  icon_set_id: 551
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130084
+# Forktop Montrals
+- guid: 40085
+  name_id: 13839
+  description_id: 14
+  icon_set_id: 543
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130085
+# Padawan's Montrals
+- guid: 40086
+  name_id: 13841
+  description_id: 14
+  icon_set_id: 547
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130086
+# Spiketop Montrals
+- guid: 40087
+  name_id: 13840
+  description_id: 14
+  icon_set_id: 545
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 5
+  customization_slot: HairStyle
+  customization_id: 130087
+# Bald
+- guid: 40088
+  name_id: 1717
+  description_id: 14
+  icon_set_id: 1289
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130088
+# Caesar Hairstyle
+- guid: 40089
+  name_id: 18037
+  description_id: 14
+  icon_set_id: 1290
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130089
+# Chi Cho Hairstyle
+- guid: 40090
+  name_id: 18038
+  description_id: 14
+  icon_set_id: 1291
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130090
+# Duck Tail Hairstyle
+- guid: 40091
+  name_id: 18039
+  description_id: 14
+  icon_set_id: 1292
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130091
+# Faux Hawk Hairstyle
+- guid: 40092
+  name_id: 18040
+  description_id: 14
+  icon_set_id: 1293
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130092
+# Flattop Hairstyle
+- guid: 40093
+  name_id: 18041
+  description_id: 14
+  icon_set_id: 1294
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130093
+# Ponytail Hairstyle
+- guid: 40094
+  name_id: 18042
+  description_id: 14
+  icon_set_id: 1295
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130094
+# Puffy Part Hairstyle
+- guid: 40095
+  name_id: 18043
+  description_id: 14
+  icon_set_id: 1296
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130095
+# Bald
+- guid: 40096
+  name_id: 1717
+  description_id: 14
+  icon_set_id: 1261
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130096
+# Gold Bob Hairstyle
+- guid: 40097
+  name_id: 18027
+  description_id: 14
+  icon_set_id: 1262
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130097
+# Gold Buns Hairstyle
+- guid: 40098
+  name_id: 18028
+  description_id: 14
+  icon_set_id: 1263
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130098
+# Gold Spiral Buns Hairstyle
+- guid: 40099
+  name_id: 18029
+  description_id: 14
+  icon_set_id: 1264
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130099
+# Low Pigtails Hairstyle
+- guid: 40100
+  name_id: 18030
+  description_id: 14
+  icon_set_id: 1265
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130100
+# Low Right Pigtail Hairstyle
+- guid: 40101
+  name_id: 18031
+  description_id: 14
+  icon_set_id: 1266
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130101
+# Pigtails Hairstyle
+- guid: 40102
+  name_id: 18032
+  description_id: 14
+  icon_set_id: 1267
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130102
+# Short Gold Hairstyle
+- guid: 40103
+  name_id: 18034
+  description_id: 14
+  icon_set_id: 1269
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130103
+# Short Hairstyle
+- guid: 40104
+  name_id: 18033
+  description_id: 14
+  icon_set_id: 1268
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130104
+# Side Swoop Hairstyle
+- guid: 40105
+  name_id: 18035
+  description_id: 14
+  icon_set_id: 1270
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130105
+# Top Bun Hairstyle
+- guid: 40106
+  name_id: 18036
+  description_id: 14
+  icon_set_id: 1271
+  cost: 50
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: HairStyle
+  customization_id: 130106
+# Bald
+- guid: 40107
+  name_id: 43468
+  description_id: 14
+  icon_set_id: 1829
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130107
+# Mohawk Lumps
+- guid: 40108
+  name_id: 43469
+  description_id: 14
+  icon_set_id: 1830
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130108
+# Shell Plates
+- guid: 40109
+  name_id: 43470
+  description_id: 14
+  icon_set_id: 1835
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130109
+# Short Spikes
+- guid: 40110
+  name_id: 43471
+  description_id: 14
+  icon_set_id: 1831
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130110
+# Spike Crown
+- guid: 40111
+  name_id: 43472
+  description_id: 14
+  icon_set_id: 1836
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130111
+# Tall Spikes
+- guid: 40112
+  name_id: 43467
+  description_id: 14
+  icon_set_id: 1832
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130112
+# Bald
+- guid: 40113
+  name_id: 43468
+  description_id: 14
+  icon_set_id: 1819
+  cost: 20
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130113
+# Mohawk Lumps
+- guid: 40114
+  name_id: 43469
+  description_id: 14
+  icon_set_id: 1820
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130114
+# Shell Plates
+- guid: 40115
+  name_id: 43470
+  description_id: 14
+  icon_set_id: 1833
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130115
+# Short Spikes
+- guid: 40116
+  name_id: 43471
+  description_id: 14
+  icon_set_id: 1821
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130116
+# Spike Crown
+- guid: 40117
+  name_id: 43472
+  description_id: 14
+  icon_set_id: 1834
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130117
+# Tall Spikes
+- guid: 40118
+  name_id: 43467
+  description_id: 14
+  icon_set_id: 1822
+  cost: 100
+  slot: !Customization HairStyle
+  required_gender: 2
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: HairStyle
+  customization_id: 130118

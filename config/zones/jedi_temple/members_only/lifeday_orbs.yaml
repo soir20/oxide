@@ -30,10 +30,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -77,10 +76,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -124,10 +122,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -189,10 +186,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -255,10 +251,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -330,10 +325,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
@@ -395,10 +389,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
@@ -463,10 +456,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -533,10 +525,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: spawn
@@ -600,10 +591,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty
@@ -657,10 +647,9 @@ members_only:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode:
-                Graceful:
-                  fade_duration_millis: 1000
-                  removal_delay_millis: 0
+              removal_mode: !Graceful
+                fade_duration_millis: 1000
+                removal_delay_millis: 0
               min_duration_millis: 1000
           next_possible_procedures:
             - procedure: empty

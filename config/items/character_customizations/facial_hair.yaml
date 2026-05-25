@@ -1,0 +1,193 @@
+---
+# Admiral's Mustache
+- guid: 20000
+  name_id: 13836
+  description_id: 14
+  icon_set_id: 530
+  cost: 200
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: FacialHair
+  customization_id: 160000
+# Alderaanian Senator's Goatee
+- guid: 20001
+  name_id: 768
+  description_id: 14
+  icon_set_id: 529
+  cost: 150
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: FacialHair
+  customization_id: 160001
+# Clean Shaven
+- guid: 20002
+  name_id: 5848
+  description_id: 14
+  icon_set_id: 532
+  cost: 10
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: FacialHair
+  customization_id: 160002
+# General's Beard
+- guid: 20003
+  name_id: 321
+  description_id: 14
+  icon_set_id: 528
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 1
+  customization_slot: FacialHair
+  customization_id: 160003
+# Clean Shaven
+- guid: 20004
+  name_id: 5848
+  description_id: 14
+  icon_set_id: 588
+  cost: 10
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: FacialHair
+  customization_id: 160004
+# Goatee
+- guid: 20005
+  name_id: 13781
+  description_id: 14
+  icon_set_id: 585
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: FacialHair
+  customization_id: 160005
+- guid: 20006
+  description_id: 14
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: FacialHair
+  customization_id: 160006
+# Splitchin Beard
+- guid: 20007
+  name_id: 13782
+  description_id: 14
+  icon_set_id: 586
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: FacialHair
+  customization_id: 160007
+# Tripchin Beard
+- guid: 20008
+  name_id: 13831
+  description_id: 14
+  icon_set_id: 587
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 2
+  customization_slot: FacialHair
+  customization_id: 160008
+# Clean Shaven
+- guid: 20009
+  name_id: 18052
+  description_id: 14
+  icon_set_id: 1289
+  cost: 20
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160009
+# Double Patch
+- guid: 20010
+  name_id: 18053
+  description_id: 14
+  icon_set_id: 1284
+  cost: 50
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160010
+# Magnum
+- guid: 20011
+  name_id: 18055
+  description_id: 14
+  icon_set_id: 1286
+  cost: 50
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160011
+# Papanoida's Beard
+- guid: 20012
+  name_id: 18056
+  description_id: 14
+  icon_set_id: 1287
+  cost: 200
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160012
+# Sharp Goatee
+- guid: 20013
+  name_id: 18054
+  description_id: 14
+  icon_set_id: 1285
+  cost: 100
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160013
+# Single Patch
+- guid: 20014
+  name_id: 18051
+  description_id: 14
+  icon_set_id: 1288
+  cost: 50
+  slot: !Customization FacialHair
+  required_gender: 1
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 10
+  customization_slot: FacialHair
+  customization_id: 160014

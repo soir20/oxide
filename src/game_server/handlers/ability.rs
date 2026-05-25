@@ -1,10 +1,52 @@
-use std::io::{Cursor, Read};
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{Cursor, Read},
+    path::Path,
+};
 
+use serde::Deserialize;
 use packet_serialize::DeserializePacket;
 
-use crate::game_server::{
-    packets::ability::AbilityOpCode, Broadcast, ProcessPacketError, ProcessPacketErrorType,
+use crate::{
+    game_server::{
+        packets::{
+            ability::AbilityOpCode, AbilitySubType,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    },
+    ConfigError,
 };
+
+const fn default_ability_sub_type() -> AbilitySubType {
+    AbilitySubType::InstantSingleTarget
+}
+
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AbilityConfig {
+    pub icon_set_id: u32,
+    pub name_id: u32,
+    #[serde(default)]
+    pub required_force_points: u32,
+    #[serde(default)]
+    pub use_cooldown_millis: u32,
+    #[serde(default)]
+    pub init_cooldown_millis: u32,
+    #[serde(default)]
+    pub area_of_effect_radius: f32,
+    #[serde(default)]
+    pub max_distance_from_player: u32,
+    #[serde(default = "default_ability_sub_type")]
+    pub ability_sub_type: AbilitySubType,
+}
+
+pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig>, ConfigError> {
+    let file = File::open(config_dir.join("abilities.yaml"))?;
+    let abilities: HashMap<String, AbilityConfig> = serde_yaml::from_reader(file)?;
+
+    Ok(abilities)
+}
 
 pub fn process_ability(cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;

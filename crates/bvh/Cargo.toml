@@ -1,0 +1,11 @@
+[package]
+name = "oxide_bvh"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bvh = { version = "0.12.0", features = ["serde"] }
+flate2 = "1.1.9"
+glam = "0.30.10"
+pot = "3.0.1"
+serde = { version = "1.0.196", features = ["derive"] }

@@ -387,6 +387,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
     Clone,
     Copy,
     Debug,
+    Default,
     Deserialize,
     PartialEq,
     Eq,
@@ -400,6 +401,7 @@ impl GamePacket for ItemDefinitionsReply<'_> {
 #[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum CustomizationSlot {
+    #[default]
     None = -1,
     HeadModel = 0,
     SkinTone = 1,

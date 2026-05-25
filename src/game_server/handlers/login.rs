@@ -1,12 +1,15 @@
+use std::collections::BTreeMap;
+
 use packet_serialize::NullTerminatedString;
 
 use crate::{
     game_server::{
         handlers::{
-            character::{BattleClass, PlayerInventory},
+            character::{BattleClass, PlayerActionBar, PlayerInventory, Toggles},
             minigame::{leave_active_minigame_if_any, LeaveMinigameTarget},
         },
         packets::{
+            item::ItemDefinition,
             login::{DefinePointsOfInterest, DeploymentEnv, GameSettings, LoginReply},
             player_update::ItemDefinitionsReply,
             tunnel::TunneledPacket,
@@ -18,11 +21,11 @@ use crate::{
 };
 
 use super::{
-    character::{Character, Player, PreviousLocation, RemovalMode},
+    character::{Character, Player, PreviousLocation, RemovalMode, Role},
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
-    test_data::{make_test_customizations, make_test_player},
+    test_data::{make_test_customizations, make_test_player, make_test_weapon_abilities},
     unique_guid::player_guid,
     zone::{clean_up_zone_if_no_players, ZoneInstance},
 };
@@ -79,13 +82,19 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             };
             packets.push(GamePacket::serialize(&settings));
 
-            let item_defs = TunneledPacket {
+            let item_defs: BTreeMap<u32, ItemDefinition> = game_server
+                .items()
+                .iter()
+                .map(|(id, config)| (*id, config.to_definition(game_server.abilities())))
+                .collect();
+
+            let item_defs_reply = TunneledPacket {
                 unknown1: true,
                 inner: ItemDefinitionsReply {
-                    definitions: game_server.items(),
+                    definitions: &item_defs,
                 },
             };
-            packets.push(GamePacket::serialize(&item_defs));
+            packets.push(GamePacket::serialize(&item_defs_reply));
 
             let player = TunneledPacket {
                 unknown1: true,
@@ -145,6 +154,15 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                         template_guid: player_zone_template,
                         pos: player.inner.data.pos,
                         rot: player.inner.data.rot,
+                    },
+                    toggles: Toggles {
+                        console: false,
+                        free_camera: false,
+                        click_to_teleport: false,
+                    },
+                    role: Role::Admin,
+                    action_bar: PlayerActionBar {
+                        weapon_abilities: make_test_weapon_abilities(),
                     },
                 },
                 game_server,

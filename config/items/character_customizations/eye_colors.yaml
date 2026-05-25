@@ -1,0 +1,157 @@
+---
+# Red Eyes
+- guid: 10000
+  name_id: 428
+  description_id: 14
+  icon_set_id: 710
+  cost: 200
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150000
+# Brown Eyes
+- guid: 10001
+  name_id: 422
+  description_id: 14
+  icon_set_id: 706
+  cost: 50
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150001
+# Yellow Eyes
+- guid: 10002
+  name_id: 420
+  description_id: 14
+  icon_set_id: 711
+  cost: 200
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150002
+# Green Eyes
+- guid: 10003
+  name_id: 430
+  description_id: 14
+  icon_set_id: 707
+  cost: 50
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150003
+# Blue Eyes
+- guid: 10004
+  name_id: 424
+  description_id: 14
+  icon_set_id: 705
+  cost: 50
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150004
+# Purple Eyes
+- guid: 10005
+  name_id: 432
+  description_id: 14
+  icon_set_id: 709
+  cost: 150
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150005
+# Magenta Eyes
+- guid: 10006
+  name_id: 434
+  description_id: 14
+  icon_set_id: 708
+  cost: 400
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150006
+# Black Eyes
+- guid: 10007
+  name_id: 426
+  description_id: 14
+  icon_set_id: 704
+  cost: 100
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 9
+  customization_slot: EyeColor
+  customization_id: 150007
+# Red Eyes
+- guid: 10008
+  name_id: 43485
+  description_id: 14
+  icon_set_id: 1809
+  cost: 200
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: EyeColor
+  customization_id: 150008
+# Orange Eyes
+- guid: 10009
+  name_id: 43484
+  description_id: 14
+  icon_set_id: 1808
+  cost: 400
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: EyeColor
+  customization_id: 150009
+# Yellow Eyes
+- guid: 10010
+  name_id: 420
+  description_id: 14
+  icon_set_id: 1811
+  cost: 200
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: EyeColor
+  customization_id: 150010
+# Yellow Green Eyes
+- guid: 10011
+  name_id: 43488
+  description_id: 14
+  icon_set_id: 1812
+  cost: 300
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: EyeColor
+  customization_id: 150011
+# Teal Eyes
+- guid: 10012
+  name_id: 43486
+  description_id: 14
+  icon_set_id: 1810
+  cost: 300
+  slot: !Customization EyeColor
+  item_type: 12
+  max_stack_size: 2
+  race_set_id: 12
+  customization_slot: EyeColor
+  customization_id: 150012

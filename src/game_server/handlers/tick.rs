@@ -5,8 +5,10 @@ use crossbeam_channel::Sender;
 use crate::{
     game_server::{
         handlers::{character::CharacterType, guid::IndexedGuid},
+        navmesh::{Collision, Navmesh, DEFAULT_COLLISION, DEFAULT_NAVMESH},
         packets::{
             minigame::{MinigameDefinitions, MinigameDefinitionsUpdate, MinigameHeader},
+            player_update::PhysicsState,
             tunnel::TunneledPacket,
             GamePacket,
         },
@@ -118,14 +120,24 @@ pub fn tick_single_chunk(
                         }
                     }
 
+                    let (navmesh, collision): &(Navmesh, Collision) = match tickable_character.stats.physics {
+                        PhysicsState::Disabled => &(DEFAULT_NAVMESH, DEFAULT_COLLISION),
+                        PhysicsState::Enabled => tickable_character.stats.navmesh
+                            .as_ref()
+                            .and_then(|navmesh| game_server.navmeshes().get(navmesh))
+                            .unwrap_or(&(DEFAULT_NAVMESH, DEFAULT_COLLISION)),
+                    };
+
                     let (mut character_broadcasts, character_pos_update) = tickable_character.tick(
                         now,
                         &nearby_player_guids,
-                        &characters_write,
+                        &mut characters_write,
                         game_server.mounts(),
                         game_server.items(),
                         game_server.customizations(),
-                        tick_duration
+                        tick_duration,
+                        navmesh,
+                        collision,
                     );
                     broadcasts.append(&mut character_broadcasts);
                     if let Some(pos_update) = character_pos_update {

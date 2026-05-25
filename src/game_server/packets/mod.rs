@@ -1,5 +1,6 @@
 pub mod ability;
 pub mod chat;
+pub mod clicked_location;
 pub mod client_update;
 pub mod combat;
 pub mod command;
@@ -242,7 +243,59 @@ impl DivAssign for Pos {
     }
 }
 
-#[derive(Clone, SerializePacket, DeserializePacket)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CharacterStateFlags {
+    #[serde(default)]
+    pub moving: bool,
+    #[serde(default)]
+    pub jumping: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, SerializePacket, DeserializePacket)]
+pub struct CharacterState {
+    state: u8,
+}
+
+impl Default for CharacterState {
+    fn default() -> Self {
+        STANDING
+    }
+}
+
+impl CharacterState {
+    pub fn moving(&self) -> bool {
+        self.state & (1 << 1) > 0
+    }
+}
+
+const fn flags_to_state(flags: CharacterStateFlags) -> CharacterState {
+    let mut state = 0u8;
+    if flags.moving {
+        state |= 1 << 1;
+    } else {
+        state |= 1;
+    }
+
+    if flags.jumping {
+        state |= 1 << 2;
+    }
+
+    CharacterState { state }
+}
+
+impl From<CharacterStateFlags> for CharacterState {
+    fn from(flags: CharacterStateFlags) -> Self {
+        flags_to_state(flags)
+    }
+}
+
+pub const STANDING: CharacterState = flags_to_state(CharacterStateFlags {
+    moving: false,
+    jumping: false,
+});
+
+#[derive(Clone, SerializePacket, DeserializePacket, Default)]
 pub struct Name {
     pub first_name_id: u32,
     pub middle_name_id: u32,
@@ -590,7 +643,14 @@ pub struct RewardBundle {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Debug,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    PartialEq,
 )]
 #[repr(u32)]
 pub enum ActionBarType {
@@ -600,7 +660,15 @@ pub enum ActionBarType {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Debug,
+    PartialEq,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    Deserialize,
+    DeserializePacket,
 )]
 #[repr(u32)]
 pub enum AbilitySubType {

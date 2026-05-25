@@ -53,6 +53,22 @@ pub enum EquipmentSlot {
 }
 
 impl EquipmentSlot {
+    pub fn action_bar_priority(self) -> u32 {
+        match self {
+            EquipmentSlot::SecondaryWeapon => 1,
+            EquipmentSlot::PrimaryWeapon => 2,
+            EquipmentSlot::PrimarySaberShape => 3,
+            EquipmentSlot::PrimarySaberColor => 3,
+            EquipmentSlot::SecondarySaberShape => 4,
+            EquipmentSlot::SecondarySaberColor => 4,
+            EquipmentSlot::Head => 5,
+            EquipmentSlot::Hands => 6,
+            EquipmentSlot::Body => 7,
+            EquipmentSlot::Feet => 8,
+            EquipmentSlot::None => 0,
+        }
+    }
+
     pub fn is_weapon(self) -> bool {
         self == EquipmentSlot::PrimaryWeapon || self == EquipmentSlot::SecondaryWeapon
     }
@@ -192,14 +208,14 @@ pub struct ItemStat {}
 
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
-pub struct ItemAbility {
-    unknown1: u32,
-    unknown2: u32,
-    unknown3: u32,
-    unknown4: u32,
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
+pub struct SpecialItemAbility {
+    pub ability_slot: u32,
+    pub ability_id: u32,
+    pub unknown3: u32,
+    pub ability_icon: u32,
+    pub unknown5: u32,
+    pub unknown6: u32,
+    pub ability_name: u32,
 }
 
 #[derive(Clone, Deserialize, SerializePacket)]
@@ -246,7 +262,7 @@ pub struct ItemDefinition {
     pub customization_id: u32,
     pub unknown40: u32,
     pub stats: Vec<ItemStat>,
-    pub abilities: Vec<ItemAbility>,
+    pub special_abilities: Vec<SpecialItemAbility>,
 }
 
 #[derive(SerializePacket, DeserializePacket)]

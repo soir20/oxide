@@ -11,6 +11,7 @@ use serde::Deserialize;
 use crate::ConfigError;
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct EnemyTypeConfig {
     pub enemy_types: HashSet<String>,
     pub enemy_types_applied_to_players: HashSet<String>,
