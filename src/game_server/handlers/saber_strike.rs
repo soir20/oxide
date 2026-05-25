@@ -12,13 +12,13 @@ use crate::game_server::{
             AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
             AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
             AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
-            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserGameConfig,
-            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
-            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
-            AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
-            AttackCruiserPlayerUpdateUnknown2, AttackCruiserShipConfig,
-            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
-            AttackCruiserWaveConfig,
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserEventCinematicConfig,
+            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerUpdate,
+            AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
+            AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig,
+            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -189,7 +189,24 @@ pub fn start_saber_strike(
                                 spawn_heading: 0.0,
                             }],
                         ),
-                        events: AttackCruiserVec::new(),
+                        events: AttackCruiserVec(
+                            "events".to_string(),
+                            vec![AttackCruiserEventConfig {
+                                cinematics: AttackCruiserVec(
+                                    "event cinematics".to_string(),
+                                    vec![AttackCruiserEventCinematicConfig {
+                                        total_seconds: 10.0,
+                                        animation_id: 0,
+                                        camera_heading: 50.0,
+                                        camera_fov: 90.0,
+                                        flip_camera_z: AttackCruiserBool(false),
+                                        pre_wipe_style: 1,
+                                        post_wipe_style: 2,
+                                    }],
+                                ),
+                                event_actors: AttackCruiserVec::new(),
+                            }],
+                        ),
                         actor_pools: AttackCruiserVec(
                             "actor pools".to_string(),
                             vec![AttackCruiserActorPoolConfig {
@@ -419,17 +436,17 @@ pub fn start_saber_strike(
         //         },
         //     },
         // }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserUpdateGameState {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                game_state: 4,
-            },
-        }),
+        // GamePacket::serialize(&TunneledPacket {
+        //     unknown1: true,
+        //     inner: AttackCruiserUpdateGameState {
+        //         minigame_header: MinigameHeader {
+        //             stage_guid: minigame_status.group.stage_guid,
+        //             sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+        //             stage_group_guid: minigame_status.group.stage_group_guid,
+        //         },
+        //         game_state: 3,
+        //     },
+        // }),
     ]
 }
 
