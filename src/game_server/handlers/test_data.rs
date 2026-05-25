@@ -5,7 +5,7 @@ use packet_serialize::LengthlessVec;
 use crate::game_server::{
     handlers::{character::PlayerAbilityGroup, item::ItemConfig},
     packets::{
-        item::{EquipmentSlot, Item, ItemDefinition, MarketData},
+        item::{EquipmentSlot, Item, MarketData},
         player_data::{
             AbilityType, ActionBar, BattleClass, BattleClassItem, BattleClassUnknown10,
             EquippedItem, InventoryItem, Item2, ItemGuid, Mount, Pet, PetTrick, Player, PlayerData,

@@ -34,7 +34,7 @@ pub struct AbilityConfig {
     #[serde(default)]
     pub area_of_effect_radius: f32,
     #[serde(default)]
-    pub max_distance_from_player: u32,
+    pub max_distance_from_player: f32,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
