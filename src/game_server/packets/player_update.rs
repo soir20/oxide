@@ -588,7 +588,7 @@ impl GamePacket for UpdateWieldType {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct Freeze {
-    freeze: bool,
+    pub freeze: bool,
 }
 
 impl GamePacket for Freeze {
