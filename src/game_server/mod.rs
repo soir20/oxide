@@ -210,7 +210,7 @@ impl GameServer {
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let (items, mut costs) = load_items(config_dir, &abilities)?;
-        let item_groups = load_item_groups(config_dir, &mut costs)?;
+        let item_groups = load_item_groups(config_dir, &items, &mut costs)?;
         Ok(GameServer {
             abilities,
             categories: load_categories(config_dir)?,
