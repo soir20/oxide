@@ -12,13 +12,14 @@ use crate::game_server::{
             AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
             AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
             AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
-            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerUpdate,
-            AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
-            AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
+            AttackCruiserConfig, AttackCruiserConfigType, AttackCruiserEventActorConfig,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
+            AttackCruiserPlayerUpdate, AttackCruiserPlayerUpdateUnknown1,
+            AttackCruiserPlayerUpdateUnknown2, AttackCruiserShipConfig,
+            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserWaveConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -52,13 +53,13 @@ pub fn start_saber_strike(
                 config1: AttackCruiserConfig {
                     unknown1: 1,
                     config_type_hash: 0x79243a4c,
-                    config_reference_name: "configtest".to_string(),
+                    config_reference_name: "global config value".to_string(),
                     config_type: AttackCruiserConfigType::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
-                            connect_timeout_seconds: 1.0,
-                            ready_timeout_seconds: 1.0,
-                            default_timeout_seconds: 1.0,
+                            connect_timeout_seconds: 120.0,
+                            ready_timeout_seconds: 120.0,
+                            default_timeout_seconds: 120.0,
                             effects_preload_timeout_seconds: 1.0,
                             effects_ready_timeout_seconds: 1.0,
                             server_update_players_interval_seconds: 1.0,
@@ -136,8 +137,8 @@ pub fn start_saber_strike(
                         sound_id: 2413,
                         mode: 1,
                         global_config: AttackCruiserAnyConfig {
-                            class: "global".to_string(),
-                            value: "configtest".to_string(),
+                            class: "GlobalConfig".to_string(),
+                            value: "global config value".to_string(),
                         },
                         end_condition_config: AttackCruiserAnyConfig {
                             class: "".to_string(),
@@ -195,16 +196,22 @@ pub fn start_saber_strike(
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
                                     vec![AttackCruiserEventCinematicConfig {
-                                        total_seconds: 10.0,
-                                        animation_id: 0,
+                                        total_seconds: 5.0,
+                                        animation_id: 1,
                                         camera_heading: 50.0,
                                         camera_fov: 90.0,
                                         flip_camera_z: AttackCruiserBool(false),
-                                        pre_wipe_style: 1,
-                                        post_wipe_style: 2,
+                                        pre_wipe_style: 0,
+                                        post_wipe_style: 0,
                                     }],
                                 ),
-                                event_actors: AttackCruiserVec::new(),
+                                event_actors: AttackCruiserVec(
+                                    "event actors".to_string(),
+                                    vec![AttackCruiserEventActorConfig {
+                                        model_id: 573,
+                                        animation_id: 1,
+                                    }],
+                                ),
                             }],
                         ),
                         actor_pools: AttackCruiserVec(
@@ -436,17 +443,17 @@ pub fn start_saber_strike(
         //         },
         //     },
         // }),
-        // GamePacket::serialize(&TunneledPacket {
-        //     unknown1: true,
-        //     inner: AttackCruiserUpdateGameState {
-        //         minigame_header: MinigameHeader {
-        //             stage_guid: minigame_status.group.stage_guid,
-        //             sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
-        //             stage_group_guid: minigame_status.group.stage_group_guid,
-        //         },
-        //         game_state: 3,
-        //     },
-        // }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserUpdateGameState {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                game_state: 3,
+            },
+        }),
     ]
 }
 
