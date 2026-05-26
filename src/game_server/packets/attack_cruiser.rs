@@ -222,6 +222,7 @@ pub struct AttackCruiserPlayerConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventConfig {
+    pub event_type: i32,
     pub cinematics: AttackCruiserVec<AttackCruiserEventCinematicConfig>,
     pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }

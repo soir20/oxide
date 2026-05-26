@@ -193,10 +193,11 @@ pub fn start_saber_strike(
                         events: AttackCruiserVec(
                             "events".to_string(),
                             vec![AttackCruiserEventConfig {
+                                event_type: 1,
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
                                     vec![AttackCruiserEventCinematicConfig {
-                                        total_seconds: 5.0,
+                                        total_seconds: 20.0,
                                         animation_id: 1,
                                         camera_heading: 50.0,
                                         camera_fov: 90.0,
