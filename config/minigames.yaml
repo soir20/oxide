@@ -5066,7 +5066,7 @@ categories:
         is_popular: true
         is_game_of_day: false
         sort_order: 15000
-        tutorial_swf: HowtoSaberStrike.swf
+        tutorial_swf: HowtoStarDestroyer.swf
         stage_group:
           guid: 13
           name_id: 7040
