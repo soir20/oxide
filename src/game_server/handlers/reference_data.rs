@@ -1,10 +1,14 @@
-use std::{collections::HashSet, fs::File, path::Path};
+use std::{
+    collections::{BTreeMap, HashSet},
+    fs::File,
+    path::Path,
+};
 
 use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::store::ItemCostMap,
+        handlers::{item::ItemConfig, store::ItemCostMap},
         packets::reference_data::{
             CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
             ItemGroupItem,
@@ -85,10 +89,22 @@ impl From<ItemGroupConfig> for ItemGroupDefinition {
 
 pub fn load_item_groups(
     config_dir: &Path,
+    items: &BTreeMap<u32, ItemConfig>,
     costs: &mut ItemCostMap,
 ) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
     let mut file = File::open(config_dir.join("item_groups.yaml"))?;
     let groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
+
+    for group in groups.iter() {
+        for item in group.items.iter() {
+            if !items.contains_key(&item.guid) {
+                return Err(ConfigError::ConstraintViolated(format!(
+                    "Item group {} contains unknown item {}",
+                    group.guid, item.guid
+                )));
+            }
+        }
+    }
 
     let items_for_sale: HashSet<u32> = groups
         .iter()
