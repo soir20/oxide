@@ -10,8 +10,8 @@ use super::{ActionBarType, GamePacket, OpCode, Pos, Target};
 #[repr(u16)]
 pub enum AbilityOpCode {
     LaunchAndLand = 0x4,
-    RequestStartAbility = 0xa,
-    RequestAbilityDefinition = 0xc,
+    RequestStartCast = 0xa,
+    RequestDefinition = 0xc,
     DetonateProjectile = 0xe,
     PulseLocationTargeting = 0xf,
     ReceivePulseLocation = 0x10,
@@ -93,15 +93,15 @@ impl DeserializePacket for AbilityTargetType {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct RequestStartAbility {
+pub struct RequestStartCast {
     pub action_bar_type: ActionBarType,
     pub slot_index: u32,
     pub target: AbilityTargetType,
 }
 
-impl GamePacket for RequestStartAbility {
+impl GamePacket for RequestStartCast {
     type Header = AbilityOpCode;
-    const HEADER: Self::Header = AbilityOpCode::RequestStartAbility;
+    const HEADER: Self::Header = AbilityOpCode::RequestStartCast;
 }
 
 #[derive(SerializePacket)]
