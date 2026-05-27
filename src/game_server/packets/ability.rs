@@ -27,13 +27,13 @@ impl SerializePacket for AbilityOpCode {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct GuidAbilityTarget {
     pub target_guid: u64,
-    pub target_guid2: u64, // Duplicate GUID
+    pub target_guid2: u64,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AoeAbilityTarget {
     pub pos: Pos,
-    pub guid: u64, // Unused for AOE
+    pub guid: u64,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
@@ -69,24 +69,19 @@ impl SerializePacket for AbilityTargetType {
 }
 
 impl DeserializePacket for AbilityTargetType {
-    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
-    where
-        Self: Sized,
-    {
-        let raw_tag: u32 = DeserializePacket::deserialize(cursor)?;
-        match raw_tag {
-            0 => {
-                let guid_target = GuidAbilityTarget::deserialize(cursor)?;
-                Ok(AbilityTargetType::Guid(guid_target))
-            }
-            1 => {
-                let aoe_target = AoeAbilityTarget::deserialize(cursor)?;
-                Ok(AbilityTargetType::Aoe(aoe_target))
-            }
-            2 => {
-                let with_self_target = WithSelfAbilityTarget::deserialize(cursor)?;
-                Ok(AbilityTargetType::WithSelf(with_self_target))
-            }
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> {
+        let tag: u32 = DeserializePacket::deserialize(cursor)?;
+
+        match tag {
+            0 => Ok(AbilityTargetType::Guid(GuidAbilityTarget::deserialize(
+                cursor,
+            )?)),
+            1 => Ok(AbilityTargetType::Aoe(AoeAbilityTarget::deserialize(
+                cursor,
+            )?)),
+            2 => Ok(AbilityTargetType::WithSelf(
+                WithSelfAbilityTarget::deserialize(cursor)?,
+            )),
             _ => Err(DeserializePacketError::UnknownDiscriminator),
         }
     }
