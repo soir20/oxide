@@ -70,9 +70,9 @@ impl SerializePacket for AbilityTargetType {
 
 impl DeserializePacket for AbilityTargetType {
     fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError> {
-        let tag: u32 = DeserializePacket::deserialize(cursor)?;
+        let raw_target_type: u32 = DeserializePacket::deserialize(cursor)?;
 
-        match tag {
+        match raw_target_type {
             0 => Ok(AbilityTargetType::Guid(GuidAbilityTarget::deserialize(
                 cursor,
             )?)),
