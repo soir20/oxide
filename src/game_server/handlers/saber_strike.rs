@@ -22,6 +22,7 @@ use crate::game_server::{
             AttackCruiserWaveConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        player_update::Freeze,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
@@ -42,6 +43,10 @@ pub fn start_saber_strike(
     game_server: &GameServer,
 ) -> Vec<Vec<u8>> {
     vec![
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: Freeze { freeze: true },
+        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserClientConfig {
@@ -196,15 +201,26 @@ pub fn start_saber_strike(
                                 event_type: 1,
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
-                                    vec![AttackCruiserEventCinematicConfig {
-                                        total_seconds: 20.0,
-                                        animation_id: 1,
-                                        camera_heading: 50.0,
-                                        camera_fov: 90.0,
-                                        flip_camera_z: AttackCruiserBool(false),
-                                        pre_wipe_style: 0,
-                                        post_wipe_style: 0,
-                                    }],
+                                    vec![
+                                        AttackCruiserEventCinematicConfig {
+                                            total_seconds: 30.0,
+                                            animation_id: 1,
+                                            camera_heading: 0.1,
+                                            camera_fov: 10.0,
+                                            flip_camera_z: AttackCruiserBool(false),
+                                            pre_wipe_style: 0,
+                                            post_wipe_style: 0,
+                                        },
+                                        AttackCruiserEventCinematicConfig {
+                                            total_seconds: 20.0,
+                                            animation_id: 1,
+                                            camera_heading: 0.5,
+                                            camera_fov: 90.0,
+                                            flip_camera_z: AttackCruiserBool(false),
+                                            pre_wipe_style: 1,
+                                            post_wipe_style: 2,
+                                        },
+                                    ],
                                 ),
                                 event_actors: AttackCruiserVec(
                                     "event actors".to_string(),
