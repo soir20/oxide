@@ -203,8 +203,8 @@ pub fn start_saber_strike(
                                     "event cinematics".to_string(),
                                     vec![
                                         AttackCruiserEventCinematicConfig {
-                                            total_seconds: 30.0,
-                                            animation_id: 1,
+                                            total_seconds: 15.0,
+                                            animation_id: -1,
                                             camera_heading: 0.1,
                                             camera_fov: 10.0,
                                             flip_camera_z: AttackCruiserBool(false),
@@ -213,7 +213,7 @@ pub fn start_saber_strike(
                                         },
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 20.0,
-                                            animation_id: 1,
+                                            animation_id: 10009,
                                             camera_heading: 0.5,
                                             camera_fov: 90.0,
                                             flip_camera_z: AttackCruiserBool(false),
