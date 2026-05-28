@@ -206,16 +206,16 @@ pub fn start_saber_strike(
                                             total_seconds: 15.0,
                                             animation_id: 10317,
                                             camera_heading: 0.0,
-                                            camera_fov: 90.0,
+                                            camera_fov: 50.0,
                                             flip_camera_z: AttackCruiserBool(false),
-                                            pre_wipe_style: 0,
-                                            post_wipe_style: 0,
+                                            pre_wipe_style: 2,
+                                            post_wipe_style: 2,
                                         },
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 20.0,
                                             animation_id: -1,
                                             camera_heading: 0.5,
-                                            camera_fov: 90.0,
+                                            camera_fov: 10.0,
                                             flip_camera_z: AttackCruiserBool(false),
                                             pre_wipe_style: 1,
                                             post_wipe_style: 2,
@@ -264,7 +264,7 @@ pub fn start_saber_strike(
                 config3: AttackCruiserConfig {
                     unknown1: 3,
                     config_type_hash: 0x6dc7e02b,
-                    config_reference_name: "".to_string(),
+                    config_reference_name: "main camera config value".to_string(),
                     config_type: AttackCruiserConfigType::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 100.0,
