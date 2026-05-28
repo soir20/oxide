@@ -204,16 +204,16 @@ pub fn start_saber_strike(
                                     vec![
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 15.0,
-                                            animation_id: -1,
-                                            camera_heading: 0.1,
-                                            camera_fov: 10.0,
+                                            animation_id: 10317,
+                                            camera_heading: 0.0,
+                                            camera_fov: 90.0,
                                             flip_camera_z: AttackCruiserBool(false),
                                             pre_wipe_style: 0,
                                             post_wipe_style: 0,
                                         },
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 20.0,
-                                            animation_id: 10009,
+                                            animation_id: -1,
                                             camera_heading: 0.5,
                                             camera_fov: 90.0,
                                             flip_camera_z: AttackCruiserBool(false),
