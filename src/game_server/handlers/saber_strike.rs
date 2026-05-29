@@ -468,7 +468,7 @@ pub fn start_saber_strike(
                     sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
-                game_state: 3,
+                game_state: 7,
             },
         }),
     ]
