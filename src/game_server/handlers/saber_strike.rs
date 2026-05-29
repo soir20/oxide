@@ -204,7 +204,7 @@ pub fn start_saber_strike(
                                     vec![
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 15.0,
-                                            animation_id: 10317,
+                                            animation_id: 10319,
                                             camera_heading: 0.0,
                                             camera_fov: 50.0,
                                             flip_camera_z: AttackCruiserBool(false),
@@ -212,12 +212,12 @@ pub fn start_saber_strike(
                                             post_wipe_style: 2,
                                         },
                                         AttackCruiserEventCinematicConfig {
-                                            total_seconds: 20.0,
-                                            animation_id: -1,
-                                            camera_heading: 0.5,
-                                            camera_fov: 10.0,
+                                            total_seconds: 15.0,
+                                            animation_id: 10317,
+                                            camera_heading: 0.0,
+                                            camera_fov: 50.0,
                                             flip_camera_z: AttackCruiserBool(false),
-                                            pre_wipe_style: 1,
+                                            pre_wipe_style: 2,
                                             post_wipe_style: 2,
                                         },
                                     ],
@@ -460,17 +460,17 @@ pub fn start_saber_strike(
         //         },
         //     },
         // }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserUpdateGameState {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                game_state: 7,
-            },
-        }),
+        // GamePacket::serialize(&TunneledPacket {
+        //     unknown1: true,
+        //     inner: AttackCruiserUpdateGameState {
+        //         minigame_header: MinigameHeader {
+        //             stage_guid: minigame_status.group.stage_guid,
+        //             sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+        //             stage_group_guid: minigame_status.group.stage_group_guid,
+        //         },
+        //         game_state: 3,
+        //     },
+        // }),
     ]
 }
 
