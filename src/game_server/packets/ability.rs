@@ -103,7 +103,7 @@ impl GamePacket for RequestStartCast {
 pub struct LaunchAndLand {
     pub launcher_guid: u64,
     pub targets: Vec<Target>,
-    pub unknown1: i32,
+    pub unknown1: i32, // Possibly a projectile bone origin ID
     pub unknown2: u32,
     pub launcher_animation_id: u32,
     pub launcher_composite_effect_id: u32,
@@ -113,7 +113,7 @@ pub struct LaunchAndLand {
     pub landed_animation_id: u32,
     pub landed_composite_effect_id1: u32,
     pub unknown10: u32,
-    pub unknown11: Pos,
+    pub unknown11: Pos, // Influences projectile fire angle
     pub launcher_composite_effect_duration: f32,
     pub unknown13: f32,
     pub unknown14: u32,
@@ -143,13 +143,13 @@ pub struct LaunchAndLand {
     pub unknown36: u32,
     pub unknown37: u32,
     pub unknown38: f32,
-    pub projectile_duration_seconds: f32,
+    pub unknown39: f32,
     pub unknown40: f32,
     pub unknown41: f32,
     pub unknown42: f32,
     pub unknown43: f32,
     pub unknown44: f32,
-    pub unknown45: f32,
+    pub unknown45: f32, // Influences projectile fire angle
     pub unknown46: String,
     pub unknown47: u32,
 }
