@@ -13,8 +13,8 @@ pub enum AbilityOpCode {
     RequestStartCast = 0xa,
     RequestDefinition = 0xc,
     DetonateProjectile = 0xe,
-    PulseLocationTargeting = 0xf,
-    ReceivePulseLocation = 0x10,
+    ToggleLocationTargeting = 0xf,
+    ReceiveTargetedLocation = 0x10,
 }
 
 impl SerializePacket for AbilityOpCode {
@@ -173,12 +173,22 @@ impl GamePacket for DetonateProjectile {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
-pub struct PulseLocationTargeting {
-    pub enable_location_targeting: bool,
-    pub size: f32,
+pub struct ToggleLocationTargeting {
+    pub enabled: bool,
+    pub target_size: f32,
 }
 
-impl GamePacket for PulseLocationTargeting {
+impl GamePacket for ToggleLocationTargeting {
     type Header = AbilityOpCode;
-    const HEADER: Self::Header = AbilityOpCode::PulseLocationTargeting;
+    const HEADER: Self::Header = AbilityOpCode::ToggleLocationTargeting;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct ReceiveTargetedLocation {
+    pub pos: Pos,
+}
+
+impl GamePacket for ReceiveTargetedLocation {
+    type Header = AbilityOpCode;
+    const HEADER: Self::Header = AbilityOpCode::ReceiveTargetedLocation;
 }
