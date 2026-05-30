@@ -29,8 +29,8 @@ pub struct ItemClassData {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClassUnknown7 {}
 
-#[derive(Clone, Debug)]
-pub struct AbilityCommon {
+#[derive(Clone, Debug, SerializePacket)]
+pub struct AbilityTypeShared {
     pub icon_id: u32,
     pub name_id: u32,
     pub unknown7: u32,
@@ -42,36 +42,32 @@ pub struct AbilityCommon {
     pub unknown13: u32,
 }
 
-fn write_ability_end(buffer: &mut Vec<u8>, c: &AbilityCommon) {
-    c.icon_id.serialize(buffer);
-    c.name_id.serialize(buffer);
-    c.unknown7.serialize(buffer);
-    c.unknown8.serialize(buffer);
-    c.unknown9.serialize(buffer);
-    c.ability_id.serialize(buffer);
-    c.unknown11.serialize(buffer);
-    c.unknown12.serialize(buffer);
-    c.unknown13.serialize(buffer);
+#[derive(Clone, Debug, SerializePacket)]
+pub struct UnknownAbilityType {
+    pub unknown2: u32,
+    pub mana_cost: u32,
+    pub common: AbilityTypeShared,
 }
 
-#[allow(dead_code)]
+#[derive(Clone, Debug, SerializePacket)]
+pub struct ItemDefinitionAbilityType {
+    pub item_id: u32,
+    pub common: AbilityTypeShared,
+}
+
+#[derive(Clone, Debug, SerializePacket)]
+pub struct AbilityDefinitionAbilityType {
+    pub unknown2: u32,
+    pub mana_cost: u32,
+    pub common: AbilityTypeShared,
+}
+
 #[derive(Clone, Debug)]
 pub enum AbilityType {
     Empty,
-    Unknown {
-        unknown2: u32,
-        mana_cost: u32,
-        common: AbilityCommon,
-    },
-    ItemDefinition {
-        item_definition_id: u32,
-        common: AbilityCommon,
-    },
-    AbilityDefinition {
-        unknown2: u32,
-        mana_cost: u32,
-        common: AbilityCommon,
-    },
+    Unknown(UnknownAbilityType),
+    ItemDefinition(ItemDefinitionAbilityType),
+    AbilityDefinition(AbilityDefinitionAbilityType),
 }
 
 impl SerializePacket for AbilityType {
@@ -80,33 +76,17 @@ impl SerializePacket for AbilityType {
             AbilityType::Empty => {
                 0u32.serialize(buffer);
             }
-            AbilityType::Unknown {
-                unknown2,
-                mana_cost,
-                common,
-            } => {
+            AbilityType::Unknown(unknown_type) => {
                 1u32.serialize(buffer);
-                unknown2.serialize(buffer);
-                mana_cost.serialize(buffer);
-                write_ability_end(buffer, common);
+                unknown_type.serialize(buffer);
             }
-            AbilityType::ItemDefinition {
-                item_definition_id,
-                common,
-            } => {
+            AbilityType::ItemDefinition(item_definition_type) => {
                 2u32.serialize(buffer);
-                item_definition_id.serialize(buffer);
-                write_ability_end(buffer, common);
+                item_definition_type.serialize(buffer);
             }
-            AbilityType::AbilityDefinition {
-                unknown2,
-                mana_cost,
-                common,
-            } => {
+            AbilityType::AbilityDefinition(ability_definition_type) => {
                 3u32.serialize(buffer);
-                unknown2.serialize(buffer);
-                mana_cost.serialize(buffer);
-                write_ability_end(buffer, common);
+                ability_definition_type.serialize(buffer);
             }
         }
     }
