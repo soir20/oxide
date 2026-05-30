@@ -29,7 +29,7 @@ pub struct ItemClassData {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClassUnknown7 {}
 
-#[derive(Clone, Debug, SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct AbilityTypeShared {
     pub icon_id: u32,
     pub name_id: u32,
@@ -42,27 +42,27 @@ pub struct AbilityTypeShared {
     pub unknown13: u32,
 }
 
-#[derive(Clone, Debug, SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct UnknownAbilityType {
     pub unknown2: u32,
     pub mana_cost: u32,
     pub common: AbilityTypeShared,
 }
 
-#[derive(Clone, Debug, SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct ItemDefinitionAbilityType {
     pub item_id: u32,
     pub common: AbilityTypeShared,
 }
 
-#[derive(Clone, Debug, SerializePacket)]
+#[derive(Clone, SerializePacket)]
 pub struct AbilityDefinitionAbilityType {
     pub unknown2: u32,
     pub mana_cost: u32,
     pub common: AbilityTypeShared,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum AbilityType {
     Empty,
     Unknown(UnknownAbilityType),
