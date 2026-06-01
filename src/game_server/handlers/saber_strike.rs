@@ -165,15 +165,19 @@ pub fn start_saber_strike(
                         kill_zone_height: 20.0,
                         enemy_attack_radius: 50.0,
                         endless_waves: AttackCruiserBool(false),
-                        debugged_actors: 5,
-                        planet_tilt_init_x: 0.0,
-                        planet_tilt_init_z: 0.0,
-                        planet_tilt_rate_x: 10.0,
-                        planet_tilt_rate_z: 20.0,
+                        debugged_actors: 0,
+                        planet_tilt_init_x: 5.0,
+                        planet_tilt_init_z: 5.0,
+                        planet_tilt_rate_x: 1.0,
+                        planet_tilt_rate_z: 1.0,
                         planet: AttackCruiserPlanetConfig {
                             model_id: 583,
-                            pos: Pos3::default(),
-                            rotation_speed: 5.0,
+                            pos: Pos3 {
+                                x: 0.0,
+                                y: 1363.94,
+                                z: 28539.1,
+                            },
+                            rotation_speed: 1.0,
                         },
                         players: AttackCruiserVec(
                             "players".to_string(),
@@ -202,15 +206,15 @@ pub fn start_saber_strike(
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
                                     vec![
-                                        AttackCruiserEventCinematicConfig {
-                                            total_seconds: 15.0,
-                                            animation_id: 10319,
-                                            camera_heading: 0.0,
-                                            camera_fov: 50.0,
-                                            flip_camera_z: AttackCruiserBool(false),
-                                            pre_wipe_style: 2,
-                                            post_wipe_style: 2,
-                                        },
+                                        // AttackCruiserEventCinematicConfig {
+                                        //     total_seconds: 15.0,
+                                        //     animation_id: 10319,
+                                        //     camera_heading: 0.0,
+                                        //     camera_fov: 50.0,
+                                        //     flip_camera_z: AttackCruiserBool(false),
+                                        //     pre_wipe_style: 2,
+                                        //     post_wipe_style: 2,
+                                        // },
                                         AttackCruiserEventCinematicConfig {
                                             total_seconds: 15.0,
                                             animation_id: 10317,
