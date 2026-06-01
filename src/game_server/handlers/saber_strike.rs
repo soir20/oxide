@@ -177,7 +177,7 @@ pub fn start_saber_strike(
                                 y: 1363.94,
                                 z: 28539.1,
                             },
-                            rotation_speed: 1.0,
+                            rotation_speed: 0.01,
                         },
                         players: AttackCruiserVec(
                             "players".to_string(),
