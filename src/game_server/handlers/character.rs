@@ -2239,7 +2239,7 @@ impl BaseNpcTemplate {
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             health: config.health,
-            max_health: if config.max_health <= 0 {
+            max_health: if config.max_health == 0 {
                 config.health
             } else {
                 config.max_health
