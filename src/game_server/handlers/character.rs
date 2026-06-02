@@ -28,11 +28,11 @@ use crate::{
             minigame::ScoreEntry,
             player_update::{
                 AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
-                CustomizationSlot, Hostility, HudMessage, Icon, MoveOnRail, NameplateImage,
-                NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect, QueueAnimation,
-                RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
-                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
-                UpdateTemporaryModel,
+                CustomizationSlot, HitPointModification, Hostility, HudMessage, Icon, MoveOnRail,
+                NameplateImage, NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect,
+                QueueAnimation, RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard,
+                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
+                UpdateSpeed, UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -66,6 +66,10 @@ pub fn coerce_to_broadcast_supplier(
 pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 pub const ORIGIN_RESET_TAG_ID: u32 = 1;
 pub const ORIGIN_RESET_COMPOSITE_EFFECT_ID: u32 = 2764;
+
+const fn default_health() -> u32 {
+    u32::MAX
+}
 
 const fn default_stand_animation_id() -> i32 {
     1
@@ -262,6 +266,12 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub speed: f32,
     pub cursor: Option<u8>,
+    #[serde(default = "default_health")]
+    pub health: u32,
+    #[serde(default)]
+    pub max_health: u32,
+    #[serde(default)]
+    pub hostility: Hostility,
     #[serde(default)]
     pub hover_description: HoverDescriptionMode,
     #[serde(default = "default_true")]
@@ -274,6 +284,8 @@ pub struct BaseNpcConfig {
     pub move_to_interact_offset: f32,
     #[serde(default = "default_true")]
     pub show_name: bool,
+    #[serde(default)]
+    pub show_health: bool,
     #[serde(default)]
     pub bounce_area_id: i32,
     #[serde(default)]
@@ -328,6 +340,8 @@ pub struct BaseNpc {
     pub enable_interact_popup: bool,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
+    pub show_health: bool,
+    pub hostility: Hostility,
     pub bounce_area_id: i32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
@@ -369,7 +383,7 @@ impl BaseNpc {
                     rot: character.rot,
                     spawn_animation_id: self.spawn_animation_id,
                     attachments: self.attachments.clone(),
-                    hostility: Hostility::Neutral,
+                    hostility: self.hostility,
                     unknown10: 1,
                     texture_alias: self.texture_alias.clone(),
                     tint_name: "".to_string(),
@@ -400,7 +414,7 @@ impl BaseNpc {
                     disable_interact_popup: !self.enable_interact_popup,
                     unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                     unknown34: false,
-                    show_health: false,
+                    show_health: self.show_health,
                     hide_despawn_fade: false,
                     enable_tilt: self.enable_tilt,
                     base_attachment_group: BaseAttachmentGroup {
@@ -488,6 +502,21 @@ impl BaseNpc {
                         }),
                         unknown2: false,
                     }],
+                },
+            }));
+        }
+
+        if character.health < character.max_health {
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: HitPointModification {
+                    attacker_guid: 0,
+                    receiver_guid: Guid::guid(character),
+                    show_hp_delta: false,
+                    max_hp: character.max_health as i32,
+                    new_hp: character.health as i32,
+                    hp_delta: character.max_health as i32 - character.health as i32,
+                    critical: false,
                 },
             }));
         }
@@ -2113,6 +2142,8 @@ pub struct BaseNpcTemplate {
     pub stand_animation_id: i32,
     pub mount_id: Option<u32>,
     pub cursor: Option<u8>,
+    pub health: u32,
+    pub max_health: u32,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
@@ -2138,6 +2169,8 @@ pub struct BaseNpcTemplate {
     pub enable_interact_popup: bool,
     pub interact_popup_radius: Option<f32>,
     pub show_name: bool,
+    pub show_health: bool,
+    pub hostility: Hostility,
     pub bounce_area_id: i32,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
@@ -2205,6 +2238,12 @@ impl BaseNpcTemplate {
             synchronize_with: config.synchronize_with.clone(),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
+            health: config.health,
+            max_health: if config.max_health <= 0 {
+                config.health
+            } else {
+                config.max_health
+            },
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
@@ -2227,6 +2266,8 @@ impl BaseNpcTemplate {
             enable_interact_popup: config.enable_interact_popup,
             interact_popup_radius: config.interact_popup_radius,
             show_name: config.show_name,
+            show_health: config.show_health,
+            hostility: config.hostility,
             bounce_area_id: config.bounce_area_id,
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
@@ -2297,7 +2338,8 @@ impl BaseNpcTemplate {
                 auto_target_radius: self.auto_target_radius,
                 enemy_types: self.enemy_types.clone(),
                 threat_table: self.enemy_prioritization.clone().into(),
-                health: 1,
+                health: self.health,
+                max_health: self.max_health,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: self.navmesh.clone(),
                 ability_height: self.ability_height,
@@ -2327,6 +2369,8 @@ impl BaseNpcTemplate {
             enable_interact_popup: self.enable_interact_popup,
             interact_popup_radius: self.interact_popup_radius,
             show_name: self.show_name,
+            show_health: self.show_health,
+            hostility: self.hostility,
             bounce_area_id: self.bounce_area_id,
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
@@ -2435,6 +2479,7 @@ pub struct CharacterStats {
     pub enemy_types: HashSet<String>,
     pub threat_table: ThreatTable,
     pub health: u32,
+    pub max_health: u32,
     pub composite_effect_tags: BTreeMap<u32, u32>,
     pub navmesh: Option<String>,
 }
@@ -2693,7 +2738,8 @@ impl Character {
                 auto_target_radius: 0.0,
                 enemy_types: HashSet::new(),
                 threat_table: ThreatTable::default(),
-                health: 1,
+                health: u32::MAX,
+                max_health: u32::MAX,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
@@ -2763,7 +2809,8 @@ impl Character {
                     .enemy_types_applied_to_players
                     .clone(),
                 threat_table: ThreatTable::default(),
-                health: 1,
+                health: u32::MAX,
+                max_health: u32::MAX,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),

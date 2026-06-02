@@ -28,6 +28,7 @@ use crate::game_server::{
     packets::{
         item::{EquipmentSlot, WieldType},
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        player_update::Hostility,
         saber_duel::{
             SaberDuelApplyForcePower, SaberDuelBoutInfo, SaberDuelBoutStart, SaberDuelBoutTied,
             SaberDuelBoutWon, SaberDuelForcePower, SaberDuelForcePowerDefinition,
@@ -667,6 +668,8 @@ impl SaberDuelGame {
                 enable_interact_popup: false,
                 interact_popup_radius: None,
                 show_name: false,
+                show_health: false,
+                hostility: Hostility::default(),
                 bounce_area_id: -1,
                 enable_gravity: true,
                 enable_tilt: false,
