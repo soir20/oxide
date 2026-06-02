@@ -515,7 +515,7 @@ impl BaseNpc {
                     show_hp_delta: false,
                     max_hp: character.max_health as i32,
                     new_hp: character.health as i32,
-                    hp_delta: character.max_health as i32 - character.health as i32,
+                    hp_delta: 0,
                     critical: false,
                 },
             }));
