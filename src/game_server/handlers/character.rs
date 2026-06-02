@@ -506,7 +506,7 @@ impl BaseNpc {
             }));
         }
 
-        if character.health < character.max_health {
+        if character.health < character.max_health && self.show_health {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: HitPointModification {
