@@ -1,8 +1,20 @@
-use std::{collections::HashMap, fs::File, path::Path};
+use std::{
+    collections::HashMap,
+    fs::File,
+    io::{Cursor, Read},
+    path::Path,
+};
 
+use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
-use crate::{game_server::packets::AbilitySubType, ConfigError};
+use crate::{
+    game_server::{
+        packets::{ability::AbilityOpCode, AbilitySubType},
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    },
+    ConfigError,
+};
 
 const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
@@ -32,4 +44,30 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
     let abilities: HashMap<String, AbilityConfig> = serde_yaml::from_reader(file)?;
 
     Ok(abilities)
+}
+
+pub fn process_ability(cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;
+    match AbilityOpCode::try_from(raw_op_code) {
+        Ok(op_code) => match op_code {
+            // Ability definitions are presumably unused, so ignore
+            AbilityOpCode::RequestDefinition => Ok(Vec::new()),
+            _ => {
+                let mut buffer = Vec::new();
+                cursor.read_to_end(&mut buffer)?;
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::UnknownOpCode,
+                    format!("Unimplemented ability packet: {op_code:?}, {buffer:x?}"),
+                ))
+            }
+        },
+        Err(_) => {
+            let mut buffer = Vec::new();
+            cursor.read_to_end(&mut buffer)?;
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::UnknownOpCode,
+                format!("Unknown ability packet: {raw_op_code}, {buffer:x?}"),
+            ))
+        }
+    }
 }
