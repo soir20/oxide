@@ -2238,7 +2238,7 @@ impl BaseNpcTemplate {
             synchronize_with: config.synchronize_with.clone(),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
-            health: config.health.into(),
+            health: config.health,
             max_health: if config.max_health == 0 {
                 config.health
             } else {
