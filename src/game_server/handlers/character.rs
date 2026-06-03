@@ -2240,9 +2240,9 @@ impl BaseNpcTemplate {
             cursor: config.cursor,
             health: config.health.into(),
             max_health: if config.max_health == 0 {
-                config.health.into()
+                config.health
             } else {
-                config.max_health.into()
+                config.max_health
             },
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
