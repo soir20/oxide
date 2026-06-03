@@ -505,17 +505,17 @@ pub fn start_saber_strike(
         //         unknown7: 5,
         //     },
         // }),
-        // GamePacket::serialize(&TunneledPacket {
-        //     unknown1: true,
-        //     inner: AttackCruiserUpdateGameState {
-        //         minigame_header: MinigameHeader {
-        //             stage_guid: minigame_status.group.stage_guid,
-        //             sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
-        //             stage_group_guid: minigame_status.group.stage_group_guid,
-        //         },
-        //         game_state: 3,
-        //     },
-        // }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserUpdateGameState {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                game_state: 3,
+            },
+        }),
     ]
 }
 
