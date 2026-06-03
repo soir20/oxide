@@ -456,7 +456,7 @@ impl GamePacket for AttackCruiserUpdateGameState {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-struct AttackCruiserPlayerUpdateType {
+struct AttackCruiserPlayerStateType {
     pub unknown1: bool,
     pub unknown2: bool,
     pub unknown3: bool,
@@ -464,7 +464,7 @@ struct AttackCruiserPlayerUpdateType {
     pub unknown5: bool,
 }
 
-impl SerializePacket for AttackCruiserPlayerUpdateType {
+impl SerializePacket for AttackCruiserPlayerStateType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut value = 0;
         if self.unknown1 {
@@ -488,7 +488,7 @@ impl SerializePacket for AttackCruiserPlayerUpdateType {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerUpdateUnknown1 {
+pub struct AttackCruiserPlayerStateUnknown1 {
     pub unknown1: u32,
     pub actor_id: u32,
     pub unknown3: u32,
@@ -497,7 +497,7 @@ pub struct AttackCruiserPlayerUpdateUnknown1 {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerUpdateUnknown2 {
+pub struct AttackCruiserPlayerStateUnknown2 {
     pub unknown1: u32,
     pub unknown2: u32,
     pub unknown3: u32,
@@ -507,13 +507,13 @@ pub struct AttackCruiserPlayerUpdateUnknown2 {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerUpdateUnknown3 {
+pub struct AttackCruiserPlayerStateUnknown3 {
     pub unknown1: u32,
     pub unknown2: u32,
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerUpdateUnknown4 {
+pub struct AttackCruiserPlayerStateUnknown4 {
     pub unknown1: u32,
     pub unknown2: u32,
     pub unknown3: u32,
@@ -523,21 +523,21 @@ pub struct AttackCruiserPlayerUpdateUnknown4 {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerUpdateUnknown5 {
+pub struct AttackCruiserPlayerStateUnknown5 {
     pub unknown1: u32,
 }
 
-pub struct AttackCruiserPlayerUpdate {
-    pub unknown1: Option<AttackCruiserPlayerUpdateUnknown1>,
-    pub unknown2: Option<AttackCruiserPlayerUpdateUnknown2>,
-    pub unknown3: Option<AttackCruiserPlayerUpdateUnknown3>,
-    pub unknown4: Option<AttackCruiserPlayerUpdateUnknown4>,
-    pub unknown5: Option<AttackCruiserPlayerUpdateUnknown5>,
+pub struct AttackCruiserPlayerState {
+    pub unknown1: Option<AttackCruiserPlayerStateUnknown1>,
+    pub unknown2: Option<AttackCruiserPlayerStateUnknown2>,
+    pub unknown3: Option<AttackCruiserPlayerStateUnknown3>,
+    pub unknown4: Option<AttackCruiserPlayerStateUnknown4>,
+    pub unknown5: Option<AttackCruiserPlayerStateUnknown5>,
 }
 
-impl SerializePacket for AttackCruiserPlayerUpdate {
+impl SerializePacket for AttackCruiserPlayerState {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        let update_type = AttackCruiserPlayerUpdateType {
+        let update_type = AttackCruiserPlayerStateType {
             unknown1: self.unknown1.is_some(),
             unknown2: self.unknown2.is_some(),
             unknown3: self.unknown3.is_some(),
@@ -572,7 +572,7 @@ impl SerializePacket for AttackCruiserPlayerUpdate {
 pub struct AttackCruiserAddPlayer {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
-    pub update: AttackCruiserPlayerUpdate,
+    pub state: AttackCruiserPlayerState,
 }
 
 impl GamePacket for AttackCruiserAddPlayer {
@@ -615,6 +615,24 @@ impl SerializePacket for AttackCruiserConfigPlayer {
 }
 
 impl GamePacket for AttackCruiserConfigPlayer {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserPlayerUpdate {
+    pub index: u32,
+    pub state: AttackCruiserPlayerState,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUpdatePlayers {
+    pub minigame_header: MinigameHeader,
+    pub states: Vec<AttackCruiserPlayerUpdate>,
+}
+
+impl GamePacket for AttackCruiserUpdatePlayers {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;

@@ -3,29 +3,25 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::{
-        character::{MinigameStatus, Player},
-        inventory::player_has_saber_equipped,
-    },
+    handlers::character::{MinigameStatus, Player},
     packets::{
         attack_cruiser::{
-            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
-            AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
-            AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
-            AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
-            AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerUpdate,
-            AttackCruiserPlayerUpdateUnknown1, AttackCruiserPlayerUpdateUnknown2,
-            AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
+            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddPlayer,
+            AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBool,
+            AttackCruiserCameraConfig, AttackCruiserClientConfig, AttackCruiserConfig,
+            AttackCruiserConfigPlayer, AttackCruiserConfigType, AttackCruiserEventActorConfig,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
+            AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1,
+            AttackCruiserPlayerStateUnknown2, AttackCruiserShipConfig,
+            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         player_update::Freeze,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
-            SaberStrikeSingleKill, SaberStrikeStageData, SaberStrikeThrowKill,
+            SaberStrikeSingleKill, SaberStrikeThrowKill,
         },
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
@@ -425,15 +421,15 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 guid: 1,
-                update: AttackCruiserPlayerUpdate {
-                    unknown1: Some(AttackCruiserPlayerUpdateUnknown1 {
+                state: AttackCruiserPlayerState {
+                    unknown1: Some(AttackCruiserPlayerStateUnknown1 {
                         unknown1: 1,
                         actor_id: 500,
                         unknown3: 200,
                         unknown4: "test".to_string(),
                         unknown5: "hello world".to_string(),
                     }),
-                    unknown2: Some(AttackCruiserPlayerUpdateUnknown2 {
+                    unknown2: Some(AttackCruiserPlayerStateUnknown2 {
                         unknown1: 10,
                         unknown2: 11,
                         unknown3: 12,

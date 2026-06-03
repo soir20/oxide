@@ -35,7 +35,11 @@ use crate::{
             zone::ZoneInstance,
         },
         packets::{
-            attack_cruiser::{AttackCruiserOpCode, AttackCruiserRoundTrip},
+            attack_cruiser::{
+                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1,
+                AttackCruiserPlayerStateUnknown2, AttackCruiserPlayerUpdate,
+                AttackCruiserRoundTrip, AttackCruiserUpdatePlayers,
+            },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
             command::StartFlashGame,
@@ -1907,6 +1911,42 @@ pub fn process_minigame_packet(
 
                 match AttackCruiserOpCode::try_from(header.sub_op_code) {
                     Ok(op_code) => match op_code {
+                        AttackCruiserOpCode::UpdatePlayerStates => Ok(vec![Broadcast::Single(
+                            sender,
+                            vec![GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: AttackCruiserUpdatePlayers {
+                                    minigame_header: MinigameHeader {
+                                        stage_guid: 27001,
+                                        sub_op_code: AttackCruiserOpCode::UpdatePlayers as i32,
+                                        stage_group_guid: 13,
+                                    },
+                                    states: vec![AttackCruiserPlayerUpdate {
+                                        index: 1,
+                                        state: AttackCruiserPlayerState {
+                                            unknown1: Some(AttackCruiserPlayerStateUnknown1 {
+                                                unknown1: 1,
+                                                actor_id: 500,
+                                                unknown3: 200,
+                                                unknown4: "test".to_string(),
+                                                unknown5: "hello world".to_string(),
+                                            }),
+                                            unknown2: Some(AttackCruiserPlayerStateUnknown2 {
+                                                unknown1: 10,
+                                                unknown2: 11,
+                                                unknown3: 12,
+                                                unknown4: 13,
+                                                unknown5: 14,
+                                                unknown6: 15,
+                                            }),
+                                            unknown3: None,
+                                            unknown4: None,
+                                            unknown5: None,
+                                        },
+                                    }],
+                                },
+                            })],
+                        )]),
                         AttackCruiserOpCode::RoundTrip => {
                             cursor.set_position(offset);
                             let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
