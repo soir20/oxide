@@ -610,6 +610,7 @@ impl SerializePacket for AttackCruiserConfigPlayer {
         }
 
         config_flags.serialize(buffer);
+        config_buffer.serialize(buffer);
     }
 }
 
