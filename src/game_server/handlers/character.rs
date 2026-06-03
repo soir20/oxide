@@ -67,8 +67,8 @@ pub const CHAT_BUBBLE_VISIBLE_RADIUS: f32 = 32.0;
 pub const ORIGIN_RESET_TAG_ID: u32 = 1;
 pub const ORIGIN_RESET_COMPOSITE_EFFECT_ID: u32 = 2764;
 
-const fn default_health() -> u32 {
-    u32::MAX
+const fn default_health() -> u16 {
+    u16::MAX
 }
 
 const fn default_stand_animation_id() -> i32 {
@@ -267,9 +267,9 @@ pub struct BaseNpcConfig {
     pub speed: f32,
     pub cursor: Option<u8>,
     #[serde(default = "default_health")]
-    pub health: u32,
+    pub health: u16,
     #[serde(default)]
-    pub max_health: u32,
+    pub max_health: u16,
     #[serde(default)]
     pub hostility: Hostility,
     #[serde(default)]
@@ -2238,11 +2238,11 @@ impl BaseNpcTemplate {
             synchronize_with: config.synchronize_with.clone(),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
-            health: config.health,
+            health: config.health.into(),
             max_health: if config.max_health == 0 {
-                config.health
+                config.health.into()
             } else {
-                config.max_health
+                config.max_health.into()
             },
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
