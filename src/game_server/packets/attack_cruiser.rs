@@ -16,7 +16,7 @@ pub enum AttackCruiserOpCode {
     AddPlayer = 0x3,
     RemovePlayer = 0x4,
     ConfigPlayer = 0x5,
-    UpdatePlayerStates = 0x6,
+    RequestUpdatePlayers = 0x6,
     UpdatePlayers = 0x7,
     UpdateActors = 0x8,
     ClickOnLocation = 0xa,
@@ -618,6 +618,12 @@ impl GamePacket for AttackCruiserConfigPlayer {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(DeserializePacket)]
+pub struct AttackCruiseRequestUpdatePlayers {
+    pub minigame_header: MinigameHeader,
+    pub update_type: u32,
 }
 
 #[derive(SerializePacket)]
