@@ -581,14 +581,36 @@ impl GamePacket for AttackCruiserAddPlayer {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(SerializePacket)]
 pub struct AttackCruiserConfigPlayer {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
-    pub config1: AttackCruiserConfig,
-    pub config2: AttackCruiserConfig,
-    pub config3: AttackCruiserConfig,
-    pub configs: Vec<AttackCruiserConfig>,
+    pub config1: Option<AttackCruiserConfig>,
+    pub config2: Option<AttackCruiserConfig>,
+    pub config3: Option<AttackCruiserConfig>,
+}
+
+impl SerializePacket for AttackCruiserConfigPlayer {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.minigame_header.serialize(buffer);
+        self.guid.serialize(buffer);
+
+        let mut config_buffer = Vec::new();
+        let mut config_flags = 0;
+        if let Some(config) = &self.config1 {
+            config_flags |= 0b1;
+            config.serialize(&mut config_buffer);
+        }
+        if let Some(config) = &self.config2 {
+            config_flags |= 0b10;
+            config.serialize(&mut config_buffer);
+        }
+        if let Some(config) = &self.config3 {
+            config_flags |= 0b100;
+            config.serialize(&mut config_buffer);
+        }
+
+        config_flags.serialize(buffer);
+    }
 }
 
 impl GamePacket for AttackCruiserConfigPlayer {
