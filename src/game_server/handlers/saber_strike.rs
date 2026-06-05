@@ -268,7 +268,7 @@ pub fn start_saber_strike(
                     config_reference_name: "main camera config value".to_string(),
                     config_type: AttackCruiserConfigType::Camera(Box::new(
                         AttackCruiserCameraConfig {
-                            distance: 100.0,
+                            distance: 1000.0,
                             min_distance: 0.0,
                             max_distance: 10000.0,
                             pitch: 30.0,
@@ -297,12 +297,12 @@ pub fn start_saber_strike(
                         config_reference_name: "actor config value".to_string(),
                         config_type: AttackCruiserConfigType::Actor(Box::new(
                             AttackCruiserActorConfig {
-                                model_id: 132,
+                                model_id: 167,
                                 effect_id: 0,
                                 death_effect_id: 0,
                                 despawn_effect_id: 0,
                                 explode_offset: 1.0,
-                                collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
+                                collision_asset_name: "Ship_RepublicDestroyer_bbe.cdt".to_string(),
                                 physics_config: AttackCruiserAnyConfig {
                                     class: "SimplePhysicsConfig".to_string(),
                                     value: "physics config value".to_string(),
