@@ -3,31 +3,14 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    handlers::character::{MinigameStatus, Player},
-    packets::{
-        attack_cruiser::{
-            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddPlayer,
-            AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBool,
-            AttackCruiserCameraConfig, AttackCruiserClientConfig, AttackCruiserConfig,
-            AttackCruiserConfigPlayer, AttackCruiserConfigType, AttackCruiserEventActorConfig,
-            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
-            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
-            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
-            AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1,
-            AttackCruiserPlayerStateUnknown2, AttackCruiserShipConfig,
-            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
-        },
-        minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        player_update::Freeze,
-        saber_strike::{
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType, handlers::character::{MinigameStatus, Player}, packets::{
+        GamePacket, Pos3, attack_cruiser::{
+            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig, AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType, AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown2, AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec
+        }, minigame::{MinigameHeader, ScoreEntry, ScoreType}, player_update::Freeze, saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeThrowKill,
-        },
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
-        GamePacket, Pos3,
-    },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        }, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams
+    }
 };
 
 use super::minigame::{handle_minigame_packet_write, MinigameTypeData};
@@ -414,6 +397,23 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
+            inner: AttackCruiserAddActor {
+                minigame_header: MinigameHeader {
+                    stage_guid: minigame_status.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::AddActor as i32,
+                    stage_group_guid: minigame_status.group.stage_group_guid,
+                },
+                actor_id: 500,
+                unknown2: 0,
+                actor_pool_id: 0x16FCDB9D3442E1B,
+                unknown4: Pos3::default(),
+                unknown5: Pos3::default(),
+                unknown6: 4,
+                unknown7: 5,
+            },
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
             inner: AttackCruiserAddPlayer {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
@@ -477,23 +477,6 @@ pub fn start_saber_strike(
                 }),
             },
         }),
-        // GamePacket::serialize(&TunneledPacket {
-        //     unknown1: true,
-        //     inner: AttackCruiserAddActor {
-        //         minigame_header: MinigameHeader {
-        //             stage_guid: minigame_status.group.stage_guid,
-        //             sub_op_code: AttackCruiserOpCode::AddActor as i32,
-        //             stage_group_guid: minigame_status.group.stage_group_guid,
-        //         },
-        //         actor_id: 500,
-        //         unknown2: 2,
-        //         actor_pool_id: 1000,
-        //         unknown4: Pos3::default(),
-        //         unknown5: Pos3::default(),
-        //         unknown6: 4,
-        //         unknown7: 5,
-        //     },
-        // }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserUpdateGameState {
