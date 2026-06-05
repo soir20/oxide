@@ -774,11 +774,20 @@ pub enum PhysicsState {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Default,
+    Debug,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    Deserialize,
 )]
 #[repr(u32)]
 pub enum Hostility {
     Hostile,
+    #[default]
     Neutral,
     Friendly,
 }
