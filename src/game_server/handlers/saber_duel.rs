@@ -670,7 +670,7 @@ impl SaberDuelGame {
                 show_name: false,
                 show_health: false,
                 hostility: Hostility::default(),
-                bounce_area_id: -1,
+                bounce_area_id: Some(-1),
                 enable_gravity: true,
                 enable_tilt: false,
                 use_terrain_model: false,

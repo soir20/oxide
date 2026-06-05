@@ -285,8 +285,7 @@ pub struct BaseNpcConfig {
     pub show_name: bool,
     #[serde(default)]
     pub show_health: bool,
-    #[serde(default)]
-    pub bounce_area_id: i32,
+    pub bounce_area_id: Option<i32>,
     #[serde(default)]
     pub physics: PhysicsState,
     #[serde(default = "default_true")]
@@ -341,7 +340,7 @@ pub struct BaseNpc {
     pub show_name: bool,
     pub show_health: bool,
     pub hostility: Hostility,
-    pub bounce_area_id: i32,
+    pub bounce_area_id: Option<i32>,
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
@@ -430,7 +429,7 @@ impl BaseNpc {
                         w: 0.0,
                     },
                     unknown40: 0,
-                    bounce_area_id: self.bounce_area_id,
+                    bounce_area_id: self.bounce_area_id.unwrap_or(-1),
                     image_set_id: 0,
                     clickable: self.clickable,
                     rider_guid: 0,
@@ -2263,7 +2262,7 @@ impl BaseNpcTemplate {
             show_name: config.show_name,
             show_health: config.show_health,
             hostility: config.hostility,
-            bounce_area_id: config.bounce_area_id,
+            bounce_area_id: config.bounce_area_id.unwrap_or(-1),
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
@@ -2366,7 +2365,7 @@ impl BaseNpcTemplate {
             show_name: self.show_name,
             show_health: self.show_health,
             hostility: self.hostility,
-            bounce_area_id: self.bounce_area_id,
+            bounce_area_id: Some(self.bounce_area_id),
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
