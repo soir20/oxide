@@ -489,7 +489,7 @@ impl SerializePacket for AttackCruiserPlayerStateType {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateUnknown1 {
-    pub unknown1: u32,
+    pub player_index: u32,
     pub actor_id: u32,
     pub unknown3: u32,
     pub unknown4: String,

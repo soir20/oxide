@@ -1937,7 +1937,7 @@ pub fn process_minigame_packet(
                                                 state: AttackCruiserPlayerState {
                                                     unknown1: Some(
                                                         AttackCruiserPlayerStateUnknown1 {
-                                                            unknown1: 1,
+                                                            player_index: 1,
                                                             actor_id: 500,
                                                             unknown3: 200,
                                                             unknown4: "test".to_string(),

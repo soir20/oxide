@@ -423,20 +423,13 @@ pub fn start_saber_strike(
                 guid: 1,
                 state: AttackCruiserPlayerState {
                     unknown1: Some(AttackCruiserPlayerStateUnknown1 {
-                        unknown1: 1,
+                        player_index: 1,
                         actor_id: 500,
                         unknown3: 200,
                         unknown4: "test".to_string(),
                         unknown5: "hello world".to_string(),
                     }),
-                    unknown2: Some(AttackCruiserPlayerStateUnknown2 {
-                        unknown1: 10,
-                        unknown2: 11,
-                        unknown3: 12,
-                        unknown4: 13,
-                        unknown5: 14,
-                        unknown6: 15,
-                    }),
+                    unknown2: None,
                     unknown3: None,
                     unknown4: None,
                     unknown5: None,
