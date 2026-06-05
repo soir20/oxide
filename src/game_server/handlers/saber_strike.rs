@@ -3,14 +3,32 @@ use std::io::{Cursor, Read};
 use packet_serialize::DeserializePacket;
 
 use crate::game_server::{
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType, handlers::character::{MinigameStatus, Player}, packets::{
-        GamePacket, Pos3, attack_cruiser::{
-            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig, AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType, AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown2, AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec
-        }, minigame::{MinigameHeader, ScoreEntry, ScoreType}, player_update::Freeze, saber_strike::{
+    handlers::character::{MinigameStatus, Player},
+    packets::{
+        attack_cruiser::{
+            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
+            AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
+            AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
+            AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
+            AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
+            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
+            AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown2,
+            AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig,
+            AttackCruiserUpdateGameState, AttackCruiserVec,
+        },
+        minigame::{MinigameHeader, ScoreEntry, ScoreType},
+        player_update::Freeze,
+        saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeThrowKill,
-        }, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams
-    }
+        },
+        tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
+        GamePacket, Pos3,
+    },
+    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
 use super::minigame::{handle_minigame_packet_write, MinigameTypeData};
@@ -317,7 +335,7 @@ pub fn start_saber_strike(
                                     height: 30.0,
                                     center_of_mass_z: 1.0,
                                     max_speed: 10.0,
-                                    vertical_speed: 1.0,
+                                    vertical_speed: 10.0,
                                 },
                                 flight_configs: AttackCruiserVec::new(),
                             },
@@ -406,7 +424,11 @@ pub fn start_saber_strike(
                 actor_id: 500,
                 unknown2: 0,
                 actor_pool_id: 0x16FCDB9D3442E1B,
-                unknown4: Pos3 { x: 3.99, y: 940.559, z: -1993.09 },
+                unknown4: Pos3 {
+                    x: 3.99,
+                    y: 940.559,
+                    z: -1993.09,
+                },
                 unknown5: Pos3::default(),
                 unknown6: 4,
                 unknown7: 5,
