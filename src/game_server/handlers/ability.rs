@@ -53,7 +53,7 @@ pub struct AbilityConfig {
     pub damage_deviation_percentage: u32,
     #[serde(default = "default_critical_chance")]
     pub critical_chance: u32,
-    pub critical_bonus_damage: Option<u32>,
+    pub critical_bonus_percentage: Option<u32>,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
