@@ -268,8 +268,7 @@ pub struct BaseNpcConfig {
     pub cursor: Option<u8>,
     #[serde(default = "default_health")]
     pub health: u16,
-    #[serde(default)]
-    pub max_health: u16,
+    pub max_health: Option<u16>,
     #[serde(default)]
     pub hostility: Hostility,
     #[serde(default)]
@@ -2239,11 +2238,7 @@ impl BaseNpcTemplate {
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             health: config.health,
-            max_health: if config.max_health == 0 {
-                config.health
-            } else {
-                config.max_health
-            },
+            max_health: config.max_health.unwrap_or(config.health),
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
@@ -2338,8 +2333,8 @@ impl BaseNpcTemplate {
                 auto_target_radius: self.auto_target_radius,
                 enemy_types: self.enemy_types.clone(),
                 threat_table: self.enemy_prioritization.clone().into(),
-                health: self.health.into(),
-                max_health: self.max_health.into(),
+                health: self.health,
+                max_health: self.max_health,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: self.navmesh.clone(),
                 ability_height: self.ability_height,
@@ -2478,8 +2473,8 @@ pub struct CharacterStats {
     pub ability_height: f32,
     pub enemy_types: HashSet<String>,
     pub threat_table: ThreatTable,
-    pub health: u32,
-    pub max_health: u32,
+    pub health: u16,
+    pub max_health: u16,
     pub composite_effect_tags: BTreeMap<u32, u32>,
     pub navmesh: Option<String>,
 }
@@ -2738,8 +2733,8 @@ impl Character {
                 auto_target_radius: 0.0,
                 enemy_types: HashSet::new(),
                 threat_table: ThreatTable::default(),
-                health: u32::MAX,
-                max_health: u32::MAX,
+                health: u16::MAX,
+                max_health: u16::MAX,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
@@ -2809,8 +2804,8 @@ impl Character {
                     .enemy_types_applied_to_players
                     .clone(),
                 threat_table: ThreatTable::default(),
-                health: u32::MAX,
-                max_health: u32::MAX,
+                health: u16::MAX,
+                max_health: u16::MAX,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
