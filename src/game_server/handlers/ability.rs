@@ -16,6 +16,18 @@ use crate::{
     ConfigError,
 };
 
+const fn default_base_damage() -> u32 {
+    100
+}
+
+const fn default_damage_deviation() -> u32 {
+    15
+}
+
+const fn default_critical_chance() -> u32 {
+    5
+}
+
 const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
 }
@@ -35,6 +47,13 @@ pub struct AbilityConfig {
     pub area_of_effect_radius: f32,
     #[serde(default)]
     pub max_distance_from_player: f32,
+    #[serde(default = "default_base_damage")]
+    pub base_damage: u32,
+    #[serde(default = "default_damage_deviation")]
+    pub damage_deviation_percentage: u32,
+    #[serde(default = "default_critical_chance")]
+    pub critical_chance: u32,
+    pub critical_bonus_damage: Option<u32>,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
