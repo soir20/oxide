@@ -146,7 +146,7 @@ pub struct AttackCruiserPlanetConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
-    pub weapon_bag_config: AttackCruiserAnyConfig,
+    pub weapon_bay_config: AttackCruiserAnyConfig,
     pub group: u32,
     pub tier: i32,
     pub special_weapon: AttackCruiserBool,
