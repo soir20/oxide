@@ -293,36 +293,6 @@ pub fn start_saber_strike(
                 },
                 configs: vec![
                     AttackCruiserConfig {
-                        unknown1: 5,
-                        config_type_hash: 0x016fcdb9,
-                        config_reference_name: "actor config value".to_string(),
-                        config_type: AttackCruiserConfigType::Actor(Box::new(
-                            AttackCruiserActorConfig {
-                                model_id: 167,
-                                effect_id: 0,
-                                death_effect_id: 0,
-                                despawn_effect_id: 0,
-                                explode_offset: 1.0,
-                                collision_asset_name: "Ship_RepublicDestroyer_bbe.cdt".to_string(),
-                                physics_config: AttackCruiserAnyConfig {
-                                    class: "SimplePhysicsConfig".to_string(),
-                                    value: "physics config value".to_string(),
-                                },
-                                max_health: 100,
-                                explosive_collision: AttackCruiserBool(true),
-                                collision_damage: 0,
-                                score: 123,
-                                bonus_score: 0,
-                                bonus_max_age_seconds: 10.0,
-                                overhead_offset_y: 0.0,
-                                overhead_health_scale: 1.0,
-                                animations: AttackCruiserVec::new(),
-                                cinematics: AttackCruiserVec::new(),
-                                damage_states: AttackCruiserVec::new(),
-                            },
-                        )),
-                    },
-                    AttackCruiserConfig {
                         unknown1: 6,
                         config_type_hash: 0x4b65ebe3,
                         config_reference_name: "physics config value".to_string(),
