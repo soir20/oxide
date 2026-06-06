@@ -36,8 +36,8 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1,
-                AttackCruiserPlayerStateUnknown2, AttackCruiserPlayerUpdate,
+                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
                 AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
                 AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
             },
@@ -1944,16 +1944,14 @@ pub fn process_minigame_packet(
                                                             unknown5: "hello world".to_string(),
                                                         },
                                                     ),
-                                                    unknown2: Some(
-                                                        AttackCruiserPlayerStateUnknown2 {
-                                                            unknown1: 10,
-                                                            unknown2: 11,
-                                                            unknown3: 12,
-                                                            unknown4: 13,
-                                                            unknown5: 14,
-                                                            unknown6: 15,
-                                                        },
-                                                    ),
+                                                    score: Some(AttackCruiserPlayerStateScore {
+                                                        score: 10,
+                                                        score_multiplier_tier_progress: 11,
+                                                        score_multiplier_tier_goal: 12,
+                                                        score_multiplier_tier: 13,
+                                                        unknown5: 14,
+                                                        unknown6: 15,
+                                                    }),
                                                     unknown3: None,
                                                     unknown4: None,
                                                     unknown5: None,

@@ -506,11 +506,11 @@ pub struct AttackCruiserPlayerStateUnknown1 {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerStateUnknown2 {
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
-    pub unknown4: u32,
+pub struct AttackCruiserPlayerStateScore {
+    pub score: u32,
+    pub score_multiplier_tier_progress: u32,
+    pub score_multiplier_tier_goal: u32,
+    pub score_multiplier_tier: u32,
     pub unknown5: u32,
     pub unknown6: u32,
 }
@@ -538,7 +538,7 @@ pub struct AttackCruiserPlayerStateUnknown5 {
 
 pub struct AttackCruiserPlayerState {
     pub unknown1: Option<AttackCruiserPlayerStateUnknown1>,
-    pub unknown2: Option<AttackCruiserPlayerStateUnknown2>,
+    pub score: Option<AttackCruiserPlayerStateScore>,
     pub unknown3: Option<AttackCruiserPlayerStateUnknown3>,
     pub unknown4: Option<AttackCruiserPlayerStateUnknown4>,
     pub unknown5: Option<AttackCruiserPlayerStateUnknown5>,
@@ -548,7 +548,7 @@ impl SerializePacket for AttackCruiserPlayerState {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let update_type = AttackCruiserPlayerStateType {
             unknown1: self.unknown1.is_some(),
-            unknown2: self.unknown2.is_some(),
+            unknown2: self.score.is_some(),
             unknown3: self.unknown3.is_some(),
             unknown4: self.unknown4.is_some(),
             unknown5: self.unknown5.is_some(),
@@ -559,7 +559,7 @@ impl SerializePacket for AttackCruiserPlayerState {
             unknown1.serialize(buffer);
         }
 
-        if let Some(unknown2) = &self.unknown2 {
+        if let Some(unknown2) = &self.score {
             unknown2.serialize(buffer);
         }
 
