@@ -7,7 +7,7 @@ enemy_types:
   - player
 enemy_types_applied_to_players:
   - player
-allowed_player_enemies:
+allowed_player_attacks:
   else: Unattackable
   if:
     aerial:
