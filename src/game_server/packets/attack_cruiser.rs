@@ -145,6 +145,13 @@ pub struct AttackCruiserPlanetConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserWeaponBayConfig {
+    pub exit_velocity: f32,
+    pub life_time_seconds: f32,
+    pub reload_time_seconds: f32,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
     pub weapon_bay_config: AttackCruiserAnyConfig,
     pub group: u32,
@@ -394,6 +401,7 @@ pub enum AttackCruiserConfigType {
     Global(Box<AttackCruiserGlobalConfig>),
     Ship(Box<AttackCruiserShipConfig>),
     SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
+    WeaponBay(Box<AttackCruiserWeaponBayConfig>),
 }
 
 impl SerializePacket for AttackCruiserConfigType {
@@ -405,6 +413,7 @@ impl SerializePacket for AttackCruiserConfigType {
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
             AttackCruiserConfigType::Ship(config) => config.serialize(buffer),
             AttackCruiserConfigType::SimplePhysics(config) => config.serialize(buffer),
+            AttackCruiserConfigType::WeaponBay(config) => config.serialize(buffer),
         }
     }
 }
@@ -621,7 +630,7 @@ impl GamePacket for AttackCruiserConfigPlayer {
 }
 
 #[derive(DeserializePacket)]
-pub struct AttackCruiseRequestUpdatePlayers {
+pub struct AttackCruiserRequestUpdatePlayers {
     pub minigame_header: MinigameHeader,
     pub update_type: u32,
 }

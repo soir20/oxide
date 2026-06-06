@@ -36,10 +36,10 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiseRequestUpdatePlayers, AttackCruiserOpCode, AttackCruiserPlayerState,
-                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown2,
-                AttackCruiserPlayerUpdate, AttackCruiserRoundTrip, AttackCruiserUpdateGameState,
-                AttackCruiserUpdatePlayers,
+                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1,
+                AttackCruiserPlayerStateUnknown2, AttackCruiserPlayerUpdate,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
+                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -1914,7 +1914,7 @@ pub fn process_minigame_packet(
                     Ok(op_code) => match op_code {
                         AttackCruiserOpCode::RequestUpdatePlayers => {
                             cursor.set_position(offset);
-                            let request = AttackCruiseRequestUpdatePlayers::deserialize(cursor)?;
+                            let request = AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
 
                             if request.update_type != 3 {
                                 return Ok(Vec::new());

@@ -15,8 +15,9 @@ use crate::game_server::{
             AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
             AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
             AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown2,
-            AttackCruiserShipConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserShipConfig, AttackCruiserShipWeaponConfig,
+            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         player_update::Freeze,
@@ -236,8 +237,8 @@ pub fn start_saber_strike(
                             "actor pools".to_string(),
                             vec![AttackCruiserActorPoolConfig {
                                 actor_config: AttackCruiserAnyConfig {
-                                    class: "ActorConfig".to_string(),
-                                    value: "actor config value".to_string(),
+                                    class: "ShipConfig".to_string(),
+                                    value: "ship config value".to_string(),
                                 },
                                 size: 500,
                             }],
@@ -348,7 +349,7 @@ pub fn start_saber_strike(
                         config_type: AttackCruiserConfigType::Ship(Box::new(
                             AttackCruiserShipConfig {
                                 actor_config: AttackCruiserActorConfig {
-                                    model_id: 247,
+                                    model_id: 167,
                                     effect_id: 0,
                                     death_effect_id: 0,
                                     despawn_effect_id: 0,
@@ -374,11 +375,40 @@ pub fn start_saber_strike(
                                 thruster_effect_id: 100,
                                 invulnerable_effect_id: 101,
                                 stun_effect_id: 102,
-                                weapons: AttackCruiserVec::new(),
-                                roll_max_angle: 1.0,
-                                pitch_max_angle: 1.0,
+                                weapons: AttackCruiserVec(
+                                    "player weapons".to_string(),
+                                    vec![AttackCruiserShipWeaponConfig {
+                                        weapon_bay_config: AttackCruiserAnyConfig {
+                                            class: "WeaponBayConfig".to_string(),
+                                            value: "weapon bay config value".to_string(),
+                                        },
+                                        group: 1,
+                                        tier: 1,
+                                        special_weapon: AttackCruiserBool(false),
+                                        exit_offset_x: 0.0,
+                                        exit_offset_y: 0.0,
+                                        exit_offset_z: 0.0,
+                                        exit_offset_angle: 0.0,
+                                        exit_min_angle: 0.0,
+                                        exit_max_angle: 360.0,
+                                    }],
+                                ),
+                                roll_max_angle: 360.0,
+                                pitch_max_angle: 360.0,
                                 continuous_fire_seconds: 10.0,
                                 fire_cooldown_seconds: 1.0,
+                            },
+                        )),
+                    },
+                    AttackCruiserConfig {
+                        unknown1: 10,
+                        config_type_hash: 0x3e702d91,
+                        config_reference_name: "weapon bay config value".to_string(),
+                        config_type: AttackCruiserConfigType::WeaponBay(Box::new(
+                            AttackCruiserWeaponBayConfig {
+                                exit_velocity: 10.0,
+                                life_time_seconds: 100.0,
+                                reload_time_seconds: 1.0,
                             },
                         )),
                     },
@@ -423,7 +453,7 @@ pub fn start_saber_strike(
                 },
                 actor_id: 500,
                 unknown2: 0,
-                actor_pool_id: 0x16FCDB9D3442E1B,
+                actor_pool_id: 0x4DB6C82AEC9B4E53,
                 unknown4: Pos3 {
                     x: 3.99,
                     y: 940.559,
