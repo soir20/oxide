@@ -1,5 +1,7 @@
 ---
 enemy_types:
+  - republic
+  - separatist
   - aerial
   - ground
   - player
