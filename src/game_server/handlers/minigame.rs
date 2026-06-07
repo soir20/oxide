@@ -1868,152 +1868,159 @@ pub fn process_minigame_packet(
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MinigameOpCode::try_from(raw_op_code) {
-        Ok(op_code) => match op_code {
-            MinigameOpCode::RequestMinigameStageGroupInstance => {
-                let request = RequestMinigameStageGroupInstance::deserialize(cursor)?;
-                handle_request_stage_group_instance(request, sender, game_server)
-            }
-            MinigameOpCode::RequestCreateActiveMinigame => {
-                let request = RequestCreateActiveMinigame::deserialize(cursor)?;
-                handle_request_create_active_minigame(request, sender, game_server)
-            }
-            MinigameOpCode::RequestStartActiveMinigame => {
-                let request = RequestStartActiveMinigame::deserialize(cursor)?;
-                handle_request_start_active_minigame(request, sender, game_server)
-            }
-            MinigameOpCode::RequestCancelActiveMinigame => {
-                RequestCancelActiveMinigame::deserialize(cursor)?;
-                handle_request_cancel_active_minigame(true, sender, game_server)
-            }
-            MinigameOpCode::PauseActiveMinigame => {
-                let header = MinigameHeader::deserialize(cursor)?;
-                handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
-            }
-            MinigameOpCode::ResumeActiveMinigame => {
-                let header = MinigameHeader::deserialize(cursor)?;
-                handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
-            }
-            MinigameOpCode::FlashPayload => {
-                let payload = FlashPayload::deserialize(cursor)?;
-                handle_flash_payload(payload, sender, game_server)
-            }
-            MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
-            MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
-            MinigameOpCode::AttackCruiser => {
-                let offset = cursor.position();
-                let header = MinigameHeader::deserialize(cursor)?;
+        Ok(op_code) => {
+            match op_code {
+                MinigameOpCode::RequestMinigameStageGroupInstance => {
+                    let request = RequestMinigameStageGroupInstance::deserialize(cursor)?;
+                    handle_request_stage_group_instance(request, sender, game_server)
+                }
+                MinigameOpCode::RequestCreateActiveMinigame => {
+                    let request = RequestCreateActiveMinigame::deserialize(cursor)?;
+                    handle_request_create_active_minigame(request, sender, game_server)
+                }
+                MinigameOpCode::RequestStartActiveMinigame => {
+                    let request = RequestStartActiveMinigame::deserialize(cursor)?;
+                    handle_request_start_active_minigame(request, sender, game_server)
+                }
+                MinigameOpCode::RequestCancelActiveMinigame => {
+                    RequestCancelActiveMinigame::deserialize(cursor)?;
+                    handle_request_cancel_active_minigame(true, sender, game_server)
+                }
+                MinigameOpCode::PauseActiveMinigame => {
+                    let header = MinigameHeader::deserialize(cursor)?;
+                    handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
+                }
+                MinigameOpCode::ResumeActiveMinigame => {
+                    let header = MinigameHeader::deserialize(cursor)?;
+                    handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
+                }
+                MinigameOpCode::FlashPayload => {
+                    let payload = FlashPayload::deserialize(cursor)?;
+                    handle_flash_payload(payload, sender, game_server)
+                }
+                MinigameOpCode::SaberStrike => {
+                    process_saber_strike_packet(cursor, sender, game_server)
+                }
+                MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
+                MinigameOpCode::AttackCruiser => {
+                    let offset = cursor.position();
+                    let header = MinigameHeader::deserialize(cursor)?;
 
-                let mut buffer = Vec::new();
-                cursor.read_to_end(&mut buffer)?;
-                info!(
-                    "Attack Cruiser packet: {:x} {buffer:x?}",
-                    header.sub_op_code
-                );
+                    let mut buffer = Vec::new();
+                    cursor.read_to_end(&mut buffer)?;
+                    info!(
+                        "Attack Cruiser packet: {:x} {buffer:x?}",
+                        header.sub_op_code
+                    );
 
-                match AttackCruiserOpCode::try_from(header.sub_op_code) {
-                    Ok(op_code) => match op_code {
-                        AttackCruiserOpCode::RequestUpdatePlayers => {
-                            cursor.set_position(offset);
-                            let request = AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
+                    match AttackCruiserOpCode::try_from(header.sub_op_code) {
+                        Ok(op_code) => match op_code {
+                            AttackCruiserOpCode::RequestUpdatePlayers => {
+                                cursor.set_position(offset);
+                                let request =
+                                    AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
 
-                            if request.update_type != 3 {
-                                return Ok(Vec::new());
-                            }
+                                if request.update_type != 3 {
+                                    return Ok(Vec::new());
+                                }
 
-                            Ok(vec![Broadcast::Single(
-                                sender,
-                                vec![
-                                    GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: AttackCruiserUpdatePlayers {
-                                            minigame_header: MinigameHeader {
-                                                stage_guid: 27001,
-                                                sub_op_code: AttackCruiserOpCode::UpdatePlayers
-                                                    as i32,
-                                                stage_group_guid: 13,
-                                            },
-                                            states: vec![AttackCruiserPlayerUpdate {
-                                                index: 1,
-                                                state: AttackCruiserPlayerState {
-                                                    unknown1: Some(
-                                                        AttackCruiserPlayerStateUnknown1 {
-                                                            player_index: 1,
-                                                            actor_id: 500,
-                                                            unknown3: 200,
-                                                            unknown4: "test".to_string(),
-                                                            unknown5: "hello world".to_string(),
-                                                        },
-                                                    ),
-                                                    score: Some(AttackCruiserPlayerStateScore {
-                                                        score: 10,
-                                                        score_multiplier_tier_progress: 11,
-                                                        score_multiplier_tier_goal: 12,
-                                                        score_multiplier_tier: 13,
-                                                        unknown5: 14,
-                                                        unknown6: 15,
-                                                    }),
-                                                    actor_replacement: None,
-                                                    unknown4: None,
-                                                    unknown5: None,
+                                Ok(vec![Broadcast::Single(
+                                    sender,
+                                    vec![
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserUpdatePlayers {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::UpdatePlayers
+                                                        as i32,
+                                                    stage_group_guid: 13,
                                                 },
-                                            }],
-                                        },
-                                    }),
-                                    GamePacket::serialize(&TunneledPacket {
+                                                states: vec![AttackCruiserPlayerUpdate {
+                                                    index: 1,
+                                                    state: AttackCruiserPlayerState {
+                                                        unknown1: Some(
+                                                            AttackCruiserPlayerStateUnknown1 {
+                                                                player_index: 1,
+                                                                actor_id: 500,
+                                                                unknown3: 200,
+                                                                unknown4: "test".to_string(),
+                                                                unknown5: "hello world".to_string(),
+                                                            },
+                                                        ),
+                                                        score: Some(
+                                                            AttackCruiserPlayerStateScore {
+                                                                score: 10,
+                                                                score_multiplier_tier_progress: 11,
+                                                                score_multiplier_tier_goal: 12,
+                                                                score_multiplier_tier: 13,
+                                                                unknown5: 14,
+                                                                unknown6: 15,
+                                                            },
+                                                        ),
+                                                        actor_replacement: None,
+                                                        special_weapon: None,
+                                                        unknown5: None,
+                                                    },
+                                                }],
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserUpdateGameState {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code:
+                                                        AttackCruiserOpCode::UpdateGameState as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                game_state: 4,
+                                            },
+                                        }),
+                                    ],
+                                )])
+                            }
+                            AttackCruiserOpCode::RoundTrip => {
+                                cursor.set_position(offset);
+                                let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
+
+                                Ok(vec![Broadcast::Single(
+                                    sender,
+                                    vec![GamePacket::serialize(&TunneledPacket {
                                         unknown1: true,
-                                        inner: AttackCruiserUpdateGameState {
+                                        inner: AttackCruiserRoundTrip {
                                             minigame_header: MinigameHeader {
                                                 stage_guid: 27001,
-                                                sub_op_code: AttackCruiserOpCode::UpdateGameState
-                                                    as i32,
+                                                sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
                                                 stage_group_guid: 13,
                                             },
-                                            game_state: 4,
+                                            client_timestamp: round_trip.client_timestamp,
+                                            server_timestamp: game_server
+                                                .start_time()
+                                                .elapsed()
+                                                .as_millis()
+                                                as u64,
                                         },
-                                    }),
-                                ],
-                            )])
-                        }
-                        AttackCruiserOpCode::RoundTrip => {
-                            cursor.set_position(offset);
-                            let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
-
-                            Ok(vec![Broadcast::Single(
-                                sender,
-                                vec![GamePacket::serialize(&TunneledPacket {
-                                    unknown1: true,
-                                    inner: AttackCruiserRoundTrip {
-                                        minigame_header: MinigameHeader {
-                                            stage_guid: 27001,
-                                            sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
-                                            stage_group_guid: 13,
-                                        },
-                                        client_timestamp: round_trip.client_timestamp,
-                                        server_timestamp: game_server
-                                            .start_time()
-                                            .elapsed()
-                                            .as_millis()
-                                            as u64,
-                                    },
-                                })],
-                            )])
-                        }
-                        _ => Ok(Vec::new()),
-                    },
-                    Err(_) => Ok(Vec::new()),
+                                    })],
+                                )])
+                            }
+                            _ => Ok(Vec::new()),
+                        },
+                        Err(_) => Ok(Vec::new()),
+                    }
+                }
+                // Ignore this unused packet to reduce log spam
+                MinigameOpCode::LeaveInstance => Ok(Vec::new()),
+                _ => {
+                    let mut buffer = Vec::new();
+                    cursor.read_to_end(&mut buffer)?;
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::UnknownOpCode,
+                        format!("Unimplemented minigame op code: {op_code:?} {buffer:x?}"),
+                    ))
                 }
             }
-            // Ignore this unused packet to reduce log spam
-            MinigameOpCode::LeaveInstance => Ok(Vec::new()),
-            _ => {
-                let mut buffer = Vec::new();
-                cursor.read_to_end(&mut buffer)?;
-                Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unimplemented minigame op code: {op_code:?} {buffer:x?}"),
-                ))
-            }
-        },
+        }
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;

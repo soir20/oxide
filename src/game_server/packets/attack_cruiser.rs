@@ -522,12 +522,12 @@ pub struct AttackCruiserPlayerStateActorReplacement {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerStateUnknown4 {
+pub struct AttackCruiserPlayerStateSpecialWeapon {
     pub unknown1: u32,
     pub unknown2: u32,
-    pub unknown3: u32,
+    pub quantity: u32,
     pub unknown4: u32,
-    pub unknown5: u32,
+    pub icon_id: u32,
     pub unknown6: u32,
 }
 
@@ -540,7 +540,7 @@ pub struct AttackCruiserPlayerState {
     pub unknown1: Option<AttackCruiserPlayerStateUnknown1>,
     pub score: Option<AttackCruiserPlayerStateScore>,
     pub actor_replacement: Option<AttackCruiserPlayerStateActorReplacement>,
-    pub unknown4: Option<AttackCruiserPlayerStateUnknown4>,
+    pub special_weapon: Option<AttackCruiserPlayerStateSpecialWeapon>,
     pub unknown5: Option<AttackCruiserPlayerStateUnknown5>,
 }
 
@@ -550,7 +550,7 @@ impl SerializePacket for AttackCruiserPlayerState {
             unknown1: self.unknown1.is_some(),
             unknown2: self.score.is_some(),
             unknown3: self.actor_replacement.is_some(),
-            unknown4: self.unknown4.is_some(),
+            unknown4: self.special_weapon.is_some(),
             unknown5: self.unknown5.is_some(),
         };
         update_type.serialize(buffer);
@@ -567,7 +567,7 @@ impl SerializePacket for AttackCruiserPlayerState {
             unknown3.serialize(buffer);
         }
 
-        if let Some(unknown4) = &self.unknown4 {
+        if let Some(unknown4) = &self.special_weapon {
             unknown4.serialize(buffer);
         }
 

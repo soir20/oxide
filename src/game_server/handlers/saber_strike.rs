@@ -447,7 +447,7 @@ pub fn start_saber_strike(
                     }),
                     score: None,
                     actor_replacement: None,
-                    unknown4: None,
+                    special_weapon: None,
                     unknown5: None,
                 },
             },
