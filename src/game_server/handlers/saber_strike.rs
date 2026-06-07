@@ -14,13 +14,11 @@ use crate::game_server::{
             AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
             AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
             AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
-            AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
-            AttackCruiserShipConfig, AttackCruiserShipWeaponConfig,
-            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
-            AttackCruiserWeaponBayConfig,
+            AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
+            AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
+            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
-        player_update::Freeze,
         saber_strike::{
             SaberStrikeGameOver, SaberStrikeObfuscatedScore, SaberStrikeOpCode,
             SaberStrikeSingleKill, SaberStrikeThrowKill,
@@ -41,10 +39,6 @@ pub fn start_saber_strike(
     game_server: &GameServer,
 ) -> Vec<Vec<u8>> {
     vec![
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: Freeze { freeze: true },
-        }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserClientConfig {
