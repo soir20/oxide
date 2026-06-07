@@ -11,6 +11,7 @@ use serde::Deserialize;
 use crate::ConfigError;
 
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub enum Attackability {
     Attackable,
     Unattackable,
