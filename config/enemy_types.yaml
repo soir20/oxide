@@ -12,23 +12,18 @@ enemy_types_applied_to_players:
 allowed_player_attacks:
   if:
     aerial:
-      if: {}
       else: Unattackable
 
     player:
-      if: {}
       else: Unattackable
 
     republic:
-      if: {}
       else: Unattackable
 
     separatist:
-      if: {}
       else: Attackable
 
     ground:
-      if: {}
       else: Attackable
 
   else: Unattackable
