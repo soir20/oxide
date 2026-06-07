@@ -500,7 +500,7 @@ impl SerializePacket for AttackCruiserPlayerStateType {
 pub struct AttackCruiserPlayerStateUnknown1 {
     pub player_index: u32,
     pub actor_id: u32,
-    pub unknown3: u32,
+    pub unknown_value4: u32,
     pub unknown4: String,
     pub unknown5: String,
 }
@@ -518,7 +518,7 @@ pub struct AttackCruiserPlayerStateScore {
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateUnknown3 {
     pub actor_id: u32,
-    pub unknown2: u32,
+    pub unknown_value4: u32,
 }
 
 #[derive(SerializePacket)]

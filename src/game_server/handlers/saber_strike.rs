@@ -441,7 +441,7 @@ pub fn start_saber_strike(
                     unknown1: Some(AttackCruiserPlayerStateUnknown1 {
                         player_index: 1,
                         actor_id: 500,
-                        unknown3: 200,
+                        unknown_value4: 200,
                         unknown4: "test".to_string(),
                         unknown5: "hello world".to_string(),
                     }),
