@@ -1943,7 +1943,7 @@ pub fn process_minigame_packet(
                                                             AttackCruiserPlayerStateUnknown1 {
                                                                 player_index: 1,
                                                                 actor_id: 500,
-                                                                unknown_value4: 200,
+                                                                unknown_value4: 1,
                                                                 unknown4: "test".to_string(),
                                                                 unknown5: "hello world".to_string(),
                                                             },
@@ -1955,7 +1955,7 @@ pub fn process_minigame_packet(
                                                                 score_multiplier_tier_goal: 12,
                                                                 score_multiplier_tier: 13,
                                                                 unknown5: 14,
-                                                                unknown6: 15,
+                                                                lives: 2,
                                                             },
                                                         ),
                                                         unknown3: None,
