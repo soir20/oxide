@@ -1958,7 +1958,7 @@ pub fn process_minigame_packet(
                                                                 unknown6: 15,
                                                             },
                                                         ),
-                                                        actor_replacement: None,
+                                                        unknown3: None,
                                                         special_weapon: None,
                                                         unknown5: None,
                                                     },
