@@ -446,7 +446,7 @@ pub fn start_saber_strike(
                         unknown5: "hello world".to_string(),
                     }),
                     score: None,
-                    unknown3: None,
+                    actor_replacement: None,
                     unknown4: None,
                     unknown5: None,
                 },

@@ -1952,7 +1952,7 @@ pub fn process_minigame_packet(
                                                         unknown5: 14,
                                                         unknown6: 15,
                                                     }),
-                                                    unknown3: None,
+                                                    actor_replacement: None,
                                                     unknown4: None,
                                                     unknown5: None,
                                                 },
