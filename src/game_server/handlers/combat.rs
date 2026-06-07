@@ -18,6 +18,7 @@ pub enum Attackability {
 
 #[allow(dead_code)]
 #[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AttackDecisionNode {
     #[serde(rename = "if")]
     pub if_branches: HashMap<String, AttackDecisionNode>,
