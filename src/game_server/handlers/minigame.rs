@@ -4,7 +4,10 @@ use std::{
     io::{Cursor, Error, ErrorKind, Read},
     iter, mem,
     path::Path,
-    sync::Arc,
+    sync::{
+        atomic::{AtomicBool, Ordering},
+        Arc,
+    },
     time::{Duration, Instant},
 };
 
@@ -1862,6 +1865,8 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Confi
     Ok(configs.into())
 }
 
+static FINISHED_INTRO: AtomicBool = AtomicBool::new(false);
+
 pub fn process_minigame_packet(
     cursor: &mut Cursor<&[u8]>,
     sender: u32,
@@ -1925,6 +1930,8 @@ pub fn process_minigame_packet(
                                     return Ok(Vec::new());
                                 }
 
+                                FINISHED_INTRO.store(true, Ordering::Relaxed);
+
                                 Ok(vec![Broadcast::Single(
                                     sender,
                                     vec![
@@ -1985,6 +1992,10 @@ pub fn process_minigame_packet(
                                 cursor.set_position(offset);
                                 let update_actors = AttackCruiserUpdateActors::deserialize(cursor)?;
 
+                                if !FINISHED_INTRO.load(Ordering::Relaxed) {
+                                    return Ok(Vec::new());
+                                }
+
                                 Ok(vec![Broadcast::Single(
                                     sender,
                                     vec![GamePacket::serialize(&TunneledPacket {
@@ -1996,7 +2007,19 @@ pub fn process_minigame_packet(
                                                     as i32,
                                                 stage_group_guid: 13,
                                             },
-                                            states: update_actors.states,
+                                            states: update_actors
+                                                .states
+                                                .into_iter()
+                                                .map(|state| AttackCruiserActorUpdate {
+                                                    actor_id: state.actor_id,
+                                                    unknown1: state.unknown1,
+                                                    unknown2: state.unknown2,
+                                                    unknown3: 0.5,
+                                                    unknown4: 1.0,
+                                                    health: 50,
+                                                    unknown6: 150,
+                                                })
+                                                .collect(),
                                         },
                                     })],
                                 )])
