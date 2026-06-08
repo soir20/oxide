@@ -2016,7 +2016,7 @@ pub fn process_minigame_packet(
                                                     unknown2: state.unknown2,
                                                     unknown3: 0.5,
                                                     unknown4: 1.0,
-                                                    health: 50,
+                                                    health: 75,
                                                     unknown6: 150,
                                                 })
                                                 .collect(),
