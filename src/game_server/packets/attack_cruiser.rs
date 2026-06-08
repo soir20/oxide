@@ -3,7 +3,7 @@ use packet_serialize::{DeserializePacket, SerializePacket};
 
 use crate::game_server::packets::{
     minigame::{MinigameHeader, MinigameOpCode},
-    GamePacket, Pos3,
+    GamePacket, Pos, Pos3,
 };
 
 #[derive(
@@ -648,6 +648,29 @@ pub struct AttackCruiserUpdatePlayers {
 }
 
 impl GamePacket for AttackCruiserUpdatePlayers {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserActorUpdate {
+    pub actor_id: u32,
+    pub unknown1: Pos,
+    pub unknown2: Pos,
+    pub unknown3: f32,
+    pub unknown4: f32,
+    pub health: u32,
+    pub unknown6: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUpdateActors {
+    pub minigame_header: MinigameHeader,
+    pub states: Vec<AttackCruiserActorUpdate>,
+}
+
+impl GamePacket for AttackCruiserUpdateActors {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;

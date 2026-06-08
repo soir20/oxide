@@ -36,10 +36,11 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
-                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
+                AttackCruiserActorUpdate, AttackCruiserOpCode, AttackCruiserPlayerState,
+                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
+                AttackCruiserPlayerUpdate, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserRoundTrip, AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
+                AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -1962,6 +1963,31 @@ pub fn process_minigame_packet(
                                                         special_weapon: None,
                                                         unknown5: None,
                                                     },
+                                                }],
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserUpdateActors {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::UpdateActors
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                states: vec![AttackCruiserActorUpdate {
+                                                    actor_id: 500,
+                                                    unknown1: Pos {
+                                                        x: 3.99,
+                                                        y: 940.559,
+                                                        z: -1993.09,
+                                                        w: 1.0,
+                                                    },
+                                                    unknown2: Pos::default(),
+                                                    unknown3: 0.5,
+                                                    unknown4: 1.0,
+                                                    health: 100,
+                                                    unknown6: 150,
                                                 }],
                                             },
                                         }),

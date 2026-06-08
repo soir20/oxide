@@ -14,9 +14,10 @@ use crate::game_server::{
             AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
             AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
             AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
-            AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
-            AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWeaponBayConfig,
+            AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
+            AttackCruiserShipConfig, AttackCruiserShipWeaponConfig,
+            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
