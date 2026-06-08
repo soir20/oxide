@@ -664,7 +664,7 @@ pub struct AttackCruiserActorUpdate {
     pub unknown6: u32,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
+#[derive(SerializePacket)]
 pub struct AttackCruiserUpdateActors {
     pub minigame_header: MinigameHeader,
     pub states: Vec<AttackCruiserActorUpdate>,
