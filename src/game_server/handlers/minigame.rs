@@ -1968,31 +1968,6 @@ pub fn process_minigame_packet(
                                         }),
                                         GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
-                                            inner: AttackCruiserUpdateActors {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::UpdateActors
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                states: vec![AttackCruiserActorUpdate {
-                                                    actor_id: 500,
-                                                    unknown1: Pos {
-                                                        x: 3.99,
-                                                        y: 940.559,
-                                                        z: -1993.09,
-                                                        w: 1.0,
-                                                    },
-                                                    unknown2: Pos::default(),
-                                                    unknown3: 0.5,
-                                                    unknown4: 1.0,
-                                                    health: 100,
-                                                    unknown6: 150,
-                                                }],
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
                                             inner: AttackCruiserUpdateGameState {
                                                 minigame_header: MinigameHeader {
                                                     stage_guid: 27001,
@@ -2004,6 +1979,26 @@ pub fn process_minigame_packet(
                                             },
                                         }),
                                     ],
+                                )])
+                            }
+                            AttackCruiserOpCode::UpdateActors => {
+                                cursor.set_position(offset);
+                                let update_actors = AttackCruiserUpdateActors::deserialize(cursor)?;
+
+                                Ok(vec![Broadcast::Single(
+                                    sender,
+                                    vec![GamePacket::serialize(&TunneledPacket {
+                                        unknown1: true,
+                                        inner: AttackCruiserUpdateActors {
+                                            minigame_header: MinigameHeader {
+                                                stage_guid: 27001,
+                                                sub_op_code: AttackCruiserOpCode::UpdateActors
+                                                    as i32,
+                                                stage_group_guid: 13,
+                                            },
+                                            states: update_actors.states,
+                                        },
+                                    })],
                                 )])
                             }
                             AttackCruiserOpCode::RoundTrip => {
