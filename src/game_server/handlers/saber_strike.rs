@@ -9,14 +9,15 @@ use crate::game_server::{
             AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
             AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
             AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
+            AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
             AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
             AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
             AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
             AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
             AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
-            AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
-            AttackCruiserShipConfig, AttackCruiserShipWeaponConfig,
-            AttackCruiserSimplePhysicsConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
+            AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
+            AttackCruiserSimplePhysicsFlightConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
             AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
@@ -219,13 +220,7 @@ pub fn start_saber_strike(
                                         },
                                     ],
                                 ),
-                                event_actors: AttackCruiserVec(
-                                    "event actors".to_string(),
-                                    vec![AttackCruiserEventActorConfig {
-                                        model_id: 573,
-                                        animation_id: 1,
-                                    }],
-                                ),
+                                event_actors: AttackCruiserVec::new(),
                             }],
                         ),
                         actor_pools: AttackCruiserVec(
@@ -289,21 +284,40 @@ pub fn start_saber_strike(
                 configs: vec![
                     AttackCruiserConfig {
                         unknown1: 6,
-                        config_type_hash: 0x4b65ebe3,
+                        config_type_hash: 0xa598eae0,
                         config_reference_name: "physics config value".to_string(),
-                        config_type: AttackCruiserConfigType::SimplePhysics(Box::new(
-                            AttackCruiserSimplePhysicsConfig {
+                        config_type: AttackCruiserConfigType::ComplexPhysics(Box::new(
+                            AttackCruiserComplexPhysicsConfig {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
-                                    mass: 10.0,
-                                    length: 100.0,
-                                    width: 20.0,
-                                    height: 30.0,
-                                    center_of_mass_z: 1.0,
+                                    mass: 1.0,
+                                    length: 114.031,
+                                    width: 54.2455,
+                                    height: 28.7354,
+                                    center_of_mass_z: -6.44467,
                                     max_speed: 10.0,
                                     vertical_speed: 10.0,
                                 },
-                                flight_configs: AttackCruiserVec::new(),
+                                reverse_speed: 10.0,
+                                turbo_speed: 20.0,
+                                stationary_turn: 10.0,
+                                gears: AttackCruiserVec(
+                                    "physics config gears".to_string(),
+                                    vec![AttackCruiserComplexPhysicsGear {
+                                        shift_up_speed: 20.0,
+                                        shift_down_speed: 20.0,
+                                        base_acceleration: 20.0,
+                                        base_deceleration: 20.0,
+                                        turbo_acceleration: 20.0,
+                                        brake_deceleration: 20.0,
+                                        sideways_deceleration: 20.0,
+                                        angular_acceleration: 20.0,
+                                        turbo_angular_acceleration: 20.0,
+                                        angular_deceleration: 20.0,
+                                        max_angular_speed: 20.0,
+                                        turbo_max_angular_speed: 20.0,
+                                    }],
+                                ),
                             },
                         )),
                     },
@@ -322,7 +336,7 @@ pub fn start_saber_strike(
                                     collision_asset_name: "Ship_RepublicFrigate_bbe.cdt"
                                         .to_string(),
                                     physics_config: AttackCruiserAnyConfig {
-                                        class: "SimplePhysicsConfig".to_string(),
+                                        class: "ComplexPhysicsConfig".to_string(),
                                         value: "physics config value".to_string(),
                                     },
                                     max_health: 100,

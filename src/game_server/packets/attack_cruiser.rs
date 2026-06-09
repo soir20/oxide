@@ -297,6 +297,31 @@ pub struct AttackCruiserSimplePhysicsConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserComplexPhysicsGear {
+    pub shift_up_speed: f32,
+    pub shift_down_speed: f32,
+    pub base_acceleration: f32,
+    pub base_deceleration: f32,
+    pub turbo_acceleration: f32,
+    pub brake_deceleration: f32,
+    pub sideways_deceleration: f32,
+    pub angular_acceleration: f32,
+    pub turbo_angular_acceleration: f32,
+    pub angular_deceleration: f32,
+    pub max_angular_speed: f32,
+    pub turbo_max_angular_speed: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserComplexPhysicsConfig {
+    pub base_config: AttackCruiserBasePhysicsConfig,
+    pub reverse_speed: f32,
+    pub turbo_speed: f32,
+    pub stationary_turn: f32,
+    pub gears: AttackCruiserVec<AttackCruiserComplexPhysicsGear>,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserActorConfig {
     pub model_id: u32,
     pub effect_id: u32,
@@ -397,6 +422,7 @@ pub struct AttackCruiserGameConfig {
 pub enum AttackCruiserConfigType {
     Actor(Box<AttackCruiserActorConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
+    ComplexPhysics(Box<AttackCruiserComplexPhysicsConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
     Ship(Box<AttackCruiserShipConfig>),
@@ -409,6 +435,7 @@ impl SerializePacket for AttackCruiserConfigType {
         match self {
             AttackCruiserConfigType::Actor(config) => config.serialize(buffer),
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
+            AttackCruiserConfigType::ComplexPhysics(config) => config.serialize(buffer),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
             AttackCruiserConfigType::Ship(config) => config.serialize(buffer),
@@ -421,7 +448,7 @@ impl SerializePacket for AttackCruiserConfigType {
 #[derive(SerializePacket)]
 pub struct AttackCruiserConfig {
     pub unknown1: i32,
-    pub config_type_hash: i32,
+    pub config_type_hash: u32,
     pub config_reference_name: String,
     pub config_type: AttackCruiserConfigType,
 }
