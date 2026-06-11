@@ -2013,7 +2013,13 @@ pub fn process_minigame_packet(
                                                 .map(|state| {
                                                     println!("POS: {:?}", state.unknown1);
                                                     println!("ROT: {:?}", state.unknown2);
-                                                    println!("OTHER: {} {} {} {}", state.unknown3, state.unknown4, state.health, state.unknown6);
+                                                    println!(
+                                                        "OTHER: {} {} {} {}",
+                                                        state.unknown3,
+                                                        state.unknown4,
+                                                        state.health,
+                                                        state.unknown6
+                                                    );
                                                     AttackCruiserActorUpdate {
                                                         actor_id: state.actor_id,
                                                         unknown1: state.unknown1,
