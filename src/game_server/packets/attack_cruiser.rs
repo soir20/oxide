@@ -427,6 +427,7 @@ pub enum AttackCruiserConfigType {
     Global(Box<AttackCruiserGlobalConfig>),
     Ship(Box<AttackCruiserShipConfig>),
     SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
+    Wave(Box<AttackCruiserWaveConfig>),
     WeaponBay(Box<AttackCruiserWeaponBayConfig>),
 }
 
@@ -440,6 +441,7 @@ impl SerializePacket for AttackCruiserConfigType {
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
             AttackCruiserConfigType::Ship(config) => config.serialize(buffer),
             AttackCruiserConfigType::SimplePhysics(config) => config.serialize(buffer),
+            AttackCruiserConfigType::Wave(config) => config.serialize(buffer),
             AttackCruiserConfigType::WeaponBay(config) => config.serialize(buffer),
         }
     }
@@ -711,8 +713,8 @@ pub struct AttackCruiserAddActor {
     pub actor_pool_id: u64,
     pub pos: Pos3,
     pub roll_speed: Pos3,
-    pub unknown6: u32,
-    pub unknown7: u32,
+    pub unknown6: f32,
+    pub unknown7: f32,
 }
 
 impl GamePacket for AttackCruiserAddActor {

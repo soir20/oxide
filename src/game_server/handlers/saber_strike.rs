@@ -18,7 +18,7 @@ use crate::game_server::{
             AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
             AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
             AttackCruiserSimplePhysicsFlightConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
-            AttackCruiserWeaponBayConfig,
+            AttackCruiserWaveConfig, AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -56,8 +56,8 @@ pub fn start_saber_strike(
                     config_type: AttackCruiserConfigType::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
-                            connect_timeout_seconds: 120.0,
-                            ready_timeout_seconds: 120.0,
+                            connect_timeout_seconds: 10.0,
+                            ready_timeout_seconds: 10.0,
                             default_timeout_seconds: 120.0,
                             effects_preload_timeout_seconds: 1.0,
                             effects_ready_timeout_seconds: 1.0,
@@ -237,8 +237,8 @@ pub fn start_saber_strike(
                             "waves".to_string(),
                             vec![AttackCruiserGameWaveConfig {
                                 wave_config: AttackCruiserAnyConfig {
-                                    class: "hello".to_string(),
-                                    value: "world".to_string(),
+                                    class: "WaveConfig".to_string(),
+                                    value: "wave config value".to_string(),
                                 },
                                 launch_condition_config: AttackCruiserAnyConfig {
                                     class: "blaster".to_string(),
@@ -294,13 +294,13 @@ pub fn start_saber_strike(
                                     length: 114.031,
                                     width: 54.2455,
                                     height: 28.7354,
-                                    center_of_mass_z: -6.44467,
-                                    max_speed: 10.0,
-                                    vertical_speed: 10.0,
+                                    center_of_mass_z: 6.44467,
+                                    max_speed: 100.0,
+                                    vertical_speed: 100.0,
                                 },
-                                reverse_speed: 10.0,
-                                turbo_speed: 20.0,
-                                stationary_turn: 10.0,
+                                reverse_speed: 100.0,
+                                turbo_speed: 200.0,
+                                stationary_turn: 100.0,
                                 gears: AttackCruiserVec(
                                     "physics config gears".to_string(),
                                     vec![AttackCruiserComplexPhysicsGear {
@@ -385,7 +385,7 @@ pub fn start_saber_strike(
                         config_reference_name: "weapon bay config value".to_string(),
                         config_type: AttackCruiserConfigType::WeaponBay(Box::new(
                             AttackCruiserWeaponBayConfig {
-                                exit_velocity: 10.0,
+                                exit_velocity: 100.0,
                                 life_time_seconds: 100.0,
                                 reload_time_seconds: 1.0,
                             },
@@ -419,6 +419,17 @@ pub fn start_saber_strike(
                             },
                         )),
                     },
+                    AttackCruiserConfig {
+                        unknown1: 9,
+                        config_type_hash: 0x23773492,
+                        config_reference_name: "wave config value".to_string(),
+                        config_type: AttackCruiserConfigType::Wave(Box::new(
+                            AttackCruiserWaveConfig {
+                                actors: AttackCruiserVec::new(),
+                                hud_messages: AttackCruiserVec::new(),
+                            },
+                        )),
+                    },
                 ],
             },
         }),
@@ -439,8 +450,8 @@ pub fn start_saber_strike(
                     z: -1993.09,
                 },
                 roll_speed: Pos3::default(),
-                unknown6: 4,
-                unknown7: 5,
+                unknown6: 100.0,
+                unknown7: 100.0,
             },
         }),
         GamePacket::serialize(&TunneledPacket {

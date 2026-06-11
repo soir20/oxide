@@ -1914,10 +1914,10 @@ pub fn process_minigame_packet(
 
                     let mut buffer = Vec::new();
                     cursor.read_to_end(&mut buffer)?;
-                    info!(
-                        "Attack Cruiser packet: {:x} {buffer:x?}",
-                        header.sub_op_code
-                    );
+                    // info!(
+                    //     "Attack Cruiser packet: {:x} {buffer:x?}",
+                    //     header.sub_op_code
+                    // );
 
                     match AttackCruiserOpCode::try_from(header.sub_op_code) {
                         Ok(op_code) => match op_code {
@@ -2010,14 +2010,19 @@ pub fn process_minigame_packet(
                                             states: update_actors
                                                 .states
                                                 .into_iter()
-                                                .map(|state| AttackCruiserActorUpdate {
-                                                    actor_id: state.actor_id,
-                                                    unknown1: state.unknown1,
-                                                    unknown2: state.unknown2,
-                                                    unknown3: 0.5,
-                                                    unknown4: 1.0,
-                                                    health: 75,
-                                                    unknown6: 150,
+                                                .map(|state| {
+                                                    println!("POS: {:?}", state.unknown1);
+                                                    println!("ROT: {:?}", state.unknown2);
+                                                    println!("OTHER: {} {} {} {}", state.unknown3, state.unknown4, state.health, state.unknown6);
+                                                    AttackCruiserActorUpdate {
+                                                        actor_id: state.actor_id,
+                                                        unknown1: state.unknown1,
+                                                        unknown2: state.unknown2,
+                                                        unknown3: 0.5,
+                                                        unknown4: 1.0,
+                                                        health: 75,
+                                                        unknown6: 150,
+                                                    }
                                                 })
                                                 .collect(),
                                         },
