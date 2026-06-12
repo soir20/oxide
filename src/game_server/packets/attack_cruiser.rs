@@ -713,7 +713,7 @@ pub struct AttackCruiserAddActor {
     pub actor_pool_id: u64,
     pub pos: Pos3,
     pub roll_speed: Pos3,
-    pub unknown6: f32,
+    pub heading: f32,
     pub unknown7: f32,
 }
 

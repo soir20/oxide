@@ -450,8 +450,8 @@ pub fn start_saber_strike(
                     z: -1993.09,
                 },
                 roll_speed: Pos3::default(),
-                unknown6: 100.0,
-                unknown7: 100.0,
+                heading: 0.0,
+                unknown7: 0.0,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
