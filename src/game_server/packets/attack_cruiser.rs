@@ -685,8 +685,8 @@ impl GamePacket for AttackCruiserUpdatePlayers {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserActorUpdate {
     pub actor_id: u32,
-    pub unknown1: Pos,
-    pub unknown2: Pos,
+    pub pos: Pos,
+    pub rot_degrees: Pos,
     pub unknown3: f32,
     pub unknown4: f32,
     pub health: u32,
