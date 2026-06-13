@@ -186,9 +186,9 @@ pub fn start_saber_strike(
                                 },
                                 lives: 5,
                                 spawn_pos: Pos3 {
-                                    x: 120.0,
-                                    y: 120.0,
-                                    z: 120.0,
+                                    x: 0.0,
+                                    y: 0.0,
+                                    z: 0.0,
                                 },
                                 spawn_heading: 0.0,
                             }],
@@ -433,10 +433,10 @@ pub fn start_saber_strike(
                 speed: Pos3 {
                     x: 0.0,
                     y: 0.0,
-                    z: 10.0,
+                    z: 20.0,
                 },
                 heading: 0.0,
-                unknown7: 3.14,
+                unknown7: 0.0,
             },
         }),
         GamePacket::serialize(&TunneledPacket {

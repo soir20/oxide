@@ -2012,7 +2012,7 @@ pub fn process_minigame_packet(
                                                 .into_iter()
                                                 .map(|state| {
                                                     println!("POS: {:?}", state.pos);
-                                                    println!("ROT: {:?}", state.rot_degrees);
+                                                    println!("ROT: {:?}", state.speed);
                                                     println!(
                                                         "OTHER: {} {} {} {}",
                                                         state.unknown3,
@@ -2023,7 +2023,7 @@ pub fn process_minigame_packet(
                                                     AttackCruiserActorUpdate {
                                                         actor_id: state.actor_id,
                                                         pos: state.pos,
-                                                        rot_degrees: state.rot_degrees,
+                                                        speed: state.speed,
                                                         unknown3: 0.5,
                                                         unknown4: 1.0,
                                                         health: 75,
