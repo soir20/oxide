@@ -283,7 +283,7 @@ pub struct AttackCruiserBasePhysicsConfig {
 pub struct AttackCruiserSimplePhysicsFlightConfig {
     pub acceleration: f32,
     pub deceleration: f32,
-    pub base_desceleration: f32,
+    pub base_deceleration: f32,
     pub max_speed: f32,
     pub max_angular_speed: f32,
     pub angular_acceleration: f32,
@@ -714,7 +714,7 @@ pub struct AttackCruiserAddActor {
     pub pos: Pos3,
     pub speed: Pos3,
     pub heading: f32,
-    pub unknown7: f32,
+    pub unknown7: u32,
 }
 
 impl GamePacket for AttackCruiserAddActor {

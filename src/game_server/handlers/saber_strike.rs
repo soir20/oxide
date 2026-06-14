@@ -298,7 +298,18 @@ pub fn start_saber_strike(
                                     max_speed: 10.0,
                                     vertical_speed: 10.0,
                                 },
-                                flight_configs: AttackCruiserVec::new(),
+                                flight_configs: AttackCruiserVec(
+                                    "physics config flight configs".to_string(),
+                                    vec![AttackCruiserSimplePhysicsFlightConfig {
+                                        acceleration: 500.0,
+                                        deceleration: 5.0,
+                                        base_deceleration: 0.0,
+                                        max_speed: 1000.0,
+                                        max_angular_speed: 0.0,
+                                        angular_acceleration: 0.0,
+                                        traction: 1.0,
+                                    }],
+                                ),
                             },
                         )),
                     },
@@ -423,7 +434,7 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 actor_id: 500,
-                unknown2: 0,
+                unknown2: 100,
                 actor_pool_id: 0x4DB6C82AEC9B4E53,
                 pos: Pos3 {
                     x: 3.99,
@@ -433,10 +444,10 @@ pub fn start_saber_strike(
                 speed: Pos3 {
                     x: 0.0,
                     y: 0.0,
-                    z: 20.0,
+                    z: 0.0,
                 },
-                heading: 0.0,
-                unknown7: 0.0,
+                heading: 10.0,
+                unknown7: 100,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
