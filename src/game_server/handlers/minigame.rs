@@ -39,11 +39,12 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserActorUpdate, AttackCruiserOpCode, AttackCruiserPlayerState,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
-                AttackCruiserPlayerUpdate, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserRoundTrip, AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
-                AttackCruiserUpdatePlayers,
+                AttackCruiserActorUpdate, AttackCruiserCommand, AttackCruiserOpCode,
+                AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserRoundTrip, AttackCruiserUnknownCommand1, AttackCruiserUpdateActors,
+                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -1983,6 +1984,24 @@ pub fn process_minigame_packet(
                                                     stage_group_guid: 13,
                                                 },
                                                 game_state: 4,
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType2(
+                                                    AttackCruiserUnknownCommand1 {
+                                                        guid: 1,
+                                                        unknown1: true,
+                                                    },
+                                                ),
                                             },
                                         }),
                                     ],

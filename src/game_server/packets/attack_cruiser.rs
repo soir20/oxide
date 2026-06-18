@@ -735,3 +735,108 @@ impl GamePacket for AttackCruiserRoundTrip {
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUnknownCommand1 {
+    pub guid: u64,
+    pub unknown1: bool,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUnknownCommand2 {
+    pub guid: u64,
+    pub unknown1: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUnknownCommand3 {
+    pub guid: u64,
+    pub unknown1: Pos3,
+    pub unknown2: Pos3,
+    pub unknown3: Pos3,
+    pub unknown4: f32,
+    pub unknown5: f32,
+    pub unknown6: f32,
+    pub unknown7: f32,
+    pub unknown8: f32,
+    pub unknown9: f32,
+    pub unknown10: Pos3,
+    pub unknown11: Pos3,
+    pub unknown12: Pos3,
+    pub unknown13: Pos3,
+    pub unknown14: Pos3,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUnknownCommand4 {
+    pub guid: u64,
+    pub unknown1: f32,
+}
+
+pub enum AttackCruiserCommand {
+    UnknownType2(AttackCruiserUnknownCommand1),
+    UnknownType3(AttackCruiserUnknownCommand1),
+    UnknownType4(AttackCruiserUnknownCommand1),
+    UnknownType5(AttackCruiserUnknownCommand1),
+    UnknownType6(AttackCruiserUnknownCommand2),
+    UnknownType7(AttackCruiserUnknownCommand2),
+    UnknownType8(AttackCruiserUnknownCommand2),
+    UnknownType9(AttackCruiserUnknownCommand3),
+    UnknownType10(AttackCruiserUnknownCommand4),
+}
+
+impl SerializePacket for AttackCruiserCommand {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        match self {
+            AttackCruiserCommand::UnknownType2(command) => {
+                2u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType3(command) => {
+                3u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType4(command) => {
+                4u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType5(command) => {
+                5u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType6(command) => {
+                6u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType7(command) => {
+                7u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType8(command) => {
+                8u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType9(command) => {
+                9u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+            AttackCruiserCommand::UnknownType10(command) => {
+                10u32.serialize(buffer);
+                command.serialize(buffer);
+            }
+        }
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserQueueCommand {
+    pub minigame_header: MinigameHeader,
+    pub actor_id: u32,
+    pub command: AttackCruiserCommand,
+}
+
+impl GamePacket for AttackCruiserQueueCommand {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
