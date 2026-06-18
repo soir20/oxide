@@ -284,10 +284,10 @@ pub fn start_saber_strike(
                 configs: vec![
                     AttackCruiserConfig {
                         unknown1: 6,
-                        config_type_hash: 0xa598eae0,
+                        config_type_hash: 0x4b65ebe3,
                         config_reference_name: "physics config value".to_string(),
-                        config_type: AttackCruiserConfigType::ComplexPhysics(Box::new(
-                            AttackCruiserComplexPhysicsConfig {
+                        config_type: AttackCruiserConfigType::SimplePhysics(Box::new(
+                            AttackCruiserSimplePhysicsConfig {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 10.0,
@@ -295,27 +295,19 @@ pub fn start_saber_strike(
                                     width: 20.0,
                                     height: 30.0,
                                     center_of_mass_z: 1.0,
-                                    max_speed: 10.0,
-                                    vertical_speed: 10.0,
+                                    max_speed: 100.0,
+                                    vertical_speed: 0.0,
                                 },
-                                reverse_speed: 100.0,
-                                turbo_speed: 200.0,
-                                stationary_turn: 100.0,
-                                gears: AttackCruiserVec(
-                                    "physics config gears".to_string(),
-                                    vec![AttackCruiserComplexPhysicsGear {
-                                        shift_up_speed: 20.0,
-                                        shift_down_speed: 20.0,
-                                        base_acceleration: 20.0,
-                                        base_deceleration: 20.0,
-                                        turbo_acceleration: 20.0,
-                                        brake_deceleration: 20.0,
-                                        sideways_deceleration: 20.0,
-                                        angular_acceleration: 20.0,
-                                        turbo_angular_acceleration: 20.0,
-                                        angular_deceleration: 20.0,
-                                        max_angular_speed: 20.0,
-                                        turbo_max_angular_speed: 20.0,
+                                flight_configs: AttackCruiserVec(
+                                    "physics config flight configs".to_string(),
+                                    vec![AttackCruiserSimplePhysicsFlightConfig {
+                                        acceleration: 50.0,
+                                        deceleration: 50.0,
+                                        base_deceleration: 0.0,
+                                        max_speed: 100.0,
+                                        max_angular_speed: 0.5,
+                                        angular_acceleration: 50.0,
+                                        traction: 1.0,
                                     }],
                                 ),
                             },
@@ -336,7 +328,7 @@ pub fn start_saber_strike(
                                     collision_asset_name: "Ship_RepublicFrigate_bbe.cdt"
                                         .to_string(),
                                     physics_config: AttackCruiserAnyConfig {
-                                        class: "ComplexPhysicsConfig".to_string(),
+                                        class: "SimplePhysicsConfig".to_string(),
                                         value: "physics config value".to_string(),
                                     },
                                     max_health: 100,
