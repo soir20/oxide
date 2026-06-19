@@ -298,7 +298,7 @@ pub fn start_saber_strike(
                                     max_speed: 100.0,
                                     vertical_speed: 0.0,
                                 },
-                                reverse_speed: 0.0,
+                                reverse_speed: -100.0,
                                 turbo_speed: 200.0,
                                 stationary_turn: 1.0,
                                 gears: AttackCruiserVec(
