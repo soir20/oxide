@@ -306,7 +306,7 @@ pub fn start_saber_strike(
                                         base_deceleration: 50.0,
                                         max_speed: 100.0,
                                         max_angular_speed: 1.0,
-                                        angular_acceleration: 50.0,
+                                        angular_acceleration: 1.0,
                                         traction: 1.0,
                                     }],
                                 ),
