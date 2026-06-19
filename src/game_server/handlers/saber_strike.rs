@@ -291,11 +291,11 @@ pub fn start_saber_strike(
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 10.0,
-                                    length: 100.0,
-                                    width: 20.0,
-                                    height: 30.0,
-                                    center_of_mass_z: 1.0,
-                                    max_speed: 100.0,
+                                    length: 114.031,
+                                    width: 54.2455,
+                                    height: 28.7354,
+                                    center_of_mass_z: 6.44467,
+                                    max_speed: 0.0,
                                     vertical_speed: 0.0,
                                 },
                                 flight_configs: AttackCruiserVec(
