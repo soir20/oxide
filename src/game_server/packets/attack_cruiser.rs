@@ -705,6 +705,19 @@ impl GamePacket for AttackCruiserUpdateActors {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserClickedLocation {
+    pub minigame_header: MinigameHeader,
+    pub game_state: u32,
+    pub clicked_pos: Pos,
+}
+
+impl GamePacket for AttackCruiserClickedLocation {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
