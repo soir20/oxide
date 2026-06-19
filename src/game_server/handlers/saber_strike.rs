@@ -303,9 +303,9 @@ pub fn start_saber_strike(
                                     vec![AttackCruiserSimplePhysicsFlightConfig {
                                         acceleration: 50.0,
                                         deceleration: 50.0,
-                                        base_deceleration: 0.0,
+                                        base_deceleration: 50.0,
                                         max_speed: 100.0,
-                                        max_angular_speed: 0.5,
+                                        max_angular_speed: 1.0,
                                         angular_acceleration: 50.0,
                                         traction: 1.0,
                                     }],
