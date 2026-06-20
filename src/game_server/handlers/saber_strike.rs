@@ -446,7 +446,7 @@ pub fn start_saber_strike(
                 actor_pool_id: 0x4DB6C82AEC9B4E53,
                 pos: Pos3 {
                     x: 3.99,
-                    y: 940.559,
+                    y: 1000.0,
                     z: -1993.09,
                 },
                 speed: Pos3 {
