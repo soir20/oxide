@@ -351,8 +351,8 @@ pub fn start_saber_strike(
                                     cinematics: AttackCruiserVec::new(),
                                     damage_states: AttackCruiserVec::new(),
                                 },
-                                thruster_effect_id: 100,
-                                invulnerable_effect_id: 101,
+                                thruster_effect_id: 1707,
+                                invulnerable_effect_id: 1744,
                                 stun_effect_id: 102,
                                 weapons: AttackCruiserVec(
                                     "player weapons".to_string(),
