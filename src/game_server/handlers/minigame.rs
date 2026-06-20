@@ -39,12 +39,12 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserActorUpdate, AttackCruiserCommand, AttackCruiserOpCode,
-                AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
+                AttackCruiserActorUpdate, AttackCruiserBoolCommand, AttackCruiserCommand,
+                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
                 AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
                 AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserRoundTrip, AttackCruiserUnknownCommand1, AttackCruiserUpdateActors,
-                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
+                AttackCruiserRoundTrip, AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
+                AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -1996,10 +1996,10 @@ pub fn process_minigame_packet(
                                                     stage_group_guid: 13,
                                                 },
                                                 actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType2(
-                                                    AttackCruiserUnknownCommand1 {
+                                                command: AttackCruiserCommand::Movable(
+                                                    AttackCruiserBoolCommand {
                                                         guid: 1,
-                                                        unknown1: true,
+                                                        value: true,
                                                     },
                                                 ),
                                             },

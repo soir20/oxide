@@ -750,9 +750,9 @@ impl GamePacket for AttackCruiserRoundTrip {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserUnknownCommand1 {
+pub struct AttackCruiserBoolCommand {
     pub guid: u64,
-    pub unknown1: bool,
+    pub value: bool,
 }
 
 #[derive(SerializePacket)]
@@ -787,10 +787,10 @@ pub struct AttackCruiserUnknownCommand4 {
 }
 
 pub enum AttackCruiserCommand {
-    UnknownType2(AttackCruiserUnknownCommand1),
-    UnknownType3(AttackCruiserUnknownCommand1),
-    UnknownType4(AttackCruiserUnknownCommand1),
-    UnknownType5(AttackCruiserUnknownCommand1),
+    Movable(AttackCruiserBoolCommand),
+    UnknownType3(AttackCruiserBoolCommand),
+    UnknownType4(AttackCruiserBoolCommand),
+    Visible(AttackCruiserBoolCommand),
     UnknownType6(AttackCruiserUnknownCommand2),
     UnknownType7(AttackCruiserUnknownCommand2),
     UnknownType8(AttackCruiserUnknownCommand2),
@@ -801,7 +801,7 @@ pub enum AttackCruiserCommand {
 impl SerializePacket for AttackCruiserCommand {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            AttackCruiserCommand::UnknownType2(command) => {
+            AttackCruiserCommand::Movable(command) => {
                 2u32.serialize(buffer);
                 command.serialize(buffer);
             }
@@ -813,7 +813,7 @@ impl SerializePacket for AttackCruiserCommand {
                 4u32.serialize(buffer);
                 command.serialize(buffer);
             }
-            AttackCruiserCommand::UnknownType5(command) => {
+            AttackCruiserCommand::Visible(command) => {
                 5u32.serialize(buffer);
                 command.serialize(buffer);
             }
