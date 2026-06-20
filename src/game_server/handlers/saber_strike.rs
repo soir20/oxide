@@ -291,9 +291,9 @@ pub fn start_saber_strike(
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 100.0,
-                                    length: 114.031,
-                                    width: 54.2455,
-                                    height: 28.7354,
+                                    length: 35.11076,
+                                    width: 24.00168,
+                                    height: 5.4446693,
                                     center_of_mass_z: 0.0,
                                     max_speed: 100.0,
                                     vertical_speed: 0.0,
