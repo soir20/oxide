@@ -86,7 +86,7 @@ pub fn start_saber_strike(
                             advance_interception_time: 1.0,
                             collisionless_time: 2000,
                             tractionless_time: 5000,
-                            screen_relative_turning: AttackCruiserBool(false),
+                            screen_relative_turning: AttackCruiserBool(true),
                             ship_to_ship_collision: AttackCruiserBool(true),
                             player_death_animation_delay_seconds: 1.0,
                             respawn_damage_area: 1.0,
