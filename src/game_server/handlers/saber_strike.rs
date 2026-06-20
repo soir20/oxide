@@ -372,7 +372,7 @@ pub fn start_saber_strike(
                                         exit_max_angle: 360.0,
                                     }],
                                 ),
-                                roll_max_angle: 0.0,
+                                roll_max_angle: 30.0,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 10.0,
                                 fire_cooldown_seconds: 1.0,
