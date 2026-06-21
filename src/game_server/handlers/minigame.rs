@@ -39,12 +39,14 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserActorUpdate, AttackCruiserBoolCommand, AttackCruiserCommand,
-                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserRoundTrip, AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
-                AttackCruiserUpdatePlayers,
+                AttackCruiserActorUpdate, AttackCruiserBoolCommand, AttackCruiserClickedLocation,
+                AttackCruiserCommand, AttackCruiserOpCode, AttackCruiserPlayerState,
+                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
+                AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand3,
+                AttackCruiserUnknownCommand4, AttackCruiserUpdateActors,
+                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -63,7 +65,7 @@ use crate::{
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, RewardBundle,
+            GamePacket, Pos, Pos3, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -2004,6 +2006,195 @@ pub fn process_minigame_packet(
                                                 ),
                                             },
                                         }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType3(
+                                                    AttackCruiserBoolCommand {
+                                                        guid: 1,
+                                                        value: true,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType4(
+                                                    AttackCruiserBoolCommand {
+                                                        guid: 1,
+                                                        value: true,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::Visible(
+                                                    AttackCruiserBoolCommand {
+                                                        guid: 1,
+                                                        value: true,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType6(
+                                                    AttackCruiserUnknownCommand2 {
+                                                        guid: 1,
+                                                        unknown1: 0,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType7(
+                                                    AttackCruiserUnknownCommand2 {
+                                                        guid: 1,
+                                                        unknown1: 0,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType8(
+                                                    AttackCruiserUnknownCommand2 {
+                                                        guid: 1,
+                                                        unknown1: 0,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        // GamePacket::serialize(&TunneledPacket {
+                                        //     unknown1: true,
+                                        //     inner: AttackCruiserQueueCommand {
+                                        //         minigame_header: MinigameHeader {
+                                        //             stage_guid: 27001,
+                                        //             sub_op_code: AttackCruiserOpCode::QueueCommand
+                                        //                 as i32,
+                                        //             stage_group_guid: 13,
+                                        //         },
+                                        //         actor_id: 500,
+                                        //         command: AttackCruiserCommand::UnknownType9(
+                                        //             AttackCruiserUnknownCommand3 {
+                                        //                 guid: 1,
+                                        //                 unknown1: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown2: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown3: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown4: 1.0,
+                                        //                 unknown5: 1.0,
+                                        //                 unknown6: 1.0,
+                                        //                 unknown7: 1.0,
+                                        //                 unknown8: 1.0,
+                                        //                 unknown9: 1.0,
+                                        //                 unknown10: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown11: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown12: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown13: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //                 unknown14: Pos3 {
+                                        //                     x: 1.0,
+                                        //                     y: 1.0,
+                                        //                     z: 1.0,
+                                        //                 },
+                                        //             },
+                                        //         ),
+                                        //     },
+                                        // }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 500,
+                                                command: AttackCruiserCommand::UnknownType10(
+                                                    AttackCruiserUnknownCommand4 {
+                                                        guid: 1,
+                                                        unknown1: 0.0,
+                                                    },
+                                                ),
+                                            },
+                                        }),
                                     ],
                                 )])
                             }
@@ -2031,7 +2222,7 @@ pub fn process_minigame_packet(
                                                 .into_iter()
                                                 .map(|state| {
                                                     println!("POS: {:?}", state.pos);
-                                                    println!("ROT: {:?}", state.speed);
+                                                    println!("SPD: {:?}", state.speed);
                                                     println!(
                                                         "OTHER: {} {} {} {}",
                                                         state.unknown3,
@@ -2043,10 +2234,10 @@ pub fn process_minigame_packet(
                                                         actor_id: state.actor_id,
                                                         pos: state.pos,
                                                         speed: state.speed,
-                                                        unknown3: 0.5,
-                                                        unknown4: 1.0,
+                                                        unknown3: state.unknown3,
+                                                        unknown4: state.unknown4,
                                                         health: 75,
-                                                        unknown6: 150,
+                                                        unknown6: state.unknown6,
                                                     }
                                                 })
                                                 .collect(),
