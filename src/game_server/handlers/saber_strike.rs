@@ -160,10 +160,10 @@ pub fn start_saber_strike(
                         enemy_attack_radius: 50.0,
                         endless_waves: AttackCruiserBool(false),
                         debugged_actors: 0,
-                        planet_tilt_init_x: 0.0,
-                        planet_tilt_init_z: 0.0,
-                        planet_tilt_rate_x: 0.0,
-                        planet_tilt_rate_z: 0.0,
+                        global_tilt_init_x: 0.0,
+                        global_tilt_init_z: 0.0,
+                        global_tilt_rate_x: 0.0,
+                        global_tilt_rate_z: 0.0,
                         planet: AttackCruiserPlanetConfig {
                             model_id: 583,
                             pos: Pos3 {
