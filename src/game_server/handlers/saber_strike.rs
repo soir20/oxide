@@ -6,9 +6,10 @@ use crate::game_server::{
     handlers::character::{MinigameStatus, Player},
     packets::{
         attack_cruiser::{
-            AttackCruiserActorConfig, AttackCruiserActorPoolConfig, AttackCruiserAddActor,
-            AttackCruiserAddPlayer, AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig,
-            AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
+            AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
+            AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
+            AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBool,
+            AttackCruiserCameraConfig, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
             AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
             AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
@@ -349,7 +350,21 @@ pub fn start_saber_strike(
                                     overhead_health_scale: 1.0,
                                     animations: AttackCruiserVec::new(),
                                     cinematics: AttackCruiserVec::new(),
-                                    damage_states: AttackCruiserVec::new(),
+                                    damage_states: AttackCruiserVec(
+                                        "damage states".to_string(),
+                                        vec![
+                                            AttackCruiserActorDamageStateConfig {
+                                                min_health_percent: 100.0,
+                                                texture_alias: "damage0".to_string(),
+                                                effects: AttackCruiserVec::new(),
+                                            },
+                                            AttackCruiserActorDamageStateConfig {
+                                                min_health_percent: 20.0,
+                                                texture_alias: "damage3".to_string(),
+                                                effects: AttackCruiserVec::new(),
+                                            },
+                                        ],
+                                    ),
                                 },
                                 thruster_effect_id: 1707,
                                 invulnerable_effect_id: 1744,
