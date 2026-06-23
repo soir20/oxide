@@ -359,6 +359,16 @@ pub fn start_saber_strike(
                                                 effects: AttackCruiserVec::new(),
                                             },
                                             AttackCruiserActorDamageStateConfig {
+                                                min_health_percent: 80.0,
+                                                texture_alias: "damage1".to_string(),
+                                                effects: AttackCruiserVec::new(),
+                                            },
+                                            AttackCruiserActorDamageStateConfig {
+                                                min_health_percent: 60.0,
+                                                texture_alias: "damage2".to_string(),
+                                                effects: AttackCruiserVec::new(),
+                                            },
+                                            AttackCruiserActorDamageStateConfig {
                                                 min_health_percent: 20.0,
                                                 texture_alias: "damage3".to_string(),
                                                 effects: AttackCruiserVec::new(),
