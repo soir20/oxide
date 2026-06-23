@@ -834,6 +834,44 @@ impl GamePacket for AttackCruiserClickedLocation {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserAddProjectile {
+    pub minigame_header: MinigameHeader,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: u32,
+    pub unknown4: u32,
+    pub unknown5: f32,
+    pub unknown6: Pos3,
+    pub unknown7: Pos3,
+    pub unknown8: Pos3,
+    pub unknown9: f32,
+    pub unknown10: f32,
+    pub unknown11: f32,
+    pub unknown12: f32,
+    pub unknown13: u32,
+}
+
+impl GamePacket for AttackCruiserAddProjectile {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserRemoveProjectile {
+    pub minigame_header: MinigameHeader,
+    pub unknown1: u32,
+    pub unknown2: u32,
+    pub unknown3: f32,
+}
+
+impl GamePacket for AttackCruiserRemoveProjectile {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
