@@ -39,14 +39,13 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserActorUpdate, AttackCruiserBoolCommand, AttackCruiserClickedLocation,
-                AttackCruiserCommand, AttackCruiserOpCode, AttackCruiserPlayerState,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
-                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
-                AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand3,
-                AttackCruiserUnknownCommand4, AttackCruiserUpdateActors,
-                AttackCruiserUpdateGameState, AttackCruiserUpdatePlayers,
+                AttackCruiserActorUpdate, AttackCruiserBoolCommand, AttackCruiserCommand,
+                AttackCruiserOpCode, AttackCruiserPlayerState, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserRoundTrip, AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand4,
+                AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
+                AttackCruiserUpdatePlayers,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -65,7 +64,7 @@ use crate::{
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, Pos3, RewardBundle,
+            GamePacket, Pos, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -2224,11 +2223,11 @@ pub fn process_minigame_packet(
                                                     println!("POS: {:?}", state.pos);
                                                     println!("SPD: {:?}", state.speed);
                                                     println!(
-                                                        "OTHER: {} {} {} {}",
+                                                        "OTHER: {} {} {} {:?}",
                                                         state.unknown3,
                                                         state.unknown4,
                                                         state.health,
-                                                        state.unknown6
+                                                        state.state
                                                     );
                                                     AttackCruiserActorUpdate {
                                                         actor_id: state.actor_id,
@@ -2237,7 +2236,7 @@ pub fn process_minigame_packet(
                                                         unknown3: state.unknown3,
                                                         unknown4: state.unknown4,
                                                         health: 75,
-                                                        unknown6: state.unknown6,
+                                                        state: state.state,
                                                     }
                                                 })
                                                 .collect(),

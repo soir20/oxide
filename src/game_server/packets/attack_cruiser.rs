@@ -682,6 +682,122 @@ impl GamePacket for AttackCruiserUpdatePlayers {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(Debug, Default)]
+pub struct AttackCruiserActorState {
+    pub unknown1: bool,
+    pub unknown2: bool,
+    pub invulnerable: bool,
+    pub unknown4: bool,
+    pub unknown5: bool,
+    pub unknown6: bool,
+    pub unknown7: bool,
+    pub unknown8: bool,
+    pub unknown9: bool,
+    pub thrusters_flicker: bool,
+    pub thrusters_on: bool,
+    pub end_game_hyperdrive: bool,
+    pub reset_damage_state: bool,
+}
+
+impl SerializePacket for AttackCruiserActorState {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        let mut state = 0;
+        if self.unknown1 {
+            state |= 1 << 0;
+        }
+
+        if self.unknown2 {
+            state |= 1 << 1;
+        }
+
+        if self.invulnerable {
+            state |= 1 << 2;
+        }
+
+        if self.unknown4 {
+            state |= 1 << 3;
+        }
+
+        if self.unknown5 {
+            state |= 1 << 4;
+        }
+
+        if self.unknown6 {
+            state |= 1 << 5;
+        }
+
+        if self.unknown7 {
+            state |= 1 << 6;
+        }
+
+        if self.unknown8 {
+            state |= 1 << 7;
+        }
+
+        if self.unknown9 {
+            state |= 1 << 8;
+        }
+
+        if self.thrusters_flicker {
+            state |= 1 << 9;
+        }
+
+        if self.thrusters_on {
+            state |= 1 << 10;
+        }
+
+        if self.end_game_hyperdrive {
+            state |= 1 << 11;
+        }
+
+        if self.reset_damage_state {
+            state |= 1 << 12;
+        }
+
+        state.serialize(buffer);
+    }
+}
+
+impl DeserializePacket for AttackCruiserActorState {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let state = i32::deserialize(cursor)?;
+        let unknown1 = state & (1 << 0) != 0;
+        let unknown2 = state & (1 << 1) != 0;
+        let invulnerable = state & (1 << 2) != 0;
+        let unknown4 = state & (1 << 3) != 0;
+        let unknown5 = state & (1 << 4) != 0;
+        let unknown6 = state & (1 << 5) != 0;
+        let unknown7 = state & (1 << 6) != 0;
+        let unknown8 = state & (1 << 7) != 0;
+        let unknown9 = state & (1 << 8) != 0;
+        let thrusters_flicker = state & (1 << 9) != 0;
+        let thrusters_on = state & (1 << 10) != 0;
+        let end_game_hyperdrive = state & (1 << 11) != 0;
+        let reset_damage_state = state & (1 << 12) != 0;
+
+        Ok(AttackCruiserActorState {
+            unknown1,
+            unknown2,
+            invulnerable,
+            unknown4,
+            unknown5,
+            unknown6,
+            unknown7,
+            unknown8,
+            unknown9,
+            thrusters_flicker,
+            thrusters_on,
+            end_game_hyperdrive,
+            reset_damage_state,
+        })
+    }
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserActorUpdate {
     pub actor_id: u32,
@@ -690,7 +806,7 @@ pub struct AttackCruiserActorUpdate {
     pub unknown3: f32,
     pub unknown4: f32,
     pub health: u32,
-    pub unknown6: u32,
+    pub state: AttackCruiserActorState,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
