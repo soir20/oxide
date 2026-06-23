@@ -821,10 +821,17 @@ impl GamePacket for AttackCruiserUpdateActors {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(i32)]
+pub enum AttackCruiserClickType {
+    Right = 0x3,
+    Left = 0x4,
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserClickedLocation {
     pub minigame_header: MinigameHeader,
-    pub game_state: u32,
+    pub click_type: AttackCruiserClickType,
     pub clicked_pos: Pos,
 }
 
