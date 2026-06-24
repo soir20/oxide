@@ -12,14 +12,15 @@ use crate::game_server::{
             AttackCruiserCameraConfig, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
             AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
-            AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
-            AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
+            AttackCruiserDeathSpawnConfig, AttackCruiserEventActorConfig,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
+            AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
             AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserSimplePhysicsFlightConfig, AttackCruiserUpdateGameState, AttackCruiserVec,
-            AttackCruiserWaveConfig, AttackCruiserWeaponBayConfig,
+            AttackCruiserSimplePhysicsFlightConfig, AttackCruiserSpawnConfig,
+            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
+            AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -113,7 +114,7 @@ pub fn start_saber_strike(
                             health_background_internal_id: 400,
                             enable_weapon_tiers: AttackCruiserBool(true),
                             player_death_spawn_config: AttackCruiserAnyConfig {
-                                class: "player death spawn config class".to_string(),
+                                class: "DeathSpawnConfig".to_string(),
                                 value: "player death spawn config value".to_string(),
                             },
                             hud_message: AttackCruiserHudMessageConfig {
@@ -452,6 +453,88 @@ pub fn start_saber_strike(
                             AttackCruiserWaveConfig {
                                 actors: AttackCruiserVec::new(),
                                 hud_messages: AttackCruiserVec::new(),
+                            },
+                        )),
+                    },
+                    AttackCruiserConfig {
+                        unknown1: 99,
+                        config_type_hash: 0x016fcdb9,
+                        config_reference_name: "player death spawn actor config value".to_string(),
+                        config_type: AttackCruiserConfigType::Actor(Box::new(
+                            AttackCruiserActorConfig {
+                                model_id: 167,
+                                effect_id: 0,
+                                death_effect_id: 0,
+                                despawn_effect_id: 0,
+                                explode_offset: 1.0,
+                                collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
+                                physics_config: AttackCruiserAnyConfig {
+                                    class: "ComplexPhysicsConfig".to_string(),
+                                    value: "physics config value".to_string(),
+                                },
+                                max_health: 100,
+                                explosive_collision: AttackCruiserBool(true),
+                                collision_damage: 0,
+                                score: 123,
+                                bonus_score: 0,
+                                bonus_max_age_seconds: 10.0,
+                                overhead_offset_y: 0.0,
+                                overhead_health_scale: 1.0,
+                                animations: AttackCruiserVec::new(),
+                                cinematics: AttackCruiserVec::new(),
+                                damage_states: AttackCruiserVec(
+                                    "damage states".to_string(),
+                                    vec![
+                                        AttackCruiserActorDamageStateConfig {
+                                            min_health_percent: 100.0,
+                                            texture_alias: "damage0".to_string(),
+                                            effects: AttackCruiserVec::new(),
+                                        },
+                                        AttackCruiserActorDamageStateConfig {
+                                            min_health_percent: 80.0,
+                                            texture_alias: "damage1".to_string(),
+                                            effects: AttackCruiserVec::new(),
+                                        },
+                                        AttackCruiserActorDamageStateConfig {
+                                            min_health_percent: 60.0,
+                                            texture_alias: "damage2".to_string(),
+                                            effects: AttackCruiserVec::new(),
+                                        },
+                                        AttackCruiserActorDamageStateConfig {
+                                            min_health_percent: 20.0,
+                                            texture_alias: "damage3".to_string(),
+                                            effects: AttackCruiserVec::new(),
+                                        },
+                                    ],
+                                ),
+                            },
+                        )),
+                    },
+                    AttackCruiserConfig {
+                        unknown1: 100,
+                        config_type_hash: 0x9704178e,
+                        config_reference_name: "player death spawn config value".to_string(),
+                        config_type: AttackCruiserConfigType::DeathSpawn(Box::new(
+                            AttackCruiserDeathSpawnConfig {
+                                enable_chance: 100.0,
+                                spawn_config: AttackCruiserVec(
+                                    "death spawns".to_string(),
+                                    vec![AttackCruiserSpawnConfig {
+                                        actor_config: AttackCruiserAnyConfig {
+                                            class: "ActorConfig".to_string(),
+                                            value: "player death spawn actor config value"
+                                                .to_string(),
+                                        },
+                                        ai_config: AttackCruiserAnyConfig {
+                                            class: "blaster".to_string(),
+                                            value: "niceshot".to_string(),
+                                        },
+                                        chance: 100.0,
+                                        forward_velocity: 1.0,
+                                        count: 3,
+                                        lifespan: 100.0,
+                                    }],
+                                ),
                             },
                         )),
                     },

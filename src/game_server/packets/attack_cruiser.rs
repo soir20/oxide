@@ -76,6 +76,22 @@ pub struct AttackCruiserHudMessageConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserSpawnConfig {
+    pub actor_config: AttackCruiserAnyConfig,
+    pub ai_config: AttackCruiserAnyConfig,
+    pub chance: f32,
+    pub forward_velocity: f32,
+    pub count: u32,
+    pub lifespan: f32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserDeathSpawnConfig {
+    pub enable_chance: f32,
+    pub spawn_config: AttackCruiserVec<AttackCruiserSpawnConfig>,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserGlobalConfig {
     pub physics_speed: f32,
     pub connect_timeout_seconds: f32,
@@ -423,6 +439,7 @@ pub enum AttackCruiserConfigType {
     Actor(Box<AttackCruiserActorConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
     ComplexPhysics(Box<AttackCruiserComplexPhysicsConfig>),
+    DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
     Ship(Box<AttackCruiserShipConfig>),
@@ -437,6 +454,7 @@ impl SerializePacket for AttackCruiserConfigType {
             AttackCruiserConfigType::Actor(config) => config.serialize(buffer),
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigType::ComplexPhysics(config) => config.serialize(buffer),
+            AttackCruiserConfigType::DeathSpawn(config) => config.serialize(buffer),
             AttackCruiserConfigType::Game(config) => config.serialize(buffer),
             AttackCruiserConfigType::Global(config) => config.serialize(buffer),
             AttackCruiserConfigType::Ship(config) => config.serialize(buffer),
