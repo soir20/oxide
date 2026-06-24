@@ -821,8 +821,8 @@ pub struct AttackCruiserActorUpdate {
     pub actor_id: u32,
     pub pos: Pos,
     pub speed: Pos,
-    pub unknown3: f32,
-    pub unknown4: f32,
+    pub forward_multiplier: f32,
+    pub turn_multiplier: f32,
     pub health: u32,
     pub state: AttackCruiserActorState,
 }
