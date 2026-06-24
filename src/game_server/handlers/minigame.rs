@@ -2224,8 +2224,8 @@ pub fn process_minigame_packet(
                                                     println!("SPD: {:?}", state.speed);
                                                     println!(
                                                         "OTHER: {} {} {} {:?}",
-                                                        state.unknown3,
-                                                        state.unknown4,
+                                                        state.forward_multiplier,
+                                                        state.turn_multiplier,
                                                         state.health,
                                                         state.state
                                                     );
@@ -2233,8 +2233,9 @@ pub fn process_minigame_packet(
                                                         actor_id: state.actor_id,
                                                         pos: state.pos,
                                                         speed: state.speed,
-                                                        unknown3: state.unknown3,
-                                                        unknown4: state.unknown4,
+                                                        forward_multiplier: state
+                                                            .forward_multiplier,
+                                                        turn_multiplier: state.turn_multiplier,
                                                         health: 75,
                                                         state: state.state,
                                                     }
