@@ -82,12 +82,54 @@ fn hash_string(string: &str) -> u32 {
     (product ^ (product >> 11)).wrapping_mul(32769i32) as u32
 }
 
-pub struct AttackCruiserConfigHash {
+pub enum AttackCruiserConfigHash {
+    Actor = 0x16fcdb9,
+    Ai = 0xe471290c,
+    AiBehavior = 0x400f509e,
+    BasePhysics = 0xe81c69d6,
+    Blaster = 0x118d962f,
+    BrainTimerAiBehavior = 0xd3c0f8cf,
+    Camera = 0x6dc7e02b,
+    ComplexPhysics = 0xa598eae0,
+    Condition = 0x7d36f971,
+    DeathSpawn = 0x9704178e,
+    FollowTargetAiBehavior = 0x10f8260,
+    Game = 0x4c61446a,
+    Global = 0x79243a4c,
+    GotoRandomTagAiBehavior = 0xa36fe7ee,
+    GotoTagAiBehavior = 0x9e4d3c55,
+    GotoTargetAiBehavior = 0xa10a5037,
+    // HealthPickup
+    // InventoryPickup
+    // KillStreak
+    // LifePickup
+    // LifeTimeAiBehavior
+    // MultiCondition
+    // Path
+    // Pickup
+    // ReturnHomeAiBehavior
+    // ScorePickup
+    // Ship
+    // ShipBay
+    // SimplePhysics
+    // Squadron
+    // TagPosition
+    // TargetAiBehavior
+    // Torpedo
+    // TorpedoBay
+    // Wave
+    // WaveTimerAiBehavior
+    // WaveVariableAiBehavior
+    // WeaponBay
+    // WeaponTierPickup
+}
+
+pub struct AttackCruiserConfigReference {
     pub config_reference_name: String,
     pub config_type_hash: u32,
 }
 
-impl SerializePacket for AttackCruiserConfigHash {
+impl SerializePacket for AttackCruiserConfigReference {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         hash_string(&self.config_reference_name).serialize(buffer);
         self.config_type_hash.serialize(buffer);
