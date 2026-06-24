@@ -82,6 +82,8 @@ fn hash_string(string: &str) -> u32 {
     (product ^ (product >> 11)).wrapping_mul(32769i32) as u32
 }
 
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(u32)]
 pub enum AttackCruiserConfigHash {
     Actor = 0x16fcdb9,
     Ai = 0xe471290c,
