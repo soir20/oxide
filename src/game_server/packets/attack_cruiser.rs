@@ -168,6 +168,19 @@ pub struct AttackCruiserWeaponBayConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserBlasterConfig {
+    pub weapon_bay_config: AttackCruiserWeaponBayConfig,
+    pub blaster_effect_id: u32,
+    pub impact_effect_id: u32,
+    pub collision_damage: u32,
+    pub width: f32,
+    pub length: f32,
+    pub auto_fire: AttackCruiserBool,
+    pub auto_fire_range: f32,
+    pub penetrate: AttackCruiserBool,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
     pub weapon_bay_config: AttackCruiserAnyConfig,
     pub group: u32,
@@ -437,6 +450,7 @@ pub struct AttackCruiserGameConfig {
 
 pub enum AttackCruiserConfigType {
     Actor(Box<AttackCruiserActorConfig>),
+    Blaster(Box<AttackCruiserBlasterConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
     ComplexPhysics(Box<AttackCruiserComplexPhysicsConfig>),
     DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),
@@ -452,6 +466,7 @@ impl SerializePacket for AttackCruiserConfigType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
             AttackCruiserConfigType::Actor(config) => config.serialize(buffer),
+            AttackCruiserConfigType::Blaster(config) => config.serialize(buffer),
             AttackCruiserConfigType::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigType::ComplexPhysics(config) => config.serialize(buffer),
             AttackCruiserConfigType::DeathSpawn(config) => config.serialize(buffer),
