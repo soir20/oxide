@@ -65,6 +65,35 @@ pub struct AttackCruiserAnyConfig {
     pub value: String,
 }
 
+fn hash_string(string: &str) -> u32 {
+    let mut hash: i32 = 0;
+
+    for &byte in string.as_bytes() {
+        if byte == 0 {
+            break;
+        }
+
+        let uppercase_byte = (byte as char).to_uppercase().next().unwrap_or(byte as char) as i32;
+        let product = hash.wrapping_add(uppercase_byte).wrapping_mul(1025);
+        hash = (product >> 6) ^ product;
+    }
+
+    let product = hash.wrapping_mul(9);
+    (product ^ (product >> 11)).wrapping_mul(32769i32) as u32
+}
+
+pub struct AttackCruiserConfigHash {
+    pub config_reference_name: String,
+    pub config_type_hash: u32,
+}
+
+impl SerializePacket for AttackCruiserConfigHash {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        hash_string(&self.config_reference_name).serialize(buffer);
+        self.config_type_hash.serialize(buffer);
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserHudMessageConfig {
     pub speaker_name_id: i32,
