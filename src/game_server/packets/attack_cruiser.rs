@@ -99,29 +99,29 @@ pub enum AttackCruiserConfigHash {
     GotoRandomTagAiBehavior = 0xa36fe7ee,
     GotoTagAiBehavior = 0x9e4d3c55,
     GotoTargetAiBehavior = 0xa10a5037,
-    // HealthPickup
-    // InventoryPickup
-    // KillStreak
-    // LifePickup
-    // LifeTimeAiBehavior
-    // MultiCondition
-    // Path
-    // Pickup
-    // ReturnHomeAiBehavior
-    // ScorePickup
-    // Ship
-    // ShipBay
-    // SimplePhysics
-    // Squadron
-    // TagPosition
-    // TargetAiBehavior
-    // Torpedo
-    // TorpedoBay
-    // Wave
-    // WaveTimerAiBehavior
-    // WaveVariableAiBehavior
-    // WeaponBay
-    // WeaponTierPickup
+    HealthPickup = 0x8dd15565,
+    InventoryPickup = 0x62cf45ee,
+    KillStreak = 0x6afb712e,
+    LifePickup = 0xe787fee6,
+    LifeTimeAiBehavior = 0xe6be56e3,
+    MultiCondition = 0x103d673c,
+    Path = 0x565115fe,
+    Pickup = 0xc0843913,
+    ReturnHomeAiBehavior = 0x88e7b12f,
+    ScorePickup = 0xd0865beb,
+    Ship = 0x4db6c82a,
+    ShipBay = 0xebaf2508,
+    SimplePhysics = 0x4b65ebe3,
+    Squadron = 0xf27ff419,
+    TagPosition = 0x84150070,
+    TargetAiBehavior = 0xd12adb78,
+    Torpedo = 0xb740760b,
+    TorpedoBay = 0x729294d0,
+    Wave = 0x23773492,
+    WaveTimerAiBehavior = 0xf9d00c76,
+    WaveVariableAiBehavior = 0x33b84b51,
+    WeaponBay = 0x3e702d91,
+    WeaponTierPickup = 0xab52827,
 }
 
 pub struct AttackCruiserConfigReference {
