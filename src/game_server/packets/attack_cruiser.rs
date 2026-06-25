@@ -587,6 +587,28 @@ pub enum AttackCruiserConfigDefinition {
     WeaponBay(Box<AttackCruiserWeaponBayConfig>),
 }
 
+impl AttackCruiserConfigDefinition {
+    pub fn config_type(&self) -> AttackCruiserConfigType {
+        match self {
+            AttackCruiserConfigDefinition::Actor(_) => AttackCruiserConfigType::Actor,
+            AttackCruiserConfigDefinition::Blaster(_) => AttackCruiserConfigType::Blaster,
+            AttackCruiserConfigDefinition::Camera(_) => AttackCruiserConfigType::Camera,
+            AttackCruiserConfigDefinition::ComplexPhysics(_) => {
+                AttackCruiserConfigType::ComplexPhysics
+            }
+            AttackCruiserConfigDefinition::DeathSpawn(_) => AttackCruiserConfigType::DeathSpawn,
+            AttackCruiserConfigDefinition::Game(_) => AttackCruiserConfigType::Game,
+            AttackCruiserConfigDefinition::Global(_) => AttackCruiserConfigType::Global,
+            AttackCruiserConfigDefinition::Ship(_) => AttackCruiserConfigType::Ship,
+            AttackCruiserConfigDefinition::SimplePhysics(_) => {
+                AttackCruiserConfigType::SimplePhysics
+            }
+            AttackCruiserConfigDefinition::Wave(_) => AttackCruiserConfigType::Wave,
+            AttackCruiserConfigDefinition::WeaponBay(_) => AttackCruiserConfigType::WeaponBay,
+        }
+    }
+}
+
 impl SerializePacket for AttackCruiserConfigDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
@@ -618,8 +640,22 @@ impl SerializePacket for AttackCruiserConfigName {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserConfig {
-    pub name: AttackCruiserConfigName,
-    pub definition: AttackCruiserConfigDefinition,
+    name: AttackCruiserConfigName,
+    definition: AttackCruiserConfigDefinition,
+}
+
+impl AttackCruiserConfig {
+    pub fn new(name: String, definition: AttackCruiserConfigDefinition) -> Self {
+        AttackCruiserConfig {
+            name: AttackCruiserConfigName {
+                hash: AttackCruiserConfigHash {
+                    config_name: name,
+                    config_type: definition.config_type(),
+                },
+            },
+            definition,
+        }
+    }
 }
 
 pub struct AttackCruiserClientConfig {
