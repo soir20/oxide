@@ -331,7 +331,7 @@ pub struct AttackCruiserBlasterConfig {
     pub weapon_bay_config: AttackCruiserWeaponBayConfig,
     pub blaster_effect_id: u32,
     pub impact_effect_id: u32,
-    pub collision_damage: u32,
+    pub collision_damage: i32,
     pub width: f32,
     pub length: f32,
     pub auto_fire: AttackCruiserBool,
