@@ -11,7 +11,7 @@ use crate::game_server::{
             AttackCruiserAnyConfig, AttackCruiserBasePhysicsConfig, AttackCruiserBlasterConfig,
             AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-            AttackCruiserConfig, AttackCruiserConfigPlayer, AttackCruiserConfigType,
+            AttackCruiserConfig, AttackCruiserConfigDefinition, AttackCruiserConfigPlayer,
             AttackCruiserDeathSpawnConfig, AttackCruiserEventActorConfig,
             AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
             AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
@@ -55,7 +55,7 @@ pub fn start_saber_strike(
                     unknown1: 1,
                     config_type_hash: 0x79243a4c,
                     config_reference_name: "global config value".to_string(),
-                    config_type: AttackCruiserConfigType::Global(Box::new(
+                    config_type: AttackCruiserConfigDefinition::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
                             connect_timeout_seconds: 10.0,
@@ -132,134 +132,136 @@ pub fn start_saber_strike(
                     unknown1: 2,
                     config_type_hash: 0x4c61446a,
                     config_reference_name: "GameConfig".to_string(),
-                    config_type: AttackCruiserConfigType::Game(Box::new(AttackCruiserGameConfig {
-                        id: 27001,
-                        encounter_id: 0,
-                        sound_id: 2413,
-                        mode: 1,
-                        global_config: AttackCruiserAnyConfig {
-                            class: "GlobalConfig".to_string(),
-                            value: "global config value".to_string(),
-                        },
-                        end_condition_config: AttackCruiserAnyConfig {
-                            class: "".to_string(),
-                            value: "".to_string(),
-                        },
-                        win_condition_config: AttackCruiserAnyConfig {
-                            class: "".to_string(),
-                            value: "".to_string(),
-                        },
-                        target_value1: 999,
-                        target_value2: 888,
-                        playfield_height: 940.559,
-                        playfield_length: 1500.0,
-                        playfield_width: 1500.0,
-                        playfield_warning_length: 1500.0,
-                        playfield_warning_width: 1500.0,
-                        playfield_center_x: 3.99,
-                        playfield_center_z: -1993.09,
-                        kill_zone_height: 0.0,
-                        enemy_attack_radius: 50.0,
-                        endless_waves: AttackCruiserBool(false),
-                        debugged_actors: 0,
-                        global_tilt_init_x: 0.0,
-                        global_tilt_init_z: 0.0,
-                        global_tilt_rate_x: 0.0,
-                        global_tilt_rate_z: 0.0,
-                        planet: AttackCruiserPlanetConfig {
-                            model_id: 583,
-                            pos: Pos3 {
-                                x: 0.0,
-                                y: 1363.94,
-                                z: 28539.1,
+                    config_type: AttackCruiserConfigDefinition::Game(Box::new(
+                        AttackCruiserGameConfig {
+                            id: 27001,
+                            encounter_id: 0,
+                            sound_id: 2413,
+                            mode: 1,
+                            global_config: AttackCruiserAnyConfig {
+                                class: "GlobalConfig".to_string(),
+                                value: "global config value".to_string(),
                             },
-                            rotation_speed: 0.01,
-                        },
-                        players: AttackCruiserVec(
-                            "players".to_string(),
-                            vec![AttackCruiserPlayerConfig {
-                                ship_config: AttackCruiserAnyConfig {
-                                    class: "ShipConfig".to_string(),
-                                    value: "ship config value".to_string(),
-                                },
-                                camera_config: AttackCruiserAnyConfig {
-                                    class: "CameraConfig".to_string(),
-                                    value: "camera config value".to_string(),
-                                },
-                                lives: 5,
-                                spawn_pos: Pos3 {
+                            end_condition_config: AttackCruiserAnyConfig {
+                                class: "".to_string(),
+                                value: "".to_string(),
+                            },
+                            win_condition_config: AttackCruiserAnyConfig {
+                                class: "".to_string(),
+                                value: "".to_string(),
+                            },
+                            target_value1: 999,
+                            target_value2: 888,
+                            playfield_height: 940.559,
+                            playfield_length: 1500.0,
+                            playfield_width: 1500.0,
+                            playfield_warning_length: 1500.0,
+                            playfield_warning_width: 1500.0,
+                            playfield_center_x: 3.99,
+                            playfield_center_z: -1993.09,
+                            kill_zone_height: 0.0,
+                            enemy_attack_radius: 50.0,
+                            endless_waves: AttackCruiserBool(false),
+                            debugged_actors: 0,
+                            global_tilt_init_x: 0.0,
+                            global_tilt_init_z: 0.0,
+                            global_tilt_rate_x: 0.0,
+                            global_tilt_rate_z: 0.0,
+                            planet: AttackCruiserPlanetConfig {
+                                model_id: 583,
+                                pos: Pos3 {
                                     x: 0.0,
-                                    y: 0.0,
-                                    z: 0.0,
+                                    y: 1363.94,
+                                    z: 28539.1,
                                 },
-                                spawn_heading: 0.0,
-                            }],
-                        ),
-                        events: AttackCruiserVec(
-                            "events".to_string(),
-                            vec![AttackCruiserEventConfig {
-                                event_type: 1,
-                                cinematics: AttackCruiserVec(
-                                    "event cinematics".to_string(),
-                                    vec![
-                                        // AttackCruiserEventCinematicConfig {
-                                        //     total_seconds: 15.0,
-                                        //     animation_id: 10319,
-                                        //     camera_heading: 0.0,
-                                        //     camera_fov: 50.0,
-                                        //     flip_camera_z: AttackCruiserBool(false),
-                                        //     pre_wipe_style: 2,
-                                        //     post_wipe_style: 2,
-                                        // },
-                                        AttackCruiserEventCinematicConfig {
-                                            total_seconds: 15.0,
-                                            animation_id: 10317,
-                                            camera_heading: 0.0,
-                                            camera_fov: 50.0,
-                                            flip_camera_z: AttackCruiserBool(false),
-                                            pre_wipe_style: 2,
-                                            post_wipe_style: 2,
-                                        },
-                                    ],
-                                ),
-                                event_actors: AttackCruiserVec::new(),
-                            }],
-                        ),
-                        actor_pools: AttackCruiserVec(
-                            "actor pools".to_string(),
-                            vec![AttackCruiserActorPoolConfig {
-                                actor_config: AttackCruiserAnyConfig {
-                                    class: "ShipConfig".to_string(),
-                                    value: "ship config value".to_string(),
-                                },
-                                size: 500,
-                            }],
-                        ),
-                        waves: AttackCruiserVec(
-                            "waves".to_string(),
-                            vec![AttackCruiserGameWaveConfig {
-                                wave_config: AttackCruiserAnyConfig {
-                                    class: "WaveConfig".to_string(),
-                                    value: "wave config value".to_string(),
-                                },
-                                launch_condition_config: AttackCruiserAnyConfig {
-                                    class: "blaster".to_string(),
-                                    value: "niceshot".to_string(),
-                                },
-                                complete_condition_config: AttackCruiserAnyConfig {
-                                    class: "".to_string(),
-                                    value: "".to_string(),
-                                },
-                                remove_actors_on_completion: AttackCruiserBool(false),
-                            }],
-                        ),
-                    })),
+                                rotation_speed: 0.01,
+                            },
+                            players: AttackCruiserVec(
+                                "players".to_string(),
+                                vec![AttackCruiserPlayerConfig {
+                                    ship_config: AttackCruiserAnyConfig {
+                                        class: "ShipConfig".to_string(),
+                                        value: "ship config value".to_string(),
+                                    },
+                                    camera_config: AttackCruiserAnyConfig {
+                                        class: "CameraConfig".to_string(),
+                                        value: "camera config value".to_string(),
+                                    },
+                                    lives: 5,
+                                    spawn_pos: Pos3 {
+                                        x: 0.0,
+                                        y: 0.0,
+                                        z: 0.0,
+                                    },
+                                    spawn_heading: 0.0,
+                                }],
+                            ),
+                            events: AttackCruiserVec(
+                                "events".to_string(),
+                                vec![AttackCruiserEventConfig {
+                                    event_type: 1,
+                                    cinematics: AttackCruiserVec(
+                                        "event cinematics".to_string(),
+                                        vec![
+                                            // AttackCruiserEventCinematicConfig {
+                                            //     total_seconds: 15.0,
+                                            //     animation_id: 10319,
+                                            //     camera_heading: 0.0,
+                                            //     camera_fov: 50.0,
+                                            //     flip_camera_z: AttackCruiserBool(false),
+                                            //     pre_wipe_style: 2,
+                                            //     post_wipe_style: 2,
+                                            // },
+                                            AttackCruiserEventCinematicConfig {
+                                                total_seconds: 15.0,
+                                                animation_id: 10317,
+                                                camera_heading: 0.0,
+                                                camera_fov: 50.0,
+                                                flip_camera_z: AttackCruiserBool(false),
+                                                pre_wipe_style: 2,
+                                                post_wipe_style: 2,
+                                            },
+                                        ],
+                                    ),
+                                    event_actors: AttackCruiserVec::new(),
+                                }],
+                            ),
+                            actor_pools: AttackCruiserVec(
+                                "actor pools".to_string(),
+                                vec![AttackCruiserActorPoolConfig {
+                                    actor_config: AttackCruiserAnyConfig {
+                                        class: "ShipConfig".to_string(),
+                                        value: "ship config value".to_string(),
+                                    },
+                                    size: 500,
+                                }],
+                            ),
+                            waves: AttackCruiserVec(
+                                "waves".to_string(),
+                                vec![AttackCruiserGameWaveConfig {
+                                    wave_config: AttackCruiserAnyConfig {
+                                        class: "WaveConfig".to_string(),
+                                        value: "wave config value".to_string(),
+                                    },
+                                    launch_condition_config: AttackCruiserAnyConfig {
+                                        class: "blaster".to_string(),
+                                        value: "niceshot".to_string(),
+                                    },
+                                    complete_condition_config: AttackCruiserAnyConfig {
+                                        class: "".to_string(),
+                                        value: "".to_string(),
+                                    },
+                                    remove_actors_on_completion: AttackCruiserBool(false),
+                                }],
+                            ),
+                        },
+                    )),
                 },
                 config3: AttackCruiserConfig {
                     unknown1: 3,
                     config_type_hash: 0x6dc7e02b,
                     config_reference_name: "main camera config value".to_string(),
-                    config_type: AttackCruiserConfigType::Camera(Box::new(
+                    config_type: AttackCruiserConfigDefinition::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 1000.0,
                             min_distance: 0.0,
@@ -288,7 +290,7 @@ pub fn start_saber_strike(
                         unknown1: 6,
                         config_type_hash: 0xa598eae0,
                         config_reference_name: "physics config value".to_string(),
-                        config_type: AttackCruiserConfigType::ComplexPhysics(Box::new(
+                        config_type: AttackCruiserConfigDefinition::ComplexPhysics(Box::new(
                             AttackCruiserComplexPhysicsConfig {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
@@ -327,7 +329,7 @@ pub fn start_saber_strike(
                         unknown1: 7,
                         config_type_hash: 0x4db6c82a,
                         config_reference_name: "ship config value".to_string(),
-                        config_type: AttackCruiserConfigType::Ship(Box::new(
+                        config_type: AttackCruiserConfigDefinition::Ship(Box::new(
                             AttackCruiserShipConfig {
                                 actor_config: AttackCruiserActorConfig {
                                     model_id: 167,
@@ -409,7 +411,7 @@ pub fn start_saber_strike(
                         unknown1: 10,
                         config_type_hash: 0x118d962f,
                         config_reference_name: "player weapon bay config value".to_string(),
-                        config_type: AttackCruiserConfigType::Blaster(Box::new(
+                        config_type: AttackCruiserConfigDefinition::Blaster(Box::new(
                             AttackCruiserBlasterConfig {
                                 weapon_bay_config: AttackCruiserWeaponBayConfig {
                                     exit_velocity: 100.0,
@@ -431,7 +433,7 @@ pub fn start_saber_strike(
                         unknown1: 8,
                         config_type_hash: 0x6dc7e02b,
                         config_reference_name: "camera config value".to_string(),
-                        config_type: AttackCruiserConfigType::Camera(Box::new(
+                        config_type: AttackCruiserConfigDefinition::Camera(Box::new(
                             AttackCruiserCameraConfig {
                                 distance: 100.0,
                                 min_distance: 0.0,
@@ -459,7 +461,7 @@ pub fn start_saber_strike(
                         unknown1: 9,
                         config_type_hash: 0x23773492,
                         config_reference_name: "wave config value".to_string(),
-                        config_type: AttackCruiserConfigType::Wave(Box::new(
+                        config_type: AttackCruiserConfigDefinition::Wave(Box::new(
                             AttackCruiserWaveConfig {
                                 actors: AttackCruiserVec::new(),
                                 hud_messages: AttackCruiserVec::new(),
@@ -470,7 +472,7 @@ pub fn start_saber_strike(
                         unknown1: 99,
                         config_type_hash: 0x016fcdb9,
                         config_reference_name: "player death spawn actor config value".to_string(),
-                        config_type: AttackCruiserConfigType::Actor(Box::new(
+                        config_type: AttackCruiserConfigDefinition::Actor(Box::new(
                             AttackCruiserActorConfig {
                                 model_id: 167,
                                 effect_id: 0,
@@ -524,7 +526,7 @@ pub fn start_saber_strike(
                         unknown1: 100,
                         config_type_hash: 0x9704178e,
                         config_reference_name: "player death spawn config value".to_string(),
-                        config_type: AttackCruiserConfigType::DeathSpawn(Box::new(
+                        config_type: AttackCruiserConfigDefinition::DeathSpawn(Box::new(
                             AttackCruiserDeathSpawnConfig {
                                 enable_chance: 100.0,
                                 spawn_config: AttackCruiserVec(
@@ -615,7 +617,7 @@ pub fn start_saber_strike(
                     unknown1: 100,
                     config_type_hash: 0x6dc7e02b,
                     config_reference_name: "player camera config value".to_string(),
-                    config_type: AttackCruiserConfigType::Camera(Box::new(
+                    config_type: AttackCruiserConfigDefinition::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 100.0,
                             min_distance: 0.0,
