@@ -2260,7 +2260,7 @@ pub fn process_minigame_packet(
                                                 unknown3: 1676,
                                                 unknown4: 1676,
                                                 unknown5: 20.0,
-                                                unknown6: Pos3 {
+                                                origin: Pos3 {
                                                     x: 3.99,
                                                     y: 1000.0,
                                                     z: -1993.09,
