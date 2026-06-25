@@ -1087,7 +1087,7 @@ pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
     pub actor_id: u32,
     pub unknown2: u32,
-    pub actor_pool_id: u64,
+    pub actor_pool: AttackCruiserConfigHash,
     pub pos: Pos3,
     pub speed: Pos3,
     pub heading: f32,
