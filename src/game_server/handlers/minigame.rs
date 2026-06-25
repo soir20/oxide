@@ -2221,7 +2221,7 @@ pub fn process_minigame_packet(
                                                 states: update_actors
                                                     .states
                                                     .into_iter()
-                                                    .map(|mut state| {
+                                                    .map(|state| {
                                                         println!("POS: {:?}", state.pos);
                                                         println!("SPD: {:?}", state.speed);
                                                         println!(
@@ -2231,7 +2231,6 @@ pub fn process_minigame_packet(
                                                             state.health,
                                                             state.state
                                                         );
-                                                        state.state.unknown6 = true;
                                                         AttackCruiserActorUpdate {
                                                             actor_id: state.actor_id,
                                                             pos: state.pos,
