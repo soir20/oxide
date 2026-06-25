@@ -340,6 +340,22 @@ pub struct AttackCruiserBlasterConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserTorpedoConfig {
+    pub splash_radius: f32,
+    pub linger_seconds: f32,
+    pub splash_damage: i32,
+    pub splash_stun_seconds: f32,
+    pub death_spawn_config: AttackCruiserConfigReference,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserTorpedoBayConfig {
+    pub weapon_bay_config: AttackCruiserWeaponBayConfig,
+    pub torpedo_config: AttackCruiserConfigReference,
+    pub ai_config: AttackCruiserConfigReference,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
     pub weapon_bay_config: AttackCruiserConfigReference,
     pub group: u32,
