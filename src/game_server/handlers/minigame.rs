@@ -45,7 +45,7 @@ use crate::{
                 AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
                 AttackCruiserRoundTrip, AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand4,
                 AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
-                AttackCruiserUpdatePlayers,
+                AttackCruiserUpdatePlayers, AttackCruiserWorldEffect,
             },
             chat::{ActionBarTextColor, SendStringId},
             client_update::{PreloadCharactersDone, UpdateCredits},
@@ -64,7 +64,7 @@ use crate::{
             },
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, RewardBundle,
+            GamePacket, Pos, Pos3, RewardBundle,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -2219,7 +2219,7 @@ pub fn process_minigame_packet(
                                             states: update_actors
                                                 .states
                                                 .into_iter()
-                                                .map(|state| {
+                                                .map(|mut state| {
                                                     println!("POS: {:?}", state.pos);
                                                     println!("SPD: {:?}", state.speed);
                                                     println!(
@@ -2229,6 +2229,7 @@ pub fn process_minigame_packet(
                                                         state.health,
                                                         state.state
                                                     );
+                                                    state.state.unknown6 = true;
                                                     AttackCruiserActorUpdate {
                                                         actor_id: state.actor_id,
                                                         pos: state.pos,
