@@ -201,6 +201,40 @@ pub struct AttackCruiserHudMessageConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserConditionConfig {
+    pub context: u32,
+    pub condition_type: u32,
+    pub operator: u32,
+    pub param1: u32,
+    pub param2: u32,
+    pub param3: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserMultiConditionConfig {
+    pub conditions: AttackCruiserVec<AttackCruiserConditionConfig>,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserAiBehaviorConfig {
+    pub action: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserAiStatesConfig {
+    pub enter_condition_config: AttackCruiserConfigReference,
+    pub exit_condition_config: AttackCruiserConfigReference,
+    pub behavior_config: AttackCruiserConfigReference,
+    pub life_time_seconds: f32,
+    pub priority: u32,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserAiConfig {
+    pub states: AttackCruiserVec<AttackCruiserAiStatesConfig>,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserSpawnConfig {
     pub actor_config: AttackCruiserConfigReference,
     pub ai_config: AttackCruiserConfigReference,
