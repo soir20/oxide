@@ -120,6 +120,17 @@ impl SerializePacket for String {
     }
 }
 
+impl SerializePacket for &str {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        buffer
+            .write_u32::<LittleEndian>(self.len() as u32)
+            .expect("Unable to write string length");
+        buffer
+            .write_all(self.as_bytes())
+            .expect("Unable to write string");
+    }
+}
+
 impl SerializePacket for NullTerminatedString {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         buffer

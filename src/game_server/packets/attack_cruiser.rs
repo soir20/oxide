@@ -166,21 +166,27 @@ impl AttackCruiserConfigType {
     }
 }
 
-#[derive(SerializePacket)]
-pub struct AttackCruiserAnyConfig {
-    pub class: String,
-    pub value: String,
-}
-
 pub struct AttackCruiserConfigReference {
-    pub config_reference_name: String,
-    pub config_type_hash: u32,
+    pub config_type: AttackCruiserConfigType,
+    pub config_name: String,
 }
 
 impl SerializePacket for AttackCruiserConfigReference {
     fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.config_type.name().serialize(buffer);
+        self.config_name.serialize(buffer);
+    }
+}
+
+pub struct AttackCruiserConfigHash {
+    pub config_reference_name: String,
+    pub config_type: AttackCruiserConfigType,
+}
+
+impl SerializePacket for AttackCruiserConfigHash {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
         hash_string(&self.config_reference_name).serialize(buffer);
-        self.config_type_hash.serialize(buffer);
+        self.config_type.serialize(buffer);
     }
 }
 
@@ -196,8 +202,8 @@ pub struct AttackCruiserHudMessageConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserSpawnConfig {
-    pub actor_config: AttackCruiserAnyConfig,
-    pub ai_config: AttackCruiserAnyConfig,
+    pub actor_config: AttackCruiserConfigReference,
+    pub ai_config: AttackCruiserConfigReference,
     pub chance: f32,
     pub forward_velocity: f32,
     pub count: u32,
@@ -268,7 +274,7 @@ pub struct AttackCruiserGlobalConfig {
     pub health_foreground_internal_id: i32,
     pub health_background_internal_id: i32,
     pub enable_weapon_tiers: AttackCruiserBool,
-    pub player_death_spawn_config: AttackCruiserAnyConfig,
+    pub player_death_spawn_config: AttackCruiserConfigReference,
     pub hud_message: AttackCruiserHudMessageConfig,
 }
 
@@ -301,7 +307,7 @@ pub struct AttackCruiserBlasterConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
-    pub weapon_bay_config: AttackCruiserAnyConfig,
+    pub weapon_bay_config: AttackCruiserConfigReference,
     pub group: u32,
     pub tier: i32,
     pub special_weapon: AttackCruiserBool,
@@ -368,8 +374,8 @@ pub struct AttackCruiserEventActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerConfig {
-    pub ship_config: AttackCruiserAnyConfig,
-    pub camera_config: AttackCruiserAnyConfig,
+    pub ship_config: AttackCruiserConfigReference,
+    pub camera_config: AttackCruiserConfigReference,
     pub lives: u32,
     pub spawn_pos: Pos3,
     pub spawn_heading: f32,
@@ -477,7 +483,7 @@ pub struct AttackCruiserActorConfig {
     pub despawn_effect_id: u32,
     pub explode_offset: f32,
     pub collision_asset_name: String,
-    pub physics_config: AttackCruiserAnyConfig,
+    pub physics_config: AttackCruiserConfigReference,
     pub max_health: u32,
     pub explosive_collision: AttackCruiserBool,
     pub collision_damage: u32,
@@ -493,16 +499,16 @@ pub struct AttackCruiserActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorPoolConfig {
-    pub actor_config: AttackCruiserAnyConfig,
+    pub actor_config: AttackCruiserConfigReference,
     pub size: u32,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveActorConfig {
-    pub actor_config: AttackCruiserAnyConfig,
-    pub ai_config: AttackCruiserAnyConfig,
-    pub squadron_config: AttackCruiserAnyConfig,
-    pub spawn_condition_config: AttackCruiserAnyConfig,
+    pub actor_config: AttackCruiserConfigReference,
+    pub ai_config: AttackCruiserConfigReference,
+    pub squadron_config: AttackCruiserConfigReference,
+    pub spawn_condition_config: AttackCruiserConfigReference,
     pub launch_time_seconds: f32,
     pub life_time_seconds: f32,
     pub spawn_pos: Pos3,
@@ -510,13 +516,13 @@ pub struct AttackCruiserWaveActorConfig {
     pub spawn_speed: f32,
     pub is_hidden: AttackCruiserBool,
     pub has_boss: AttackCruiserBool,
-    pub death_spawn_condition_config: AttackCruiserAnyConfig,
-    pub death_spawn_config: AttackCruiserAnyConfig,
+    pub death_spawn_condition_config: AttackCruiserConfigReference,
+    pub death_spawn_config: AttackCruiserConfigReference,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveHudMessageConfig {
-    pub display_condition_config: AttackCruiserAnyConfig,
+    pub display_condition_config: AttackCruiserConfigReference,
     pub hud_message_config: AttackCruiserHudMessageConfig,
 }
 
@@ -528,9 +534,9 @@ pub struct AttackCruiserWaveConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserGameWaveConfig {
-    pub wave_config: AttackCruiserAnyConfig,
-    pub launch_condition_config: AttackCruiserAnyConfig,
-    pub complete_condition_config: AttackCruiserAnyConfig,
+    pub wave_config: AttackCruiserConfigReference,
+    pub launch_condition_config: AttackCruiserConfigReference,
+    pub complete_condition_config: AttackCruiserConfigReference,
     pub remove_actors_on_completion: AttackCruiserBool,
 }
 
@@ -540,9 +546,9 @@ pub struct AttackCruiserGameConfig {
     pub encounter_id: i32,
     pub sound_id: i32,
     pub mode: i32,
-    pub global_config: AttackCruiserAnyConfig,
-    pub end_condition_config: AttackCruiserAnyConfig,
-    pub win_condition_config: AttackCruiserAnyConfig,
+    pub global_config: AttackCruiserConfigReference,
+    pub end_condition_config: AttackCruiserConfigReference,
+    pub win_condition_config: AttackCruiserConfigReference,
     pub target_value1: u32,
     pub target_value2: u32,
     pub playfield_height: f32,
