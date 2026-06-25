@@ -529,7 +529,7 @@ pub fn start_saber_strike(
                 },
                 actor_id: 500,
                 unknown2: 100,
-                actor_pool: AttackCruiserConfigHash {
+                actor_config: AttackCruiserConfigHash {
                     name: "ship config value".to_string(),
                     class: AttackCruiserConfigClass::Ship,
                 },
