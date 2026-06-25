@@ -2264,7 +2264,7 @@ pub fn process_minigame_packet(
                                                     y: 1000.0,
                                                     z: -1993.09,
                                                 },
-                                                unknown7: Pos3 {
+                                                speed: Pos3 {
                                                     x: 100.0,
                                                     y: 100.0,
                                                     z: 100.0,
