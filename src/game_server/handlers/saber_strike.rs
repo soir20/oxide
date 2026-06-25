@@ -11,17 +11,14 @@ use crate::game_server::{
             AttackCruiserBasePhysicsConfig, AttackCruiserBlasterConfig, AttackCruiserBool,
             AttackCruiserCameraConfig, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-            AttackCruiserConfig, AttackCruiserConfigDefinition, AttackCruiserConfigHash,
-            AttackCruiserConfigName, AttackCruiserConfigPlayer, AttackCruiserConfigReference,
-            AttackCruiserConfigType, AttackCruiserDeathSpawnConfig, AttackCruiserEventActorConfig,
+            AttackCruiserConfig, AttackCruiserConfigClass, AttackCruiserConfigDefinition,
+            AttackCruiserConfigPlayer, AttackCruiserConfigReference, AttackCruiserDeathSpawnConfig,
             AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
             AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
             AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
             AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
-            AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
-            AttackCruiserSimplePhysicsFlightConfig, AttackCruiserSpawnConfig,
-            AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
-            AttackCruiserWeaponBayConfig,
+            AttackCruiserShipWeaponConfig, AttackCruiserSpawnConfig, AttackCruiserUpdateGameState,
+            AttackCruiserVec, AttackCruiserWaveConfig, AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -112,8 +109,8 @@ pub fn start_saber_strike(
                         health_background_internal_id: 400,
                         enable_weapon_tiers: AttackCruiserBool(true),
                         player_death_spawn_config: AttackCruiserConfigReference {
-                            config_type: AttackCruiserConfigType::DeathSpawn,
-                            config_name: "player death spawn config value".to_string(),
+                            class: AttackCruiserConfigClass::DeathSpawn,
+                            name: "player death spawn config value".to_string(),
                         },
                         hud_message: AttackCruiserHudMessageConfig {
                             speaker_name_id: 100,
@@ -133,16 +130,16 @@ pub fn start_saber_strike(
                         sound_id: 2413,
                         mode: 1,
                         global_config: AttackCruiserConfigReference {
-                            config_type: AttackCruiserConfigType::Global,
-                            config_name: "global config value".to_string(),
+                            class: AttackCruiserConfigClass::Global,
+                            name: "global config value".to_string(),
                         },
                         end_condition_config: AttackCruiserConfigReference {
-                            config_type: AttackCruiserConfigType::Condition,
-                            config_name: "".to_string(),
+                            class: AttackCruiserConfigClass::Condition,
+                            name: "".to_string(),
                         },
                         win_condition_config: AttackCruiserConfigReference {
-                            config_type: AttackCruiserConfigType::Condition,
-                            config_name: "".to_string(),
+                            class: AttackCruiserConfigClass::Condition,
+                            name: "".to_string(),
                         },
                         target_value1: 999,
                         target_value2: 888,
@@ -174,12 +171,12 @@ pub fn start_saber_strike(
                             "players".to_string(),
                             vec![AttackCruiserPlayerConfig {
                                 ship_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Ship,
-                                    config_name: "ship config value".to_string(),
+                                    class: AttackCruiserConfigClass::Ship,
+                                    name: "ship config value".to_string(),
                                 },
                                 camera_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Camera,
-                                    config_name: "camera config value".to_string(),
+                                    class: AttackCruiserConfigClass::Camera,
+                                    name: "camera config value".to_string(),
                                 },
                                 lives: 5,
                                 spawn_pos: Pos3 {
@@ -224,8 +221,8 @@ pub fn start_saber_strike(
                             "actor pools".to_string(),
                             vec![AttackCruiserActorPoolConfig {
                                 actor_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Ship,
-                                    config_name: "ship config value".to_string(),
+                                    class: AttackCruiserConfigClass::Ship,
+                                    name: "ship config value".to_string(),
                                 },
                                 size: 500,
                             }],
@@ -234,16 +231,16 @@ pub fn start_saber_strike(
                             "waves".to_string(),
                             vec![AttackCruiserGameWaveConfig {
                                 wave_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Wave,
-                                    config_name: "wave config value".to_string(),
+                                    class: AttackCruiserConfigClass::Wave,
+                                    name: "wave config value".to_string(),
                                 },
                                 launch_condition_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Condition,
-                                    config_name: "niceshot".to_string(),
+                                    class: AttackCruiserConfigClass::Condition,
+                                    name: "niceshot".to_string(),
                                 },
                                 complete_condition_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::Condition,
-                                    config_name: "".to_string(),
+                                    class: AttackCruiserConfigClass::Condition,
+                                    name: "".to_string(),
                                 },
                                 remove_actors_on_completion: AttackCruiserBool(false),
                             }],
@@ -323,8 +320,8 @@ pub fn start_saber_strike(
                                 explode_offset: 1.0,
                                 collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
                                 physics_config: AttackCruiserConfigReference {
-                                    config_type: AttackCruiserConfigType::ComplexPhysics,
-                                    config_name: "physics config value".to_string(),
+                                    class: AttackCruiserConfigClass::ComplexPhysics,
+                                    name: "physics config value".to_string(),
                                 },
                                 max_health: 100,
                                 explosive_collision: AttackCruiserBool(true),
@@ -369,8 +366,8 @@ pub fn start_saber_strike(
                                 "player weapons".to_string(),
                                 vec![AttackCruiserShipWeaponConfig {
                                     weapon_bay_config: AttackCruiserConfigReference {
-                                        config_type: AttackCruiserConfigType::Blaster,
-                                        config_name: "player weapon bay config value".to_string(),
+                                        class: AttackCruiserConfigClass::Blaster,
+                                        name: "player weapon bay config value".to_string(),
                                     },
                                     group: 1,
                                     tier: 1,
@@ -452,8 +449,8 @@ pub fn start_saber_strike(
                             explode_offset: 1.0,
                             collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
                             physics_config: AttackCruiserConfigReference {
-                                config_type: AttackCruiserConfigType::ComplexPhysics,
-                                config_name: "physics config value".to_string(),
+                                class: AttackCruiserConfigClass::ComplexPhysics,
+                                name: "physics config value".to_string(),
                             },
                             max_health: 100,
                             explosive_collision: AttackCruiserBool(true),
@@ -501,13 +498,13 @@ pub fn start_saber_strike(
                                     "death spawns".to_string(),
                                     vec![AttackCruiserSpawnConfig {
                                         actor_config: AttackCruiserConfigReference {
-                                            config_type: AttackCruiserConfigType::Actor,
-                                            config_name: "player death spawn actor config value"
+                                            class: AttackCruiserConfigClass::Actor,
+                                            name: "player death spawn actor config value"
                                                 .to_string(),
                                         },
                                         ai_config: AttackCruiserConfigReference {
-                                            config_type: AttackCruiserConfigType::Ai,
-                                            config_name: "niceshot".to_string(),
+                                            class: AttackCruiserConfigClass::Ai,
+                                            name: "niceshot".to_string(),
                                         },
                                         chance: 100.0,
                                         forward_velocity: 1.0,

@@ -78,7 +78,7 @@ fn hash_string(string: &str) -> u32 {
 
 #[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
-pub enum AttackCruiserConfigType {
+pub enum AttackCruiserConfigClass {
     Actor = 0x16fcdb9,
     Ai = 0xe471290c,
     AiBehavior = 0x400f509e,
@@ -120,73 +120,73 @@ pub enum AttackCruiserConfigType {
     WeaponTierPickup = 0xab52827,
 }
 
-impl AttackCruiserConfigType {
+impl AttackCruiserConfigClass {
     pub fn name(&self) -> &'static str {
         match self {
-            AttackCruiserConfigType::Actor => "ActorConfig",
-            AttackCruiserConfigType::Ai => "AIConfig",
-            AttackCruiserConfigType::AiBehavior => "AIBehaviorConfig",
-            AttackCruiserConfigType::BasePhysics => "BasePhysicsConfig",
-            AttackCruiserConfigType::Blaster => "BlasterConfig",
-            AttackCruiserConfigType::BrainTimerAiBehavior => "SetBrainTimerAIBehaviorConfig",
-            AttackCruiserConfigType::Camera => "CameraConfig",
-            AttackCruiserConfigType::ComplexPhysics => "ComplexPhysicsConfig",
-            AttackCruiserConfigType::Condition => "ConditionConfig",
-            AttackCruiserConfigType::DeathSpawn => "DeathSpawnConfig",
-            AttackCruiserConfigType::FollowTargetAiBehavior => "FollowTargetAIBehaviorConfig",
-            AttackCruiserConfigType::Game => "GameConfig",
-            AttackCruiserConfigType::Global => "GlobalConfig",
-            AttackCruiserConfigType::GoToRandomTagAiBehavior => "GotoRandomTagAIBehaviorConfig",
-            AttackCruiserConfigType::GoToTagAiBehavior => "GotoTagAIBehaviorConfig",
-            AttackCruiserConfigType::GoToTargetAiBehavior => "GotoTargetAIBehaviorConfig",
-            AttackCruiserConfigType::HealthPickup => "HealthPickupConfig",
-            AttackCruiserConfigType::InventoryPickup => "InventoryPickupConfig",
-            AttackCruiserConfigType::KillStreak => "NDConfig",
-            AttackCruiserConfigType::LifePickup => "LifePickupConfig",
-            AttackCruiserConfigType::LifeTimeAiBehavior => "SetLifeTimeAIBehaviorConfig",
-            AttackCruiserConfigType::MultiCondition => "MultiConditionConfig",
-            AttackCruiserConfigType::Path => "PathConfig",
-            AttackCruiserConfigType::Pickup => "PickupConfig",
-            AttackCruiserConfigType::ReturnHomeAiBehavior => "ReturnHomeAIBehaviorConfig",
-            AttackCruiserConfigType::ScorePickup => "ScorePickupConfig",
-            AttackCruiserConfigType::Ship => "ShipConfig",
-            AttackCruiserConfigType::ShipBay => "ShipBayConfig",
-            AttackCruiserConfigType::SimplePhysics => "SimplePhysicsConfig",
-            AttackCruiserConfigType::Squadron => "SquadronConfig",
-            AttackCruiserConfigType::TagPosition => "TagPositionConfig",
-            AttackCruiserConfigType::TargetAiBehavior => "TargetAIBehaviorConfig",
-            AttackCruiserConfigType::Torpedo => "TorpedoConfig",
-            AttackCruiserConfigType::TorpedoBay => "TorpedoBayConfig",
-            AttackCruiserConfigType::Wave => "WaveConfig",
-            AttackCruiserConfigType::WaveTimerAiBehavior => "SetWaveTimerAIBehaviorConfig",
-            AttackCruiserConfigType::WaveVariableAiBehavior => "SetWaveVariableAIBehaviorConfig",
-            AttackCruiserConfigType::WeaponBay => "WeaponBayConfig",
-            AttackCruiserConfigType::WeaponTierPickup => "WeaponTierPickupConfig",
+            AttackCruiserConfigClass::Actor => "ActorConfig",
+            AttackCruiserConfigClass::Ai => "AIConfig",
+            AttackCruiserConfigClass::AiBehavior => "AIBehaviorConfig",
+            AttackCruiserConfigClass::BasePhysics => "BasePhysicsConfig",
+            AttackCruiserConfigClass::Blaster => "BlasterConfig",
+            AttackCruiserConfigClass::BrainTimerAiBehavior => "SetBrainTimerAIBehaviorConfig",
+            AttackCruiserConfigClass::Camera => "CameraConfig",
+            AttackCruiserConfigClass::ComplexPhysics => "ComplexPhysicsConfig",
+            AttackCruiserConfigClass::Condition => "ConditionConfig",
+            AttackCruiserConfigClass::DeathSpawn => "DeathSpawnConfig",
+            AttackCruiserConfigClass::FollowTargetAiBehavior => "FollowTargetAIBehaviorConfig",
+            AttackCruiserConfigClass::Game => "GameConfig",
+            AttackCruiserConfigClass::Global => "GlobalConfig",
+            AttackCruiserConfigClass::GoToRandomTagAiBehavior => "GotoRandomTagAIBehaviorConfig",
+            AttackCruiserConfigClass::GoToTagAiBehavior => "GotoTagAIBehaviorConfig",
+            AttackCruiserConfigClass::GoToTargetAiBehavior => "GotoTargetAIBehaviorConfig",
+            AttackCruiserConfigClass::HealthPickup => "HealthPickupConfig",
+            AttackCruiserConfigClass::InventoryPickup => "InventoryPickupConfig",
+            AttackCruiserConfigClass::KillStreak => "NDConfig",
+            AttackCruiserConfigClass::LifePickup => "LifePickupConfig",
+            AttackCruiserConfigClass::LifeTimeAiBehavior => "SetLifeTimeAIBehaviorConfig",
+            AttackCruiserConfigClass::MultiCondition => "MultiConditionConfig",
+            AttackCruiserConfigClass::Path => "PathConfig",
+            AttackCruiserConfigClass::Pickup => "PickupConfig",
+            AttackCruiserConfigClass::ReturnHomeAiBehavior => "ReturnHomeAIBehaviorConfig",
+            AttackCruiserConfigClass::ScorePickup => "ScorePickupConfig",
+            AttackCruiserConfigClass::Ship => "ShipConfig",
+            AttackCruiserConfigClass::ShipBay => "ShipBayConfig",
+            AttackCruiserConfigClass::SimplePhysics => "SimplePhysicsConfig",
+            AttackCruiserConfigClass::Squadron => "SquadronConfig",
+            AttackCruiserConfigClass::TagPosition => "TagPositionConfig",
+            AttackCruiserConfigClass::TargetAiBehavior => "TargetAIBehaviorConfig",
+            AttackCruiserConfigClass::Torpedo => "TorpedoConfig",
+            AttackCruiserConfigClass::TorpedoBay => "TorpedoBayConfig",
+            AttackCruiserConfigClass::Wave => "WaveConfig",
+            AttackCruiserConfigClass::WaveTimerAiBehavior => "SetWaveTimerAIBehaviorConfig",
+            AttackCruiserConfigClass::WaveVariableAiBehavior => "SetWaveVariableAIBehaviorConfig",
+            AttackCruiserConfigClass::WeaponBay => "WeaponBayConfig",
+            AttackCruiserConfigClass::WeaponTierPickup => "WeaponTierPickupConfig",
         }
     }
 }
 
 pub struct AttackCruiserConfigReference {
-    pub config_type: AttackCruiserConfigType,
-    pub config_name: String,
+    pub class: AttackCruiserConfigClass,
+    pub name: String,
 }
 
 impl SerializePacket for AttackCruiserConfigReference {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        self.config_type.name().serialize(buffer);
-        self.config_name.serialize(buffer);
+        self.class.name().serialize(buffer);
+        self.name.serialize(buffer);
     }
 }
 
 pub struct AttackCruiserConfigHash {
-    pub config_name: String,
-    pub config_type: AttackCruiserConfigType,
+    pub name: String,
+    pub class: AttackCruiserConfigClass,
 }
 
 impl SerializePacket for AttackCruiserConfigHash {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        hash_string(&self.config_name).serialize(buffer);
-        self.config_type.serialize(buffer);
+        hash_string(&self.name).serialize(buffer);
+        self.class.serialize(buffer);
     }
 }
 
@@ -588,23 +588,23 @@ pub enum AttackCruiserConfigDefinition {
 }
 
 impl AttackCruiserConfigDefinition {
-    pub fn config_type(&self) -> AttackCruiserConfigType {
+    pub fn class(&self) -> AttackCruiserConfigClass {
         match self {
-            AttackCruiserConfigDefinition::Actor(_) => AttackCruiserConfigType::Actor,
-            AttackCruiserConfigDefinition::Blaster(_) => AttackCruiserConfigType::Blaster,
-            AttackCruiserConfigDefinition::Camera(_) => AttackCruiserConfigType::Camera,
+            AttackCruiserConfigDefinition::Actor(_) => AttackCruiserConfigClass::Actor,
+            AttackCruiserConfigDefinition::Blaster(_) => AttackCruiserConfigClass::Blaster,
+            AttackCruiserConfigDefinition::Camera(_) => AttackCruiserConfigClass::Camera,
             AttackCruiserConfigDefinition::ComplexPhysics(_) => {
-                AttackCruiserConfigType::ComplexPhysics
+                AttackCruiserConfigClass::ComplexPhysics
             }
-            AttackCruiserConfigDefinition::DeathSpawn(_) => AttackCruiserConfigType::DeathSpawn,
-            AttackCruiserConfigDefinition::Game(_) => AttackCruiserConfigType::Game,
-            AttackCruiserConfigDefinition::Global(_) => AttackCruiserConfigType::Global,
-            AttackCruiserConfigDefinition::Ship(_) => AttackCruiserConfigType::Ship,
+            AttackCruiserConfigDefinition::DeathSpawn(_) => AttackCruiserConfigClass::DeathSpawn,
+            AttackCruiserConfigDefinition::Game(_) => AttackCruiserConfigClass::Game,
+            AttackCruiserConfigDefinition::Global(_) => AttackCruiserConfigClass::Global,
+            AttackCruiserConfigDefinition::Ship(_) => AttackCruiserConfigClass::Ship,
             AttackCruiserConfigDefinition::SimplePhysics(_) => {
-                AttackCruiserConfigType::SimplePhysics
+                AttackCruiserConfigClass::SimplePhysics
             }
-            AttackCruiserConfigDefinition::Wave(_) => AttackCruiserConfigType::Wave,
-            AttackCruiserConfigDefinition::WeaponBay(_) => AttackCruiserConfigType::WeaponBay,
+            AttackCruiserConfigDefinition::Wave(_) => AttackCruiserConfigClass::Wave,
+            AttackCruiserConfigDefinition::WeaponBay(_) => AttackCruiserConfigClass::WeaponBay,
         }
     }
 }
@@ -634,7 +634,7 @@ pub struct AttackCruiserConfigName {
 impl SerializePacket for AttackCruiserConfigName {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.hash.serialize(buffer);
-        self.hash.config_name.serialize(buffer);
+        self.hash.name.serialize(buffer);
     }
 }
 
@@ -649,8 +649,8 @@ impl AttackCruiserConfig {
         AttackCruiserConfig {
             name: AttackCruiserConfigName {
                 hash: AttackCruiserConfigHash {
-                    config_name: name,
-                    config_type: definition.config_type(),
+                    name,
+                    class: definition.class(),
                 },
             },
             definition,
