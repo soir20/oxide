@@ -11,13 +11,13 @@ use crate::game_server::{
             AttackCruiserBasePhysicsConfig, AttackCruiserBlasterConfig, AttackCruiserBool,
             AttackCruiserCameraConfig, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-            AttackCruiserConfig, AttackCruiserConfigDefinition, AttackCruiserConfigPlayer,
-            AttackCruiserConfigReference, AttackCruiserConfigType, AttackCruiserDeathSpawnConfig,
-            AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGameWaveConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerConfig, AttackCruiserPlayerState,
-            AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
+            AttackCruiserConfig, AttackCruiserConfigDefinition, AttackCruiserConfigHash,
+            AttackCruiserConfigName, AttackCruiserConfigPlayer, AttackCruiserConfigReference,
+            AttackCruiserConfigType, AttackCruiserDeathSpawnConfig, AttackCruiserEventActorConfig,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGameWaveConfig, AttackCruiserGlobalConfig, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerConfig,
+            AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
             AttackCruiserShipWeaponConfig, AttackCruiserSimplePhysicsConfig,
             AttackCruiserSimplePhysicsFlightConfig, AttackCruiserSpawnConfig,
             AttackCruiserUpdateGameState, AttackCruiserVec, AttackCruiserWaveConfig,
@@ -53,10 +53,13 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 config1: AttackCruiserConfig {
-                    unknown1: 1,
-                    config_type_hash: 0x79243a4c,
-                    config_reference_name: "global config value".to_string(),
-                    config_type: AttackCruiserConfigDefinition::Global(Box::new(
+                    name: AttackCruiserConfigName {
+                        hash: AttackCruiserConfigHash {
+                            config_type: AttackCruiserConfigType::Global,
+                            config_name: "global config value".to_string(),
+                        },
+                    },
+                    definition: AttackCruiserConfigDefinition::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
                             connect_timeout_seconds: 10.0,
@@ -130,10 +133,13 @@ pub fn start_saber_strike(
                     )),
                 },
                 config2: AttackCruiserConfig {
-                    unknown1: 2,
-                    config_type_hash: 0x4c61446a,
-                    config_reference_name: "GameConfig".to_string(),
-                    config_type: AttackCruiserConfigDefinition::Game(Box::new(
+                    name: AttackCruiserConfigName {
+                        hash: AttackCruiserConfigHash {
+                            config_type: AttackCruiserConfigType::Game,
+                            config_name: "game config value".to_string(),
+                        },
+                    },
+                    definition: AttackCruiserConfigDefinition::Game(Box::new(
                         AttackCruiserGameConfig {
                             id: 27001,
                             encounter_id: 0,
@@ -259,10 +265,13 @@ pub fn start_saber_strike(
                     )),
                 },
                 config3: AttackCruiserConfig {
-                    unknown1: 3,
-                    config_type_hash: 0x6dc7e02b,
-                    config_reference_name: "main camera config value".to_string(),
-                    config_type: AttackCruiserConfigDefinition::Camera(Box::new(
+                    name: AttackCruiserConfigName {
+                        hash: AttackCruiserConfigHash {
+                            config_type: AttackCruiserConfigType::Camera,
+                            config_name: "main camera config value".to_string(),
+                        },
+                    },
+                    definition: AttackCruiserConfigDefinition::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 1000.0,
                             min_distance: 0.0,
@@ -288,10 +297,13 @@ pub fn start_saber_strike(
                 },
                 configs: vec![
                     AttackCruiserConfig {
-                        unknown1: 6,
-                        config_type_hash: 0xa598eae0,
-                        config_reference_name: "physics config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::ComplexPhysics(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::ComplexPhysics,
+                                config_name: "physics config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::ComplexPhysics(Box::new(
                             AttackCruiserComplexPhysicsConfig {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
@@ -327,10 +339,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 7,
-                        config_type_hash: 0x4db6c82a,
-                        config_reference_name: "ship config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::Ship(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::Ship,
+                                config_name: "ship config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::Ship(Box::new(
                             AttackCruiserShipConfig {
                                 actor_config: AttackCruiserActorConfig {
                                     model_id: 167,
@@ -410,10 +425,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 10,
-                        config_type_hash: 0x118d962f,
-                        config_reference_name: "player weapon bay config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::Blaster(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::Blaster,
+                                config_name: "player weapon bay config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::Blaster(Box::new(
                             AttackCruiserBlasterConfig {
                                 weapon_bay_config: AttackCruiserWeaponBayConfig {
                                     exit_velocity: 100.0,
@@ -432,10 +450,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 8,
-                        config_type_hash: 0x6dc7e02b,
-                        config_reference_name: "camera config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::Camera(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::Camera,
+                                config_name: "camera config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::Camera(Box::new(
                             AttackCruiserCameraConfig {
                                 distance: 100.0,
                                 min_distance: 0.0,
@@ -460,10 +481,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 9,
-                        config_type_hash: 0x23773492,
-                        config_reference_name: "wave config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::Wave(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::Wave,
+                                config_name: "wave config value config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::Wave(Box::new(
                             AttackCruiserWaveConfig {
                                 actors: AttackCruiserVec::new(),
                                 hud_messages: AttackCruiserVec::new(),
@@ -471,10 +495,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 99,
-                        config_type_hash: 0x016fcdb9,
-                        config_reference_name: "player death spawn actor config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::Actor(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::Actor,
+                                config_name: "player death spawn actor config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::Actor(Box::new(
                             AttackCruiserActorConfig {
                                 model_id: 167,
                                 effect_id: 0,
@@ -525,10 +552,13 @@ pub fn start_saber_strike(
                         )),
                     },
                     AttackCruiserConfig {
-                        unknown1: 100,
-                        config_type_hash: 0x9704178e,
-                        config_reference_name: "player death spawn config value".to_string(),
-                        config_type: AttackCruiserConfigDefinition::DeathSpawn(Box::new(
+                        name: AttackCruiserConfigName {
+                            hash: AttackCruiserConfigHash {
+                                config_type: AttackCruiserConfigType::DeathSpawn,
+                                config_name: "player death spawn config value".to_string(),
+                            },
+                        },
+                        definition: AttackCruiserConfigDefinition::DeathSpawn(Box::new(
                             AttackCruiserDeathSpawnConfig {
                                 enable_chance: 100.0,
                                 spawn_config: AttackCruiserVec(
@@ -616,10 +646,13 @@ pub fn start_saber_strike(
                 config1: None,
                 config2: None,
                 config3: Some(AttackCruiserConfig {
-                    unknown1: 100,
-                    config_type_hash: 0x6dc7e02b,
-                    config_reference_name: "player camera config value".to_string(),
-                    config_type: AttackCruiserConfigDefinition::Camera(Box::new(
+                    name: AttackCruiserConfigName {
+                        hash: AttackCruiserConfigHash {
+                            config_type: AttackCruiserConfigType::Camera,
+                            config_name: "player camera config value".to_string(),
+                        },
+                    },
+                    definition: AttackCruiserConfigDefinition::Camera(Box::new(
                         AttackCruiserCameraConfig {
                             distance: 100.0,
                             min_distance: 0.0,

@@ -179,13 +179,13 @@ impl SerializePacket for AttackCruiserConfigReference {
 }
 
 pub struct AttackCruiserConfigHash {
-    pub config_reference_name: String,
+    pub config_name: String,
     pub config_type: AttackCruiserConfigType,
 }
 
 impl SerializePacket for AttackCruiserConfigHash {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        hash_string(&self.config_reference_name).serialize(buffer);
+        hash_string(&self.config_name).serialize(buffer);
         self.config_type.serialize(buffer);
     }
 }
@@ -605,12 +605,21 @@ impl SerializePacket for AttackCruiserConfigDefinition {
     }
 }
 
+pub struct AttackCruiserConfigName {
+    pub hash: AttackCruiserConfigHash,
+}
+
+impl SerializePacket for AttackCruiserConfigName {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.hash.serialize(buffer);
+        self.hash.config_name.serialize(buffer);
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserConfig {
-    pub unknown1: i32,
-    pub config_type_hash: u32,
-    pub config_reference_name: String,
-    pub config_type: AttackCruiserConfigDefinition,
+    pub name: AttackCruiserConfigName,
+    pub definition: AttackCruiserConfigDefinition,
 }
 
 pub struct AttackCruiserClientConfig {
