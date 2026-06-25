@@ -1152,6 +1152,7 @@ impl GamePacket for AttackCruiserAddActor {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWorldEffect {
+    pub minigame_header: MinigameHeader,
     pub effect_id: u32,
     pub pos: Pos3,
 }
