@@ -435,7 +435,7 @@ pub fn start_saber_strike(
                         )),
                     ),
                     AttackCruiserConfig::new(
-                        "wave config value config value".to_string(),
+                        "wave config value".to_string(),
                         AttackCruiserConfigDefinition::Wave(Box::new(AttackCruiserWaveConfig {
                             actors: AttackCruiserVec::new(),
                             hud_messages: AttackCruiserVec::new(),
