@@ -1101,7 +1101,7 @@ pub struct AttackCruiserAddProjectile {
     pub unknown2: u32,
     pub effect_id: u32,
     pub unknown4: u32,
-    pub unknown5: f32,
+    pub max_distance_from_origin: f32,
     pub origin: Pos3,
     pub speed: Pos3,
     pub unknown8: Pos3,
