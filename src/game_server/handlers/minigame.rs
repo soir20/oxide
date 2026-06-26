@@ -2258,7 +2258,7 @@ pub fn process_minigame_packet(
                                                 unknown2: 1532,
                                                 effect_id: 1532,
                                                 despawn_effect_id: 1450,
-                                                max_distance_from_origin: 10.0,
+                                                lifetime_seconds: 10.0,
                                                 origin: Pos3 {
                                                     x: 3.99,
                                                     y: 1000.0,
