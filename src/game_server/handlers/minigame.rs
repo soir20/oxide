@@ -2257,7 +2257,7 @@ pub fn process_minigame_packet(
                                                 unknown1: 1532,
                                                 unknown2: 1532,
                                                 effect_id: 1532,
-                                                unknown4: 1532,
+                                                despawn_effect_id: 1450,
                                                 max_distance_from_origin: 10.0,
                                                 origin: Pos3 {
                                                     x: 3.99,
@@ -2266,7 +2266,7 @@ pub fn process_minigame_packet(
                                                 },
                                                 speed: Pos3 {
                                                     x: 100.0,
-                                                    y: 100.0,
+                                                    y: 1.0,
                                                     z: 100.0,
                                                 },
                                                 unknown8: Pos3 {
