@@ -628,6 +628,7 @@ pub enum AttackCruiserConfigDefinition {
     Blaster(Box<AttackCruiserBlasterConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
     ComplexPhysics(Box<AttackCruiserComplexPhysicsConfig>),
+    Condition(Box<AttackCruiserConditionConfig>),
     DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
@@ -646,6 +647,7 @@ impl AttackCruiserConfigDefinition {
             AttackCruiserConfigDefinition::ComplexPhysics(_) => {
                 AttackCruiserConfigClass::ComplexPhysics
             }
+            AttackCruiserConfigDefinition::Condition(_) => AttackCruiserConfigClass::Condition,
             AttackCruiserConfigDefinition::DeathSpawn(_) => AttackCruiserConfigClass::DeathSpawn,
             AttackCruiserConfigDefinition::Game(_) => AttackCruiserConfigClass::Game,
             AttackCruiserConfigDefinition::Global(_) => AttackCruiserConfigClass::Global,
@@ -666,6 +668,7 @@ impl SerializePacket for AttackCruiserConfigDefinition {
             AttackCruiserConfigDefinition::Blaster(config) => config.serialize(buffer),
             AttackCruiserConfigDefinition::Camera(config) => config.serialize(buffer),
             AttackCruiserConfigDefinition::ComplexPhysics(config) => config.serialize(buffer),
+            AttackCruiserConfigDefinition::Condition(config) => config.serialize(buffer),
             AttackCruiserConfigDefinition::DeathSpawn(config) => config.serialize(buffer),
             AttackCruiserConfigDefinition::Game(config) => config.serialize(buffer),
             AttackCruiserConfigDefinition::Global(config) => config.serialize(buffer),
