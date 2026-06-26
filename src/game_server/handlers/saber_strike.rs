@@ -20,7 +20,7 @@ use crate::game_server::{
             AttackCruiserPlayerState, AttackCruiserPlayerStateUnknown1, AttackCruiserShipConfig,
             AttackCruiserShipWeaponConfig, AttackCruiserSpawnConfig, AttackCruiserUpdateGameState,
             AttackCruiserVec, AttackCruiserWaveActorConfig, AttackCruiserWaveConfig,
-            AttackCruiserWeaponBayConfig,
+            AttackCruiserWaveHudMessageConfig, AttackCruiserWeaponBayConfig,
         },
         minigame::{MinigameHeader, ScoreEntry, ScoreType},
         saber_strike::{
@@ -96,7 +96,7 @@ pub fn start_saber_strike(
                         torpedo_reticule_effect_seconds: 1.0,
                         fighter_reticule_effect_id: 5678,
                         fighter_reticule_effect_seconds: 1.0,
-                        wave_end_sound_id: 1234,
+                        wave_end_sound_id: 5400,
                         damage_warning_sound_id: 5678,
                         damage_warning_interval_seconds: 1.0,
                         mine_deploy_sound_id: 1234,
@@ -154,7 +154,7 @@ pub fn start_saber_strike(
                         playfield_center_z: -1993.09,
                         kill_zone_height: 0.0,
                         enemy_attack_radius: 50.0,
-                        endless_waves: AttackCruiserBool(false),
+                        endless_waves: AttackCruiserBool(true),
                         debugged_actors: 0,
                         global_tilt_init_x: 0.0,
                         global_tilt_init_z: 0.0,
@@ -464,7 +464,7 @@ pub fn start_saber_strike(
                                         z: -1999.0,
                                     },
                                     spawn_heading: 0.0,
-                                    spawn_speed: 10.0,
+                                    spawn_speed: 1.0,
                                     is_hidden: AttackCruiserBool(false),
                                     has_boss: AttackCruiserBool(false),
                                     death_spawn_condition_config: AttackCruiserConfigReference {
@@ -477,19 +477,35 @@ pub fn start_saber_strike(
                                     },
                                 }],
                             ),
-                            hud_messages: AttackCruiserVec::new(),
+                            hud_messages: AttackCruiserVec(
+                                "wave messages".to_string(),
+                                vec![AttackCruiserWaveHudMessageConfig {
+                                    display_condition_config: AttackCruiserConfigReference {
+                                        class: AttackCruiserConfigClass::Condition,
+                                        name: "test condition".to_string(),
+                                    },
+                                    hud_message_config: AttackCruiserHudMessageConfig {
+                                        speaker_name_id: 1000,
+                                        speaker_image_id: 1000,
+                                        message_id: 1000,
+                                        sound_id: 1000,
+                                        duration_millis: 10000,
+                                        delay_millis: 0,
+                                    },
+                                }],
+                            ),
                         })),
                     ),
                     AttackCruiserConfig::new(
                         "player death spawn config value".to_string(),
                         AttackCruiserConfigDefinition::DeathSpawn(Box::new(
                             AttackCruiserDeathSpawnConfig {
-                                enable_chance: 100.0,
+                                enable_chance: AttackCruiserBool(true),
                                 spawn_config: AttackCruiserVec(
                                     "death spawns".to_string(),
                                     vec![AttackCruiserSpawnConfig {
                                         actor_config: AttackCruiserConfigReference {
-                                            class: AttackCruiserConfigClass::Actor,
+                                            class: AttackCruiserConfigClass::Ship,
                                             name: "ship config value".to_string(),
                                         },
                                         ai_config: AttackCruiserConfigReference {
@@ -512,9 +528,9 @@ pub fn start_saber_strike(
                                 context: 1,
                                 condition_type: 2,
                                 operator: 3,
-                                param1: 4,
-                                param2: 5,
-                                param3: 6,
+                                param1: 4.0,
+                                param2: 5.0,
+                                param3: 6.0,
                             },
                         )),
                     ),

@@ -205,9 +205,9 @@ pub struct AttackCruiserConditionConfig {
     pub context: u32,
     pub condition_type: u32,
     pub operator: u32,
-    pub param1: u32,
-    pub param2: u32,
-    pub param3: u32,
+    pub param1: f64,
+    pub param2: f64,
+    pub param3: f64,
 }
 
 #[derive(SerializePacket)]
@@ -246,7 +246,7 @@ pub struct AttackCruiserSpawnConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserDeathSpawnConfig {
-    pub enable_chance: f32,
+    pub enable_chance: AttackCruiserBool,
     pub spawn_config: AttackCruiserVec<AttackCruiserSpawnConfig>,
 }
 
