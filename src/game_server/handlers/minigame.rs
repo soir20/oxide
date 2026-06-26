@@ -2275,7 +2275,7 @@ pub fn process_minigame_packet(
                                                     z: 100.0,
                                                 },
                                                 unknown9: 40.0,
-                                                unknown10: 60.0,
+                                                heading: 0.0,
                                                 unknown11: 80.0,
                                                 unknown12: 100.0,
                                                 unknown13: 1532,
