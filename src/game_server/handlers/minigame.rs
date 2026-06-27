@@ -1966,7 +1966,7 @@ pub fn process_minigame_packet(
                                                                 score_multiplier_tier_progress: 11,
                                                                 score_multiplier_tier_goal: 12,
                                                                 score_multiplier_tier: 13,
-                                                                unknown5: 14,
+                                                                pain: 14,
                                                                 lives: 2,
                                                             },
                                                         ),

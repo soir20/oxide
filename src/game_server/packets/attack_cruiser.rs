@@ -796,7 +796,7 @@ pub struct AttackCruiserPlayerStateScore {
     pub score_multiplier_tier_progress: u32,
     pub score_multiplier_tier_goal: u32,
     pub score_multiplier_tier: u32,
-    pub unknown5: u32,
+    pub pain: u32,
     pub lives: u32,
 }
 
