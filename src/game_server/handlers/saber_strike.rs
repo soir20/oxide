@@ -55,8 +55,8 @@ pub fn start_saber_strike(
                     "global config value".to_string(),
                     AttackCruiserConfigDefinition::Global(Box::new(AttackCruiserGlobalConfig {
                         physics_speed: 1.0,
-                        connect_timeout_seconds: 100.0,
-                        ready_timeout_seconds: 100.0,
+                        connect_timeout_seconds: 10.0,
+                        ready_timeout_seconds: 10.0,
                         default_timeout_seconds: 120.0,
                         effects_preload_timeout_seconds: 1.0,
                         effects_ready_timeout_seconds: 1.0,
@@ -83,8 +83,8 @@ pub fn start_saber_strike(
                         projectile_ray_iterations: 100,
                         advance_launch_seconds: 1.0,
                         advance_interception_time: 1.0,
-                        collisionless_time: 0,
-                        tractionless_time: 0,
+                        collisionless_time: 2000,
+                        tractionless_time: 5000,
                         screen_relative_turning: AttackCruiserBool(true),
                         ship_to_ship_collision: AttackCruiserBool(true),
                         player_death_animation_delay_seconds: 1.0,
@@ -171,42 +171,23 @@ pub fn start_saber_strike(
                         },
                         players: AttackCruiserVec(
                             "players".to_string(),
-                            vec![
-                                AttackCruiserPlayerConfig {
-                                    ship_config: AttackCruiserConfigReference {
-                                        class: AttackCruiserConfigClass::Ship,
-                                        name: "ship config value".to_string(),
-                                    },
-                                    camera_config: AttackCruiserConfigReference {
-                                        class: AttackCruiserConfigClass::Camera,
-                                        name: "camera config value".to_string(),
-                                    },
-                                    lives: 5,
-                                    spawn_pos: Pos3 {
-                                        x: 0.0,
-                                        y: 0.0,
-                                        z: 0.0,
-                                    },
-                                    spawn_heading: 0.0,
+                            vec![AttackCruiserPlayerConfig {
+                                ship_config: AttackCruiserConfigReference {
+                                    class: AttackCruiserConfigClass::Ship,
+                                    name: "ship config value".to_string(),
                                 },
-                                AttackCruiserPlayerConfig {
-                                    ship_config: AttackCruiserConfigReference {
-                                        class: AttackCruiserConfigClass::Ship,
-                                        name: "ship config value".to_string(),
-                                    },
-                                    camera_config: AttackCruiserConfigReference {
-                                        class: AttackCruiserConfigClass::Camera,
-                                        name: "camera config value".to_string(),
-                                    },
-                                    lives: 5,
-                                    spawn_pos: Pos3 {
-                                        x: 0.0,
-                                        y: 0.0,
-                                        z: 0.0,
-                                    },
-                                    spawn_heading: 0.0,
+                                camera_config: AttackCruiserConfigReference {
+                                    class: AttackCruiserConfigClass::Camera,
+                                    name: "camera config value".to_string(),
                                 },
-                            ],
+                                lives: 5,
+                                spawn_pos: Pos3 {
+                                    x: 0.0,
+                                    y: 0.0,
+                                    z: 0.0,
+                                },
+                                spawn_heading: 0.0,
+                            }],
                         ),
                         events: AttackCruiserVec(
                             "events".to_string(),
@@ -586,34 +567,6 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: AttackCruiserAddActor {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::AddActor as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                actor_id: 501,
-                unknown2: 100,
-                actor_config: AttackCruiserConfigHash {
-                    name: "ship config value".to_string(),
-                    class: AttackCruiserConfigClass::Ship,
-                },
-                pos: Pos3 {
-                    x: 300.99,
-                    y: 1000.0,
-                    z: -1993.09,
-                },
-                speed: Pos3 {
-                    x: 0.0,
-                    y: 0.0,
-                    z: 0.0,
-                },
-                heading: 0.0,
-                unknown7: 100,
-            },
-        }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
             inner: AttackCruiserAddPlayer {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
@@ -638,30 +591,6 @@ pub fn start_saber_strike(
         }),
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: AttackCruiserAddPlayer {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                guid: 2,
-                state: AttackCruiserPlayerState {
-                    unknown1: Some(AttackCruiserPlayerStateUnknown1 {
-                        player_index: 2,
-                        actor_id: 501,
-                        unknown_value4: 200,
-                        unknown4: "test".to_string(),
-                        unknown5: "hello world".to_string(),
-                    }),
-                    score: None,
-                    unknown3: None,
-                    inventory: None,
-                    unknown5: None,
-                },
-            },
-        }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
             inner: AttackCruiserConfigPlayer {
                 minigame_header: MinigameHeader {
                     stage_guid: minigame_status.group.stage_guid,
@@ -669,43 +598,6 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 guid: 1,
-                config1: None,
-                config2: None,
-                config3: Some(AttackCruiserConfig::new(
-                    "player camera config value".to_string(),
-                    AttackCruiserConfigDefinition::Camera(Box::new(AttackCruiserCameraConfig {
-                        distance: 100.0,
-                        min_distance: 0.0,
-                        max_distance: 10000.0,
-                        pitch: 0.0,
-                        min_pitch: 0.0,
-                        max_pitch: 100.0,
-                        z_offset: 0.0,
-                        target_tracking_hlq: 1.0,
-                        zoom_step_q: 1.0,
-                        zoom_step_hlq: 1.0,
-                        forward_tether: AttackCruiserBool(false),
-                        forward_tether_seconds: 1.0,
-                        near_clip_distance: 1.0,
-                        particle_update_distance: 100000.0,
-                        actor_update_radius: 100000.0,
-                        shadow_quality: 20,
-                        shadow_draw_distance: 30000.0,
-                        shadow_blob_render_distance: 20000.0,
-                        overhead_render_distance: 10000.0,
-                    })),
-                )),
-            },
-        }),
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserConfigPlayer {
-                minigame_header: MinigameHeader {
-                    stage_guid: minigame_status.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::ConfigPlayer as i32,
-                    stage_group_guid: minigame_status.group.stage_group_guid,
-                },
-                guid: 2,
                 config1: None,
                 config2: None,
                 config3: Some(AttackCruiserConfig::new(
