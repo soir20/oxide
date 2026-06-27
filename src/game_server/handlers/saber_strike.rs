@@ -584,7 +584,7 @@ pub fn start_saber_strike(
                     }),
                     score: None,
                     unknown3: None,
-                    special_weapon: None,
+                    inventory: None,
                     unknown5: None,
                 },
             },

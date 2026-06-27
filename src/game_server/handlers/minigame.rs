@@ -41,10 +41,10 @@ use crate::{
             attack_cruiser::{
                 AttackCruiserActorUpdate, AttackCruiserAddProjectile, AttackCruiserBoolCommand,
                 AttackCruiserCommand, AttackCruiserOpCode, AttackCruiserPlayerState,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateUnknown1,
-                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
-                AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand4,
+                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserRoundTrip, AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand4,
                 AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
                 AttackCruiserUpdatePlayers,
             },
@@ -1923,19 +1923,20 @@ pub fn process_minigame_packet(
                     // );
 
                     match AttackCruiserOpCode::try_from(header.sub_op_code) {
-                        Ok(op_code) => match op_code {
-                            AttackCruiserOpCode::RequestUpdatePlayers => {
-                                cursor.set_position(offset);
-                                let request =
-                                    AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
+                        Ok(op_code) => {
+                            match op_code {
+                                AttackCruiserOpCode::RequestUpdatePlayers => {
+                                    cursor.set_position(offset);
+                                    let request =
+                                        AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
 
-                                if request.update_type != 3 {
-                                    return Ok(Vec::new());
-                                }
+                                    if request.update_type != 3 {
+                                        return Ok(Vec::new());
+                                    }
 
-                                FINISHED_INTRO.store(true, Ordering::Relaxed);
+                                    FINISHED_INTRO.store(true, Ordering::Relaxed);
 
-                                Ok(vec![Broadcast::Single(
+                                    Ok(vec![Broadcast::Single(
                                     sender,
                                     vec![
                                         GamePacket::serialize(&TunneledPacket {
@@ -1970,7 +1971,14 @@ pub fn process_minigame_packet(
                                                             },
                                                         ),
                                                         unknown3: None,
-                                                        special_weapon: None,
+                                                        inventory: Some(AttackCruiserPlayerStateInventory {
+                                                            weapon_tier: 1,
+                                                            primary_quantity: 2,
+                                                            special_quantity: 3,
+                                                            unknown4: 4,
+                                                            special_icon_id: 5,
+                                                            special_id: 6
+                                                        }),
                                                         unknown5: None,
                                                     },
                                                 }],
@@ -2197,119 +2205,124 @@ pub fn process_minigame_packet(
                                         }),
                                     ],
                                 )])
-                            }
-                            AttackCruiserOpCode::UpdateActors => {
-                                cursor.set_position(offset);
-                                let update_actors = AttackCruiserUpdateActors::deserialize(cursor)?;
-
-                                if !FINISHED_INTRO.load(Ordering::Relaxed) {
-                                    return Ok(Vec::new());
                                 }
+                                AttackCruiserOpCode::UpdateActors => {
+                                    cursor.set_position(offset);
+                                    let update_actors =
+                                        AttackCruiserUpdateActors::deserialize(cursor)?;
 
-                                Ok(vec![Broadcast::Single(
-                                    sender,
-                                    vec![
-                                        GamePacket::serialize(&TunneledPacket {
+                                    if !FINISHED_INTRO.load(Ordering::Relaxed) {
+                                        return Ok(Vec::new());
+                                    }
+
+                                    Ok(vec![Broadcast::Single(
+                                        sender,
+                                        vec![
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: AttackCruiserUpdateActors {
+                                                    minigame_header: MinigameHeader {
+                                                        stage_guid: 27001,
+                                                        sub_op_code:
+                                                            AttackCruiserOpCode::UpdateActors as i32,
+                                                        stage_group_guid: 13,
+                                                    },
+                                                    states: update_actors
+                                                        .states
+                                                        .into_iter()
+                                                        .map(|state| {
+                                                            println!("POS: {:?}", state.pos);
+                                                            println!("SPD: {:?}", state.speed);
+                                                            println!(
+                                                                "OTHER: {} {} {} {:?}",
+                                                                state.forward_multiplier,
+                                                                state.turn_multiplier,
+                                                                state.health,
+                                                                state.state
+                                                            );
+                                                            AttackCruiserActorUpdate {
+                                                                actor_id: state.actor_id,
+                                                                pos: state.pos,
+                                                                speed: state.speed,
+                                                                forward_multiplier: state
+                                                                    .forward_multiplier,
+                                                                turn_multiplier: state
+                                                                    .turn_multiplier,
+                                                                health: 75,
+                                                                state: state.state,
+                                                            }
+                                                        })
+                                                        .collect(),
+                                                },
+                                            }),
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: AttackCruiserAddProjectile {
+                                                    minigame_header: MinigameHeader {
+                                                        stage_guid: 27001,
+                                                        sub_op_code:
+                                                            AttackCruiserOpCode::AddProjectile
+                                                                as i32,
+                                                        stage_group_guid: 13,
+                                                    },
+                                                    unknown1: 1532,
+                                                    unknown2: 1532,
+                                                    effect_id: 1558,
+                                                    despawn_effect_id: 1450,
+                                                    lifetime_seconds: 10.0,
+                                                    origin: Pos3 {
+                                                        x: 3.99,
+                                                        y: 1000.0,
+                                                        z: -1993.09,
+                                                    },
+                                                    speed: Pos3 {
+                                                        x: 100.0,
+                                                        y: 1.0,
+                                                        z: 100.0,
+                                                    },
+                                                    unknown8: Pos3 {
+                                                        x: 100.0,
+                                                        y: 100.0,
+                                                        z: 100.0,
+                                                    },
+                                                    unknown9: 40.0,
+                                                    heading: 0.0,
+                                                    unknown11: 80.0,
+                                                    unknown12: 100.0,
+                                                    unknown13: 1532,
+                                                },
+                                            }),
+                                        ],
+                                    )])
+                                }
+                                AttackCruiserOpCode::RoundTrip => {
+                                    cursor.set_position(offset);
+                                    let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
+
+                                    Ok(vec![Broadcast::Single(
+                                        sender,
+                                        vec![GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
-                                            inner: AttackCruiserUpdateActors {
+                                            inner: AttackCruiserRoundTrip {
                                                 minigame_header: MinigameHeader {
                                                     stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::UpdateActors
+                                                    sub_op_code: AttackCruiserOpCode::RoundTrip
                                                         as i32,
                                                     stage_group_guid: 13,
                                                 },
-                                                states: update_actors
-                                                    .states
-                                                    .into_iter()
-                                                    .map(|state| {
-                                                        println!("POS: {:?}", state.pos);
-                                                        println!("SPD: {:?}", state.speed);
-                                                        println!(
-                                                            "OTHER: {} {} {} {:?}",
-                                                            state.forward_multiplier,
-                                                            state.turn_multiplier,
-                                                            state.health,
-                                                            state.state
-                                                        );
-                                                        AttackCruiserActorUpdate {
-                                                            actor_id: state.actor_id,
-                                                            pos: state.pos,
-                                                            speed: state.speed,
-                                                            forward_multiplier: state
-                                                                .forward_multiplier,
-                                                            turn_multiplier: state.turn_multiplier,
-                                                            health: 75,
-                                                            state: state.state,
-                                                        }
-                                                    })
-                                                    .collect(),
+                                                client_timestamp: round_trip.client_timestamp,
+                                                server_timestamp: game_server
+                                                    .start_time()
+                                                    .elapsed()
+                                                    .as_millis()
+                                                    as u64,
                                             },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserAddProjectile {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::AddProjectile
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                unknown1: 1532,
-                                                unknown2: 1532,
-                                                effect_id: 1532,
-                                                despawn_effect_id: 1450,
-                                                lifetime_seconds: 10.0,
-                                                origin: Pos3 {
-                                                    x: 3.99,
-                                                    y: 1000.0,
-                                                    z: -1993.09,
-                                                },
-                                                speed: Pos3 {
-                                                    x: 100.0,
-                                                    y: 1.0,
-                                                    z: 100.0,
-                                                },
-                                                unknown8: Pos3 {
-                                                    x: 100.0,
-                                                    y: 100.0,
-                                                    z: 100.0,
-                                                },
-                                                unknown9: 40.0,
-                                                heading: 0.0,
-                                                unknown11: 80.0,
-                                                unknown12: 100.0,
-                                                unknown13: 1532,
-                                            },
-                                        }),
-                                    ],
-                                )])
+                                        })],
+                                    )])
+                                }
+                                _ => Ok(Vec::new()),
                             }
-                            AttackCruiserOpCode::RoundTrip => {
-                                cursor.set_position(offset);
-                                let round_trip = AttackCruiserRoundTrip::deserialize(cursor)?;
-
-                                Ok(vec![Broadcast::Single(
-                                    sender,
-                                    vec![GamePacket::serialize(&TunneledPacket {
-                                        unknown1: true,
-                                        inner: AttackCruiserRoundTrip {
-                                            minigame_header: MinigameHeader {
-                                                stage_guid: 27001,
-                                                sub_op_code: AttackCruiserOpCode::RoundTrip as i32,
-                                                stage_group_guid: 13,
-                                            },
-                                            client_timestamp: round_trip.client_timestamp,
-                                            server_timestamp: game_server
-                                                .start_time()
-                                                .elapsed()
-                                                .as_millis()
-                                                as u64,
-                                        },
-                                    })],
-                                )])
-                            }
-                            _ => Ok(Vec::new()),
-                        },
+                        }
                         Err(_) => Ok(Vec::new()),
                     }
                 }
