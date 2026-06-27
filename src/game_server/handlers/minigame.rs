@@ -42,9 +42,9 @@ use crate::{
                 AttackCruiserActorUpdate, AttackCruiserAddProjectile, AttackCruiserBoolCommand,
                 AttackCruiserCommand, AttackCruiserOpCode, AttackCruiserPlayerState,
                 AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserRoundTrip, AttackCruiserUnknownCommand2, AttackCruiserUnknownCommand4,
+                AttackCruiserPlayerStateUnknown1, AttackCruiserPlayerStateUnknown5,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserRoundTrip,
                 AttackCruiserUpdateActors, AttackCruiserUpdateGameState,
                 AttackCruiserUpdatePlayers,
             },
@@ -2016,7 +2016,7 @@ pub fn process_minigame_packet(
                                                             special_icon_id: 5,
                                                             special_id: 6
                                                         }),
-                                                        unknown5: None,
+                                                        unknown5: Some(AttackCruiserPlayerStateUnknown5 { actor_id: 501 }),
                                                     },
                                                 }],
                                             },
@@ -2065,114 +2065,6 @@ pub fn process_minigame_packet(
                                                     AttackCruiserBoolCommand {
                                                         guid: 2,
                                                         value: true,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType3(
-                                                    AttackCruiserBoolCommand {
-                                                        guid: 1,
-                                                        value: true,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType4(
-                                                    AttackCruiserBoolCommand {
-                                                        guid: 1,
-                                                        value: true,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::Visible(
-                                                    AttackCruiserBoolCommand {
-                                                        guid: 1,
-                                                        value: true,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType6(
-                                                    AttackCruiserUnknownCommand2 {
-                                                        guid: 1,
-                                                        unknown1: 0,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType7(
-                                                    AttackCruiserUnknownCommand2 {
-                                                        guid: 1,
-                                                        unknown1: 0,
-                                                    },
-                                                ),
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType8(
-                                                    AttackCruiserUnknownCommand2 {
-                                                        guid: 1,
-                                                        unknown1: 0,
                                                     },
                                                 ),
                                             },
@@ -2240,24 +2132,6 @@ pub fn process_minigame_packet(
                                         //         ),
                                         //     },
                                         // }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserQueueCommand {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType10(
-                                                    AttackCruiserUnknownCommand4 {
-                                                        guid: 1,
-                                                        unknown1: 0.0,
-                                                    },
-                                                ),
-                                            },
-                                        }),
                                     ],
                                 )])
                                 }
@@ -2266,14 +2140,14 @@ pub fn process_minigame_packet(
                                     let update_actors =
                                         AttackCruiserUpdateActors::deserialize(cursor)?;
 
-                                    if (sender == 1 && !FINISHED_INTRO1.load(Ordering::Relaxed))
-                                        || (sender == 2 && !FINISHED_INTRO2.load(Ordering::Relaxed))
+                                    if !FINISHED_INTRO1.load(Ordering::Relaxed)
+                                        || !FINISHED_INTRO2.load(Ordering::Relaxed)
                                     {
                                         return Ok(Vec::new());
                                     }
 
-                                    Ok(vec![Broadcast::Single(
-                                        sender,
+                                    Ok(vec![Broadcast::Multi(
+                                        vec![1, 2],
                                         vec![
                                             GamePacket::serialize(&TunneledPacket {
                                                 unknown1: true,

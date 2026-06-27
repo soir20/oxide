@@ -55,8 +55,8 @@ pub fn start_saber_strike(
                     "global config value".to_string(),
                     AttackCruiserConfigDefinition::Global(Box::new(AttackCruiserGlobalConfig {
                         physics_speed: 1.0,
-                        connect_timeout_seconds: 10.0,
-                        ready_timeout_seconds: 10.0,
+                        connect_timeout_seconds: 100.0,
+                        ready_timeout_seconds: 100.0,
                         default_timeout_seconds: 120.0,
                         effects_preload_timeout_seconds: 1.0,
                         effects_ready_timeout_seconds: 1.0,
@@ -593,7 +593,7 @@ pub fn start_saber_strike(
                     stage_group_guid: minigame_status.group.stage_group_guid,
                 },
                 actor_id: 501,
-                unknown2: 0,
+                unknown2: 100,
                 actor_config: AttackCruiserConfigHash {
                     name: "ship config value".to_string(),
                     class: AttackCruiserConfigClass::Ship,
@@ -609,7 +609,7 @@ pub fn start_saber_strike(
                     z: 0.0,
                 },
                 heading: 0.0,
-                unknown7: 0,
+                unknown7: 100,
             },
         }),
         GamePacket::serialize(&TunneledPacket {
