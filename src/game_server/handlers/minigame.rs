@@ -1985,19 +1985,7 @@ pub fn process_minigame_packet(
                                                         }),
                                                         unknown5: None,
                                                     },
-                                                }],
-                                            },
-                                        }),
-                                        GamePacket::serialize(&TunneledPacket {
-                                            unknown1: true,
-                                            inner: AttackCruiserUpdatePlayers {
-                                                minigame_header: MinigameHeader {
-                                                    stage_guid: 27001,
-                                                    sub_op_code: AttackCruiserOpCode::UpdatePlayers
-                                                        as i32,
-                                                    stage_group_guid: 13,
-                                                },
-                                                states: vec![AttackCruiserPlayerUpdate {
+                                                }, AttackCruiserPlayerUpdate {
                                                     index: 2,
                                                     state: AttackCruiserPlayerState {
                                                         unknown1: Some(
