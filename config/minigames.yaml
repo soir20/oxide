@@ -5083,7 +5083,7 @@ categories:
               stage_icon_id: 247
               start_screen_icon_id: 663
               min_players: 1
-              max_players: 1
+              max_players: 2
               difficulty: 1
               start_sound_id: 1510
               members_only: false

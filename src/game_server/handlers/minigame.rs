@@ -1868,7 +1868,8 @@ pub fn load_all_minigames(config_dir: &Path) -> Result<AllMinigameConfigs, Confi
     Ok(configs.into())
 }
 
-static FINISHED_INTRO: AtomicBool = AtomicBool::new(false);
+static FINISHED_INTRO1: AtomicBool = AtomicBool::new(false);
+static FINISHED_INTRO2: AtomicBool = AtomicBool::new(false);
 
 pub fn process_minigame_packet(
     cursor: &mut Cursor<&[u8]>,
@@ -1934,7 +1935,10 @@ pub fn process_minigame_packet(
                                         return Ok(Vec::new());
                                     }
 
-                                    FINISHED_INTRO.store(true, Ordering::Relaxed);
+                                    match sender {
+                                        1 => FINISHED_INTRO1.store(true, Ordering::Relaxed),
+                                        _ => FINISHED_INTRO2.store(true, Ordering::Relaxed),
+                                    }
 
                                     Ok(vec![Broadcast::Single(
                                     sender,
@@ -1955,6 +1959,51 @@ pub fn process_minigame_packet(
                                                             AttackCruiserPlayerStateUnknown1 {
                                                                 player_index: 1,
                                                                 actor_id: 500,
+                                                                unknown_value4: 1,
+                                                                unknown4: "test".to_string(),
+                                                                unknown5: "hello world".to_string(),
+                                                            },
+                                                        ),
+                                                        score: Some(
+                                                            AttackCruiserPlayerStateScore {
+                                                                score: 10,
+                                                                score_multiplier_tier_progress: 11,
+                                                                score_multiplier_tier_goal: 12,
+                                                                score_multiplier_tier: 13,
+                                                                pain: 14,
+                                                                lives: 2,
+                                                            },
+                                                        ),
+                                                        unknown3: None,
+                                                        inventory: Some(AttackCruiserPlayerStateInventory {
+                                                            weapon_tier: 1,
+                                                            primary_quantity: 2,
+                                                            special_quantity: 3,
+                                                            unknown4: 4,
+                                                            special_icon_id: 5,
+                                                            special_id: 6
+                                                        }),
+                                                        unknown5: None,
+                                                    },
+                                                }],
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserUpdatePlayers {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::UpdatePlayers
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                states: vec![AttackCruiserPlayerUpdate {
+                                                    index: 2,
+                                                    state: AttackCruiserPlayerState {
+                                                        unknown1: Some(
+                                                            AttackCruiserPlayerStateUnknown1 {
+                                                                player_index: 2,
+                                                                actor_id: 501,
                                                                 unknown_value4: 1,
                                                                 unknown4: "test".to_string(),
                                                                 unknown5: "hello world".to_string(),
@@ -2009,6 +2058,24 @@ pub fn process_minigame_packet(
                                                 command: AttackCruiserCommand::Movable(
                                                     AttackCruiserBoolCommand {
                                                         guid: 1,
+                                                        value: true,
+                                                    },
+                                                ),
+                                            },
+                                        }),
+                                        GamePacket::serialize(&TunneledPacket {
+                                            unknown1: true,
+                                            inner: AttackCruiserQueueCommand {
+                                                minigame_header: MinigameHeader {
+                                                    stage_guid: 27001,
+                                                    sub_op_code: AttackCruiserOpCode::QueueCommand
+                                                        as i32,
+                                                    stage_group_guid: 13,
+                                                },
+                                                actor_id: 501,
+                                                command: AttackCruiserCommand::Movable(
+                                                    AttackCruiserBoolCommand {
+                                                        guid: 2,
                                                         value: true,
                                                     },
                                                 ),
@@ -2211,7 +2278,9 @@ pub fn process_minigame_packet(
                                     let update_actors =
                                         AttackCruiserUpdateActors::deserialize(cursor)?;
 
-                                    if !FINISHED_INTRO.load(Ordering::Relaxed) {
+                                    if (sender == 1 && !FINISHED_INTRO1.load(Ordering::Relaxed))
+                                        || (sender == 2 && !FINISHED_INTRO2.load(Ordering::Relaxed))
+                                    {
                                         return Ok(Vec::new());
                                     }
 
