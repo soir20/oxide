@@ -320,7 +320,7 @@ pub fn start_saber_strike(
                                 death_effect_id: 0,
                                 despawn_effect_id: 0,
                                 explode_offset: 1.0,
-                                collision_asset_name: "Ship_RepublicFrigate_bbe.cdt".to_string(),
+                                collision_asset_name: "Ship_RepublicDestroyer_bbe.cdt".to_string(),
                                 physics_config: AttackCruiserConfigReference {
                                     class: AttackCruiserConfigClass::ComplexPhysics,
                                     name: "physics config value".to_string(),
