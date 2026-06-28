@@ -1226,7 +1226,7 @@ pub struct AttackCruiserUnknownCommand4 {
 
 pub enum AttackCruiserCommand {
     Movable(AttackCruiserBoolCommand),
-    UnknownType3(AttackCruiserBoolCommand),
+    Collision(AttackCruiserBoolCommand),
     UnknownType4(AttackCruiserBoolCommand),
     Visible(AttackCruiserBoolCommand),
     UnknownType6(AttackCruiserUnknownCommand2),
@@ -1243,7 +1243,7 @@ impl SerializePacket for AttackCruiserCommand {
                 2u32.serialize(buffer);
                 command.serialize(buffer);
             }
-            AttackCruiserCommand::UnknownType3(command) => {
+            AttackCruiserCommand::Collision(command) => {
                 3u32.serialize(buffer);
                 command.serialize(buffer);
             }

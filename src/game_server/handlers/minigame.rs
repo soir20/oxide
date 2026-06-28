@@ -2024,7 +2024,7 @@ pub fn process_minigame_packet(
                                                     stage_group_guid: 13,
                                                 },
                                                 actor_id: 500,
-                                                command: AttackCruiserCommand::UnknownType3(
+                                                command: AttackCruiserCommand::Collision(
                                                     AttackCruiserBoolCommand {
                                                         guid: 1,
                                                         value: true,
