@@ -590,12 +590,20 @@ pub struct AttackCruiserGameWaveConfig {
     pub remove_actors_on_completion: AttackCruiserBool,
 }
 
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(u32)]
+pub enum AttackCruiserChallengeMode {
+    Unlimited,
+    Timed,
+    ScoreTarget,
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserGameConfig {
     pub id: i32,
     pub encounter_id: i32,
     pub sound_id: i32,
-    pub mode: i32,
+    pub challenge_mode: AttackCruiserChallengeMode,
     pub global_config: AttackCruiserConfigReference,
     pub end_condition_config: AttackCruiserConfigReference,
     pub win_condition_config: AttackCruiserConfigReference,

@@ -9,7 +9,7 @@ use crate::game_server::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
             AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
             AttackCruiserBasePhysicsConfig, AttackCruiserBlasterConfig, AttackCruiserBool,
-            AttackCruiserCameraConfig, AttackCruiserClientConfig,
+            AttackCruiserCameraConfig, AttackCruiserChallengeMode, AttackCruiserClientConfig,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
             AttackCruiserConditionConfig, AttackCruiserConfig, AttackCruiserConfigClass,
             AttackCruiserConfigDefinition, AttackCruiserConfigHash, AttackCruiserConfigPlayer,
@@ -130,7 +130,7 @@ pub fn start_saber_strike(
                         id: 27001,
                         encounter_id: 0,
                         sound_id: 2413,
-                        mode: 1,
+                        challenge_mode: AttackCruiserChallengeMode::Unlimited,
                         global_config: AttackCruiserConfigReference {
                             class: AttackCruiserConfigClass::Global,
                             name: "global config value".to_string(),
