@@ -1170,6 +1170,18 @@ impl GamePacket for AttackCruiserAddActor {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserRemoveActor {
+    pub minigame_header: MinigameHeader,
+    pub actor_id: u32,
+}
+
+impl GamePacket for AttackCruiserRemoveActor {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserWorldEffect {
     pub minigame_header: MinigameHeader,
     pub effect_id: u32,
