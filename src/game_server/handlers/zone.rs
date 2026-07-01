@@ -44,8 +44,8 @@ use super::{
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
-        CharacterLockRequest, CharacterTableWriteHandle, CharacterWriteGuard,
-        ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
+        CharacterLockRequest, CharacterTableWriteHandle, CharacterWriteGuard, ZoneLockEnforcer,
+        ZoneLockRequest, ZoneTableWriteHandle,
     },
     mount::MountConfig,
     unique_guid::{
