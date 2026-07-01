@@ -301,6 +301,8 @@ pub struct BaseNpcConfig {
     pub synchronize_with: Option<String>,
     #[serde(default = "default_true")]
     pub is_spawned: bool,
+    #[serde(default)]
+    pub removal_mode: RemovalMode,
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
@@ -344,6 +346,7 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub removal_mode: RemovalMode,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -358,7 +361,7 @@ pub struct BaseNpc {
 impl BaseNpc {
     pub fn add_packets(
         &self,
-        character: &CharacterStats,
+        character: &mut CharacterStats,
         override_is_spawned: bool,
     ) -> Vec<Vec<u8>> {
         if !character.is_spawned && !override_is_spawned {
@@ -505,6 +508,7 @@ impl BaseNpc {
         }
 
         if character.health < character.max_health && self.show_health {
+            let hp_delta = character.health as i32 - character.max_health as i32;
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: HitPointModification {
@@ -513,10 +517,15 @@ impl BaseNpc {
                     show_hp_delta: false,
                     max_hp: character.max_health as i32,
                     new_hp: character.health as i32,
-                    hp_delta: 0,
+                    hp_delta,
                     critical: false,
                 },
-            }));
+            }))
+        }
+
+        if character.health == 0 {
+            character.is_spawned = false;
+            packets.extend(character.remove_packets(self.removal_mode));
         }
 
         packets
@@ -2173,6 +2182,7 @@ pub struct BaseNpcTemplate {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub removal_mode: RemovalMode,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -2266,6 +2276,7 @@ impl BaseNpcTemplate {
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
+            removal_mode: config.removal_mode,
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
@@ -2369,6 +2380,7 @@ impl BaseNpcTemplate {
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
+            removal_mode: self.removal_mode,
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
@@ -2480,13 +2492,15 @@ pub struct CharacterStats {
 
 impl CharacterStats {
     pub fn add_packets(
-        &self,
+        &mut self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
     ) -> Vec<Vec<u8>> {
-        let mut packets = match &self.character_type {
+        let character_type = self.character_type.clone();
+
+        let mut packets = match character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
                 ambient_npc.add_packets(self, override_is_spawned)
             }
@@ -2494,9 +2508,9 @@ impl CharacterStats {
                 player.add_packets(self, mount_configs, item_configs, customizations)
             }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
-                *house_guid,
+                house_guid,
                 Guid::guid(self),
-                fixture,
+                &fixture,
                 self.pos,
                 self.rot,
                 self.scale,

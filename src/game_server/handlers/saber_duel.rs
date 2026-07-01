@@ -14,7 +14,7 @@ use crate::game_server::{
     handlers::{
         character::{
             default_spawn_animation_id, BaseNpc, Character, CharacterType, HoverDescriptionMode,
-            MinigameMatchmakingGroup, MinigameStatus, PlayerInventory,
+            MinigameMatchmakingGroup, MinigameStatus, PlayerInventory, RemovalMode,
         },
         inventory::{
             attachments_from_equipped_items, player_has_saber_equipped, wield_type_from_inventory,
@@ -674,6 +674,7 @@ impl SaberDuelGame {
                 enable_gravity: true,
                 enable_tilt: false,
                 use_terrain_model: false,
+                removal_mode: RemovalMode::default(),
                 attachments,
                 composite_effect_id: None,
                 sub_title_id: None,

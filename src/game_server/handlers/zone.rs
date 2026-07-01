@@ -44,7 +44,7 @@ use super::{
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
-        CharacterLockRequest, CharacterReadGuard, CharacterTableWriteHandle, CharacterWriteGuard,
+        CharacterLockRequest, CharacterTableWriteHandle, CharacterWriteGuard,
         ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
     },
     mount::MountConfig,
@@ -351,7 +351,7 @@ impl IndexedGuid<u64, u8> for ZoneInstance {
 }
 
 #[macro_export]
-macro_rules! diff_character_handles {
+macro_rules! diff_character_write_handles {
     ($instance_guid:expr, $old_chunk:expr, $new_chunk:expr, $characters_table_write_handle:expr, $moved_character_guid:expr) => {{
         let character_diffs =
             $crate::game_server::handlers::zone::ZoneInstance::diff_character_guids(
@@ -365,7 +365,7 @@ macro_rules! diff_character_handles {
         let mut handles = BTreeMap::new();
         for guid in character_diffs.character_diffs_for_moved_character.keys() {
             if let Some(character) = $characters_table_write_handle.get(*guid) {
-                handles.insert(*guid, character.read());
+                handles.insert(*guid, character.write());
             }
         }
 
@@ -668,8 +668,8 @@ impl ZoneInstance {
     pub fn diff_character_broadcasts(
         moved_character_guid: u64,
         character_diffs: CharacterDiffResult,
-        characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
-        moved_character_handle: &Character,
+        characters_write: &mut BTreeMap<u64, CharacterWriteGuard<'_>>,
+        moved_character_handle: &mut Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_configs: &BTreeMap<u32, ItemConfig>,
         customizations: &BTreeMap<u32, Customization>,
@@ -680,7 +680,7 @@ impl ZoneInstance {
             let mut diff_packets: Vec<Vec<u8>> = Vec::new();
 
             for (guid, add) in &character_diffs.character_diffs_for_moved_character {
-                if let Some(character) = characters_read.get(guid) {
+                if let Some(character) = characters_write.get_mut(guid) {
                     if *add {
                         diff_packets.append(&mut character.stats.add_packets(
                             false,
@@ -831,7 +831,7 @@ impl ZoneInstance {
                     characters_table_write_handle.update_value_indices(
                         moved_character_guid,
                         |possible_character_write_handle, characters_table_write_handle| {
-                            let Some(moved_character_write_handle) =
+                            let Some(mut moved_character_write_handle) =
                                 possible_character_write_handle
                             else {
                                 return;
@@ -840,7 +840,7 @@ impl ZoneInstance {
                             let (_, instance_guid, old_chunk) =
                                 moved_character_write_handle.index1();
 
-                            let (character_diffs, characters_read) = diff_character_handles!(
+                            let (character_diffs, mut characters_write) = diff_character_write_handles!(
                                 instance_guid,
                                 old_chunk,
                                 new_chunk,
@@ -850,7 +850,7 @@ impl ZoneInstance {
 
                             // Move the character
                             ZoneInstance::move_character_with_locks(
-                                moved_character_write_handle,
+                                &mut moved_character_write_handle,
                                 new_pos,
                                 new_rot,
                             );
@@ -878,8 +878,8 @@ impl ZoneInstance {
                             broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
                                 moved_character_guid,
                                 character_diffs,
-                                &characters_read,
-                                moved_character_write_handle,
+                                &mut characters_write,
+                                &mut moved_character_write_handle,
                                 game_server.mounts(),
                                 game_server.items(),
                                 game_server.customizations(),
