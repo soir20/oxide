@@ -531,6 +531,8 @@ impl GameServer {
                                         };
                                         sender_only_character_packets.push(GamePacket::serialize(&power));
 
+                                        let mut character_broadcasts = Vec::new();
+
                                         let Some(mut character_write_handle) = characters_write.remove(&player_guid(sender)) else {
                                             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} sent a ready packet")));
                                         };
@@ -538,59 +540,54 @@ impl GameServer {
                                         character_write_handle.update_speed(|speed| speed.base = zone.speed);
                                         character_write_handle.stats.jump_height_multiplier.base = zone.jump_height_multiplier;
 
-                                        let result = (|| {
-                                            let mut character_broadcasts = Vec::new();
+                                        character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
+                                            player_guid(sender),
+                                            character_diffs,
+                                            &mut characters_write,
+                                            &mut character_write_handle,
+                                            self.mounts(),
+                                            self.items(),
+                                            self.customizations()
+                                        ));
 
-                                            character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
-                                                player_guid(sender),
-                                                character_diffs,
-                                                &mut characters_write,
-                                                &mut character_write_handle,
-                                                self.mounts(),
-                                                self.items(),
-                                                self.customizations()
-                                            ));
+                                        let wield_type = TunneledPacket {
+                                            unknown1: true,
+                                            inner: UpdateWieldType {
+                                                guid: player_guid(sender),
+                                                wield_type: character_write_handle.stats.wield_type(),
+                                            },
+                                        };
+                                        let global_packets = vec![GamePacket::serialize(&wield_type)];
 
-                                            let wield_type = TunneledPacket {
+                                        if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
+                                            sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
                                                 unknown1: true,
-                                                inner: UpdateWieldType {
-                                                    guid: player_guid(sender),
-                                                    wield_type: character_write_handle.stats.wield_type(),
+                                                inner: InitCustomizations {
+                                                    customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
                                                 },
-                                            };
-                                            let global_packets = vec![GamePacket::serialize(&wield_type)];
+                                            }));
 
-                                            if let CharacterType::Player(player) = &character_write_handle.stats.character_type {
-                                                sender_only_character_packets.push(GamePacket::serialize(&TunneledPacket {
-                                                    unknown1: true,
-                                                    inner: InitCustomizations {
-                                                        customizations: customizations_from_guids(player.customizations.values().cloned(), self.customizations()),
-                                                    },
-                                                }));
+                                            let items = player.inventory.equipped_items(player.inventory.active_battle_class);
+                                            character_broadcasts.append(&mut update_saber_tints(
+                                                sender,
+                                                characters_table_read_handle,
+                                                instance_guid,
+                                                chunk,
+                                                &items,
+                                                player.inventory.active_battle_class,
+                                                character_write_handle.stats.wield_type(),
+                                                self
+                                            ));
+                                        }
 
-                                                let items = player.inventory.equipped_items(player.inventory.active_battle_class);
-                                                character_broadcasts.append(&mut update_saber_tints(
-                                                    sender,
-                                                    characters_table_read_handle,
-                                                    instance_guid,
-                                                    chunk,
-                                                    &items,
-                                                    player.inventory.active_battle_class,
-                                                    character_write_handle.stats.wield_type(),
-                                                    self
-                                                ));
-                                            }
+                                        let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
+                                        character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
 
-                                            let all_players_nearby = ZoneInstance::all_players_nearby(chunk, instance_guid, characters_table_read_handle);
-                                            character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
-
-                                            character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-
-                                            Ok(character_broadcasts)
-                                        })();
+                                        character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
 
                                         characters_write.insert(player_guid(sender), character_write_handle);
-                                        result
+
+                                        Ok(character_broadcasts)
                                     },
                                 })
                             },

@@ -831,7 +831,7 @@ impl ZoneInstance {
                     characters_table_write_handle.update_value_indices(
                         moved_character_guid,
                         |possible_character_write_handle, characters_table_write_handle| {
-                            let Some(mut moved_character_write_handle) =
+                            let Some(moved_character_write_handle) =
                                 possible_character_write_handle
                             else {
                                 return;
@@ -850,7 +850,7 @@ impl ZoneInstance {
 
                             // Move the character
                             ZoneInstance::move_character_with_locks(
-                                &mut moved_character_write_handle,
+                                moved_character_write_handle,
                                 new_pos,
                                 new_rot,
                             );
@@ -879,7 +879,7 @@ impl ZoneInstance {
                                 moved_character_guid,
                                 character_diffs,
                                 &mut characters_write,
-                                &mut moved_character_write_handle,
+                                moved_character_write_handle,
                                 game_server.mounts(),
                                 game_server.items(),
                                 game_server.customizations(),
