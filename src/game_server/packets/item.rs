@@ -238,7 +238,7 @@ pub struct ItemDefinition {
     pub texture_alias: String,
     pub required_gender: u32,
     pub item_type: u32,
-    pub category: u32,
+    pub category: i32,
     pub members: bool,
     pub non_minigame: bool,
     pub weapon_trail_effect: u32,

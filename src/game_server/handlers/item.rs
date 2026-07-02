@@ -9,8 +9,7 @@ use crate::{
         handlers::{
             ability::AbilityConfig,
             store::{
-                compute_costs, ItemCostMap, REDIRECT_CATEGORY_ID, REDIRECT_GUID,
-                REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID,
+                compute_costs, ItemCostMap, REDIRECT_GUID, REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID,
             },
         },
         packets::{
@@ -79,7 +78,7 @@ pub struct ItemConfig {
     pub required_gender: u32,
     pub item_type: u32,
     #[serde(default)]
-    pub category: u32,
+    pub category: i32,
     #[serde(default)]
     pub members: bool,
     #[serde(default)]
@@ -250,9 +249,9 @@ pub fn load_items(
         }
     }
 
-    if items.contains_key(&REDIRECT_GUID) {
+    if items.range(REDIRECT_GUID..).count() > 0 {
         return Err(ConfigError::ConstraintViolated(format!(
-            "Item cannot have GUID {REDIRECT_GUID}"
+            "Item cannot have GUID >= {REDIRECT_GUID}"
         )));
     }
 
@@ -275,7 +274,7 @@ pub fn load_items(
             texture_alias: "".to_string(),
             required_gender: 0,
             item_type: 0,
-            category: REDIRECT_CATEGORY_ID,
+            category: 0,
             members: false,
             non_minigame: false,
             weapon_trail_effect: None,

@@ -13,7 +13,7 @@ use super::{
 pub struct EquippedItem {
     pub slot: EquipmentSlot,
     pub guid: i32,
-    pub category: u32,
+    pub category: i32,
 }
 
 #[derive(Clone, SerializePacket)]

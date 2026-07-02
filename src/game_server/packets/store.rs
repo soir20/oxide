@@ -100,19 +100,19 @@ impl SerializePacket for RedirectOpCode {
 #[derive(SerializePacket)]
 pub struct RedirectItem {
     guid: i32,
-    _unused: Skip<8>,
+    unused: Skip<8>,
 }
 
 #[derive(SerializePacket)]
 pub struct RedirectBundle {
-    _unused: Skip<77>,
+    unused: Skip<77>,
     items: Vec<RedirectItem>,
 }
 
 #[derive(SerializePacket)]
 pub struct RedirectItemDefinitions {
     store: i32,
-    _unused: Skip<20>,
+    unused: Skip<20>,
     bundles: Vec<RedirectBundle>,
 }
 
@@ -125,13 +125,10 @@ impl RedirectItemDefinitions {
     pub fn new(guid: i32) -> Self {
         RedirectItemDefinitions {
             store: 2,
-            _unused: Skip,
+            unused: Skip,
             bundles: vec![RedirectBundle {
-                _unused: Skip,
-                items: vec![RedirectItem {
-                    guid,
-                    _unused: Skip,
-                }],
+                unused: Skip,
+                items: vec![RedirectItem { guid, unused: Skip }],
             }],
         }
     }
@@ -139,8 +136,8 @@ impl RedirectItemDefinitions {
 
 #[derive(SerializePacket)]
 struct RedirectCategory {
-    _unused1: Skip<20>,
-    _unused2: i32,
+    unused1: Skip<20>,
+    unused2: i32,
 }
 
 #[derive(SerializePacket)]
@@ -157,8 +154,8 @@ impl RedirectCategories {
     pub fn new() -> Self {
         RedirectCategories {
             categories: vec![RedirectCategory {
-                _unused1: Skip,
-                _unused2: 1,
+                unused1: Skip,
+                unused2: 1,
             }],
         }
     }
