@@ -176,6 +176,6 @@ impl SerializePacket for IgnoredAny {
 
 impl<const N: usize> SerializePacket for Skip<N> {
     fn serialize(&self, buffer: &mut Vec<u8>) {
-        vec![0; N].serialize(buffer);
+        LengthlessVec(vec![0u8; N]).serialize(buffer);
     }
 }

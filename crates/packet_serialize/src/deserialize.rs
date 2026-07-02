@@ -158,6 +158,6 @@ impl<const N: usize> DeserializePacket for Skip<N> {
     {
         let mut buffer = vec![0; N];
         cursor.read_exact(&mut buffer)?;
-        Ok(Skip {})
+        Ok(Skip)
     }
 }

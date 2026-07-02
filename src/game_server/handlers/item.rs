@@ -9,7 +9,8 @@ use crate::{
         handlers::{
             ability::AbilityConfig,
             store::{
-                compute_costs, ItemCostMap, REDIRECT_GUID, REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID,
+                compute_costs, ItemCostMap, REDIRECT_CATEGORY_ID, REDIRECT_GUID,
+                REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID,
             },
         },
         packets::{
@@ -274,7 +275,7 @@ pub fn load_items(
             texture_alias: "".to_string(),
             required_gender: 0,
             item_type: 0,
-            category: 0,
+            category: REDIRECT_CATEGORY_ID,
             members: false,
             non_minigame: false,
             weapon_trail_effect: None,
