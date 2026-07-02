@@ -1,4 +1,4 @@
-use packet_serialize::SerializePacket;
+use packet_serialize::{SerializePacket, Skip};
 
 use super::{GamePacket, OpCode};
 
@@ -70,4 +70,96 @@ pub struct StoreItemDefinitionsReply {
 impl GamePacket for StoreItemDefinitionsReply {
     type Header = StoreOpCode;
     const HEADER: Self::Header = StoreOpCode::ItemDefinitionsReply;
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum PurchaseOpCode {
+    Redirect = 0x5,
+    Categories = 0xe,
+}
+
+impl SerializePacket for PurchaseOpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        OpCode::Purchase.serialize(buffer);
+        (*self as u16).serialize(buffer);
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
+pub enum RedirectOpCode {
+    Definitions = 0x2,
+}
+
+impl SerializePacket for RedirectOpCode {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        PurchaseOpCode::Redirect.serialize(buffer);
+        (*self as u32).serialize(buffer);
+    }
+}
+
+#[derive(SerializePacket)]
+pub struct RedirectItem {
+    guid: i32,
+    _unused: Skip<8>,
+}
+
+#[derive(SerializePacket)]
+pub struct RedirectBundle {
+    _unused: Skip<77>,
+    items: Vec<RedirectItem>,
+}
+
+#[derive(SerializePacket)]
+pub struct RedirectItemDefinitions {
+    store: i32,
+    _unused: Skip<20>,
+    bundles: Vec<RedirectBundle>,
+}
+
+impl GamePacket for RedirectItemDefinitions {
+    type Header = RedirectOpCode;
+    const HEADER: Self::Header = RedirectOpCode::Definitions;
+}
+
+impl RedirectItemDefinitions {
+    pub fn new(guid: i32) -> Self {
+        RedirectItemDefinitions {
+            store: 2,
+            _unused: Skip,
+            bundles: vec![RedirectBundle {
+                _unused: Skip,
+                items: vec![RedirectItem {
+                    guid,
+                    _unused: Skip,
+                }],
+            }],
+        }
+    }
+}
+
+#[derive(SerializePacket)]
+struct RedirectCategory {
+    _unused1: Skip<20>,
+    _unused2: i32,
+}
+
+#[derive(SerializePacket)]
+pub struct RedirectCategories {
+    categories: Vec<RedirectCategory>,
+}
+
+impl GamePacket for RedirectCategories {
+    type Header = PurchaseOpCode;
+    const HEADER: Self::Header = PurchaseOpCode::Categories;
+}
+
+impl RedirectCategories {
+    pub fn new() -> Self {
+        RedirectCategories {
+            categories: vec![RedirectCategory {
+                _unused1: Skip,
+                _unused2: 1,
+            }],
+        }
+    }
 }

@@ -62,7 +62,7 @@ use rand::Rng;
 
 use crate::config::ConfigError;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
-use crate::game_server::handlers::store::ItemCostMap;
+use crate::game_server::handlers::store::{redirect_packets, ItemCostMap};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::game_server::navmesh::config::load_navmeshes;
 use crate::game_server::navmesh::{Collision, Navmesh};
@@ -435,6 +435,7 @@ impl GameServer {
                         inner: GamePacket::serialize(&StoreItemList::from(&self.costs)),
                     };
                     sender_only_packets.push(GamePacket::serialize(&store_items));
+                    sender_only_packets.append(&mut redirect_packets());
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
                         let possible_index = characters_table_read_handle.index1(player_guid(sender));

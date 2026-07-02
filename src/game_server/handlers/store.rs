@@ -8,7 +8,11 @@ use evalexpr::{context_map, eval_with_context, Value};
 use crate::{
     game_server::{
         handlers::item::ItemConfig,
-        packets::store::{StoreItem, StoreItemList},
+        packets::{
+            store::{RedirectCategories, RedirectItemDefinitions, StoreItem, StoreItemList},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
     },
     ConfigError,
 };
@@ -106,4 +110,17 @@ fn evaluate_cost_expression(
             ),
         )
     })
+}
+
+pub fn redirect_packets() -> Vec<Vec<u8>> {
+    vec![
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: RedirectCategories::new(),
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: RedirectItemDefinitions::new(REDIRECT_GUID),
+        }),
+    ]
 }
