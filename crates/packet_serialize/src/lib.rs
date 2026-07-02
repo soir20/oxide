@@ -13,3 +13,5 @@ pub struct LengthlessSlice<'a, T>(pub &'a [T]);
 
 #[derive(Clone)]
 pub struct NullTerminatedString(pub String);
+
+pub struct Skip<const N: usize>;
