@@ -13,6 +13,10 @@ use crate::{
     ConfigError,
 };
 
+pub const REDIRECT_GUID: i32 = i32::MAX;
+pub const REDIRECT_NAME_ID: u32 = 51791;
+pub const REDIRECT_ICON_SET_ID: u32 = 2371;
+
 pub struct CostEntry {
     pub base: u32,
     pub members: u32,

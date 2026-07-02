@@ -8,7 +8,10 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::{item::ItemConfig, store::ItemCostMap},
+        handlers::{
+            item::ItemConfig,
+            store::{ItemCostMap, REDIRECT_GUID, REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID},
+        },
         packets::reference_data::{
             CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
             ItemGroupItem,
@@ -96,10 +99,9 @@ pub fn load_item_groups(
     let mut groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
 
     for group in groups.iter() {
-        if group.guid == i32::MAX {
+        if group.guid == REDIRECT_GUID {
             return Err(ConfigError::ConstraintViolated(format!(
-                "Item group cannot have GUID {}",
-                i32::MAX
+                "Item group cannot have GUID {REDIRECT_GUID}",
             )));
         }
 
@@ -114,11 +116,11 @@ pub fn load_item_groups(
     }
 
     groups.push(ItemGroupConfig {
-        guid: i32::MAX,
-        name_id: 51791,
-        description_id: 51791,
+        guid: REDIRECT_GUID,
+        name_id: REDIRECT_NAME_ID,
+        description_id: REDIRECT_NAME_ID,
         sort_order: 0,
-        icon_set_id: 2371,
+        icon_set_id: REDIRECT_ICON_SET_ID,
         category: 91,
         page: 0,
         preview_model_id: 0,
@@ -127,7 +129,7 @@ pub fn load_item_groups(
         members_only: false,
         for_sale: false,
         items: vec![ItemGroupItem {
-            guid: i32::MAX,
+            guid: REDIRECT_GUID,
             unknown: 0,
         }],
     });
