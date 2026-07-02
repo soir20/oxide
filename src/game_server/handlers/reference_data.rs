@@ -10,7 +10,10 @@ use crate::{
     game_server::{
         handlers::{
             item::ItemConfig,
-            store::{ItemCostMap, REDIRECT_GUID, REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID},
+            store::{
+                ItemCostMap, REDIRECT_ANIMATION_ID, REDIRECT_GUID, REDIRECT_ICON_SET_ID,
+                REDIRECT_MODEL_ID, REDIRECT_NAME_ID,
+            },
         },
         packets::reference_data::{
             CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
@@ -141,8 +144,8 @@ pub fn load_item_groups(
             icon_set_id: REDIRECT_ICON_SET_ID,
             category,
             page: 0,
-            preview_model_id: 2376,
-            preview_animation_id: 9002,
+            preview_model_id: REDIRECT_MODEL_ID,
+            preview_animation_id: REDIRECT_ANIMATION_ID,
             is_new: false,
             members_only: false,
             for_sale: false,
