@@ -36,7 +36,6 @@ use handlers::minigame::{
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
 use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
-use handlers::store::CostEntry;
 use handlers::test_data::make_test_nameplate_image;
 use handlers::tick::{
     enqueue_tickable_chunks, enqueue_tickable_minigames, tick_matchmaking_groups, tick_minigame,
@@ -63,6 +62,7 @@ use rand::Rng;
 
 use crate::config::ConfigError;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
+use crate::game_server::handlers::store::ItemCostMap;
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::game_server::navmesh::config::load_navmeshes;
 use crate::game_server::navmesh::{Collision, Navmesh};
@@ -186,13 +186,13 @@ pub enum TickableNpcSynchronization {
 pub struct GameServer {
     abilities: HashMap<String, AbilityConfig>,
     categories: CategoryDefinitions,
-    costs: BTreeMap<u32, CostEntry>,
-    customizations: BTreeMap<u32, Customization>,
-    customization_item_mappings: BTreeMap<u32, Vec<u32>>,
-    default_sabers: BTreeMap<u32, DefaultSaber>,
+    costs: ItemCostMap,
+    customizations: BTreeMap<i32, Customization>,
+    customization_item_mappings: BTreeMap<i32, Vec<i32>>,
+    default_sabers: BTreeMap<i32, DefaultSaber>,
     enemy_types: EnemyTypeConfig,
     lock_enforcer_source: LockEnforcerSource,
-    items: BTreeMap<u32, ItemConfig>,
+    items: BTreeMap<i32, ItemConfig>,
     item_classes: ItemClassDefinitions,
     item_groups: ItemGroupDefinitions,
     minigames: AllMinigameConfigs,
@@ -827,19 +827,19 @@ impl GameServer {
         &self.abilities
     }
 
-    pub fn costs(&self) -> &BTreeMap<u32, CostEntry> {
+    pub fn costs(&self) -> &ItemCostMap {
         &self.costs
     }
 
-    pub fn customizations(&self) -> &BTreeMap<u32, Customization> {
+    pub fn customizations(&self) -> &BTreeMap<i32, Customization> {
         &self.customizations
     }
 
-    pub fn customization_item_mappings(&self) -> &BTreeMap<u32, Vec<u32>> {
+    pub fn customization_item_mappings(&self) -> &BTreeMap<i32, Vec<i32>> {
         &self.customization_item_mappings
     }
 
-    pub fn default_sabers(&self) -> &BTreeMap<u32, DefaultSaber> {
+    pub fn default_sabers(&self) -> &BTreeMap<i32, DefaultSaber> {
         &self.default_sabers
     }
 
@@ -847,7 +847,7 @@ impl GameServer {
         &self.enemy_types
     }
 
-    pub fn items(&self) -> &BTreeMap<u32, ItemConfig> {
+    pub fn items(&self) -> &BTreeMap<i32, ItemConfig> {
         &self.items
     }
 

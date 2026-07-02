@@ -89,13 +89,20 @@ impl From<ItemGroupConfig> for ItemGroupDefinition {
 
 pub fn load_item_groups(
     config_dir: &Path,
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<i32, ItemConfig>,
     costs: &mut ItemCostMap,
 ) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
     let mut file = File::open(config_dir.join("item_groups.yaml"))?;
-    let groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
+    let mut groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
 
     for group in groups.iter() {
+        if group.guid == i32::MAX {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Item group cannot have GUID {}",
+                i32::MAX
+            )));
+        }
+
         for item in group.items.iter() {
             if !items.contains_key(&item.guid) {
                 return Err(ConfigError::ConstraintViolated(format!(
@@ -106,7 +113,26 @@ pub fn load_item_groups(
         }
     }
 
-    let items_for_sale: HashSet<u32> = groups
+    groups.push(ItemGroupConfig {
+        guid: i32::MAX,
+        name_id: 51791,
+        description_id: 51791,
+        sort_order: 0,
+        icon_set_id: 2371,
+        category: 91,
+        page: 0,
+        preview_model_id: 0,
+        preview_animation_id: 0,
+        is_new: false,
+        members_only: false,
+        for_sale: false,
+        items: vec![ItemGroupItem {
+            guid: i32::MAX,
+            unknown: 0,
+        }],
+    });
+
+    let items_for_sale: HashSet<i32> = groups
         .iter()
         .filter(|group| group.for_sale)
         .flat_map(|group| group.items.iter().map(|item| item.guid))

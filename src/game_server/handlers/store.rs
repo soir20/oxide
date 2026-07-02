@@ -18,9 +18,9 @@ pub struct CostEntry {
     pub members: u32,
 }
 
-pub type ItemCostMap = BTreeMap<u32, CostEntry>;
+pub type ItemCostMap = BTreeMap<i32, CostEntry>;
 
-pub fn compute_costs(items: &[ItemConfig]) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
+pub fn compute_costs(items: &[ItemConfig]) -> Result<ItemCostMap, ConfigError> {
     let mut costs = BTreeMap::new();
 
     for item_config in items.iter() {
@@ -40,8 +40,8 @@ pub fn compute_costs(items: &[ItemConfig]) -> Result<BTreeMap<u32, CostEntry>, C
     Ok(costs)
 }
 
-impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
-    fn from(cost_map: &BTreeMap<u32, CostEntry>) -> Self {
+impl From<&ItemCostMap> for StoreItemList {
+    fn from(cost_map: &ItemCostMap) -> Self {
         StoreItemList {
             static_items: cost_map
                 .iter()
@@ -69,7 +69,7 @@ impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
 fn evaluate_cost_expression(
     cost_expression: &str,
     cost: u32,
-    item_guid: u32,
+    item_guid: i32,
 ) -> Result<u32, Error> {
     let context = context_map! {
         "x" => evalexpr::Value::Float(cost as f64),

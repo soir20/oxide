@@ -185,9 +185,9 @@ pub struct BaseAttachmentGroup {
 
 #[derive(Clone, SerializePacket)]
 pub struct Item {
-    pub definition_id: u32,
+    pub definition_id: i32,
     pub tint: u32,
-    pub guid: u32,
+    pub guid: i32,
     pub quantity: u32,
     pub num_consumed: u32,
     pub last_use_time: u32,
@@ -221,7 +221,7 @@ pub struct SpecialItemAbility {
 #[derive(Clone, Deserialize, SerializePacket)]
 #[serde(deny_unknown_fields)]
 pub struct ItemDefinition {
-    pub guid: u32,
+    pub guid: i32,
     pub name_id: u32,
     pub description_id: u32,
     pub icon_set_id: u32,

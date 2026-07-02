@@ -46,7 +46,7 @@ pub struct ItemActionBarConfig {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ItemConfig {
-    pub guid: u32,
+    pub guid: i32,
     #[serde(default)]
     pub name_id: u32,
     #[serde(default)]
@@ -187,7 +187,7 @@ impl ItemConfig {
     }
 }
 
-pub type ItemConfigMap = BTreeMap<u32, ItemConfig>;
+pub type ItemConfigMap = BTreeMap<i32, ItemConfig>;
 
 pub fn load_items(
     config_dir: &Path,

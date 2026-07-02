@@ -16,7 +16,7 @@ impl SerializePacket for StoreOpCode {
 }
 
 pub struct StoreItem {
-    pub guid: u32,
+    pub guid: i32,
     pub unknown2: u32,
     pub unknown3: u32,
     pub unknown4: bool,
@@ -64,7 +64,7 @@ impl GamePacket for StoreItemList {
 #[derive(SerializePacket)]
 pub struct StoreItemDefinitionsReply {
     pub unknown: bool,
-    pub defs: Vec<u32>,
+    pub defs: Vec<i32>,
 }
 
 impl GamePacket for StoreItemDefinitionsReply {
