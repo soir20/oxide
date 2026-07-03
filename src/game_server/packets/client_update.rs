@@ -67,7 +67,7 @@ impl GamePacket for AddItems {
 
 #[derive(SerializePacket)]
 pub struct EquipItem {
-    pub item_guid: u32,
+    pub item_guid: i32,
     pub attachment: Attachment,
     pub battle_class: u32,
     pub item_class: i32,

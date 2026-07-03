@@ -983,8 +983,8 @@ impl TickableStep {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
     ) -> (Vec<Broadcast>, Option<NavmeshWaypoint>) {
         let mut packets_for_all = Vec::new();
         let mut pos_update: Option<NavmeshWaypoint> = None;
@@ -1433,8 +1433,8 @@ impl TickableProcedure {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
     ) -> TickResult {
@@ -1656,8 +1656,8 @@ impl TickableProcedureTracker {
         nearby_player_guids: &[u32],
         nearby_characters: &BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
     ) -> (Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>) {
@@ -1745,7 +1745,7 @@ fn trigger_synchronized_interaction(
     supplier?(game_server)
 }
 
-pub type EquippedItemMap = BTreeMap<EquipmentSlot, u32>;
+pub type EquippedItemMap = BTreeMap<EquipmentSlot, i32>;
 
 #[derive(Clone)]
 pub struct BattleClass {
@@ -1756,15 +1756,15 @@ pub struct BattleClass {
 pub struct PlayerInventory {
     battle_classes: BTreeMap<u32, BattleClass>,
     pub active_battle_class: u32,
-    temporary_items: BTreeMap<EquipmentSlot, Option<u32>>,
-    inventory: BTreeSet<u32>,
+    temporary_items: BTreeMap<EquipmentSlot, Option<i32>>,
+    inventory: BTreeSet<i32>,
 }
 
 impl PlayerInventory {
     pub fn new(
         battle_classes: BTreeMap<u32, BattleClass>,
         active_battle_class: u32,
-        inventory: BTreeSet<u32>,
+        inventory: BTreeSet<i32>,
     ) -> Self {
         PlayerInventory {
             battle_classes,
@@ -1792,7 +1792,7 @@ impl PlayerInventory {
         items
     }
 
-    pub fn equipped_item(&self, battle_class: u32, slot: EquipmentSlot) -> Option<u32> {
+    pub fn equipped_item(&self, battle_class: u32, slot: EquipmentSlot) -> Option<i32> {
         self.temporary_items
             .get(&slot)
             .copied()
@@ -1810,7 +1810,7 @@ impl PlayerInventory {
         &mut self,
         battle_class_guid: u32,
         slot: EquipmentSlot,
-        item_guid: u32,
+        item_guid: i32,
     ) -> Result<bool, ProcessPacketError> {
         if !self.inventory.contains(&item_guid) {
             return Err(ProcessPacketError::new(
@@ -1854,7 +1854,7 @@ impl PlayerInventory {
             && !self.temporary_items.contains_key(&slot))
     }
 
-    pub fn equip_item_temporarily(&mut self, slot: EquipmentSlot, item_guid: Option<u32>) {
+    pub fn equip_item_temporarily(&mut self, slot: EquipmentSlot, item_guid: Option<i32>) {
         self.temporary_items.insert(slot, item_guid);
     }
 
@@ -1862,7 +1862,7 @@ impl PlayerInventory {
         self.temporary_items.clear();
     }
 
-    pub fn owns_item(&self, item_guid: u32) -> bool {
+    pub fn owns_item(&self, item_guid: i32) -> bool {
         self.inventory.contains(&item_guid)
     }
 }
@@ -1930,7 +1930,7 @@ pub struct PreviousLocation {
 
 #[derive(Clone)]
 pub struct PlayerAbilityGroup {
-    pub source_item_id: u32,
+    pub source_item_id: i32,
     pub ability_keys: Vec<String>,
     pub priority: u32,
 }
@@ -1949,7 +1949,7 @@ pub struct Player {
     pub member: bool,
     pub credits: u32,
     pub inventory: PlayerInventory,
-    pub customizations: BTreeMap<CustomizationSlot, u32>,
+    pub customizations: BTreeMap<CustomizationSlot, i32>,
     pub minigame_stats: PlayerMinigameStats,
     pub minigame_status: Option<MinigameStatus>,
     pub update_previous_location_on_leave: bool,
@@ -1964,8 +1964,8 @@ impl Player {
         &self,
         character: &CharacterStats,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
     ) -> Vec<Vec<u8>> {
         if !self.ready {
             return Vec::new();
@@ -2495,8 +2495,8 @@ impl CharacterStats {
         &mut self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
     ) -> Vec<Vec<u8>> {
         let character_type = self.character_type.clone();
 
@@ -2851,8 +2851,8 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
         collision: &Collision,
@@ -3051,8 +3051,8 @@ impl Character {
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
         tick_duration: Duration,
         navmesh: &Navmesh,
     ) -> (Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>) {

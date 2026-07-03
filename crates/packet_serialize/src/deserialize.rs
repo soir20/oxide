@@ -1,4 +1,4 @@
-use crate::NullTerminatedString;
+use crate::{NullTerminatedString, Skip};
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::{BufRead, Cursor, Error, Read};
 use std::string::FromUtf8Error;
@@ -148,5 +148,16 @@ impl<T: DeserializePacket> DeserializePacket for Vec<T> {
         }
 
         Ok(items)
+    }
+}
+
+impl<const N: usize> DeserializePacket for Skip<N> {
+    fn deserialize(cursor: &mut Cursor<&[u8]>) -> Result<Self, DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let mut buffer = vec![0; N];
+        cursor.read_exact(&mut buffer)?;
+        Ok(Skip)
     }
 }

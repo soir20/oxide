@@ -745,7 +745,7 @@ pub struct MinigameChallengeConfig {
     pub min_players: u32,
     pub max_players: u32,
     pub start_sound_id: Option<u32>,
-    pub required_item_guid: Option<u32>,
+    pub required_item_guid: Option<i32>,
     pub members_only: bool,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
@@ -840,7 +840,7 @@ pub struct MinigameCampaignStageConfig {
     pub start_sound_id: Option<u32>,
     #[serde(default = "default_true")]
     pub show_end_score_screen: bool,
-    pub required_item_guid: Option<u32>,
+    pub required_item_guid: Option<i32>,
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
@@ -1003,7 +1003,7 @@ struct MinigameStageGroupConfig {
     pub icon_id: u32,
     pub stage_icon_id: u32,
     pub stage_select_map_name: String,
-    pub required_item_guid: Option<u32>,
+    pub required_item_guid: Option<i32>,
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
