@@ -12,9 +12,43 @@ use crate::ConfigError;
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+pub enum Attackability {
+    Attackable,
+    Unattackable,
+}
+
+#[allow(dead_code)]
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttackDecisionNode {
+    #[serde(rename = "if", default)]
+    pub if_branches: HashMap<String, AttackDecisionNode>,
+    #[serde(rename = "else")]
+    pub else_result: Attackability,
+}
+
+#[allow(dead_code)]
+pub fn player_can_attack(node: &AttackDecisionNode, enemy_types: &[String]) -> bool {
+    let mut result = matches!(node.else_result, Attackability::Attackable);
+
+    for enemy_type in enemy_types {
+        if let Some(next_node) = node.if_branches.get(enemy_type) {
+            if !player_can_attack(next_node, enemy_types) {
+                return false;
+            }
+            result = true;
+        }
+    }
+
+    result
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct EnemyTypeConfig {
     pub enemy_types: HashSet<String>,
     pub enemy_types_applied_to_players: HashSet<String>,
+    pub allowed_player_attacks: AttackDecisionNode,
 }
 
 pub fn load_enemy_types(config_dir: &Path) -> Result<EnemyTypeConfig, ConfigError> {
@@ -27,6 +61,15 @@ pub fn load_enemy_types(config_dir: &Path) -> Result<EnemyTypeConfig, ConfigErro
         return Err(ConfigError::ConstraintViolated(
             "Enemy types applied to players must be a subset of valid enemy types".to_string(),
         ));
+    }
+
+    for enemy_type in config.allowed_player_attacks.if_branches.keys() {
+        if !config.enemy_types.contains(enemy_type) {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Invalid enemy type found in allowed player attacks {}",
+                enemy_type
+            )));
+        }
     }
     Ok(config)
 }

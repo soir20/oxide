@@ -29,118 +29,67 @@ pub struct ItemClassData {
 #[derive(Clone, SerializePacket)]
 pub struct BattleClassUnknown7 {}
 
-#[allow(dead_code)]
-#[derive(Clone)]
-pub enum Ability {
-    Empty,
-    Type1(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type2(u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    Type3(u32, u32, u32, u32, u32, u32, u32, u32, u32, bool),
-    OtherType(u32, u32, u32, u32, u32, u32, u32, u32, bool),
+#[derive(Clone, SerializePacket)]
+pub struct AbilityTypeShared {
+    pub icon_id: u32,
+    pub name_id: u32,
+    pub unknown7: u32,
+    pub unknown8: f32,
+    pub unknown9: f32,
+    pub ability_id: u32,
+    pub unknown11: u32,
+    pub unknown12: u32,
+    pub unknown13: u32,
 }
 
-impl SerializePacket for Ability {
+#[derive(Clone, SerializePacket)]
+pub struct UnknownAbilityType {
+    pub unknown2: u32,
+    pub mana_cost: u32,
+    pub common: AbilityTypeShared,
+}
+
+#[derive(Clone, SerializePacket)]
+pub struct ItemDefinitionAbilityType {
+    pub item_id: u32,
+    pub common: AbilityTypeShared,
+}
+
+#[derive(Clone, SerializePacket)]
+pub struct AbilityDefinitionAbilityType {
+    pub unknown2: u32,
+    pub mana_cost: u32,
+    pub common: AbilityTypeShared,
+}
+
+#[derive(Clone)]
+pub enum AbilityType {
+    Empty,
+    Unknown(UnknownAbilityType),
+    ItemDefinition(ItemDefinitionAbilityType),
+    AbilityDefinition(AbilityDefinitionAbilityType),
+}
+
+impl SerializePacket for AbilityType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            Ability::Empty => 0u32.serialize(buffer),
-            Ability::Type1(
-                unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+            AbilityType::Empty => {
+                0u32.serialize(buffer);
+            }
+            AbilityType::Unknown(unknown_type) => {
                 1u32.serialize(buffer);
-                unknown2.serialize(buffer);
-                unknown3.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                unknown_type.serialize(buffer);
             }
-            Ability::Type2(
-                unknown4,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+            AbilityType::ItemDefinition(item_definition_type) => {
                 2u32.serialize(buffer);
-                unknown4.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                item_definition_type.serialize(buffer);
             }
-            Ability::Type3(
-                unknown2,
-                unknown3,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
+            AbilityType::AbilityDefinition(ability_definition_type) => {
                 3u32.serialize(buffer);
-                unknown2.serialize(buffer);
-                unknown3.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
-            }
-            Ability::OtherType(
-                unknown1,
-                unknown5,
-                unknown6,
-                unknown7,
-                unknown8,
-                unknown9,
-                unknown10,
-                unknown11,
-                unknown12,
-            ) => {
-                unknown1.serialize(buffer);
-                write_ability_end(
-                    *unknown5, *unknown6, *unknown7, *unknown8, *unknown9, *unknown10, *unknown11,
-                    *unknown12, buffer,
-                );
+                ability_definition_type.serialize(buffer);
             }
         }
     }
-}
-
-fn write_ability_end(
-    unknown5: u32,
-    unknown6: u32,
-    unknown7: u32,
-    unknown8: u32,
-    unknown9: u32,
-    unknown10: u32,
-    unknown11: u32,
-    unknown12: bool,
-    buffer: &mut Vec<u8>,
-) {
-    unknown5.serialize(buffer);
-    unknown6.serialize(buffer);
-    unknown7.serialize(buffer);
-    unknown8.serialize(buffer);
-    unknown9.serialize(buffer);
-    unknown10.serialize(buffer);
-    unknown11.serialize(buffer);
-    unknown12.serialize(buffer);
 }
 
 #[allow(dead_code)]
@@ -206,7 +155,7 @@ pub struct BattleClass {
     pub unknown8: u32,
     pub items: BTreeMap<EquipmentSlot, EquippedItem>,
     pub unknown9: u32,
-    pub abilities: Vec<Ability>,
+    pub abilities: Vec<AbilityType>,
     pub unknown10: LengthlessVec<BattleClassUnknown10>,
 }
 

@@ -1,3 +1,4 @@
+pub mod ability;
 pub mod attack_cruiser;
 pub mod chat;
 pub mod clicked_location;
@@ -54,6 +55,7 @@ pub enum OpCode {
     ClientBeginZoning = 0x1f,
     Combat = 0x20,
     PlayerUpdate = 0x23,
+    Ability = 0x24,
     ClientUpdate = 0x26,
     Minigame = 0x27,
     Inventory = 0x2a,

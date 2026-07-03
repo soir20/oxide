@@ -36,6 +36,7 @@ pub enum PlayerUpdateOpCode {
     SlotCompositeEffectOverride = 0x1f,
     Freeze = 0x20,
     ItemDefinitionsRequest = 0x22,
+    HitPointModification = 0x23,
     ItemDefinitionsReply = 0x25,
     UpdateCustomizations = 0x27,
     AddCompositeEffectTag = 0x29,
@@ -47,6 +48,7 @@ pub enum PlayerUpdateOpCode {
     MoveOnRail = 0x35,
     ClearRail = 0x36,
     MoveOnRelativeRail = 0x37,
+    UpdateShields = 0x39,
     SeekTarget = 0x3b,
     SeekTargetUpdate = 0x3c,
     UpdateWieldType = 0x3d,
@@ -153,6 +155,34 @@ impl GamePacket for AddPc {
 }
 
 #[derive(SerializePacket, DeserializePacket)]
+pub struct UpdateShields {
+    pub guid: u64,
+    pub max_shields: u32,
+    pub current_shields: u32,
+}
+
+impl GamePacket for UpdateShields {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::UpdateShields;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
+pub struct HitPointModification {
+    pub attacker_guid: u64,
+    pub receiver_guid: u64,
+    pub show_hp_delta: bool,
+    pub max_hp: i32,
+    pub new_hp: i32,
+    pub hp_delta: i32,
+    pub critical: bool,
+}
+
+impl GamePacket for HitPointModification {
+    type Header = PlayerUpdateOpCode;
+    const HEADER: Self::Header = PlayerUpdateOpCode::HitPointModification;
+}
+
+#[derive(SerializePacket, DeserializePacket)]
 pub struct UpdateIdleAnimation {
     pub guid: u64,
     pub animation_id: i32,
@@ -247,9 +277,9 @@ impl GamePacket for NameplateImageId {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct UpdatePower {
     pub guid: u64,
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub unknown3: u32,
+    pub new_power1: u32,
+    pub max_power: u32,
+    pub new_power2: u32,
 }
 
 impl GamePacket for UpdatePower {
@@ -744,11 +774,20 @@ pub enum PhysicsState {
 }
 
 #[derive(
-    Copy, Clone, Debug, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket,
+    Copy,
+    Clone,
+    Default,
+    Debug,
+    TryFromPrimitive,
+    IntoPrimitive,
+    SerializePacket,
+    DeserializePacket,
+    Deserialize,
 )]
 #[repr(u32)]
 pub enum Hostility {
     Hostile,
+    #[default]
     Neutral,
     Friendly,
 }
