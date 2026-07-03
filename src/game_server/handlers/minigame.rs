@@ -2462,7 +2462,7 @@ pub fn prepare_active_minigame_instance(
                         ),
                     ));
                 }
-                characters.into_iter().for_each(|mut character| {
+                characters.into_iter().for_each(|character| {
                     let chunk = Character::chunk(
                         character.stats.pos.x,
                         character.stats.pos.z,

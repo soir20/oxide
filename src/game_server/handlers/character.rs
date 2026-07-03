@@ -299,8 +299,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    #[serde(default = "default_true")]
-    pub is_spawned: bool,
+    #[serde(default)]
+    pub force_despawn: bool,
     #[serde(default)]
     pub removal_mode: RemovalMode,
     pub composite_effect_id: Option<u32>,
@@ -361,10 +361,10 @@ pub struct BaseNpc {
 impl BaseNpc {
     pub fn add_packets(
         &self,
-        character: &mut CharacterStats,
+        character: &CharacterStats,
         override_is_spawned: bool,
     ) -> Vec<Vec<u8>> {
-        if !character.is_spawned && !override_is_spawned {
+        if !character.is_spawned() && !override_is_spawned {
             return Vec::new();
         }
 
@@ -508,7 +508,6 @@ impl BaseNpc {
         }
 
         if character.health < character.max_health && self.show_health {
-            let hp_delta = character.health as i32 - character.max_health as i32;
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: HitPointModification {
@@ -517,15 +516,10 @@ impl BaseNpc {
                     show_hp_delta: false,
                     max_hp: character.max_health as i32,
                     new_hp: character.health as i32,
-                    hp_delta,
+                    hp_delta: character.health as i32 - character.max_health as i32,
                     critical: false,
                 },
-            }))
-        }
-
-        if character.health == 0 {
-            character.is_spawned = false;
-            packets.extend(character.remove_packets(self.removal_mode));
+            }));
         }
 
         packets
@@ -779,7 +773,7 @@ impl OneShotInteractionTemplate {
         let mut packets_for_sender = Vec::new();
 
         if self.despawn_npc {
-            character.is_spawned = false;
+            character.force_despawn = true;
             packets_for_all.extend(character.remove_packets(self.removal_mode));
         }
 
@@ -991,8 +985,8 @@ impl TickableStep {
 
         match self.spawned_state {
             SpawnedState::Always => {
-                if !character.is_spawned {
-                    character.is_spawned = true;
+                if !character.is_spawned() {
+                    character.force_despawn = false;
                     pos_update = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         false,
@@ -1003,8 +997,8 @@ impl TickableStep {
                 }
             }
             SpawnedState::OnFirstStepTick => {
-                if !character.is_spawned {
-                    // Spawn the character without updating its state to prevent it from being visible
+                if !character.is_spawned() {
+                    // Spawn the character without updating force_despawn to prevent it from being visible
                     // to players joining the room mid-step
                     pos_update = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
@@ -1016,9 +1010,9 @@ impl TickableStep {
                 }
             }
             SpawnedState::Despawn => {
-                // Skip checking if the character is spawned before despawning it and instead check if
-                // its state needs updating as OnFirstStepTick doesn't maintain states
-                character.is_spawned = false;
+                // Skip checking if the character is spawned before despawning it and instead ensure
+                // force_despawn is false as OnFirstStepTick doesn't maintain this field
+                character.force_despawn = true;
                 packets_for_all.extend(character.remove_packets(self.removal_mode));
             }
             SpawnedState::Keep => {}
@@ -2158,7 +2152,7 @@ pub struct BaseNpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    pub is_spawned: bool,
+    pub force_despawn: bool,
     pub physics: PhysicsState,
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
@@ -2251,7 +2245,7 @@ impl BaseNpcTemplate {
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
-            is_spawned: config.is_spawned,
+            force_despawn: config.force_despawn,
             physics: config.physics,
             mount_id: None,
             wield_type: WieldType::None,
@@ -2333,7 +2327,7 @@ impl BaseNpcTemplate {
                     mount_multiplier: 1.0,
                 },
                 cursor: self.cursor,
-                is_spawned: self.is_spawned,
+                force_despawn: self.force_despawn,
                 physics: self.physics,
                 name: None,
                 squad_guid: None,
@@ -2471,7 +2465,7 @@ pub struct CharacterStats {
     speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
-    pub is_spawned: bool,
+    pub force_despawn: bool,
     pub physics: PhysicsState,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
@@ -2491,16 +2485,18 @@ pub struct CharacterStats {
 }
 
 impl CharacterStats {
+    pub fn is_spawned(&self) -> bool {
+        !self.force_despawn && self.health > 0
+    }
+
     pub fn add_packets(
-        &mut self,
+        &self,
         override_is_spawned: bool,
         mount_configs: &BTreeMap<u32, MountConfig>,
         item_configs: &BTreeMap<i32, ItemConfig>,
         customizations: &BTreeMap<i32, Customization>,
     ) -> Vec<Vec<u8>> {
-        let character_type = self.character_type.clone();
-
-        let mut packets = match character_type {
+        let mut packets = match &self.character_type {
             CharacterType::AmbientNpc(ambient_npc) => {
                 ambient_npc.add_packets(self, override_is_spawned)
             }
@@ -2508,9 +2504,9 @@ impl CharacterStats {
                 player.add_packets(self, mount_configs, item_configs, customizations)
             }
             CharacterType::Fixture(house_guid, fixture) => fixture_packets(
-                house_guid,
+                *house_guid,
                 Guid::guid(self),
-                &fixture,
+                fixture,
                 self.pos,
                 self.rot,
                 self.scale,
@@ -2720,7 +2716,7 @@ impl Character {
                 character_type,
                 mount: mount_id,
                 cursor,
-                is_spawned: true,
+                force_despawn: false,
                 physics: PhysicsState::default(),
                 name: None,
                 squad_guid: None,
@@ -2790,7 +2786,7 @@ impl Character {
                 character_type: CharacterType::Player(Box::new(data)),
                 mount: None,
                 cursor: None,
-                is_spawned: true,
+                force_despawn: false,
                 physics: PhysicsState::default(),
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,

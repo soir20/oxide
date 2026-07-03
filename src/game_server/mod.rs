@@ -2,7 +2,6 @@ use std::backtrace::Backtrace;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::fmt::Display;
 use std::io::{Cursor, Error};
-use std::iter::once;
 use std::num::ParseIntError;
 use std::path::Path;
 use std::str::ParseBoolError;
@@ -449,17 +448,11 @@ impl GameServer {
                         ))
                             .unwrap_or_default();
 
-                        let write_character_guids: Vec<u64> = once(player_guid(sender))
-                            .chain(
-                                character_diffs
-                                    .character_diffs_for_moved_character
-                                    .keys()
-                                    .copied()
-                            ).collect();
+                        let read_character_guids: Vec<u64> = character_diffs.character_diffs_for_moved_character.keys().copied().collect();
                         CharacterLockRequest {
-                            read_guids: Vec::new(),
-                            write_guids: write_character_guids,
-                            character_consumer: move |characters_table_read_handle, _, mut characters_write, minigame_data_lock_enforcer| {
+                            read_guids: read_character_guids,
+                            write_guids: vec![player_guid(sender)],
+                            character_consumer: move |characters_table_read_handle, characters_read, mut characters_write, minigame_data_lock_enforcer| {
                                 let Some((_, instance_guid, chunk)) = possible_index else {
                                     return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Player {sender} sent a ready packet but is not in any zone")));
                                 };
@@ -534,7 +527,7 @@ impl GameServer {
 
                                         let mut character_broadcasts = Vec::new();
 
-                                        let Some(mut character_write_handle) = characters_write.remove(&player_guid(sender)) else {
+                                        let Some(character_write_handle) = characters_write.get_mut(&player_guid(sender)) else {
                                             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Unknown player {sender} sent a ready packet")));
                                         };
 
@@ -544,8 +537,8 @@ impl GameServer {
                                         character_broadcasts.append(&mut ZoneInstance::diff_character_broadcasts(
                                             player_guid(sender),
                                             character_diffs,
-                                            &mut characters_write,
-                                            &mut character_write_handle,
+                                            &characters_read,
+                                            character_write_handle,
                                             self.mounts(),
                                             self.items(),
                                             self.customizations()
@@ -585,8 +578,6 @@ impl GameServer {
                                         character_broadcasts.push(Broadcast::Multi(all_players_nearby, global_packets));
 
                                         character_broadcasts.push(Broadcast::Single(sender, sender_only_character_packets));
-
-                                        characters_write.insert(player_guid(sender), character_write_handle);
 
                                         Ok(character_broadcasts)
                                     },
