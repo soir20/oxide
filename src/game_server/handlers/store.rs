@@ -8,19 +8,29 @@ use evalexpr::{context_map, eval_with_context, Value};
 use crate::{
     game_server::{
         handlers::item::ItemConfig,
-        packets::store::{StoreItem, StoreItemList},
+        packets::{
+            store::{RedirectCategories, RedirectItemDefinitions, StoreItem, StoreItemList},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
     },
     ConfigError,
 };
+
+pub const REDIRECT_GUID: i32 = 0b01000000_00000000_00000000_00000000;
+pub const REDIRECT_NAME_ID: u32 = 51791;
+pub const REDIRECT_ICON_SET_ID: u32 = 1962;
+pub const REDIRECT_MODEL_ID: u32 = 2376;
+pub const REDIRECT_ANIMATION_ID: i32 = 9002;
 
 pub struct CostEntry {
     pub base: u32,
     pub members: u32,
 }
 
-pub type ItemCostMap = BTreeMap<u32, CostEntry>;
+pub type ItemCostMap = BTreeMap<i32, CostEntry>;
 
-pub fn compute_costs(items: &[ItemConfig]) -> Result<BTreeMap<u32, CostEntry>, ConfigError> {
+pub fn compute_costs(items: &[ItemConfig]) -> Result<ItemCostMap, ConfigError> {
     let mut costs = BTreeMap::new();
 
     for item_config in items.iter() {
@@ -40,8 +50,8 @@ pub fn compute_costs(items: &[ItemConfig]) -> Result<BTreeMap<u32, CostEntry>, C
     Ok(costs)
 }
 
-impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
-    fn from(cost_map: &BTreeMap<u32, CostEntry>) -> Self {
+impl From<&ItemCostMap> for StoreItemList {
+    fn from(cost_map: &ItemCostMap) -> Self {
         StoreItemList {
             static_items: cost_map
                 .iter()
@@ -69,7 +79,7 @@ impl From<&BTreeMap<u32, CostEntry>> for StoreItemList {
 fn evaluate_cost_expression(
     cost_expression: &str,
     cost: u32,
-    item_guid: u32,
+    item_guid: i32,
 ) -> Result<u32, Error> {
     let context = context_map! {
         "x" => evalexpr::Value::Float(cost as f64),
@@ -102,4 +112,17 @@ fn evaluate_cost_expression(
             ),
         )
     })
+}
+
+pub fn redirect_packets() -> Vec<Vec<u8>> {
+    vec![
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: RedirectCategories::new(),
+        }),
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: RedirectItemDefinitions::new(REDIRECT_GUID),
+        }),
+    ]
 }

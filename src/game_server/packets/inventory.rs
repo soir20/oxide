@@ -28,17 +28,17 @@ pub struct UnequipSlot {
 
 #[derive(DeserializePacket)]
 pub struct EquipGuid {
-    pub item_guid: u32,
+    pub item_guid: i32,
     pub battle_class: u32,
     pub slot: EquipmentSlot,
 }
 
 #[derive(DeserializePacket)]
 pub struct PreviewCustomization {
-    pub item_guid: u32,
+    pub item_guid: i32,
 }
 
 #[derive(DeserializePacket)]
 pub struct EquipCustomization {
-    pub item_guid: u32,
+    pub item_guid: i32,
 }

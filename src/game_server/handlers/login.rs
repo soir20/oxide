@@ -82,7 +82,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             };
             packets.push(GamePacket::serialize(&settings));
 
-            let item_defs: BTreeMap<u32, ItemDefinition> = game_server
+            let item_defs: BTreeMap<i32, ItemDefinition> = game_server
                 .items()
                 .iter()
                 .map(|(id, config)| (*id, config.to_definition(game_server.abilities())))
