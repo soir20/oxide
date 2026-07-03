@@ -13,7 +13,6 @@ pub mod minigame;
 pub mod mount;
 pub mod player_data;
 pub mod player_update;
-pub mod purchase;
 pub mod reference_data;
 pub mod saber_duel;
 pub mod saber_strike;

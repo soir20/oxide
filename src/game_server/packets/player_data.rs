@@ -12,8 +12,8 @@ use super::{
 #[derive(Clone, SerializePacket)]
 pub struct EquippedItem {
     pub slot: EquipmentSlot,
-    pub guid: u32,
-    pub category: u32,
+    pub guid: i32,
+    pub category: i32,
 }
 
 #[derive(Clone, SerializePacket)]
@@ -183,7 +183,7 @@ impl SerializePacket for MarketData {
 
 #[derive(Clone, SerializePacket)]
 pub struct InventoryItem {
-    pub definition_id: u32,
+    pub definition_id: i32,
     pub item: Item,
 }
 
@@ -361,7 +361,7 @@ pub struct PlayerData {
     pub active_battle_class: u32,
     pub unknown: Vec<Unknown>,
     pub social: Vec<SocialInfo>,
-    pub inventory: BTreeMap<u32, InventoryItem>,
+    pub inventory: BTreeMap<i32, InventoryItem>,
     pub gender: u32,
     pub quests: Vec<Quest>,
     pub quests_unknown1: u32,

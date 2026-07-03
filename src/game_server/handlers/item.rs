@@ -8,10 +8,12 @@ use crate::{
     game_server::{
         handlers::{
             ability::AbilityConfig,
-            store::{compute_costs, ItemCostMap},
+            store::{
+                compute_costs, ItemCostMap, REDIRECT_GUID, REDIRECT_ICON_SET_ID, REDIRECT_NAME_ID,
+            },
         },
         packets::{
-            item::{ItemDefinition, ItemType, SpecialItemAbility},
+            item::{EquipmentSlot, ItemDefinition, ItemType, SpecialItemAbility},
             player_update::CustomizationSlot,
         },
     },
@@ -46,7 +48,7 @@ pub struct ItemActionBarConfig {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ItemConfig {
-    pub guid: u32,
+    pub guid: i32,
     #[serde(default)]
     pub name_id: u32,
     #[serde(default)]
@@ -76,7 +78,7 @@ pub struct ItemConfig {
     pub required_gender: u32,
     pub item_type: u32,
     #[serde(default)]
-    pub category: u32,
+    pub category: i32,
     #[serde(default)]
     pub members: bool,
     #[serde(default)]
@@ -187,7 +189,7 @@ impl ItemConfig {
     }
 }
 
-pub type ItemConfigMap = BTreeMap<u32, ItemConfig>;
+pub type ItemConfigMap = BTreeMap<i32, ItemConfig>;
 
 pub fn load_items(
     config_dir: &Path,
@@ -246,6 +248,53 @@ pub fn load_items(
             item_paths.insert(guid, file_path.clone());
         }
     }
+
+    if items.range(REDIRECT_GUID..).count() > 0 {
+        return Err(ConfigError::ConstraintViolated(format!(
+            "Item cannot have GUID >= {REDIRECT_GUID}"
+        )));
+    }
+
+    items.insert(
+        REDIRECT_GUID,
+        ItemConfig {
+            guid: REDIRECT_GUID,
+            name_id: REDIRECT_NAME_ID,
+            description_id: REDIRECT_NAME_ID,
+            icon_set_id: REDIRECT_ICON_SET_ID,
+            tint: 0,
+            cost: 0,
+            members_cost_expression: "x".to_string(),
+            item_class: 0,
+            required_battle_class: 0,
+            slot: ItemType::Equipment(EquipmentSlot::None),
+            disable_trade: false,
+            disable_sale: false,
+            model_name: "".to_string(),
+            texture_alias: "".to_string(),
+            required_gender: 0,
+            item_type: 0,
+            category: 0,
+            members: false,
+            non_minigame: false,
+            weapon_trail_effect: None,
+            composite_effect: None,
+            power_rating: 0,
+            min_battle_class_level: 0,
+            rarity: 0,
+            single_use: false,
+            max_stack_size: 0,
+            tint_alias: "".to_string(),
+            disable_preview: false,
+            race_set_id: 0,
+            customization_slot: CustomizationSlot::None,
+            customization_id: 0,
+            action_bar: ItemActionBarConfig {
+                priority_override: None,
+                ability_keys: Vec::new(),
+            },
+        },
+    );
 
     Ok((items, costs))
 }

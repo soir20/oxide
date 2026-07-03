@@ -61,9 +61,9 @@ struct SaberDuelAiForcePower {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct SaberDuelEquippableSaber {
-    hilt_item_guid: u32,
-    shape_item_guid: u32,
-    color_item_guid: u32,
+    hilt_item_guid: i32,
+    shape_item_guid: i32,
+    color_item_guid: i32,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
