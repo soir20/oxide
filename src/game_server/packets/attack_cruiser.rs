@@ -773,7 +773,7 @@ impl GamePacket for AttackCruiserClientConfig {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserUpdateGameState {
     pub minigame_header: MinigameHeader,
-    pub game_state: u32,
+    pub game_state: i32,
 }
 
 impl GamePacket for AttackCruiserUpdateGameState {
@@ -782,11 +782,12 @@ impl GamePacket for AttackCruiserUpdateGameState {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-struct AttackCruiserPlayerStateType {
+#[derive(Clone, Copy)]
+pub struct AttackCruiserPlayerStateType {
     pub unknown1: bool,
-    pub unknown2: bool,
+    pub score: bool,
     pub unknown3: bool,
-    pub unknown4: bool,
+    pub inventory: bool,
     pub unknown5: bool,
 }
 
@@ -796,13 +797,13 @@ impl SerializePacket for AttackCruiserPlayerStateType {
         if self.unknown1 {
             value |= 0b1;
         }
-        if self.unknown2 {
+        if self.score {
             value |= 0b10;
         }
         if self.unknown3 {
             value |= 0b100;
         }
-        if self.unknown4 {
+        if self.inventory {
             value |= 0b1000;
         }
         if self.unknown5 {
@@ -813,44 +814,63 @@ impl SerializePacket for AttackCruiserPlayerStateType {
     }
 }
 
+impl DeserializePacket for AttackCruiserPlayerStateType {
+    fn deserialize(
+        cursor: &mut std::io::Cursor<&[u8]>,
+    ) -> Result<Self, packet_serialize::DeserializePacketError>
+    where
+        Self: Sized,
+    {
+        let state_type = i32::deserialize(cursor)?;
+
+        Ok(AttackCruiserPlayerStateType {
+            unknown1: state_type & 0b1 != 0,
+            score: state_type & 0b10 != 0,
+            unknown3: state_type & 0b100 != 0,
+            inventory: state_type & 0b1000 != 0,
+            unknown5: state_type & 0b10000 != 0,
+        })
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateUnknown1 {
-    pub player_index: u32,
-    pub actor_id: u32,
-    pub unknown_value4: u32,
+    pub player_index: i32,
+    pub actor_id: i32,
+    pub unknown_value4: i32,
     pub unknown4: String,
     pub unknown5: String,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateScore {
-    pub score: u32,
-    pub score_multiplier_tier_progress: u32,
-    pub score_multiplier_tier_goal: u32,
-    pub score_multiplier_tier: u32,
-    pub pain: u32,
-    pub lives: u32,
+    pub score: i32,
+    pub score_multiplier_tier_progress: i32,
+    pub score_multiplier_tier_goal: i32,
+    pub score_multiplier_tier: i32,
+    pub pain: i32,
+    pub lives: i32,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateUnknown3 {
-    pub actor_id: u32,
-    pub unknown_value4: u32,
+    pub actor_id: i32,
+    pub unknown_value4: i32,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateInventory {
-    pub weapon_tier: u32,
-    pub primary_quantity: u32,
-    pub special_quantity: u32,
-    pub unknown4: u32,
-    pub special_icon_id: u32,
-    pub special_id: u32,
+    pub weapon_tier: i32,
+    pub primary_quantity: i32,
+    pub special_quantity: i32,
+    pub unknown4: i32,
+    pub special_icon_id: i32,
+    pub special_id: i32,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerStateUnknown5 {
-    pub actor_id: u32,
+    pub actor_id: i32,
 }
 
 pub struct AttackCruiserPlayerStateUpdate {
@@ -865,9 +885,9 @@ impl SerializePacket for AttackCruiserPlayerStateUpdate {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let update_type = AttackCruiserPlayerStateType {
             unknown1: self.unknown1.is_some(),
-            unknown2: self.score.is_some(),
+            score: self.score.is_some(),
             unknown3: self.unknown3.is_some(),
-            unknown4: self.inventory.is_some(),
+            inventory: self.inventory.is_some(),
             unknown5: self.unknown5.is_some(),
         };
         update_type.serialize(buffer);
@@ -949,12 +969,12 @@ impl GamePacket for AttackCruiserConfigPlayer {
 #[derive(DeserializePacket)]
 pub struct AttackCruiserRequestUpdatePlayers {
     pub minigame_header: MinigameHeader,
-    pub update_type: u32,
+    pub update_type: AttackCruiserPlayerStateType,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerUpdate {
-    pub index: u32,
+    pub index: i32,
     pub state: AttackCruiserPlayerStateUpdate,
 }
 
@@ -1088,12 +1108,12 @@ impl DeserializePacket for AttackCruiserActorState {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserActorUpdate {
-    pub actor_id: u32,
+    pub actor_id: i32,
     pub pos: Pos,
     pub speed: Pos,
     pub forward_multiplier: f32,
     pub turn_multiplier: f32,
-    pub health: u32,
+    pub health: i32,
     pub state: AttackCruiserActorState,
 }
 
@@ -1132,10 +1152,10 @@ impl GamePacket for AttackCruiserClickedLocation {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserAddProjectile {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
-    pub unknown2: u32,
-    pub effect_id: u32,
-    pub despawn_effect_id: u32,
+    pub unknown1: i32,
+    pub unknown2: i32,
+    pub effect_id: i32,
+    pub despawn_effect_id: i32,
     pub lifetime_seconds: f32,
     pub origin: Pos3,
     pub speed: Pos3,
@@ -1144,7 +1164,7 @@ pub struct AttackCruiserAddProjectile {
     pub heading: f32,
     pub unknown11: f32,
     pub unknown12: f32,
-    pub unknown13: u32,
+    pub unknown13: i32,
 }
 
 impl GamePacket for AttackCruiserAddProjectile {
@@ -1156,8 +1176,8 @@ impl GamePacket for AttackCruiserAddProjectile {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserRemoveProjectile {
     pub minigame_header: MinigameHeader,
-    pub unknown1: u32,
-    pub unknown2: u32,
+    pub unknown1: i32,
+    pub unknown2: i32,
     pub unknown3: f32,
 }
 
@@ -1178,13 +1198,13 @@ pub enum AttackCruiserHostility {
 #[derive(SerializePacket)]
 pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
-    pub actor_id: u32,
+    pub actor_id: i32,
     pub hostility: AttackCruiserHostility,
     pub actor_config: AttackCruiserStartupConfigHash,
     pub pos: Pos3,
     pub speed: Pos3,
     pub heading: f32,
-    pub unknown7: u32,
+    pub unknown7: i32,
 }
 
 impl GamePacket for AttackCruiserAddActor {
@@ -1196,7 +1216,7 @@ impl GamePacket for AttackCruiserAddActor {
 #[derive(SerializePacket)]
 pub struct AttackCruiserRemoveActor {
     pub minigame_header: MinigameHeader,
-    pub actor_id: u32,
+    pub actor_id: i32,
 }
 
 impl GamePacket for AttackCruiserRemoveActor {
@@ -1208,7 +1228,7 @@ impl GamePacket for AttackCruiserRemoveActor {
 #[derive(SerializePacket)]
 pub struct AttackCruiserWorldEffect {
     pub minigame_header: MinigameHeader,
-    pub effect_id: u32,
+    pub effect_id: i32,
     pub pos: Pos3,
 }
 
@@ -1240,7 +1260,7 @@ pub struct AttackCruiserBoolCommand {
 #[derive(SerializePacket)]
 pub struct AttackCruiserUnknownCommand2 {
     pub guid: u64,
-    pub unknown1: u32,
+    pub unknown1: i32,
 }
 
 #[derive(SerializePacket)]
@@ -1326,7 +1346,7 @@ impl SerializePacket for AttackCruiserCommand {
 #[derive(SerializePacket)]
 pub struct AttackCruiserQueueCommand {
     pub minigame_header: MinigameHeader,
-    pub actor_id: u32,
+    pub actor_id: i32,
     pub command: AttackCruiserCommand,
 }
 

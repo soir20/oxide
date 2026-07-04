@@ -23,10 +23,14 @@ use crate::game_server::{
             AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
             AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
             AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
-            AttackCruiserPlayerConfig, AttackCruiserPlayerStateUpdate, AttackCruiserShipConfig,
-            AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-            AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigReference,
-            AttackCruiserUpdateGameState, AttackCruiserVec,
+            AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+            AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown1,
+            AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUnknown5,
+            AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
+            AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
+            AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+            AttackCruiserStartupConfigReference, AttackCruiserUpdateGameState,
+            AttackCruiserUpdatePlayers, AttackCruiserVec,
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
@@ -35,19 +39,14 @@ use crate::game_server::{
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
 
-#[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-enum AttackCruiserPlayerReadiness {
-    Ready,
-    #[default]
-    Unready,
-}
+const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
 #[derive(Clone, Debug, Default)]
 struct AttackCruiserPlayerState {
-    readiness: AttackCruiserPlayerReadiness,
+    ready: bool,
     pub score: i32,
     pub score_multiplier_tier_progress: u16,
-    pub score_multiplier_tier: u16,
+    pub score_multiplier_tier: u8,
     pub lives: u8,
     pub health: u16,
 }
@@ -55,7 +54,7 @@ struct AttackCruiserPlayerState {
 impl AttackCruiserPlayerState {
     pub fn new(lives: u8, health: u16) -> Self {
         AttackCruiserPlayerState {
-            readiness: AttackCruiserPlayerReadiness::default(),
+            ready: false,
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -104,6 +103,10 @@ pub fn process_attack_cruiser_packet(
 
             match AttackCruiserOpCode::try_from(header.sub_op_code) {
                 Ok(op_code) => match op_code {
+                    AttackCruiserOpCode::RequestUpdatePlayers => {
+                        let request = AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
+                        game.update_players(sender, request.update_type)
+                    }
                     _ => {
                         let mut buffer = Vec::new();
                         cursor.read_to_end(&mut buffer)?;
@@ -138,7 +141,7 @@ pub struct AttackCruiserGame {
     player2: Option<u32>,
     player_states: [AttackCruiserPlayerState; 2],
     state: AttackCruiserGameState,
-    recipients: Vec<u32>,
+    players: Vec<u32>,
     group: MinigameMatchmakingGroup,
 }
 
@@ -149,9 +152,9 @@ impl AttackCruiserGame {
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
     ) -> Self {
-        let mut recipients = vec![player1];
+        let mut players = vec![player1];
         if let Some(player2) = player2 {
-            recipients.push(player2);
+            players.push(player2);
         }
         AttackCruiserGame {
             config,
@@ -159,7 +162,7 @@ impl AttackCruiserGame {
             player2,
             player_states: Default::default(),
             state: AttackCruiserGameState::WaitingForPlayersReady,
-            recipients,
+            players,
             group,
         }
     }
@@ -525,6 +528,90 @@ impl AttackCruiserGame {
         })
     }
 
+    pub fn update_players(
+        &mut self,
+        sender: u32,
+        update_type: AttackCruiserPlayerStateType,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+
+        match self.player_states[player_index as usize].ready {
+            true => todo!(),
+            false => self.mark_player_ready(sender, update_type),
+        }
+    }
+
+    fn mark_player_ready(
+        &mut self,
+        sender: u32,
+        update_type: AttackCruiserPlayerStateType,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let AttackCruiserGameState::WaitingForPlayersReady = &self.state else {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Tried to mark player {sender} ready, but the game isn't waiting for readiness ({self:?})")
+            ));
+        };
+
+        Ok(vec![Broadcast::Single(
+            sender,
+            self.players
+                .iter()
+                .map(|guid| {
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserAddPlayer {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+                                stage_group_guid: self.group.stage_group_guid,
+                            },
+                            guid: player_guid(*guid),
+                            state: self.player_state_update(
+                                self.player_index(*guid)
+                                    .expect("GUID in players list is not actually a player"),
+                                update_type,
+                            ),
+                        },
+                    })
+                })
+                .collect(),
+        )])
+    }
+
+    fn update_players_once_ready(
+        &mut self,
+        sender: u32,
+        update_type: AttackCruiserPlayerStateType,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdatePlayers {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    states: self
+                        .players
+                        .iter()
+                        .map(|guid| {
+                            let player_index = self
+                                .player_index(*guid)
+                                .expect("GUID in players list is not actually a player");
+                            AttackCruiserPlayerUpdate {
+                                index: player_index.into(),
+                                state: self.player_state_update(player_index, update_type),
+                            }
+                        })
+                        .collect(),
+                },
+            })],
+        )])
+    }
+
     fn is_singleplayer(&self) -> bool {
         self.player2.is_none()
     }
@@ -539,6 +626,71 @@ impl AttackCruiserGame {
                 ProcessPacketErrorType::ConstraintViolated,
                 format!("Player {sender} sent a packet for Attack Cruiser, but they aren't one of the game's players ({self:?})")
             ))
+        }
+    }
+
+    fn player_actor_id(&self, player_index: u8) -> i32 {
+        player_index.into()
+    }
+
+    fn player_state_update(
+        &self,
+        player_index: u8,
+        update_type: AttackCruiserPlayerStateType,
+    ) -> AttackCruiserPlayerStateUpdate {
+        let player_state = &self.player_states[player_index as usize];
+
+        AttackCruiserPlayerStateUpdate {
+            unknown1: match update_type.unknown1 {
+                true => Some(AttackCruiserPlayerStateUnknown1 {
+                    player_index: player_index.into(),
+                    actor_id: self.player_actor_id(player_index),
+                    unknown_value4: 0,
+                    unknown4: "".to_string(),
+                    unknown5: "".to_string(),
+                }),
+                false => None,
+            },
+            score: match update_type.score {
+                true => Some(AttackCruiserPlayerStateScore {
+                    score: player_state.score,
+                    score_multiplier_tier_progress: player_state
+                        .score_multiplier_tier_progress
+                        .into(),
+                    score_multiplier_tier_goal: SCORE_MULTIPLIER_TIERS
+                        [player_state.score_multiplier_tier as usize]
+                        .into(),
+                    score_multiplier_tier: player_state.score_multiplier_tier.into(),
+                    pain: 0,
+                    lives: player_state.lives.into(),
+                }),
+                false => None,
+            },
+            unknown3: match update_type.unknown3 {
+                true => Some(AttackCruiserPlayerStateUnknown3 {
+                    actor_id: self.player_actor_id(player_index),
+                    unknown_value4: 0,
+                }),
+                false => None,
+            },
+            inventory: match update_type.inventory {
+                true => Some(AttackCruiserPlayerStateInventory {
+                    // TODO: handle inventory
+                    weapon_tier: 0,
+                    primary_quantity: 0,
+                    special_quantity: 0,
+                    unknown4: 0,
+                    special_icon_id: 0,
+                    special_id: 0,
+                }),
+                false => None,
+            },
+            unknown5: match update_type.unknown5 {
+                true => Some(AttackCruiserPlayerStateUnknown5 {
+                    actor_id: self.player_actor_id(player_index),
+                }),
+                false => None,
+            },
         }
     }
 }
