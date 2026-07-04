@@ -317,7 +317,7 @@ pub struct AttackCruiserGlobalConfig {
     pub health_background_internal_id: i32,
     pub enable_weapon_tiers: AttackCruiserBool,
     pub player_death_spawn_config: AttackCruiserStartupConfigReference,
-    pub hud_message: AttackCruiserHudMessageConfig,
+    pub out_of_bounds_hud_message: AttackCruiserHudMessageConfig,
 }
 
 #[derive(SerializePacket)]
@@ -745,9 +745,9 @@ impl AttackCruiserStartupConfig {
 
 pub struct AttackCruiserClientConfig {
     pub minigame_header: MinigameHeader,
-    pub config1: AttackCruiserStartupConfig,
-    pub config2: AttackCruiserStartupConfig,
-    pub config3: AttackCruiserStartupConfig,
+    pub global_config: AttackCruiserStartupConfig,
+    pub game_config: AttackCruiserStartupConfig,
+    pub camera_config: AttackCruiserStartupConfig,
     pub configs: Vec<AttackCruiserStartupConfig>,
 }
 
@@ -755,9 +755,9 @@ impl SerializePacket for AttackCruiserClientConfig {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.minigame_header.serialize(buffer);
         (self.configs.len() as u32).serialize(buffer);
-        self.config1.serialize(buffer);
-        self.config2.serialize(buffer);
-        self.config3.serialize(buffer);
+        self.global_config.serialize(buffer);
+        self.game_config.serialize(buffer);
+        self.camera_config.serialize(buffer);
         self.configs
             .iter()
             .for_each(|config| config.serialize(buffer));
