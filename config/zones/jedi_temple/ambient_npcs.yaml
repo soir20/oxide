@@ -583,7 +583,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:
@@ -625,7 +625,7 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:

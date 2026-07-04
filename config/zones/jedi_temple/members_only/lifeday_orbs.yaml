@@ -13,7 +13,7 @@ members_only:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      force_despawn: true
       tickable_procedures:
         spawn:
           weight: 300
@@ -59,7 +59,7 @@ members_only:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      force_despawn: true
       tickable_procedures:
         spawn:
           weight: 300
@@ -105,7 +105,7 @@ members_only:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      force_despawn: true
       tickable_procedures:
         spawn:
           weight: 150
@@ -161,7 +161,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -226,7 +226,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -299,7 +299,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -363,7 +363,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -431,7 +431,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -500,7 +500,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -565,7 +565,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
@@ -621,7 +621,7 @@ members_only:
         z: 0
         w: 0
       cursor: 54
-      is_spawned: false
+      force_despawn: true
       enable_interact_popup: false
       show_name: false
       one_shot_interaction:
