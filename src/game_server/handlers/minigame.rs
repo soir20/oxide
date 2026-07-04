@@ -22,6 +22,7 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
+            attack_cruiser::{AttackCruiserConfig, AttackCruiserGame},
             character::{
                 Character, MinigameStatus, MinigameWinStatus, PlayerInventory, RemovalMode,
             },
@@ -255,6 +256,7 @@ pub enum FlashMinigameType {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum MinigameType {
+    AttackCruiser(Box<AttackCruiserConfig>),
     Flash {
         game_swf_name: String,
         #[serde(default)]
@@ -432,6 +434,9 @@ impl
 
     fn index1(&self) -> SharedMinigameDataTickableIndex {
         match self.data {
+            SharedMinigameTypeData::AttackCruiser { .. } => {
+                SharedMinigameDataTickableIndex::Tickable
+            }
             SharedMinigameTypeData::FleetCommander { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
@@ -460,6 +465,9 @@ impl
 #[non_exhaustive]
 #[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
+    AttackCruiser {
+        game: Box<AttackCruiserGame>,
+    },
     FleetCommander {
         game: Box<FleetCommanderGame>,
     },
@@ -486,6 +494,14 @@ impl SharedMinigameTypeData {
         let player2 = members.get(1).cloned();
 
         match minigame_type {
+            MinigameType::AttackCruiser(config) => SharedMinigameTypeData::AttackCruiser {
+                game: Box::new(AttackCruiserGame::new(
+                    *config.to_owned(),
+                    player1,
+                    player2,
+                    group,
+                )),
+            },
             MinigameType::Flash { game_type, .. } => match game_type {
                 FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander {
                     game: Box::new(FleetCommanderGame::new(
@@ -525,6 +541,7 @@ impl SharedMinigameTypeData {
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         match self {
+            SharedMinigameTypeData::AttackCruiser { game } => game.pause_or_resume(sender, pause),
             SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
             SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
             SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause),
@@ -534,6 +551,7 @@ impl SharedMinigameTypeData {
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
         match self {
+            SharedMinigameTypeData::AttackCruiser { game } => game.tick(now),
             SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             SharedMinigameTypeData::SaberDuel { game } => game.tick(now),
@@ -547,6 +565,9 @@ impl SharedMinigameTypeData {
         minigame_status: &mut MinigameStatus,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         match self {
+            SharedMinigameTypeData::AttackCruiser { game } => {
+                game.remove_player(player, minigame_status)
+            }
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
             }
@@ -3066,6 +3087,11 @@ fn handle_request_start_active_minigame(
                     }));
 
                     match stage_config.minigame_type() {
+                        MinigameType::AttackCruiser { .. } => {
+                            if let SharedMinigameTypeData::AttackCruiser { game } = &shared_minigame_data.data {
+                                packets.append(&mut game.start(sender)?)
+                            }
+                        },
                         MinigameType::Flash { game_swf_name, .. } => {
                             packets.push(
                                 GamePacket::serialize(&TunneledPacket {
