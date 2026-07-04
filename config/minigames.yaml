@@ -3116,6 +3116,47 @@ categories:
               stage_select_map_name: ''
               short_name: ''
               stages: []
+      - guid: 1006
+        name_id: 9228
+        description_id: 9228
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1232
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 5000
+        tutorial_swf: HowtoStarDestroyer.swf
+        stage_group:
+          guid: 16
+          name_id: 9228
+          description_id: 9228
+          icon_id: 373
+          stage_icon_id: 373
+          members_only: false
+          stage_select_map_name: starDestroyer
+          stages:
+            - !Stage
+              guid: 33001
+              name_id: 7270
+              description_id: 15098
+              stage_icon_id: 379
+              start_screen_icon_id: 2091
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2245
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                !AttackCruiser
+                max_health: 100
+              zone_template_guid: 250
+              score_to_credits_expression: x / 129
       - guid: 1027
         name_id: 33128
         description_id: 6394
