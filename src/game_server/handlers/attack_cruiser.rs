@@ -60,7 +60,7 @@ pub struct AttackCruiserConfig {
     max_health: u16,
 }
 
-pub fn process_saber_duel_packet(
+pub fn process_attack_cruiser_packet(
     cursor: &mut Cursor<&[u8]>,
     sender: u32,
     game_server: &GameServer,
@@ -78,7 +78,7 @@ pub fn process_saber_duel_packet(
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::UnknownOpCode,
                     format!(
-                        "Received Saber Duel packet from unexpected game: {}, {buffer:x?}",
+                        "Received Attack Cruiser packet from unexpected game: {}, {buffer:x?}",
                         header.sub_op_code
                     ),
                 ));
@@ -103,7 +103,7 @@ pub fn process_saber_duel_packet(
                     Err(ProcessPacketError::new(
                         ProcessPacketErrorType::UnknownOpCode,
                         format!(
-                            "Unknown Saber Duel packet: {}, {buffer:x?}",
+                            "Unknown Attack Cruiser packet: {}, {buffer:x?}",
                             header.sub_op_code
                         ),
                     ))
