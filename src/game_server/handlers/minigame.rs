@@ -693,6 +693,7 @@ impl MinigameStopwatch {
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
 const GROUP_LINK_NAME: &str = "group";
+const WILDCARD_STAGE_ID: i32 = -1;
 
 #[derive(Clone, Copy, Deserialize)]
 enum DailyGameType {
@@ -2811,7 +2812,7 @@ pub fn handle_minigame_packet_write<T>(
                 ));
             };
 
-            if header.stage_guid != minigame_status.group.stage_guid {
+            if header.stage_guid != WILDCARD_STAGE_ID && header.stage_guid != minigame_status.group.stage_guid {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
