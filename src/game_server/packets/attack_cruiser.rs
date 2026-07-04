@@ -853,7 +853,7 @@ pub struct AttackCruiserPlayerStateUnknown5 {
     pub actor_id: u32,
 }
 
-pub struct AttackCruiserPlayerState {
+pub struct AttackCruiserPlayerStateUpdate {
     pub unknown1: Option<AttackCruiserPlayerStateUnknown1>,
     pub score: Option<AttackCruiserPlayerStateScore>,
     pub unknown3: Option<AttackCruiserPlayerStateUnknown3>,
@@ -861,7 +861,7 @@ pub struct AttackCruiserPlayerState {
     pub unknown5: Option<AttackCruiserPlayerStateUnknown5>,
 }
 
-impl SerializePacket for AttackCruiserPlayerState {
+impl SerializePacket for AttackCruiserPlayerStateUpdate {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let update_type = AttackCruiserPlayerStateType {
             unknown1: self.unknown1.is_some(),
@@ -898,7 +898,7 @@ impl SerializePacket for AttackCruiserPlayerState {
 pub struct AttackCruiserAddPlayer {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
-    pub state: AttackCruiserPlayerState,
+    pub state: AttackCruiserPlayerStateUpdate,
 }
 
 impl GamePacket for AttackCruiserAddPlayer {
@@ -955,7 +955,7 @@ pub struct AttackCruiserRequestUpdatePlayers {
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerUpdate {
     pub index: u32,
-    pub state: AttackCruiserPlayerState,
+    pub state: AttackCruiserPlayerStateUpdate,
 }
 
 #[derive(SerializePacket)]
