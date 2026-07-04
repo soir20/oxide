@@ -147,6 +147,10 @@ impl AttackCruiserGame {
     }
 
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+
+        //
+
         Ok(Vec::new())
     }
 
@@ -172,5 +176,22 @@ impl AttackCruiserGame {
             characters_to_remove: Vec::new(),
             end_game_for_all: false,
         })
+    }
+
+    fn is_singleplayer(&self) -> bool {
+        self.player2.is_none()
+    }
+
+    fn player_index(&self, sender: u32) -> Result<u8, ProcessPacketError> {
+        if sender == self.player1 {
+            Ok(0)
+        } else if Some(sender) == self.player2 {
+            Ok(1)
+        } else {
+            Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Player {sender} sent a packet for Attack Cruiser, but they aren't one of the game's players ({self:?})")
+            ))
+        }
     }
 }
