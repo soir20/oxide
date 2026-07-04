@@ -536,7 +536,7 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
 
         match self.player_states[player_index as usize].ready {
-            true => todo!(),
+            true => self.update_players_once_ready(sender, update_type),
             false => self.mark_player_ready(sender, update_type),
         }
     }
