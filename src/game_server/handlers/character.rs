@@ -1400,7 +1400,7 @@ impl TickableProcedure {
             (WeightedAliasIndex::new(weights), references)
         };
 
-        let procedure = TickableProcedure {
+        TickableProcedure {
             steps: config.steps,
             current_step_index: None,
             last_step_change: Instant::now(),
@@ -1408,9 +1408,7 @@ impl TickableProcedure {
             distribution: distribution.expect("Couldn't create weighted alias index"),
             next_possible_procedures,
             is_interruptible: config.is_interruptible,
-        };
-
-        procedure
+        }
     }
 
     pub fn tick(
