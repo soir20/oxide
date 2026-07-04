@@ -987,6 +987,7 @@ impl TickableStep {
             SpawnedState::Always => {
                 if !character.is_spawned() {
                     character.force_despawn = false;
+                    character.refresh_health();
                     pos_update = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         false,
@@ -1000,6 +1001,7 @@ impl TickableStep {
                 if !character.is_spawned() {
                     // Spawn the character without updating force_despawn to prevent it from being visible
                     // to players joining the room mid-step
+                    character.refresh_health();
                     pos_update = self.reselect_possible_pos(character);
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
@@ -2487,6 +2489,10 @@ pub struct CharacterStats {
 impl CharacterStats {
     pub fn is_spawned(&self) -> bool {
         !self.force_despawn && self.health > 0
+    }
+
+    pub fn refresh_health(&mut self) {
+        self.health = self.max_health;
     }
 
     pub fn add_packets(
