@@ -5054,7 +5054,7 @@ categories:
     icon_id: 5809
     sort_order: 3
     portal_entries:
-      - guid: 1006
+      - guid: 1004
         name_id: 7040
         description_id: 7041
         members_only: false
@@ -5066,7 +5066,7 @@ categories:
         is_popular: true
         is_game_of_day: false
         sort_order: 15000
-        tutorial_swf: HowtoStarDestroyer.swf
+        tutorial_swf: HowtoSaberStrike.swf
         stage_group:
           guid: 13
           name_id: 7040
@@ -5093,7 +5093,7 @@ categories:
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 11
-              zone_template_guid: 250
+              zone_template_guid: 200
               score_to_credits_expression: x / 129
               challenges:
                 # Use base level's credit ratio as a placeholder
