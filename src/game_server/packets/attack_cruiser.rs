@@ -78,7 +78,7 @@ fn hash_string(string: &str) -> u32 {
 
 #[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
-pub enum AttackCruiserConfigClass {
+pub enum AttackCruiserStartupConfigClass {
     Actor = 0x16fcdb9,
     Ai = 0xe471290c,
     AiBehavior = 0x400f509e,
@@ -120,70 +120,78 @@ pub enum AttackCruiserConfigClass {
     WeaponTierPickup = 0xab52827,
 }
 
-impl AttackCruiserConfigClass {
+impl AttackCruiserStartupConfigClass {
     pub fn name(&self) -> &'static str {
         match self {
-            AttackCruiserConfigClass::Actor => "ActorConfig",
-            AttackCruiserConfigClass::Ai => "AIConfig",
-            AttackCruiserConfigClass::AiBehavior => "AIBehaviorConfig",
-            AttackCruiserConfigClass::BasePhysics => "BasePhysicsConfig",
-            AttackCruiserConfigClass::Blaster => "BlasterConfig",
-            AttackCruiserConfigClass::BrainTimerAiBehavior => "SetBrainTimerAIBehaviorConfig",
-            AttackCruiserConfigClass::Camera => "CameraConfig",
-            AttackCruiserConfigClass::ComplexPhysics => "ComplexPhysicsConfig",
-            AttackCruiserConfigClass::Condition => "ConditionConfig",
-            AttackCruiserConfigClass::DeathSpawn => "DeathSpawnConfig",
-            AttackCruiserConfigClass::FollowTargetAiBehavior => "FollowTargetAIBehaviorConfig",
-            AttackCruiserConfigClass::Game => "GameConfig",
-            AttackCruiserConfigClass::Global => "GlobalConfig",
-            AttackCruiserConfigClass::GoToRandomTagAiBehavior => "GotoRandomTagAIBehaviorConfig",
-            AttackCruiserConfigClass::GoToTagAiBehavior => "GotoTagAIBehaviorConfig",
-            AttackCruiserConfigClass::GoToTargetAiBehavior => "GotoTargetAIBehaviorConfig",
-            AttackCruiserConfigClass::HealthPickup => "HealthPickupConfig",
-            AttackCruiserConfigClass::InventoryPickup => "InventoryPickupConfig",
-            AttackCruiserConfigClass::KillStreak => "NDConfig",
-            AttackCruiserConfigClass::LifePickup => "LifePickupConfig",
-            AttackCruiserConfigClass::LifeTimeAiBehavior => "SetLifeTimeAIBehaviorConfig",
-            AttackCruiserConfigClass::MultiCondition => "MultiConditionConfig",
-            AttackCruiserConfigClass::Path => "PathConfig",
-            AttackCruiserConfigClass::Pickup => "PickupConfig",
-            AttackCruiserConfigClass::ReturnHomeAiBehavior => "ReturnHomeAIBehaviorConfig",
-            AttackCruiserConfigClass::ScorePickup => "ScorePickupConfig",
-            AttackCruiserConfigClass::Ship => "ShipConfig",
-            AttackCruiserConfigClass::ShipBay => "ShipBayConfig",
-            AttackCruiserConfigClass::SimplePhysics => "SimplePhysicsConfig",
-            AttackCruiserConfigClass::Squadron => "SquadronConfig",
-            AttackCruiserConfigClass::TagPosition => "TagPositionConfig",
-            AttackCruiserConfigClass::TargetAiBehavior => "TargetAIBehaviorConfig",
-            AttackCruiserConfigClass::Torpedo => "TorpedoConfig",
-            AttackCruiserConfigClass::TorpedoBay => "TorpedoBayConfig",
-            AttackCruiserConfigClass::Wave => "WaveConfig",
-            AttackCruiserConfigClass::WaveTimerAiBehavior => "SetWaveTimerAIBehaviorConfig",
-            AttackCruiserConfigClass::WaveVariableAiBehavior => "SetWaveVariableAIBehaviorConfig",
-            AttackCruiserConfigClass::WeaponBay => "WeaponBayConfig",
-            AttackCruiserConfigClass::WeaponTierPickup => "WeaponTierPickupConfig",
+            AttackCruiserStartupConfigClass::Actor => "ActorConfig",
+            AttackCruiserStartupConfigClass::Ai => "AIConfig",
+            AttackCruiserStartupConfigClass::AiBehavior => "AIBehaviorConfig",
+            AttackCruiserStartupConfigClass::BasePhysics => "BasePhysicsConfig",
+            AttackCruiserStartupConfigClass::Blaster => "BlasterConfig",
+            AttackCruiserStartupConfigClass::BrainTimerAiBehavior => {
+                "SetBrainTimerAIBehaviorConfig"
+            }
+            AttackCruiserStartupConfigClass::Camera => "CameraConfig",
+            AttackCruiserStartupConfigClass::ComplexPhysics => "ComplexPhysicsConfig",
+            AttackCruiserStartupConfigClass::Condition => "ConditionConfig",
+            AttackCruiserStartupConfigClass::DeathSpawn => "DeathSpawnConfig",
+            AttackCruiserStartupConfigClass::FollowTargetAiBehavior => {
+                "FollowTargetAIBehaviorConfig"
+            }
+            AttackCruiserStartupConfigClass::Game => "GameConfig",
+            AttackCruiserStartupConfigClass::Global => "GlobalConfig",
+            AttackCruiserStartupConfigClass::GoToRandomTagAiBehavior => {
+                "GotoRandomTagAIBehaviorConfig"
+            }
+            AttackCruiserStartupConfigClass::GoToTagAiBehavior => "GotoTagAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::GoToTargetAiBehavior => "GotoTargetAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::HealthPickup => "HealthPickupConfig",
+            AttackCruiserStartupConfigClass::InventoryPickup => "InventoryPickupConfig",
+            AttackCruiserStartupConfigClass::KillStreak => "NDConfig",
+            AttackCruiserStartupConfigClass::LifePickup => "LifePickupConfig",
+            AttackCruiserStartupConfigClass::LifeTimeAiBehavior => "SetLifeTimeAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::MultiCondition => "MultiConditionConfig",
+            AttackCruiserStartupConfigClass::Path => "PathConfig",
+            AttackCruiserStartupConfigClass::Pickup => "PickupConfig",
+            AttackCruiserStartupConfigClass::ReturnHomeAiBehavior => "ReturnHomeAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::ScorePickup => "ScorePickupConfig",
+            AttackCruiserStartupConfigClass::Ship => "ShipConfig",
+            AttackCruiserStartupConfigClass::ShipBay => "ShipBayConfig",
+            AttackCruiserStartupConfigClass::SimplePhysics => "SimplePhysicsConfig",
+            AttackCruiserStartupConfigClass::Squadron => "SquadronConfig",
+            AttackCruiserStartupConfigClass::TagPosition => "TagPositionConfig",
+            AttackCruiserStartupConfigClass::TargetAiBehavior => "TargetAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::Torpedo => "TorpedoConfig",
+            AttackCruiserStartupConfigClass::TorpedoBay => "TorpedoBayConfig",
+            AttackCruiserStartupConfigClass::Wave => "WaveConfig",
+            AttackCruiserStartupConfigClass::WaveTimerAiBehavior => "SetWaveTimerAIBehaviorConfig",
+            AttackCruiserStartupConfigClass::WaveVariableAiBehavior => {
+                "SetWaveVariableAIBehaviorConfig"
+            }
+            AttackCruiserStartupConfigClass::WeaponBay => "WeaponBayConfig",
+            AttackCruiserStartupConfigClass::WeaponTierPickup => "WeaponTierPickupConfig",
         }
     }
 }
 
-pub struct AttackCruiserConfigReference {
-    pub class: AttackCruiserConfigClass,
+pub struct AttackCruiserStartupConfigReference {
+    pub class: AttackCruiserStartupConfigClass,
     pub name: String,
 }
 
-impl SerializePacket for AttackCruiserConfigReference {
+impl SerializePacket for AttackCruiserStartupConfigReference {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.class.name().serialize(buffer);
         self.name.serialize(buffer);
     }
 }
 
-pub struct AttackCruiserConfigHash {
+pub struct AttackCruiserStartupConfigHash {
     pub name: String,
-    pub class: AttackCruiserConfigClass,
+    pub class: AttackCruiserStartupConfigClass,
 }
 
-impl SerializePacket for AttackCruiserConfigHash {
+impl SerializePacket for AttackCruiserStartupConfigHash {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         hash_string(&self.name).serialize(buffer);
         self.class.serialize(buffer);
@@ -222,9 +230,9 @@ pub struct AttackCruiserAiBehaviorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserAiStatesConfig {
-    pub enter_condition_config: AttackCruiserConfigReference,
-    pub exit_condition_config: AttackCruiserConfigReference,
-    pub behavior_config: AttackCruiserConfigReference,
+    pub enter_condition_config: AttackCruiserStartupConfigReference,
+    pub exit_condition_config: AttackCruiserStartupConfigReference,
+    pub behavior_config: AttackCruiserStartupConfigReference,
     pub life_time_seconds: f32,
     pub priority: u32,
 }
@@ -236,8 +244,8 @@ pub struct AttackCruiserAiConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserSpawnConfig {
-    pub actor_config: AttackCruiserConfigReference,
-    pub ai_config: AttackCruiserConfigReference,
+    pub actor_config: AttackCruiserStartupConfigReference,
+    pub ai_config: AttackCruiserStartupConfigReference,
     pub chance: f32,
     pub forward_velocity: f32,
     pub count: u32,
@@ -308,7 +316,7 @@ pub struct AttackCruiserGlobalConfig {
     pub health_foreground_internal_id: i32,
     pub health_background_internal_id: i32,
     pub enable_weapon_tiers: AttackCruiserBool,
-    pub player_death_spawn_config: AttackCruiserConfigReference,
+    pub player_death_spawn_config: AttackCruiserStartupConfigReference,
     pub hud_message: AttackCruiserHudMessageConfig,
 }
 
@@ -345,19 +353,19 @@ pub struct AttackCruiserTorpedoConfig {
     pub linger_seconds: f32,
     pub splash_damage: i32,
     pub splash_stun_seconds: f32,
-    pub death_spawn_config: AttackCruiserConfigReference,
+    pub death_spawn_config: AttackCruiserStartupConfigReference,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserTorpedoBayConfig {
     pub weapon_bay_config: AttackCruiserWeaponBayConfig,
-    pub torpedo_config: AttackCruiserConfigReference,
-    pub ai_config: AttackCruiserConfigReference,
+    pub torpedo_config: AttackCruiserStartupConfigReference,
+    pub ai_config: AttackCruiserStartupConfigReference,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
-    pub weapon_bay_config: AttackCruiserConfigReference,
+    pub weapon_bay_config: AttackCruiserStartupConfigReference,
     pub group: u32,
     pub tier: i32,
     pub special_weapon: AttackCruiserBool,
@@ -424,8 +432,8 @@ pub struct AttackCruiserEventActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerConfig {
-    pub ship_config: AttackCruiserConfigReference,
-    pub camera_config: AttackCruiserConfigReference,
+    pub ship_config: AttackCruiserStartupConfigReference,
+    pub camera_config: AttackCruiserStartupConfigReference,
     pub lives: u32,
     pub spawn_pos: Pos3,
     pub spawn_heading: f32,
@@ -533,7 +541,7 @@ pub struct AttackCruiserActorConfig {
     pub despawn_effect_id: u32,
     pub explode_offset: f32,
     pub collision_asset_name: String,
-    pub physics_config: AttackCruiserConfigReference,
+    pub physics_config: AttackCruiserStartupConfigReference,
     pub max_health: u32,
     pub explosive_collision: AttackCruiserBool,
     pub collision_damage: u32,
@@ -549,16 +557,16 @@ pub struct AttackCruiserActorConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorPoolConfig {
-    pub actor_config: AttackCruiserConfigReference,
+    pub actor_config: AttackCruiserStartupConfigReference,
     pub size: u32,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveActorConfig {
-    pub actor_config: AttackCruiserConfigReference,
-    pub ai_config: AttackCruiserConfigReference,
-    pub squadron_config: AttackCruiserConfigReference,
-    pub spawn_condition_config: AttackCruiserConfigReference,
+    pub actor_config: AttackCruiserStartupConfigReference,
+    pub ai_config: AttackCruiserStartupConfigReference,
+    pub squadron_config: AttackCruiserStartupConfigReference,
+    pub spawn_condition_config: AttackCruiserStartupConfigReference,
     pub launch_time_seconds: f32,
     pub life_time_seconds: f32,
     pub spawn_pos: Pos3,
@@ -566,13 +574,13 @@ pub struct AttackCruiserWaveActorConfig {
     pub spawn_speed: f32,
     pub is_hidden: AttackCruiserBool,
     pub has_boss: AttackCruiserBool,
-    pub death_spawn_condition_config: AttackCruiserConfigReference,
-    pub death_spawn_config: AttackCruiserConfigReference,
+    pub death_spawn_condition_config: AttackCruiserStartupConfigReference,
+    pub death_spawn_config: AttackCruiserStartupConfigReference,
 }
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveHudMessageConfig {
-    pub display_condition_config: AttackCruiserConfigReference,
+    pub display_condition_config: AttackCruiserStartupConfigReference,
     pub hud_message_config: AttackCruiserHudMessageConfig,
 }
 
@@ -584,9 +592,9 @@ pub struct AttackCruiserWaveConfig {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserGameWaveConfig {
-    pub wave_config: AttackCruiserConfigReference,
-    pub launch_condition_config: AttackCruiserConfigReference,
-    pub complete_condition_config: AttackCruiserConfigReference,
+    pub wave_config: AttackCruiserStartupConfigReference,
+    pub launch_condition_config: AttackCruiserStartupConfigReference,
+    pub complete_condition_config: AttackCruiserStartupConfigReference,
     pub remove_actors_on_completion: AttackCruiserBool,
 }
 
@@ -604,9 +612,9 @@ pub struct AttackCruiserGameConfig {
     pub encounter_id: i32,
     pub sound_id: i32,
     pub challenge_mode: AttackCruiserChallengeMode,
-    pub global_config: AttackCruiserConfigReference,
-    pub end_condition_config: AttackCruiserConfigReference,
-    pub win_condition_config: AttackCruiserConfigReference,
+    pub global_config: AttackCruiserStartupConfigReference,
+    pub end_condition_config: AttackCruiserStartupConfigReference,
+    pub win_condition_config: AttackCruiserStartupConfigReference,
     pub target_value1: u32,
     pub target_value2: u32,
     pub playfield_height: f32,
@@ -631,7 +639,7 @@ pub struct AttackCruiserGameConfig {
     pub waves: AttackCruiserVec<AttackCruiserGameWaveConfig>,
 }
 
-pub enum AttackCruiserConfigDefinition {
+pub enum AttackCruiserStartupConfigDefinition {
     Actor(Box<AttackCruiserActorConfig>),
     Blaster(Box<AttackCruiserBlasterConfig>),
     Camera(Box<AttackCruiserCameraConfig>),
@@ -646,53 +654,69 @@ pub enum AttackCruiserConfigDefinition {
     WeaponBay(Box<AttackCruiserWeaponBayConfig>),
 }
 
-impl AttackCruiserConfigDefinition {
-    pub fn class(&self) -> AttackCruiserConfigClass {
+impl AttackCruiserStartupConfigDefinition {
+    pub fn class(&self) -> AttackCruiserStartupConfigClass {
         match self {
-            AttackCruiserConfigDefinition::Actor(_) => AttackCruiserConfigClass::Actor,
-            AttackCruiserConfigDefinition::Blaster(_) => AttackCruiserConfigClass::Blaster,
-            AttackCruiserConfigDefinition::Camera(_) => AttackCruiserConfigClass::Camera,
-            AttackCruiserConfigDefinition::ComplexPhysics(_) => {
-                AttackCruiserConfigClass::ComplexPhysics
+            AttackCruiserStartupConfigDefinition::Actor(_) => {
+                AttackCruiserStartupConfigClass::Actor
             }
-            AttackCruiserConfigDefinition::Condition(_) => AttackCruiserConfigClass::Condition,
-            AttackCruiserConfigDefinition::DeathSpawn(_) => AttackCruiserConfigClass::DeathSpawn,
-            AttackCruiserConfigDefinition::Game(_) => AttackCruiserConfigClass::Game,
-            AttackCruiserConfigDefinition::Global(_) => AttackCruiserConfigClass::Global,
-            AttackCruiserConfigDefinition::Ship(_) => AttackCruiserConfigClass::Ship,
-            AttackCruiserConfigDefinition::SimplePhysics(_) => {
-                AttackCruiserConfigClass::SimplePhysics
+            AttackCruiserStartupConfigDefinition::Blaster(_) => {
+                AttackCruiserStartupConfigClass::Blaster
             }
-            AttackCruiserConfigDefinition::Wave(_) => AttackCruiserConfigClass::Wave,
-            AttackCruiserConfigDefinition::WeaponBay(_) => AttackCruiserConfigClass::WeaponBay,
+            AttackCruiserStartupConfigDefinition::Camera(_) => {
+                AttackCruiserStartupConfigClass::Camera
+            }
+            AttackCruiserStartupConfigDefinition::ComplexPhysics(_) => {
+                AttackCruiserStartupConfigClass::ComplexPhysics
+            }
+            AttackCruiserStartupConfigDefinition::Condition(_) => {
+                AttackCruiserStartupConfigClass::Condition
+            }
+            AttackCruiserStartupConfigDefinition::DeathSpawn(_) => {
+                AttackCruiserStartupConfigClass::DeathSpawn
+            }
+            AttackCruiserStartupConfigDefinition::Game(_) => AttackCruiserStartupConfigClass::Game,
+            AttackCruiserStartupConfigDefinition::Global(_) => {
+                AttackCruiserStartupConfigClass::Global
+            }
+            AttackCruiserStartupConfigDefinition::Ship(_) => AttackCruiserStartupConfigClass::Ship,
+            AttackCruiserStartupConfigDefinition::SimplePhysics(_) => {
+                AttackCruiserStartupConfigClass::SimplePhysics
+            }
+            AttackCruiserStartupConfigDefinition::Wave(_) => AttackCruiserStartupConfigClass::Wave,
+            AttackCruiserStartupConfigDefinition::WeaponBay(_) => {
+                AttackCruiserStartupConfigClass::WeaponBay
+            }
         }
     }
 }
 
-impl SerializePacket for AttackCruiserConfigDefinition {
+impl SerializePacket for AttackCruiserStartupConfigDefinition {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         match self {
-            AttackCruiserConfigDefinition::Actor(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Blaster(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Camera(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::ComplexPhysics(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Condition(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::DeathSpawn(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Game(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Global(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Ship(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::SimplePhysics(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::Wave(config) => config.serialize(buffer),
-            AttackCruiserConfigDefinition::WeaponBay(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Actor(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Blaster(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Camera(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::ComplexPhysics(config) => {
+                config.serialize(buffer)
+            }
+            AttackCruiserStartupConfigDefinition::Condition(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::DeathSpawn(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Game(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Global(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Ship(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::SimplePhysics(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Wave(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::WeaponBay(config) => config.serialize(buffer),
         }
     }
 }
 
-pub struct AttackCruiserConfigName {
-    pub hash: AttackCruiserConfigHash,
+pub struct AttackCruiserStartupConfigName {
+    pub hash: AttackCruiserStartupConfigHash,
 }
 
-impl SerializePacket for AttackCruiserConfigName {
+impl SerializePacket for AttackCruiserStartupConfigName {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         self.hash.serialize(buffer);
         self.hash.name.serialize(buffer);
@@ -700,16 +724,16 @@ impl SerializePacket for AttackCruiserConfigName {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserConfig {
-    name: AttackCruiserConfigName,
-    definition: AttackCruiserConfigDefinition,
+pub struct AttackCruiserStartupConfig {
+    name: AttackCruiserStartupConfigName,
+    definition: AttackCruiserStartupConfigDefinition,
 }
 
-impl AttackCruiserConfig {
-    pub fn new(name: String, definition: AttackCruiserConfigDefinition) -> Self {
-        AttackCruiserConfig {
-            name: AttackCruiserConfigName {
-                hash: AttackCruiserConfigHash {
+impl AttackCruiserStartupConfig {
+    pub fn new(name: String, definition: AttackCruiserStartupConfigDefinition) -> Self {
+        AttackCruiserStartupConfig {
+            name: AttackCruiserStartupConfigName {
+                hash: AttackCruiserStartupConfigHash {
                     name,
                     class: definition.class(),
                 },
@@ -721,10 +745,10 @@ impl AttackCruiserConfig {
 
 pub struct AttackCruiserClientConfig {
     pub minigame_header: MinigameHeader,
-    pub config1: AttackCruiserConfig,
-    pub config2: AttackCruiserConfig,
-    pub config3: AttackCruiserConfig,
-    pub configs: Vec<AttackCruiserConfig>,
+    pub config1: AttackCruiserStartupConfig,
+    pub config2: AttackCruiserStartupConfig,
+    pub config3: AttackCruiserStartupConfig,
+    pub configs: Vec<AttackCruiserStartupConfig>,
 }
 
 impl SerializePacket for AttackCruiserClientConfig {
@@ -886,9 +910,9 @@ impl GamePacket for AttackCruiserAddPlayer {
 pub struct AttackCruiserConfigPlayer {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
-    pub config1: Option<AttackCruiserConfig>,
-    pub config2: Option<AttackCruiserConfig>,
-    pub config3: Option<AttackCruiserConfig>,
+    pub config1: Option<AttackCruiserStartupConfig>,
+    pub config2: Option<AttackCruiserStartupConfig>,
+    pub config3: Option<AttackCruiserStartupConfig>,
 }
 
 impl SerializePacket for AttackCruiserConfigPlayer {
@@ -1156,7 +1180,7 @@ pub struct AttackCruiserAddActor {
     pub minigame_header: MinigameHeader,
     pub actor_id: u32,
     pub hostility: AttackCruiserHostility,
-    pub actor_config: AttackCruiserConfigHash,
+    pub actor_config: AttackCruiserStartupConfigHash,
     pub pos: Pos3,
     pub speed: Pos3,
     pub heading: f32,
