@@ -1013,7 +1013,7 @@ impl TickableStep {
             }
             SpawnedState::Despawn => {
                 // Skip checking if the character is spawned before despawning it and instead ensure
-                // force_despawn is false as OnFirstStepTick doesn't maintain this field
+                // force_despawn is true as OnFirstStepTick doesn't maintain this field
                 character.force_despawn = true;
                 packets_for_all.extend(character.remove_packets(self.removal_mode));
             }
