@@ -784,7 +784,7 @@ impl GamePacket for AttackCruiserUpdateGameState {
 
 #[derive(Clone, Copy)]
 pub struct AttackCruiserPlayerStateType {
-    pub unknown1: bool,
+    pub index: bool,
     pub score: bool,
     pub unknown3: bool,
     pub inventory: bool,
@@ -794,7 +794,7 @@ pub struct AttackCruiserPlayerStateType {
 impl SerializePacket for AttackCruiserPlayerStateType {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let mut value = 0;
-        if self.unknown1 {
+        if self.index {
             value |= 0b1;
         }
         if self.score {
@@ -824,7 +824,7 @@ impl DeserializePacket for AttackCruiserPlayerStateType {
         let state_type = i32::deserialize(cursor)?;
 
         Ok(AttackCruiserPlayerStateType {
-            unknown1: state_type & 0b1 != 0,
+            index: state_type & 0b1 != 0,
             score: state_type & 0b10 != 0,
             unknown3: state_type & 0b100 != 0,
             inventory: state_type & 0b1000 != 0,
@@ -834,7 +834,7 @@ impl DeserializePacket for AttackCruiserPlayerStateType {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerStateUnknown1 {
+pub struct AttackCruiserPlayerStateIndex {
     pub player_index: i32,
     pub actor_id: i32,
     pub unknown_value4: i32,
@@ -874,7 +874,7 @@ pub struct AttackCruiserPlayerStateUnknown5 {
 }
 
 pub struct AttackCruiserPlayerStateUpdate {
-    pub unknown1: Option<AttackCruiserPlayerStateUnknown1>,
+    pub index: Option<AttackCruiserPlayerStateIndex>,
     pub score: Option<AttackCruiserPlayerStateScore>,
     pub unknown3: Option<AttackCruiserPlayerStateUnknown3>,
     pub inventory: Option<AttackCruiserPlayerStateInventory>,
@@ -884,7 +884,7 @@ pub struct AttackCruiserPlayerStateUpdate {
 impl SerializePacket for AttackCruiserPlayerStateUpdate {
     fn serialize(&self, buffer: &mut Vec<u8>) {
         let update_type = AttackCruiserPlayerStateType {
-            unknown1: self.unknown1.is_some(),
+            index: self.index.is_some(),
             score: self.score.is_some(),
             unknown3: self.unknown3.is_some(),
             inventory: self.inventory.is_some(),
@@ -892,7 +892,7 @@ impl SerializePacket for AttackCruiserPlayerStateUpdate {
         };
         update_type.serialize(buffer);
 
-        if let Some(unknown1) = &self.unknown1 {
+        if let Some(unknown1) = &self.index {
             unknown1.serialize(buffer);
         }
 
@@ -968,7 +968,6 @@ impl GamePacket for AttackCruiserConfigPlayer {
 
 #[derive(DeserializePacket)]
 pub struct AttackCruiserRequestUpdatePlayers {
-    pub minigame_header: MinigameHeader,
     pub update_type: AttackCruiserPlayerStateType,
 }
 
