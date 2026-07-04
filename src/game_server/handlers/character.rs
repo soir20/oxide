@@ -346,7 +346,6 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
-    pub removal_mode: RemovalMode,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -704,8 +703,6 @@ pub struct OneShotInteractionConfig {
     #[serde(default)]
     pub hud_message: HudMessageType,
     #[serde(default)]
-    pub removal_mode: RemovalMode,
-    #[serde(default)]
     pub despawn_npc: bool,
     pub duration_millis: u64,
 }
@@ -720,7 +717,6 @@ pub struct OneShotInteractionTemplate {
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
     pub hud_message: HudMessageType,
-    pub removal_mode: RemovalMode,
     pub despawn_npc: bool,
     pub duration_millis: u64,
 }
@@ -754,7 +750,6 @@ impl OneShotInteractionTemplate {
             animation_delay_seconds: config.animation_delay_seconds,
             composite_effect_id: config.composite_effect_id,
             composite_effect_delay_millis: config.composite_effect_delay_millis,
-            removal_mode: config.removal_mode,
             despawn_npc: config.despawn_npc,
             duration_millis: config.duration_millis,
         }
@@ -774,7 +769,7 @@ impl OneShotInteractionTemplate {
 
         if self.despawn_npc {
             character.force_despawn = true;
-            packets_for_all.extend(character.remove_packets(self.removal_mode));
+            packets_for_all.extend(character.remove_packets(character.removal_mode));
         }
 
         if let Some(animation_id) = self.one_shot_animation_id {
@@ -942,8 +937,6 @@ pub struct TickableStep {
     #[serde(default)]
     pub script: ScriptType,
     #[serde(default)]
-    pub removal_mode: RemovalMode,
-    #[serde(default)]
     pub spawned_state: SpawnedState,
     #[serde(default)]
     pub cursor: CursorUpdate,
@@ -1015,7 +1008,7 @@ impl TickableStep {
                 // Skip checking if the character is spawned before despawning it and instead ensure
                 // force_despawn is true as OnFirstStepTick doesn't maintain this field
                 character.force_despawn = true;
-                packets_for_all.extend(character.remove_packets(self.removal_mode));
+                packets_for_all.extend(character.remove_packets(character.removal_mode));
             }
             SpawnedState::Keep => {}
         }
@@ -1417,8 +1410,6 @@ impl TickableProcedure {
             is_interruptible: config.is_interruptible,
         };
 
-        procedure.panic_if_removal_exceeds_duration();
-
         procedure
     }
 
@@ -1537,28 +1528,6 @@ impl TickableProcedure {
 
     pub fn is_interruptible(&self) -> bool {
         self.is_interruptible
-    }
-
-    fn panic_if_removal_exceeds_duration(&self) {
-        for step in &self.steps {
-            if let RemovalMode::Graceful {
-                removal_delay_millis,
-                removal_effect_delay_millis,
-                fade_duration_millis,
-                ..
-            } = step.removal_mode
-            {
-                let total_removal_time =
-                    removal_delay_millis + removal_effect_delay_millis + fade_duration_millis;
-
-                if total_removal_time > step.min_duration_millis as u32 {
-                    panic!(
-                        "(Removal delay: {}) + (Effect Delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
-                        removal_delay_millis, removal_effect_delay_millis, fade_duration_millis, step.min_duration_millis
-                    );
-                }
-            }
-        }
     }
 }
 
@@ -2147,6 +2116,7 @@ pub struct BaseNpcTemplate {
     pub cursor: Option<u8>,
     pub health: u16,
     pub max_health: u16,
+    pub removal_mode: RemovalMode,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
@@ -2178,7 +2148,6 @@ pub struct BaseNpcTemplate {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
-    pub removal_mode: RemovalMode,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -2244,6 +2213,7 @@ impl BaseNpcTemplate {
             cursor: config.cursor,
             health: config.health,
             max_health: config.max_health.unwrap_or(config.health),
+            removal_mode: config.removal_mode,
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
@@ -2272,7 +2242,6 @@ impl BaseNpcTemplate {
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
-            removal_mode: config.removal_mode,
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
@@ -2341,6 +2310,7 @@ impl BaseNpcTemplate {
                 threat_table: self.enemy_prioritization.clone().into(),
                 health: self.health,
                 max_health: self.max_health,
+                removal_mode: self.removal_mode,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: self.navmesh.clone(),
                 ability_height: self.ability_height,
@@ -2376,7 +2346,6 @@ impl BaseNpcTemplate {
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
-            removal_mode: self.removal_mode,
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
@@ -2482,6 +2451,7 @@ pub struct CharacterStats {
     pub threat_table: ThreatTable,
     pub health: u16,
     pub max_health: u16,
+    pub removal_mode: RemovalMode,
     pub composite_effect_tags: BTreeMap<u32, u32>,
     pub navmesh: Option<String>,
 }
@@ -2750,6 +2720,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: u16::MAX,
                 max_health: u16::MAX,
+                removal_mode: RemovalMode::default(),
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
@@ -2821,6 +2792,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: u16::MAX,
                 max_health: u16::MAX,
+                removal_mode: RemovalMode::default(),
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
