@@ -43,7 +43,7 @@ use crate::game_server::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 struct AttackCruiserPlayerState {
     ready: bool,
     pub score: i32,
@@ -54,9 +54,9 @@ struct AttackCruiserPlayerState {
 }
 
 impl AttackCruiserPlayerState {
-    pub fn new(lives: u8, health: u16) -> Self {
+    pub fn new(lives: u8, health: u16, ready: bool) -> Self {
         AttackCruiserPlayerState {
-            ready: false,
+            ready,
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -76,6 +76,7 @@ enum AttackCruiserGameState {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
+    lives: u8,
     max_health: u16,
 }
 
@@ -160,13 +161,16 @@ impl AttackCruiserGame {
             players.push(player2);
         }
         AttackCruiserGame {
-            config,
             player1,
             player2,
-            player_states: Default::default(),
+            player_states: [
+                AttackCruiserPlayerState::new(config.lives, config.max_health, false),
+                AttackCruiserPlayerState::new(config.lives, config.max_health, player2.is_none()),
+            ],
             state: AttackCruiserGameState::WaitingForPlayersReady,
             players,
             group,
+            config,
         }
     }
 
