@@ -782,7 +782,7 @@ impl GamePacket for AttackCruiserUpdateGameState {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Debug, Default)]
 pub struct AttackCruiserPlayerStateType {
     pub index: bool,
     pub score: bool,
