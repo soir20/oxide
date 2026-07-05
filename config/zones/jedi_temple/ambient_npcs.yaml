@@ -585,7 +585,7 @@ jedi_temple:
         w: 0
       removal_mode: &starfighter_removal_config
         !Graceful
-          enable_death_animation: false
+        enable_death_animation: false
       force_despawn: true
       enable_gravity: false
       tickable_procedures:
