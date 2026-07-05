@@ -35,6 +35,7 @@ use crate::game_server::{
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
+        ui::ExecuteScriptWithStringParams,
         GamePacket, Pos3,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
@@ -545,7 +546,16 @@ impl AttackCruiserGame {
 
         match (already_ready, has_ready_update_type) {
             (false, true) => {
-                let mut broadcasts = Vec::new();
+                let mut broadcasts = vec![Broadcast::Single(
+                    sender,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithStringParams {
+                            script_name: "NotificationHandler.hideNotification".to_string(),
+                            params: vec!["ACClickToStart".to_string()],
+                        },
+                    })],
+                )];
 
                 if !self.is_singleplayer() {
                     let other_player_index = (player_index + 1) % 2;
