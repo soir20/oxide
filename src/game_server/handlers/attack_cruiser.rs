@@ -578,30 +578,30 @@ impl AttackCruiserGame {
         };
 
         Ok(vec![
-            // GamePacket::serialize(&TunneledPacket {
-            //     unknown1: true,
-            //     inner: AttackCruiserAddActor {
-            //         minigame_header: MinigameHeader {
-            //             stage_guid: self.group.stage_guid,
-            //             sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
-            //             stage_group_guid: self.group.stage_group_guid,
-            //         },
-            //         actor_id: self.player_actor_id(player_index),
-            //         hostility: AttackCruiserHostility::Friendly,
-            //         actor_config: AttackCruiserStartupConfigHash {
-            //             name: "ship config value".to_string(),
-            //             class: AttackCruiserStartupConfigClass::Ship,
-            //         },
-            //         pos: Pos3 {
-            //             x: 3.9,
-            //             y: 1000.0,
-            //             z: -1999.0,
-            //         },
-            //         speed: Pos3::default(),
-            //         heading: 0.0,
-            //         unknown7: 0,
-            //     },
-            // }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserAddActor {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddActor as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    actor_id: self.player_actor_id(player_index),
+                    hostility: AttackCruiserHostility::Friendly,
+                    actor_config: AttackCruiserStartupConfigHash {
+                        name: "ship config value".to_string(),
+                        class: AttackCruiserStartupConfigClass::Ship,
+                    },
+                    pos: Pos3 {
+                        x: 3.9,
+                        y: 1000.0,
+                        z: -1999.0,
+                    },
+                    speed: Pos3::default(),
+                    heading: 0.0,
+                    unknown7: 0,
+                },
+            }),
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserAddPlayer {
