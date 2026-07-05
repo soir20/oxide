@@ -13,9 +13,10 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      removal_mode: &orb_removal_config !Graceful
-        fade_duration_millis: 1000
-        removal_delay_millis: 0
+      removal_mode: &orb_removal_config
+        !Graceful
+          fade_duration_millis: 1000
+          removal_delay_millis: 0
       force_despawn: true
       tickable_procedures:
         spawn:
