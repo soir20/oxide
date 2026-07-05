@@ -18,20 +18,21 @@ use crate::game_server::{
         attack_cruiser::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
             AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
-            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserCameraConfig,
-            AttackCruiserChallengeMode, AttackCruiserClientConfig, AttackCruiserClientState,
-            AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
-            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
+            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
+            AttackCruiserCameraConfig, AttackCruiserChallengeMode, AttackCruiserClientConfig,
+            AttackCruiserClientState, AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
+            AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
+            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
+            AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+            AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
             AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
             AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
             AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
-            AttackCruiserPlayerUpdate, AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig,
-            AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-            AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-            AttackCruiserStartupConfigReference, AttackCruiserUpdateClientState,
-            AttackCruiserUpdatePlayers, AttackCruiserVec,
+            AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
+            AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
+            AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+            AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
+            AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers, AttackCruiserVec,
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
@@ -677,20 +678,52 @@ impl AttackCruiserGame {
 
     fn start_first_wave(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.state = AttackCruiserGameState::WaveActive;
-        Ok(vec![Broadcast::Multi(
-            self.players.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserUpdateClientState {
+                minigame_header: MinigameHeader {
+                    stage_guid: self.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                    stage_group_guid: self.group.stage_group_guid,
+                },
+                client_state: AttackCruiserClientState::WaveActive,
+            },
+        })];
+
+        for (player_index, guid) in self.players.iter().enumerate() {
+            packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: AttackCruiserUpdateClientState {
+                inner: AttackCruiserQueueCommand {
                     minigame_header: MinigameHeader {
                         stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    client_state: AttackCruiserClientState::WaveActive,
+                    actor_id: self.player_actor_id(player_index as u8),
+                    command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
+                        guid: player_guid(*guid),
+                        value: true,
+                    }),
                 },
-            })],
-        )])
+            }));
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserQueueCommand {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    actor_id: self.player_actor_id(player_index as u8),
+                    command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
+                        guid: player_guid(*guid),
+                        value: true,
+                    }),
+                },
+            }));
+        }
+
+        Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
     }
 
     fn is_singleplayer(&self) -> bool {
