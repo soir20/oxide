@@ -782,13 +782,25 @@ impl GamePacket for AttackCruiserUpdateGameState {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(Clone, Copy, Debug, Default)]
+#[derive(Clone, Copy, Debug)]
 pub struct AttackCruiserPlayerStateType {
     pub index: bool,
     pub score: bool,
     pub unknown3: bool,
     pub inventory: bool,
     pub unknown5: bool,
+}
+
+impl Default for AttackCruiserPlayerStateType {
+    fn default() -> Self {
+        Self {
+            index: true,
+            score: false,
+            unknown3: false,
+            inventory: false,
+            unknown5: false,
+        }
+    }
 }
 
 impl SerializePacket for AttackCruiserPlayerStateType {

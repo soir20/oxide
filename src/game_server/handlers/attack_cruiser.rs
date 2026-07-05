@@ -17,18 +17,19 @@ use crate::game_server::{
     packets::{
         attack_cruiser::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
-            AttackCruiserActorPoolConfig, AttackCruiserAddPlayer, AttackCruiserBasePhysicsConfig,
-            AttackCruiserBool, AttackCruiserCameraConfig, AttackCruiserChallengeMode,
-            AttackCruiserClientConfig, AttackCruiserComplexPhysicsConfig,
-            AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-            AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
-            AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
-            AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
-            AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUnknown5,
-            AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
-            AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
-            AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+            AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
+            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserCameraConfig,
+            AttackCruiserChallengeMode, AttackCruiserClientConfig,
+            AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
+            AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+            AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
+            AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
+            AttackCruiserPlayerUpdate, AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig,
+            AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+            AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
             AttackCruiserStartupConfigReference, AttackCruiserUpdateGameState,
             AttackCruiserUpdatePlayers, AttackCruiserVec,
         },
@@ -576,18 +577,44 @@ impl AttackCruiserGame {
             ));
         };
 
-        Ok(vec![GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserAddPlayer {
-                minigame_header: MinigameHeader {
-                    stage_guid: self.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
-                    stage_group_guid: self.group.stage_group_guid,
+        Ok(vec![
+            // GamePacket::serialize(&TunneledPacket {
+            //     unknown1: true,
+            //     inner: AttackCruiserAddActor {
+            //         minigame_header: MinigameHeader {
+            //             stage_guid: self.group.stage_guid,
+            //             sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+            //             stage_group_guid: self.group.stage_group_guid,
+            //         },
+            //         actor_id: self.player_actor_id(player_index),
+            //         hostility: AttackCruiserHostility::Friendly,
+            //         actor_config: AttackCruiserStartupConfigHash {
+            //             name: "ship config value".to_string(),
+            //             class: AttackCruiserStartupConfigClass::Ship,
+            //         },
+            //         pos: Pos3 {
+            //             x: 3.9,
+            //             y: 1000.0,
+            //             z: -1999.0,
+            //         },
+            //         speed: Pos3::default(),
+            //         heading: 0.0,
+            //         unknown7: 0,
+            //     },
+            // }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserAddPlayer {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    guid: player_guid(self.players[player_index as usize]),
+                    state: self.player_state_update(player_index, update_type),
                 },
-                guid: player_guid(self.players[player_index as usize]),
-                state: self.player_state_update(player_index, update_type),
-            },
-        })])
+            }),
+        ])
     }
 
     fn update_client_players_once_ready(
@@ -641,7 +668,7 @@ impl AttackCruiserGame {
     }
 
     fn player_actor_id(&self, player_index: u8) -> i32 {
-        player_index.into()
+        (player_index + 1).into()
     }
 
     fn player_state_update(
@@ -654,7 +681,7 @@ impl AttackCruiserGame {
         AttackCruiserPlayerStateUpdate {
             index: match update_type.index {
                 true => Some(AttackCruiserPlayerStateIndex {
-                    player_index: player_index.into(),
+                    player_index: (player_index + 1).into(),
                     actor_id: self.player_actor_id(player_index),
                     unknown_value4: 0,
                     unknown4: "".to_string(),
