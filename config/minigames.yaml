@@ -3154,6 +3154,7 @@ categories:
               short_name: stage03
               minigame_type:
                 !AttackCruiser
+                lives: 3
                 max_health: 100
               zone_template_guid: 250
               score_to_credits_expression: x / 129
