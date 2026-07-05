@@ -619,7 +619,10 @@ impl AttackCruiserGame {
                         class: AttackCruiserStartupConfigClass::Ship,
                     },
                     pos: Pos3 {
-                        x: 3.9,
+                        x: match player_index == 0 {
+                            true => 3.9,
+                            false => 203.9,
+                        },
                         y: 1000.0,
                         z: -1999.0,
                     },
