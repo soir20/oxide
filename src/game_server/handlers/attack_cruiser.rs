@@ -19,7 +19,7 @@ use crate::game_server::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
             AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
             AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserCameraConfig,
-            AttackCruiserChallengeMode, AttackCruiserClientConfig,
+            AttackCruiserChallengeMode, AttackCruiserClientConfig, AttackCruiserClientState,
             AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
             AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
             AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
@@ -30,7 +30,7 @@ use crate::game_server::{
             AttackCruiserPlayerUpdate, AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig,
             AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
             AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-            AttackCruiserStartupConfigReference, AttackCruiserUpdateGameState,
+            AttackCruiserStartupConfigReference, AttackCruiserUpdateClientState,
             AttackCruiserUpdatePlayers, AttackCruiserVec,
         },
         minigame::MinigameHeader,
@@ -45,7 +45,7 @@ const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayerState {
-    ready: bool,
+    pub ready: bool,
     pub score: i32,
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
@@ -501,13 +501,13 @@ impl AttackCruiserGame {
         );
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
-            inner: AttackCruiserUpdateGameState {
+            inner: AttackCruiserUpdateClientState {
                 minigame_header: MinigameHeader {
                     stage_guid: self.group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::UpdateGameState as i32,
+                    sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
                     stage_group_guid: self.group.stage_group_guid,
                 },
-                game_state: 3,
+                client_state: AttackCruiserClientState::Intro,
             },
         }));
 
@@ -548,7 +548,7 @@ impl AttackCruiserGame {
         let already_ready = self.player_states[player_index as usize].ready;
         let has_ready_update_type = update_type.score;
 
-        match (already_ready, has_ready_update_type) {
+        let mut broadcasts = match (already_ready, has_ready_update_type) {
             (false, true) => {
                 let mut broadcasts = vec![Broadcast::Single(
                     sender,
@@ -576,7 +576,18 @@ impl AttackCruiserGame {
             }
             (true, _) => self.update_client_players_once_ready(sender, update_type),
             _ => Ok(Vec::new()),
+        }?;
+
+        if self
+            .player_states
+            .iter()
+            .all(|player_state| player_state.ready)
+            && matches!(self.state, AttackCruiserGameState::WaitingForPlayersReady)
+        {
+            broadcasts.append(&mut self.start_first_wave()?);
         }
+
+        Ok(broadcasts)
     }
 
     fn add_player_to_client(
@@ -659,6 +670,24 @@ impl AttackCruiserGame {
                             }
                         })
                         .collect(),
+                },
+            })],
+        )])
+    }
+
+    fn start_first_wave(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.state = AttackCruiserGameState::WaveActive;
+        Ok(vec![Broadcast::Multi(
+            self.players.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateClientState {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    client_state: AttackCruiserClientState::WaveActive,
                 },
             })],
         )])

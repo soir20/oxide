@@ -12,7 +12,7 @@ use crate::game_server::packets::{
 #[repr(i32)]
 pub enum AttackCruiserOpCode {
     ClientConfig = 0x1,
-    UpdateGameState = 0x2,
+    UpdateClientState = 0x2,
     AddPlayer = 0x3,
     RemovePlayer = 0x4,
     ConfigPlayer = 0x5,
@@ -770,13 +770,20 @@ impl GamePacket for AttackCruiserClientConfig {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(SerializePacket, DeserializePacket)]
-pub struct AttackCruiserUpdateGameState {
-    pub minigame_header: MinigameHeader,
-    pub game_state: i32,
+#[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
+#[repr(i32)]
+pub enum AttackCruiserClientState {
+    Intro = 3,
+    WaveActive = 4,
 }
 
-impl GamePacket for AttackCruiserUpdateGameState {
+#[derive(SerializePacket, DeserializePacket)]
+pub struct AttackCruiserUpdateClientState {
+    pub minigame_header: MinigameHeader,
+    pub client_state: AttackCruiserClientState,
+}
+
+impl GamePacket for AttackCruiserUpdateClientState {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
