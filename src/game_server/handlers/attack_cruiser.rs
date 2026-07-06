@@ -654,36 +654,9 @@ impl AttackCruiserGame {
             }
         }
 
-        let states = self
-            .players
-            .iter()
-            .enumerate()
-            .map(|(player_index, _)| {
-                let player_state = &self.player_states[player_index];
-                AttackCruiserActorUpdate {
-                    actor_id: self.player_actor_id(player_index as u8),
-                    pos: Pos {
-                        x: player_state.pos.x,
-                        y: player_state.pos.y,
-                        z: player_state.pos.z,
-                        w: player_state.heading,
-                    },
-                    speed: Pos {
-                        x: player_state.speed.x,
-                        y: player_state.speed.y,
-                        z: player_state.speed.z,
-                        w: 0.0,
-                    },
-                    forward_multiplier: player_state.forward_multiplier,
-                    turn_multiplier: player_state.turn_multiplier,
-                    health: player_state.health.into(),
-                    state: AttackCruiserActorState::default(),
-                }
-            })
-            .collect();
-
-        Ok(vec![Broadcast::Single(
-            sender,
+        let player_state = &self.player_states[player_index as usize];
+        Ok(vec![Broadcast::Multi(
+            self.players.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserUpdateServerActors {
@@ -692,7 +665,25 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    states,
+                    states: vec![AttackCruiserActorUpdate {
+                        actor_id: self.player_actor_id(player_index),
+                        pos: Pos {
+                            x: player_state.pos.x,
+                            y: player_state.pos.y,
+                            z: player_state.pos.z,
+                            w: player_state.heading,
+                        },
+                        speed: Pos {
+                            x: player_state.speed.x,
+                            y: player_state.speed.y,
+                            z: player_state.speed.z,
+                            w: 0.0,
+                        },
+                        forward_multiplier: player_state.forward_multiplier,
+                        turn_multiplier: player_state.turn_multiplier,
+                        health: player_state.health.into(),
+                        state: AttackCruiserActorState::default(),
+                    }],
                 },
             })],
         )])
