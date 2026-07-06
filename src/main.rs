@@ -167,12 +167,12 @@ async fn main() {
         &game_server_arc,
     );
 
-    let mainigame_tick_dequeue = tick(Duration::from_millis(
+    let minigame_tick_dequeue = tick(Duration::from_millis(
         server_options.minigame_tick_period_millis,
     ));
     spawn_minigame_tick_threads(
         &channel_manager_arc,
-        mainigame_tick_dequeue,
+        minigame_tick_dequeue,
         client_enqueue.clone(),
         &server_options,
         &game_server_arc,
