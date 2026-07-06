@@ -3156,6 +3156,18 @@ categories:
                 !AttackCruiser
                 lives: 3
                 max_health: 100
+                spawn1:
+                  pos:
+                    x: 3.9
+                    y: 1000.0
+                    z: -1999.0
+                  heading: 0.0
+                spawn2:
+                  pos:
+                    x: 200.9
+                    y: 1000.0
+                    z: -1999.0
+                  heading: 0.0
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027

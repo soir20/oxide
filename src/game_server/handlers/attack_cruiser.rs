@@ -17,10 +17,11 @@ use crate::game_server::{
     packets::{
         attack_cruiser::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
-            AttackCruiserActorPoolConfig, AttackCruiserAddActor, AttackCruiserAddPlayer,
-            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
-            AttackCruiserCameraConfig, AttackCruiserChallengeMode, AttackCruiserClientConfig,
-            AttackCruiserClientState, AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
+            AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
+            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserBasePhysicsConfig,
+            AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserCameraConfig,
+            AttackCruiserChallengeMode, AttackCruiserClientConfig, AttackCruiserClientState,
+            AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
             AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
             AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
             AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
@@ -32,12 +33,13 @@ use crate::game_server::{
             AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
             AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
             AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-            AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers, AttackCruiserVec,
+            AttackCruiserUpdateActors, AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+            AttackCruiserVec,
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
         ui::ExecuteScriptWithStringParams,
-        GamePacket, Pos3,
+        GamePacket, Pos, Pos3,
     },
     Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
 };
@@ -47,6 +49,8 @@ const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayerState {
     pub ready: bool,
+    pub pos: Pos3,
+    pub heading: f32,
     pub score: i32,
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
@@ -55,9 +59,11 @@ struct AttackCruiserPlayerState {
 }
 
 impl AttackCruiserPlayerState {
-    pub fn new(lives: u8, health: u16, ready: bool) -> Self {
+    pub fn new(lives: u8, pos: Pos3, heading: f32, health: u16, ready: bool) -> Self {
         AttackCruiserPlayerState {
             ready,
+            pos,
+            heading,
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -76,9 +82,18 @@ enum AttackCruiserGameState {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserSpawnLocation {
+    pos: Pos3,
+    heading: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
     lives: u8,
     max_health: u16,
+    spawn1: AttackCruiserSpawnLocation,
+    spawn2: AttackCruiserSpawnLocation,
 }
 
 pub fn process_attack_cruiser_packet(
@@ -110,6 +125,10 @@ pub fn process_attack_cruiser_packet(
                     AttackCruiserOpCode::RequestUpdatePlayers => {
                         let request = AttackCruiserRequestUpdatePlayers::deserialize(cursor)?;
                         game.update_client_players(sender, request.update_type)
+                    }
+                    AttackCruiserOpCode::UpdateActors => {
+                        let client_states = AttackCruiserUpdateActors::deserialize(cursor)?;
+                        game.handle_client_actor_update(sender, client_states)
                     }
                     AttackCruiserOpCode::RoundTrip => Ok(Vec::new()),
                     _ => {
@@ -165,8 +184,20 @@ impl AttackCruiserGame {
             player1,
             player2,
             player_states: [
-                AttackCruiserPlayerState::new(config.lives, config.max_health, false),
-                AttackCruiserPlayerState::new(config.lives, config.max_health, player2.is_none()),
+                AttackCruiserPlayerState::new(
+                    config.lives,
+                    config.spawn1.pos,
+                    config.spawn1.heading,
+                    config.max_health,
+                    false,
+                ),
+                AttackCruiserPlayerState::new(
+                    config.lives,
+                    config.spawn2.pos,
+                    config.spawn2.heading,
+                    config.max_health,
+                    player2.is_none(),
+                ),
             ],
             state: AttackCruiserGameState::WaitingForPlayersReady,
             players,
@@ -591,6 +622,64 @@ impl AttackCruiserGame {
         Ok(broadcasts)
     }
 
+    pub fn handle_client_actor_update(
+        &mut self,
+        sender: u32,
+        client_states: AttackCruiserUpdateActors,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+
+        for client_state in client_states.states.into_iter() {
+            if client_state.actor_id == self.player_actor_id(player_index) {
+                let player_state = &mut self.player_states[player_index as usize];
+                player_state.pos = Pos3 {
+                    x: client_state.pos.x,
+                    y: client_state.pos.y,
+                    z: client_state.pos.z,
+                };
+                player_state.heading = client_state.pos.w;
+            }
+        }
+
+        let states = self
+            .players
+            .iter()
+            .enumerate()
+            .map(|(player_index, _)| {
+                let player_state = &self.player_states[player_index];
+                AttackCruiserActorUpdate {
+                    actor_id: self.player_actor_id(player_index as u8),
+                    pos: Pos {
+                        x: player_state.pos.x,
+                        y: player_state.pos.y,
+                        z: player_state.pos.z,
+                        w: player_state.heading,
+                    },
+                    speed: Pos::default(),
+                    forward_multiplier: 0.0,
+                    turn_multiplier: 0.0,
+                    health: player_state.health.into(),
+                    state: AttackCruiserActorState::default(),
+                }
+            })
+            .collect();
+
+        Ok(vec![Broadcast::Single(
+            sender,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateActors {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    states,
+                },
+            })],
+        )])
+    }
+
     fn add_player_to_client(
         &self,
         player_index: u8,
@@ -618,14 +707,7 @@ impl AttackCruiserGame {
                         name: "ship config value".to_string(),
                         class: AttackCruiserStartupConfigClass::Ship,
                     },
-                    pos: Pos3 {
-                        x: match player_index == 0 {
-                            true => 3.9,
-                            false => 203.9,
-                        },
-                        y: 1000.0,
-                        z: -1999.0,
-                    },
+                    pos: self.player_states[player_index as usize].pos,
                     speed: Pos3::default(),
                     heading: 0.0,
                     unknown7: 0,
