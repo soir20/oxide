@@ -51,6 +51,9 @@ struct AttackCruiserPlayerState {
     pub ready: bool,
     pub pos: Pos3,
     pub heading: f32,
+    pub speed: Pos3,
+    pub forward_multiplier: f32,
+    pub turn_multiplier: f32,
     pub score: i32,
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
@@ -64,6 +67,9 @@ impl AttackCruiserPlayerState {
             ready,
             pos,
             heading,
+            speed: Pos3::default(),
+            forward_multiplier: 0.0,
+            turn_multiplier: 0.0,
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -230,7 +236,7 @@ impl AttackCruiserGame {
                             server_update_players_interval_seconds: 1.0,
                             server_update_actors_interval_seconds: 1.0,
                             server_draw_debug_data_interval_seconds: 1.0,
-                            client_update_actors_interval_seconds: 1.0,
+                            client_update_actors_interval_seconds: 0.1,
                             max_interpolation_step: 1.0,
                             small_mass_threshold: 1.0,
                             dodge_prediction_time: 1.0,
@@ -638,6 +644,13 @@ impl AttackCruiserGame {
                     z: client_state.pos.z,
                 };
                 player_state.heading = client_state.pos.w;
+                player_state.speed = Pos3 {
+                    x: client_state.speed.x,
+                    y: client_state.speed.y,
+                    z: client_state.speed.z,
+                };
+                player_state.forward_multiplier = client_state.forward_multiplier;
+                player_state.turn_multiplier = client_state.turn_multiplier;
             }
         }
 
@@ -655,9 +668,14 @@ impl AttackCruiserGame {
                         z: player_state.pos.z,
                         w: player_state.heading,
                     },
-                    speed: Pos::default(),
-                    forward_multiplier: 0.0,
-                    turn_multiplier: 0.0,
+                    speed: Pos {
+                        x: player_state.speed.x,
+                        y: player_state.speed.y,
+                        z: player_state.speed.z,
+                        w: 0.0,
+                    },
+                    forward_multiplier: player_state.forward_multiplier,
+                    turn_multiplier: player_state.turn_multiplier,
                     health: player_state.health.into(),
                     state: AttackCruiserActorState::default(),
                 }
