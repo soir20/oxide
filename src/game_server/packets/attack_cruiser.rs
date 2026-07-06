@@ -1135,13 +1135,18 @@ pub struct AttackCruiserActorUpdate {
     pub state: AttackCruiserActorState,
 }
 
-#[derive(SerializePacket, DeserializePacket)]
-pub struct AttackCruiserUpdateActors {
+#[derive(DeserializePacket)]
+pub struct AttackCruiserUpdateClientActors {
+    pub states: Vec<AttackCruiserActorUpdate>,
+}
+
+#[derive(SerializePacket)]
+pub struct AttackCruiserUpdateServerActors {
     pub minigame_header: MinigameHeader,
     pub states: Vec<AttackCruiserActorUpdate>,
 }
 
-impl GamePacket for AttackCruiserUpdateActors {
+impl GamePacket for AttackCruiserUpdateServerActors {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;

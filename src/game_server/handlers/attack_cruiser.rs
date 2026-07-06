@@ -33,8 +33,8 @@ use crate::game_server::{
             AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
             AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
             AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-            AttackCruiserUpdateActors, AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-            AttackCruiserVec,
+            AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
+            AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
@@ -127,7 +127,7 @@ pub fn process_attack_cruiser_packet(
                         game.update_client_players(sender, request.update_type)
                     }
                     AttackCruiserOpCode::UpdateActors => {
-                        let client_states = AttackCruiserUpdateActors::deserialize(cursor)?;
+                        let client_states = AttackCruiserUpdateClientActors::deserialize(cursor)?;
                         game.handle_client_actor_update(sender, client_states)
                     }
                     AttackCruiserOpCode::RoundTrip => Ok(Vec::new()),
@@ -625,7 +625,7 @@ impl AttackCruiserGame {
     pub fn handle_client_actor_update(
         &mut self,
         sender: u32,
-        client_states: AttackCruiserUpdateActors,
+        client_states: AttackCruiserUpdateClientActors,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
 
@@ -668,7 +668,7 @@ impl AttackCruiserGame {
             sender,
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: AttackCruiserUpdateActors {
+                inner: AttackCruiserUpdateServerActors {
                     minigame_header: MinigameHeader {
                         stage_guid: self.group.stage_guid,
                         sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
