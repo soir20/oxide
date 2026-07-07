@@ -9,6 +9,7 @@ use serde::Deserialize;
 use crate::game_server::{
     handlers::{
         character::{MinigameMatchmakingGroup, MinigameStatus},
+        direction,
         minigame::{
             handle_minigame_packet_write, MinigameRemovePlayerResult, SharedMinigameTypeData,
         },
@@ -18,14 +19,14 @@ use crate::game_server::{
         attack_cruiser::{
             AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
             AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
-            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserBasePhysicsConfig,
-            AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserCameraConfig,
-            AttackCruiserChallengeMode, AttackCruiserClientConfig, AttackCruiserClientState,
-            AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
-            AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
-            AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-            AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-            AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
+            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
+            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
+            AttackCruiserCameraConfig, AttackCruiserChallengeMode, AttackCruiserClickedLocation,
+            AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
+            AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
+            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
+            AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
+            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
             AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
             AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
             AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
@@ -135,6 +136,10 @@ pub fn process_attack_cruiser_packet(
                     AttackCruiserOpCode::UpdateActors => {
                         let client_states = AttackCruiserUpdateClientActors::deserialize(cursor)?;
                         game.handle_client_actor_update(sender, client_states)
+                    }
+                    AttackCruiserOpCode::ClickedLocation => {
+                        let click = AttackCruiserClickedLocation::deserialize(cursor)?;
+                        game.handle_click(sender, click)
                     }
                     AttackCruiserOpCode::RoundTrip => Ok(Vec::new()),
                     _ => {
@@ -498,8 +503,8 @@ impl AttackCruiserGame {
                                 weapons: AttackCruiserVec::new(),
                                 roll_max_angle: 30.0,
                                 pitch_max_angle: 0.0,
-                                continuous_fire_seconds: 10.0,
-                                fire_cooldown_seconds: 1.0,
+                                continuous_fire_seconds: 0.1,
+                                fire_cooldown_seconds: 0.5,
                             },
                         )),
                     ),
@@ -675,6 +680,61 @@ impl AttackCruiserGame {
                         health: player_state.health.into(),
                         state: AttackCruiserActorState::default(),
                     }],
+                },
+            })],
+        )])
+    }
+
+    pub fn handle_click(
+        &mut self,
+        sender: u32,
+        click: AttackCruiserClickedLocation,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let player_index = self.player_index(sender)?;
+        let player_state = &self.player_states[player_index as usize];
+
+        let speed = direction(
+            Pos {
+                x: player_state.pos.x,
+                y: 0.0,
+                z: player_state.pos.z,
+                w: 1.0,
+            },
+            Pos {
+                x: click.clicked_pos.x,
+                y: 0.0,
+                z: click.clicked_pos.y,
+                w: 1.0,
+            },
+        ) * 500.0;
+
+        Ok(vec![Broadcast::Multi(
+            self.players.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserAddProjectile {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    unknown1: 0,
+                    unknown2: 0,
+                    effect_id: 1558,
+                    despawn_effect_id: 0,
+                    lifetime_seconds: 3.0,
+                    origin: player_state.pos,
+                    speed: Pos3 {
+                        x: speed.x,
+                        y: 0.0,
+                        z: speed.z,
+                    },
+                    unknown8: Pos3::default(),
+                    unknown9: 0.0,
+                    heading: speed.z.atan2(speed.x),
+                    unknown11: 0.0,
+                    unknown12: 0.0,
+                    unknown13: 0,
                 },
             })],
         )])

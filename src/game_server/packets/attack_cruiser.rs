@@ -19,7 +19,7 @@ pub enum AttackCruiserOpCode {
     RequestUpdatePlayers = 0x6,
     UpdatePlayers = 0x7,
     UpdateActors = 0x8,
-    ClickOnLocation = 0xa,
+    ClickedLocation = 0xa,
     AddProjectile = 0xb,
     RemoveProjectile = 0xc,
     AddActor = 0xd,
@@ -1161,7 +1161,6 @@ pub enum AttackCruiserClickType {
 
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserClickedLocation {
-    pub minigame_header: MinigameHeader,
     pub click_type: AttackCruiserClickType,
     pub clicked_pos: Pos,
 }
