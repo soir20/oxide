@@ -802,7 +802,7 @@ impl Default for AttackCruiserPlayerStateType {
     fn default() -> Self {
         Self {
             index: true,
-            score: false,
+            score: true,
             unknown3: false,
             inventory: false,
             unknown5: false,
