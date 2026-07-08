@@ -730,7 +730,7 @@ impl AttackCruiserGame {
                         z: speed.z,
                     },
                     unknown8: Pos3::default(),
-                    roll: 0.0,
+                    yaw: speed.x.atan2(speed.z),
                     pitch: 0.0,
                     unknown11: 0.0,
                     unknown12: 0.0,

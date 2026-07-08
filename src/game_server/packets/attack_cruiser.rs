@@ -1182,7 +1182,7 @@ pub struct AttackCruiserAddProjectile {
     pub origin: Pos3,
     pub speed: Pos3,
     pub unknown8: Pos3,
-    pub roll: f32,
+    pub yaw: f32,
     pub pitch: f32,
     pub unknown11: f32,
     pub unknown12: f32,
