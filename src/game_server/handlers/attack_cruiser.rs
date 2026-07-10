@@ -4,6 +4,7 @@ use std::{
 };
 
 use packet_serialize::DeserializePacket;
+use rand::Rng;
 use serde::Deserialize;
 
 use crate::game_server::{
@@ -703,7 +704,7 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
 
-        let speed = direction(
+        let direction = direction(
             Pos {
                 x: player_state.pos.x,
                 y: 0.0,
@@ -716,9 +717,15 @@ impl AttackCruiserGame {
                 z: click.clicked_pos.y,
                 w: 1.0,
             },
-        ) * 500.0;
+        );
+        let speed = 500.0;
 
-        let test_offset = 10.0f32.to_radians();
+        let offset = 10.0f32.to_radians();
+        let wobble = 2.0f32.to_radians();
+        let wobble1 = rand::thread_rng().gen_range(-wobble..=wobble);
+        let wobble2 = rand::thread_rng().gen_range(-wobble..=wobble);
+        let test_offset1 = offset + wobble1;
+        let test_offset2 = offset + wobble2;
 
         Ok(vec![Broadcast::Multi(
             self.players.clone(),
@@ -739,15 +746,15 @@ impl AttackCruiserGame {
                         origin: player_state.pos,
                         speed: rotate_horizontally(
                             Pos3 {
-                                x: speed.x,
-                                y: 0.0,
-                                z: speed.z,
+                                x: direction.x,
+                                y: wobble1.sin(),
+                                z: direction.z,
                             },
-                            test_offset,
-                        ),
+                            test_offset1,
+                        ) * speed,
                         unknown8: Pos3::default(),
-                        yaw: speed.x.atan2(speed.z) - test_offset,
-                        pitch: 0.0,
+                        yaw: direction.x.atan2(direction.z) - test_offset1,
+                        pitch: wobble1,
                         unknown11: 0.0,
                         unknown12: 0.0,
                         unknown13: 0,
@@ -769,15 +776,15 @@ impl AttackCruiserGame {
                         origin: player_state.pos,
                         speed: rotate_horizontally(
                             Pos3 {
-                                x: speed.x,
-                                y: 0.0,
-                                z: speed.z,
+                                x: direction.x,
+                                y: wobble2.sin(),
+                                z: direction.z,
                             },
-                            -test_offset,
-                        ),
+                            -test_offset2,
+                        ) * speed,
                         unknown8: Pos3::default(),
-                        yaw: speed.x.atan2(speed.z) + test_offset,
-                        pitch: 0.0,
+                        yaw: direction.x.atan2(direction.z) + test_offset2,
+                        pitch: wobble2,
                         unknown11: 0.0,
                         unknown12: 0.0,
                         unknown13: 0,
