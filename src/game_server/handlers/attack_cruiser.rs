@@ -47,6 +47,16 @@ use crate::game_server::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
+fn rotate_horizontally(pos: Pos3, radians: f32) -> Pos3 {
+    let cos = radians.cos();
+    let sin = radians.sin();
+    Pos3 {
+        x: pos.x * cos - pos.z * sin,
+        y: pos.y,
+        z: pos.x * sin + pos.z * cos,
+    }
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayerState {
     pub ready: bool,
@@ -708,35 +718,72 @@ impl AttackCruiserGame {
             },
         ) * 500.0;
 
+        let test_offset = 10.0f32.to_radians();
+
         Ok(vec![Broadcast::Multi(
             self.players.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserAddProjectile {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                        stage_group_guid: self.group.stage_group_guid,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserAddProjectile {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        unknown1: 0,
+                        unknown2: 0,
+                        effect_id: 1762,
+                        despawn_effect_id: 0,
+                        lifetime_seconds: 3.0,
+                        origin: player_state.pos,
+                        speed: rotate_horizontally(
+                            Pos3 {
+                                x: speed.x,
+                                y: 0.0,
+                                z: speed.z,
+                            },
+                            test_offset,
+                        ),
+                        unknown8: Pos3::default(),
+                        yaw: speed.x.atan2(speed.z) - test_offset,
+                        pitch: 0.0,
+                        unknown11: 0.0,
+                        unknown12: 0.0,
+                        unknown13: 0,
                     },
-                    unknown1: 0,
-                    unknown2: 0,
-                    effect_id: 1558,
-                    despawn_effect_id: 0,
-                    lifetime_seconds: 3.0,
-                    origin: player_state.pos,
-                    speed: Pos3 {
-                        x: speed.x,
-                        y: 0.0,
-                        z: speed.z,
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserAddProjectile {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        unknown1: 0,
+                        unknown2: 0,
+                        effect_id: 1762,
+                        despawn_effect_id: 0,
+                        lifetime_seconds: 3.0,
+                        origin: player_state.pos,
+                        speed: rotate_horizontally(
+                            Pos3 {
+                                x: speed.x,
+                                y: 0.0,
+                                z: speed.z,
+                            },
+                            -test_offset,
+                        ),
+                        unknown8: Pos3::default(),
+                        yaw: speed.x.atan2(speed.z) + test_offset,
+                        pitch: 0.0,
+                        unknown11: 0.0,
+                        unknown12: 0.0,
+                        unknown13: 0,
                     },
-                    unknown8: Pos3::default(),
-                    yaw: speed.x.atan2(speed.z),
-                    pitch: 0.0,
-                    unknown11: 0.0,
-                    unknown12: 0.0,
-                    unknown13: 0,
-                },
-            })],
+                }),
+            ],
         )])
     }
 
