@@ -515,7 +515,7 @@ impl AttackCruiserGame {
                                 roll_max_angle: 30.0,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 0.05,
-                                fire_cooldown_seconds: 0.2,
+                                fire_cooldown_seconds: 0.3,
                             },
                         )),
                     ),
