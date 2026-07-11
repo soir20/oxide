@@ -253,6 +253,16 @@ pub struct Pos3 {
     pub z: f32,
 }
 
+impl From<Pos> for Pos3 {
+    fn from(value: Pos) -> Self {
+        Pos3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
 impl Add for Pos3 {
     type Output = Self;
 

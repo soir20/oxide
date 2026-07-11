@@ -3172,6 +3172,13 @@ categories:
                   cooldown_millis: 300
                   primary_tiers:
                     - shots:
+                        - composite_effect_id: 1558
+                          length: 10
+                          width: 10
+                          count: 2
+                        - composite_effect_id: 1763
+                          length: 10
+                          width: 10
                         - composite_effect_id: 1762
                           yaw_degrees: 10
                           length: 10

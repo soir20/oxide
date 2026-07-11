@@ -4,7 +4,7 @@ use std::{
 };
 
 use packet_serialize::DeserializePacket;
-use rand::Rng;
+use rand::{thread_rng, Rng};
 use serde::Deserialize;
 
 use crate::game_server::{
@@ -123,6 +123,18 @@ const fn default_lifetime_seconds() -> f32 {
     3.0
 }
 
+const fn default_count() -> u8 {
+    1
+}
+
+const fn default_launch_offset() -> f32 {
+    30.0
+}
+
+const fn default_launch_height() -> f32 {
+    10.0
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserPlayerWeaponShot {
@@ -137,6 +149,12 @@ pub struct AttackCruiserPlayerWeaponShot {
     pub lifetime_seconds: f32,
     pub length: f32,
     pub width: f32,
+    #[serde(default = "default_count")]
+    pub count: u8,
+    #[serde(default = "default_launch_offset")]
+    pub launch_offset: f32,
+    #[serde(default = "default_launch_height")]
+    pub launch_height: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -753,7 +771,7 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
 
-        let direction = direction(
+        let direction = Pos3::from(direction(
             Pos {
                 x: player_state.pos.x,
                 y: 0.0,
@@ -766,9 +784,10 @@ impl AttackCruiserGame {
                 z: click.clicked_pos.y,
                 w: 1.0,
             },
-        );
+        ));
 
         let mut packets = Vec::new();
+        let rng = &mut thread_rng();
 
         if let Some(primary_weapon) = self
             .config
@@ -777,41 +796,61 @@ impl AttackCruiserGame {
             .get(player_state.primary_weapon_tier)
         {
             for shot in primary_weapon.shots.iter() {
-                let wobble = rand::thread_rng()
-                    .gen_range(-shot.wobble_degrees..=shot.wobble_degrees)
-                    .to_radians();
-                let offset = shot.yaw_degrees.to_radians() + wobble;
+                for _ in 0..shot.count {
+                    let wobble = rng
+                        .gen_range(-shot.wobble_degrees..=shot.wobble_degrees)
+                        .to_radians();
+                    let yaw = shot.yaw_degrees.to_radians() + wobble;
 
-                packets.push(GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: AttackCruiserAddProjectile {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                            stage_group_guid: self.group.stage_group_guid,
+                    let launch_offset = direction
+                        + direction
+                            * Pos3 {
+                                x: shot.launch_offset,
+                                y: 0.0,
+                                z: shot.launch_offset,
+                            }
+                        + Pos3 {
+                            x: 0.0,
+                            y: shot.launch_height,
+                            z: 0.0,
+                        };
+
+                    let origin = player_state.pos + launch_offset;
+                    let speed = rotate_horizontally(
+                        Pos3 {
+                            x: direction.x,
+                            y: wobble.sin(),
+                            z: direction.z,
                         },
-                        unknown1: 0,
-                        unknown2: 0,
-                        effect_id: shot.composite_effect_id,
-                        despawn_effect_id: 0,
-                        lifetime_seconds: shot.lifetime_seconds,
-                        origin: player_state.pos,
-                        speed: rotate_horizontally(
-                            Pos3 {
-                                x: direction.x,
-                                y: wobble.sin(),
-                                z: direction.z,
+                        yaw,
+                    ) * shot.speed;
+                    let yaw = direction.x.atan2(direction.z) - yaw;
+                    let pitch = wobble;
+
+                    packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserAddProjectile {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                                stage_group_guid: self.group.stage_group_guid,
                             },
-                            offset,
-                        ) * shot.speed,
-                        unknown8: Pos3::default(),
-                        yaw: direction.x.atan2(direction.z) - offset,
-                        pitch: wobble,
-                        unknown11: 0.0,
-                        unknown12: 0.0,
-                        unknown13: 0,
-                    },
-                }));
+                            unknown1: 0,
+                            unknown2: 0,
+                            effect_id: shot.composite_effect_id,
+                            despawn_effect_id: 0,
+                            lifetime_seconds: shot.lifetime_seconds,
+                            origin,
+                            speed,
+                            unknown8: Pos3::default(),
+                            yaw,
+                            pitch,
+                            unknown11: 0.0,
+                            unknown12: 0.0,
+                            unknown13: 0,
+                        },
+                    }));
+                }
             }
         }
 
