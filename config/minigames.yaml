@@ -3180,11 +3180,11 @@ categories:
                           length: 10
                           width: 10
                         - composite_effect_id: 1762
-                          yaw_degrees: 10
+                          yaw_degrees: 5
                           length: 10
                           width: 10
                         - composite_effect_id: 1762
-                          yaw_degrees: -10
+                          yaw_degrees: -5
                           length: 10
                           width: 10
               zone_template_guid: 250

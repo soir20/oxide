@@ -112,7 +112,7 @@ const fn default_yaw_degrees() -> f32 {
 }
 
 const fn default_wobble_degrees() -> f32 {
-    2.0
+    3.0
 }
 
 const fn default_speed() -> f32 {
