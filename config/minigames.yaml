@@ -3169,7 +3169,7 @@ categories:
                     z: -1999.0
                   heading: 0.0
                 player_weapons:
-                  cooldown_millis: 300
+                  cooldown_millis: 250
                   primary_tiers:
                     - shots:
                         - composite_effect_id: 1558
