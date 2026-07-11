@@ -71,6 +71,7 @@ struct AttackCruiserPlayerState {
     pub score_multiplier_tier: u8,
     pub lives: u8,
     pub health: u16,
+    pub primary_weapon_tier: usize,
 }
 
 impl AttackCruiserPlayerState {
@@ -87,6 +88,7 @@ impl AttackCruiserPlayerState {
             score_multiplier_tier: 1,
             lives,
             health,
+            primary_weapon_tier: 0,
         }
     }
 }
@@ -105,6 +107,51 @@ struct AttackCruiserSpawnLocation {
     heading: f32,
 }
 
+const fn default_yaw_degrees() -> f32 {
+    0.0
+}
+
+const fn default_wobble_degrees() -> f32 {
+    2.0
+}
+
+const fn default_speed() -> f32 {
+    500.0
+}
+
+const fn default_lifetime_seconds() -> f32 {
+    3.0
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttackCruiserPlayerWeaponShot {
+    pub composite_effect_id: u32,
+    #[serde(default = "default_yaw_degrees")]
+    pub yaw_degrees: f32,
+    #[serde(default = "default_wobble_degrees")]
+    pub wobble_degrees: f32,
+    #[serde(default = "default_speed")]
+    pub speed: f32,
+    #[serde(default = "default_lifetime_seconds")]
+    pub lifetime_seconds: f32,
+    pub length: f32,
+    pub width: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttackCruiserPlayerPrimaryWeapon {
+    pub shots: Vec<AttackCruiserPlayerWeaponShot>,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttackCruiserPlayerWeaponConfig {
+    pub cooldown_millis: f32,
+    pub primary_tiers: Vec<AttackCruiserPlayerPrimaryWeapon>,
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
@@ -112,6 +159,7 @@ pub struct AttackCruiserConfig {
     max_health: u16,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
+    player_weapons: AttackCruiserPlayerWeaponConfig,
 }
 
 pub fn process_attack_cruiser_packet(
@@ -515,7 +563,8 @@ impl AttackCruiserGame {
                                 roll_max_angle: 30.0,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 0.05,
-                                fire_cooldown_seconds: 0.3,
+                                fire_cooldown_seconds: self.config.player_weapons.cooldown_millis
+                                    / 1000.0,
                             },
                         )),
                     ),
@@ -718,19 +767,22 @@ impl AttackCruiserGame {
                 w: 1.0,
             },
         );
-        let speed = 500.0;
 
-        let offset = 10.0f32.to_radians();
-        let wobble = 2.0f32.to_radians();
-        let wobble1 = rand::thread_rng().gen_range(-wobble..=wobble);
-        let wobble2 = rand::thread_rng().gen_range(-wobble..=wobble);
-        let test_offset1 = offset + wobble1;
-        let test_offset2 = offset + wobble2;
+        let mut packets = Vec::new();
 
-        Ok(vec![Broadcast::Multi(
-            self.players.clone(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
+        if let Some(primary_weapon) = self
+            .config
+            .player_weapons
+            .primary_tiers
+            .get(player_state.primary_weapon_tier)
+        {
+            for shot in primary_weapon.shots.iter() {
+                let wobble = rand::thread_rng()
+                    .gen_range(-shot.wobble_degrees..=shot.wobble_degrees)
+                    .to_radians();
+                let offset = shot.yaw_degrees.to_radians() + wobble;
+
+                packets.push(GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
                     inner: AttackCruiserAddProjectile {
                         minigame_header: MinigameHeader {
@@ -740,58 +792,30 @@ impl AttackCruiserGame {
                         },
                         unknown1: 0,
                         unknown2: 0,
-                        effect_id: 1762,
+                        effect_id: shot.composite_effect_id,
                         despawn_effect_id: 0,
-                        lifetime_seconds: 3.0,
+                        lifetime_seconds: shot.lifetime_seconds,
                         origin: player_state.pos,
                         speed: rotate_horizontally(
                             Pos3 {
                                 x: direction.x,
-                                y: wobble1.sin(),
+                                y: wobble.sin(),
                                 z: direction.z,
                             },
-                            test_offset1,
-                        ) * speed,
+                            offset,
+                        ) * shot.speed,
                         unknown8: Pos3::default(),
-                        yaw: direction.x.atan2(direction.z) - test_offset1,
-                        pitch: wobble1,
+                        yaw: direction.x.atan2(direction.z) - offset,
+                        pitch: wobble,
                         unknown11: 0.0,
                         unknown12: 0.0,
                         unknown13: 0,
                     },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: AttackCruiserAddProjectile {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                            stage_group_guid: self.group.stage_group_guid,
-                        },
-                        unknown1: 0,
-                        unknown2: 0,
-                        effect_id: 1762,
-                        despawn_effect_id: 0,
-                        lifetime_seconds: 3.0,
-                        origin: player_state.pos,
-                        speed: rotate_horizontally(
-                            Pos3 {
-                                x: direction.x,
-                                y: wobble2.sin(),
-                                z: direction.z,
-                            },
-                            -test_offset2,
-                        ) * speed,
-                        unknown8: Pos3::default(),
-                        yaw: direction.x.atan2(direction.z) + test_offset2,
-                        pitch: wobble2,
-                        unknown11: 0.0,
-                        unknown12: 0.0,
-                        unknown13: 0,
-                    },
-                }),
-            ],
-        )])
+                }));
+            }
+        }
+
+        Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
     }
 
     fn add_player_to_client(

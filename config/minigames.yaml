@@ -3168,6 +3168,18 @@ categories:
                     y: 1000.0
                     z: -1999.0
                   heading: 0.0
+                player_weapons:
+                  cooldown_millis: 300
+                  primary_tiers:
+                    - shots:
+                        - composite_effect_id: 1762
+                          yaw_degrees: 10
+                          length: 10
+                          width: 10
+                        - composite_effect_id: 1762
+                          yaw_degrees: -10
+                          length: 10
+                          width: 10
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027

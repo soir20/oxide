@@ -1176,7 +1176,7 @@ pub struct AttackCruiserAddProjectile {
     pub minigame_header: MinigameHeader,
     pub unknown1: i32,
     pub unknown2: i32,
-    pub effect_id: i32,
+    pub effect_id: u32,
     pub despawn_effect_id: i32,
     pub lifetime_seconds: f32,
     pub origin: Pos3,
