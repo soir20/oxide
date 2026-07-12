@@ -275,7 +275,6 @@ struct AttackCruiserProjectileInstance {
     origin_corner1: Pos3,
     origin_corner2: Pos3,
     launch_time: Instant,
-    lifetime_millis: f32,
 }
 
 #[derive(Clone, Debug)]
@@ -380,7 +379,6 @@ impl AttackCruiserProjectilePool {
                     origin_corner1: corner1,
                     origin_corner2: corner2,
                     launch_time: now,
-                    lifetime_millis: projectile.lifetime_millis,
                 },
             );
             self.expiry.push(projectile_id, Reverse(expiry_time));
