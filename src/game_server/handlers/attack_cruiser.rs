@@ -270,6 +270,7 @@ pub fn process_attack_cruiser_packet(
 
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectileInstance {
+    launched_by_actor_id: i32,
     speed: Pos3,
     origin_corner1: Pos3,
     origin_corner2: Pos3,
@@ -293,7 +294,8 @@ impl AttackCruiserProjectilePool {
 
     pub fn launch(
         &mut self,
-        ship_origin: Pos3,
+        launched_by_actor_id: i32,
+        actor_origin: Pos3,
         direction: Pos3,
         projectile: &AttackCruiserProjectile,
         group: MinigameMatchmakingGroup,
@@ -324,7 +326,7 @@ impl AttackCruiserProjectilePool {
                     z: 0.0,
                 };
 
-            let origin = ship_origin + launch_offset;
+            let origin = actor_origin + launch_offset;
             let speed = rotate(
                 Pos3 {
                     x: direction.x,
@@ -373,6 +375,7 @@ impl AttackCruiserProjectilePool {
             self.live_projectiles.insert(
                 projectile_id,
                 AttackCruiserProjectileInstance {
+                    launched_by_actor_id,
                     speed,
                     origin_corner1: corner1,
                     origin_corner2: corner2,
@@ -1000,6 +1003,7 @@ impl AttackCruiserGame {
         {
             for projectile in primary_weapon.projectiles.iter() {
                 packets.append(&mut self.projectiles.launch(
+                    self.player_actor_id(player_index),
                     player_state.pos,
                     direction,
                     projectile,
