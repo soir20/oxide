@@ -1,10 +1,12 @@
 use std::{
+    cmp::Reverse,
     collections::BTreeMap,
     io::{Cursor, Read},
-    time::Instant,
+    time::{Duration, Instant},
 };
 
 use packet_serialize::DeserializePacket;
+use priority_queue::PriorityQueue;
 use rand::{thread_rng, Rng};
 use serde::Deserialize;
 
@@ -267,12 +269,14 @@ struct AttackCruiserProjectileInstance {
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectilePool {
     live_projectiles: BTreeMap<i32, AttackCruiserProjectileInstance>,
+    expiry: PriorityQueue<i32, Reverse<Instant>>,
 }
 
 impl AttackCruiserProjectilePool {
     pub fn new() -> Self {
         AttackCruiserProjectilePool {
             live_projectiles: BTreeMap::new(),
+            expiry: PriorityQueue::new(),
         }
     }
 
@@ -341,16 +345,29 @@ impl AttackCruiserProjectilePool {
                 pitch,
             );
 
+            let now = Instant::now();
+            let expiry_time = now
+                .checked_add(Duration::from_secs_f32(projectile.lifetime_millis * 1000.0))
+                .ok_or_else(|| {
+                    ProcessPacketError::new(
+                        ProcessPacketErrorType::ConstraintViolated,
+                        format!(
+                            "Tried to launch a projectile, but {now:?} + {}ms would overflow",
+                            projectile.lifetime_millis
+                        ),
+                    )
+                })?;
             self.live_projectiles.insert(
                 projectile_id,
                 AttackCruiserProjectileInstance {
                     speed,
                     origin_corner1: corner1,
                     origin_corner2: corner2,
-                    launch_time: Instant::now(),
+                    launch_time: now,
                     lifetime_millis: projectile.lifetime_millis,
                 },
             );
+            self.expiry.push(projectile_id, Reverse(expiry_time));
 
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -380,6 +397,25 @@ impl AttackCruiserProjectilePool {
         Ok(packets)
     }
 
+    pub fn expire(&mut self) {
+        loop {
+            let removable_projectile_id = self.expiry.peek().and_then(|(projectile_id, expiry)| {
+                match expiry.0 <= Instant::now() {
+                    true => Some(*projectile_id),
+                    false => None,
+                }
+            });
+
+            match removable_projectile_id {
+                Some(projectile_id) => {
+                    self.expiry.remove(&projectile_id);
+                    self.live_projectiles.remove(&projectile_id);
+                }
+                None => break,
+            }
+        }
+    }
+
     fn next_id(&mut self) -> Result<i32, ProcessPacketError> {
         match self
             .live_projectiles
@@ -388,13 +424,7 @@ impl AttackCruiserProjectilePool {
         {
             Some(next_id) => Ok(next_id),
             None => {
-                for id in 1..=i32::MAX {
-                    if !self.live_projectiles.contains_key(&id) {
-                        return Ok(id);
-                    }
-                }
-
-                Err(ProcessPacketError::new(
+                (1..=i32::MAX).into_iter().find(|id| !self.live_projectiles.contains_key(id)).ok_or_else(|| ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     "Tried to launch a projectile, but the game is at the maximum number of projectiles".to_string()
                 ))
@@ -795,6 +825,8 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+        self.projectiles.expire();
+
         Vec::new()
     }
 
