@@ -835,7 +835,7 @@ impl AttackCruiserGame {
                                 sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
                                 stage_group_guid: self.group.stage_group_guid,
                             },
-                            unknown1: 0,
+                            projectile_id: 0,
                             unknown2: 0,
                             effect_id: shot.composite_effect_id,
                             despawn_effect_id: 0,
