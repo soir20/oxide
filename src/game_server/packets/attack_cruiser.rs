@@ -1199,8 +1199,8 @@ impl GamePacket for AttackCruiserAddProjectile {
 pub struct AttackCruiserRemoveProjectile {
     pub minigame_header: MinigameHeader,
     pub projectile_id: i32,
-    pub unknown2: i32,
-    pub unknown3: f32,
+    pub despawn_effect_id: i32,
+    pub delay_seconds: f32,
 }
 
 impl GamePacket for AttackCruiserRemoveProjectile {
