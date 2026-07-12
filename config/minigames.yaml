@@ -3171,7 +3171,7 @@ categories:
                 player_weapons:
                   cooldown_millis: 250
                   primary_tiers:
-                    - shots:
+                    - projectiles:
                         - composite_effect_id: 1558
                           length: 10
                           width: 10

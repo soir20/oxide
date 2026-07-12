@@ -1,4 +1,5 @@
 use std::{
+    collections::BTreeMap,
     io::{Cursor, Read},
     time::Instant,
 };
@@ -48,13 +49,21 @@ use crate::game_server::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
-fn rotate_horizontally(pos: Pos3, radians: f32) -> Pos3 {
-    let cos = radians.cos();
-    let sin = radians.sin();
+fn rotate(pos: Pos3, yaw: f32, pitch: f32) -> Pos3 {
+    let (sin_yaw, cos_yaw) = yaw.sin_cos();
+    let x1 = pos.x * cos_yaw + pos.z * sin_yaw;
+    let y1 = pos.y;
+    let z1 = -pos.x * sin_yaw + pos.z * cos_yaw;
+
+    let (sin_pitch, cos_pitch) = pitch.sin_cos();
+    let x2 = x1;
+    let y2 = y1 * cos_pitch - z1 * sin_pitch;
+    let z2 = y1 * sin_pitch + z1 * cos_pitch;
+
     Pos3 {
-        x: pos.x * cos - pos.z * sin,
-        y: pos.y,
-        z: pos.x * sin + pos.z * cos,
+        x: x2,
+        y: y2,
+        z: z2,
     }
 }
 
@@ -119,7 +128,7 @@ const fn default_speed() -> f32 {
     500.0
 }
 
-const fn default_lifetime_seconds() -> f32 {
+const fn default_lifetime_millis() -> f32 {
     3.0
 }
 
@@ -137,7 +146,7 @@ const fn default_launch_height() -> f32 {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserPlayerWeaponShot {
+pub struct AttackCruiserProjectile {
     pub composite_effect_id: u32,
     #[serde(default = "default_yaw_degrees")]
     pub yaw_degrees: f32,
@@ -145,8 +154,8 @@ pub struct AttackCruiserPlayerWeaponShot {
     pub wobble_degrees: f32,
     #[serde(default = "default_speed")]
     pub speed: f32,
-    #[serde(default = "default_lifetime_seconds")]
-    pub lifetime_seconds: f32,
+    #[serde(default = "default_lifetime_millis")]
+    pub lifetime_millis: f32,
     pub length: f32,
     pub width: f32,
     #[serde(default = "default_count")]
@@ -160,7 +169,7 @@ pub struct AttackCruiserPlayerWeaponShot {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserPlayerPrimaryWeapon {
-    pub shots: Vec<AttackCruiserPlayerWeaponShot>,
+    pub projectiles: Vec<AttackCruiserProjectile>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -247,6 +256,154 @@ pub fn process_attack_cruiser_packet(
 }
 
 #[derive(Clone, Debug)]
+struct AttackCruiserProjectileInstance {
+    speed: Pos3,
+    origin_corner1: Pos3,
+    origin_corner2: Pos3,
+    launch_time: Instant,
+    lifetime_millis: f32,
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserProjectilePool {
+    live_projectiles: BTreeMap<i32, AttackCruiserProjectileInstance>,
+}
+
+impl AttackCruiserProjectilePool {
+    pub fn new() -> Self {
+        AttackCruiserProjectilePool {
+            live_projectiles: BTreeMap::new(),
+        }
+    }
+
+    pub fn launch(
+        &mut self,
+        ship_origin: Pos3,
+        direction: Pos3,
+        projectile: &AttackCruiserProjectile,
+        group: MinigameMatchmakingGroup,
+    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        let rng = &mut thread_rng();
+        let mut packets = Vec::new();
+
+        for _ in 0..projectile.count {
+            let projectile_id = self.next_id()?;
+
+            let wobble = rng
+                .gen_range(-projectile.wobble_degrees..=projectile.wobble_degrees)
+                .to_radians();
+            let relative_yaw = projectile.yaw_degrees.to_radians() + wobble;
+
+            let launch_offset = direction
+                + direction
+                    * Pos3 {
+                        x: projectile.launch_offset,
+                        y: 0.0,
+                        z: projectile.launch_offset,
+                    }
+                + Pos3 {
+                    x: 0.0,
+                    y: projectile.launch_height,
+                    z: 0.0,
+                };
+
+            let origin = ship_origin + launch_offset;
+            let speed = rotate(
+                Pos3 {
+                    x: direction.x,
+                    y: 0.0,
+                    z: direction.z,
+                },
+                relative_yaw,
+                wobble,
+            ) * projectile.speed;
+            let yaw = direction.x.atan2(direction.z) + relative_yaw;
+            let pitch = wobble;
+
+            let corner1 = rotate(
+                origin
+                    - Pos3 {
+                        x: projectile.length / 2.0,
+                        y: 0.0,
+                        z: projectile.width / 2.0,
+                    },
+                yaw,
+                pitch,
+            );
+            let corner2 = rotate(
+                origin
+                    + Pos3 {
+                        x: projectile.length / 2.0,
+                        y: 0.0,
+                        z: projectile.width / 2.0,
+                    },
+                yaw,
+                pitch,
+            );
+
+            self.live_projectiles.insert(
+                projectile_id,
+                AttackCruiserProjectileInstance {
+                    speed,
+                    origin_corner1: corner1,
+                    origin_corner2: corner2,
+                    launch_time: Instant::now(),
+                    lifetime_millis: projectile.lifetime_millis,
+                },
+            );
+
+            packets.push(GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserAddProjectile {
+                    minigame_header: MinigameHeader {
+                        stage_guid: group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                        stage_group_guid: group.stage_group_guid,
+                    },
+                    projectile_id,
+                    unknown2: 0,
+                    effect_id: projectile.composite_effect_id,
+                    despawn_effect_id: 0,
+                    lifetime_seconds: projectile.lifetime_millis * 1000.0,
+                    origin,
+                    speed,
+                    unknown8: Pos3::default(),
+                    yaw,
+                    pitch,
+                    unknown11: 0.0,
+                    unknown12: 0.0,
+                    unknown13: 0,
+                },
+            }));
+        }
+
+        Ok(packets)
+    }
+
+    fn next_id(&mut self) -> Result<i32, ProcessPacketError> {
+        match self
+            .live_projectiles
+            .last_key_value()
+            .and_then(|(id, _)| id.checked_add(1))
+        {
+            Some(next_id) => Ok(next_id),
+            None => {
+                for id in 1..=i32::MAX {
+                    if !self.live_projectiles.contains_key(&id) {
+                        return Ok(id);
+                    }
+                }
+
+                Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    "Tried to launch a projectile, but the game is at the maximum number of projectiles".to_string()
+                ))
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: AttackCruiserConfig,
     player1: u32,
@@ -255,6 +412,7 @@ pub struct AttackCruiserGame {
     state: AttackCruiserGameState,
     players: Vec<u32>,
     group: MinigameMatchmakingGroup,
+    projectiles: AttackCruiserProjectilePool,
 }
 
 impl AttackCruiserGame {
@@ -291,6 +449,7 @@ impl AttackCruiserGame {
             players,
             group,
             config,
+            projectiles: AttackCruiserProjectilePool::new(),
         }
     }
 
@@ -787,7 +946,6 @@ impl AttackCruiserGame {
         ));
 
         let mut packets = Vec::new();
-        let rng = &mut thread_rng();
 
         if let Some(primary_weapon) = self
             .config
@@ -795,62 +953,13 @@ impl AttackCruiserGame {
             .primary_tiers
             .get(player_state.primary_weapon_tier)
         {
-            for shot in primary_weapon.shots.iter() {
-                for _ in 0..shot.count {
-                    let wobble = rng
-                        .gen_range(-shot.wobble_degrees..=shot.wobble_degrees)
-                        .to_radians();
-                    let yaw = shot.yaw_degrees.to_radians() + wobble;
-
-                    let launch_offset = direction
-                        + direction
-                            * Pos3 {
-                                x: shot.launch_offset,
-                                y: 0.0,
-                                z: shot.launch_offset,
-                            }
-                        + Pos3 {
-                            x: 0.0,
-                            y: shot.launch_height,
-                            z: 0.0,
-                        };
-
-                    let origin = player_state.pos + launch_offset;
-                    let speed = rotate_horizontally(
-                        Pos3 {
-                            x: direction.x,
-                            y: wobble.sin(),
-                            z: direction.z,
-                        },
-                        yaw,
-                    ) * shot.speed;
-                    let yaw = direction.x.atan2(direction.z) - yaw;
-                    let pitch = wobble;
-
-                    packets.push(GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AttackCruiserAddProjectile {
-                            minigame_header: MinigameHeader {
-                                stage_guid: self.group.stage_guid,
-                                sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                                stage_group_guid: self.group.stage_group_guid,
-                            },
-                            projectile_id: 0,
-                            unknown2: 0,
-                            effect_id: shot.composite_effect_id,
-                            despawn_effect_id: 0,
-                            lifetime_seconds: shot.lifetime_seconds,
-                            origin,
-                            speed,
-                            unknown8: Pos3::default(),
-                            yaw,
-                            pitch,
-                            unknown11: 0.0,
-                            unknown12: 0.0,
-                            unknown13: 0,
-                        },
-                    }));
-                }
+            for projectile in primary_weapon.projectiles.iter() {
+                packets.append(&mut self.projectiles.launch(
+                    player_state.pos,
+                    direction,
+                    projectile,
+                    self.group,
+                )?);
             }
         }
 
