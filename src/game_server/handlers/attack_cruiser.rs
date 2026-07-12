@@ -35,11 +35,12 @@ use crate::game_server::{
             AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
             AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
             AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
-            AttackCruiserRequestUpdatePlayers, AttackCruiserShipConfig, AttackCruiserStartupConfig,
-            AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
-            AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-            AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
-            AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+            AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+            AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+            AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
+            AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
+            AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+            AttackCruiserUpdateServerActors, AttackCruiserVec,
         },
         minigame::MinigameHeader,
         tunnel::TunneledPacket,
@@ -183,11 +184,21 @@ pub struct AttackCruiserPlayerWeaponConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct AttackCruiserShipConfig {
+    pub model_id: u32,
+    pub length: f32,
+    pub width: f32,
+    pub height: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
     lives: u8,
     max_health: u16,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
+    player_ship: AttackCruiserShipConfig,
     player_weapons: AttackCruiserPlayerWeaponConfig,
 }
 
@@ -683,9 +694,9 @@ impl AttackCruiserGame {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 100.0,
-                                    length: 35.11076,
-                                    width: 24.00168,
-                                    height: 5.4446693,
+                                    length: self.config.player_ship.length,
+                                    width: self.config.player_ship.width,
+                                    height: self.config.player_ship.height,
                                     center_of_mass_z: 0.0,
                                     max_speed: 100.0,
                                     vertical_speed: 0.0,
@@ -716,9 +727,9 @@ impl AttackCruiserGame {
                     AttackCruiserStartupConfig::new(
                         "ship config value".to_string(),
                         AttackCruiserStartupConfigDefinition::Ship(Box::new(
-                            AttackCruiserShipConfig {
+                            AttackCruiserShipStartupConfig {
                                 actor_config: AttackCruiserActorConfig {
-                                    model_id: 167,
+                                    model_id: self.config.player_ship.model_id,
                                     effect_id: 0,
                                     death_effect_id: 0,
                                     despawn_effect_id: 0,

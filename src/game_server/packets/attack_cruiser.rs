@@ -378,7 +378,7 @@ pub struct AttackCruiserShipWeaponConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserShipConfig {
+pub struct AttackCruiserShipStartupConfig {
     pub actor_config: AttackCruiserActorConfig,
     pub thruster_effect_id: u32,
     pub invulnerable_effect_id: u32,
@@ -648,7 +648,7 @@ pub enum AttackCruiserStartupConfigDefinition {
     DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
-    Ship(Box<AttackCruiserShipConfig>),
+    Ship(Box<AttackCruiserShipStartupConfig>),
     SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
     Wave(Box<AttackCruiserWaveConfig>),
     WeaponBay(Box<AttackCruiserWeaponBayConfig>),
