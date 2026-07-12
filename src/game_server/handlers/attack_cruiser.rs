@@ -298,6 +298,8 @@ impl AttackCruiserProjectilePool {
         projectile: &AttackCruiserProjectile,
         group: MinigameMatchmakingGroup,
     ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+        self.expire();
+
         let rng = &mut thread_rng();
         let mut packets = Vec::new();
 
@@ -838,8 +840,6 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        self.projectiles.expire();
-
         Vec::new()
     }
 
