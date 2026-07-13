@@ -1300,7 +1300,7 @@ pub fn interact_with_character(
                                 ));
                             };
 
-                            if !target_read_handle.stats.is_spawned {
+                            if !target_read_handle.stats.is_spawned() {
                                 return Err(ProcessPacketError::new(
                                     ProcessPacketErrorType::ConstraintViolated,
                                     format!("Received request to interact with inactive NPC {target} from {requester}"),
