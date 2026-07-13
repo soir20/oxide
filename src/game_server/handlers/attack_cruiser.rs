@@ -52,11 +52,11 @@ use crate::game_server::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
-fn rotate(pos: Pos3, yaw: f32, pitch: f32) -> Pos3 {
+fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
     let (sin_yaw, cos_yaw) = yaw.sin_cos();
-    let x1 = pos.x * cos_yaw + pos.z * sin_yaw;
-    let y1 = pos.y;
-    let z1 = -pos.x * sin_yaw + pos.z * cos_yaw;
+    let x1 = origin.x * cos_yaw + origin.z * sin_yaw;
+    let y1 = origin.y;
+    let z1 = -origin.x * sin_yaw + origin.z * cos_yaw;
 
     let (sin_pitch, cos_pitch) = pitch.sin_cos();
     let x2 = x1;
@@ -68,6 +68,26 @@ fn rotate(pos: Pos3, yaw: f32, pitch: f32) -> Pos3 {
         y: y2,
         z: z2,
     }
+}
+
+fn corners(
+    origin: Pos3,
+    length: f32,
+    width: f32,
+    height: f32,
+    yaw: f32,
+    pitch: f32,
+) -> (Pos3, Pos3) {
+    let half_size = Pos3 {
+        x: length / 2.0,
+        y: height / 2.0,
+        z: width / 2.0,
+    };
+
+    let corner1 = rotate(origin - half_size, yaw, pitch);
+    let corner2 = rotate(origin + half_size, yaw, pitch);
+
+    (corner1, corner2)
 }
 
 #[derive(Clone, Debug)]
@@ -350,26 +370,8 @@ impl AttackCruiserProjectilePool {
             let yaw = direction.x.atan2(direction.z) + relative_yaw;
             let pitch = wobble;
 
-            let corner1 = rotate(
-                origin
-                    - Pos3 {
-                        x: projectile.length / 2.0,
-                        y: 0.0,
-                        z: projectile.width / 2.0,
-                    },
-                yaw,
-                pitch,
-            );
-            let corner2 = rotate(
-                origin
-                    + Pos3 {
-                        x: projectile.length / 2.0,
-                        y: 0.0,
-                        z: projectile.width / 2.0,
-                    },
-                yaw,
-                pitch,
-            );
+            let (corner1, corner2) =
+                corners(origin, projectile.length, projectile.width, 0.0, yaw, pitch);
 
             let now = Instant::now();
             let expiry_time = now
