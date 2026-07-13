@@ -1069,6 +1069,7 @@ impl AttackCruiserGame {
             ));
         };
 
+        let player_state = &self.player_states[player_index as usize];
         Ok(vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -1084,9 +1085,9 @@ impl AttackCruiserGame {
                         name: "ship config value".to_string(),
                         class: AttackCruiserStartupConfigClass::Ship,
                     },
-                    pos: self.player_states[player_index as usize].pos,
-                    speed: self.player_states[player_index as usize].speed,
-                    heading: self.player_states[player_index as usize].heading,
+                    pos: player_state.pos,
+                    speed: player_state.speed,
+                    heading: player_state.heading,
                     unknown7: 0,
                 },
             }),
