@@ -167,6 +167,7 @@ pub struct AttackCruiserProjectile {
     pub launch_offset: f32,
     #[serde(default = "default_launch_height")]
     pub launch_height: f32,
+    pub damage: i16,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -275,6 +276,18 @@ struct AttackCruiserProjectileInstance {
     origin_corner1: Pos3,
     origin_corner2: Pos3,
     launch_time: Instant,
+    damage: i16,
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserProjectileSpawn {
+    pub projectile_id: i32,
+    pub effect_id: u32,
+    pub lifetime_millis: f32,
+    pub origin: Pos3,
+    pub speed: Pos3,
+    pub yaw: f32,
+    pub pitch: f32,
 }
 
 #[derive(Clone, Debug)]
@@ -297,12 +310,11 @@ impl AttackCruiserProjectilePool {
         actor_origin: Pos3,
         direction: Pos3,
         projectile: &AttackCruiserProjectile,
-        group: MinigameMatchmakingGroup,
-    ) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
+    ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
         self.expire();
 
         let rng = &mut thread_rng();
-        let mut packets = Vec::new();
+        let mut launched_projectiles = Vec::new();
 
         for _ in 0..projectile.count {
             let projectile_id = self.next_id()?;
@@ -379,36 +391,23 @@ impl AttackCruiserProjectilePool {
                     origin_corner1: corner1,
                     origin_corner2: corner2,
                     launch_time: now,
+                    damage: projectile.damage,
                 },
             );
             self.expiry.push(projectile_id, Reverse(expiry_time));
 
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserAddProjectile {
-                    minigame_header: MinigameHeader {
-                        stage_guid: group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                        stage_group_guid: group.stage_group_guid,
-                    },
-                    projectile_id,
-                    unknown2: 0,
-                    effect_id: projectile.composite_effect_id,
-                    despawn_effect_id: 0,
-                    lifetime_seconds: projectile.lifetime_millis * 1000.0,
-                    origin,
-                    speed,
-                    unknown8: Pos3::default(),
-                    yaw,
-                    pitch,
-                    unknown11: 0.0,
-                    unknown12: 0.0,
-                    unknown13: 0,
-                },
-            }));
+            launched_projectiles.push(AttackCruiserProjectileSpawn {
+                projectile_id,
+                effect_id: projectile.composite_effect_id,
+                lifetime_millis: projectile.lifetime_millis,
+                origin,
+                speed,
+                yaw,
+                pitch,
+            });
         }
 
-        Ok(packets)
+        Ok(launched_projectiles)
     }
 
     pub fn expire(&mut self) {
@@ -1000,13 +999,41 @@ impl AttackCruiserGame {
             .get(player_state.primary_weapon_tier)
         {
             for projectile in primary_weapon.projectiles.iter() {
-                packets.append(&mut self.projectiles.launch(
-                    self.player_actor_id(player_index),
-                    player_state.pos,
-                    direction,
-                    projectile,
-                    self.group,
-                )?);
+                packets.extend(
+                    self.projectiles
+                        .launch(
+                            self.player_actor_id(player_index),
+                            player_state.pos,
+                            direction,
+                            projectile,
+                        )?
+                        .into_iter()
+                        .map(|launched_projectile| {
+                            GamePacket::serialize(&TunneledPacket {
+                                unknown1: true,
+                                inner: AttackCruiserAddProjectile {
+                                    minigame_header: MinigameHeader {
+                                        stage_guid: self.group.stage_guid,
+                                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                                        stage_group_guid: self.group.stage_group_guid,
+                                    },
+                                    projectile_id: launched_projectile.projectile_id,
+                                    unknown2: 0,
+                                    effect_id: projectile.composite_effect_id,
+                                    despawn_effect_id: 0,
+                                    lifetime_seconds: projectile.lifetime_millis * 1000.0,
+                                    origin: launched_projectile.origin,
+                                    speed: launched_projectile.speed,
+                                    unknown8: Pos3::default(),
+                                    yaw: launched_projectile.yaw,
+                                    pitch: launched_projectile.pitch,
+                                    unknown11: 0.0,
+                                    unknown12: 0.0,
+                                    unknown13: 0,
+                                },
+                            })
+                        }),
+                );
             }
         }
 
