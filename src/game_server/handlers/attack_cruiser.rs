@@ -72,16 +72,16 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
 
 fn corners(
     origin: Pos3,
-    length: f32,
-    width: f32,
-    height: f32,
+    size_x: f32,
+    size_y: f32,
+    size_z: f32,
     yaw: f32,
     pitch: f32,
 ) -> (Pos3, Pos3) {
     let half_size = Pos3 {
-        x: length / 2.0,
-        y: height / 2.0,
-        z: width / 2.0,
+        x: size_x / 2.0,
+        y: size_y / 2.0,
+        z: size_z / 2.0,
     };
 
     let corner1 = rotate(origin - half_size, yaw, pitch);
@@ -181,8 +181,8 @@ pub struct AttackCruiserProjectile {
     pub speed: f32,
     #[serde(default = "default_lifetime_millis")]
     pub lifetime_millis: f32,
-    pub length: f32,
-    pub width: f32,
+    pub size_x: f32,
+    pub size_z: f32,
     #[serde(default = "default_count")]
     pub count: u8,
     #[serde(default = "default_launch_offset")]
@@ -209,9 +209,9 @@ pub struct AttackCruiserPlayerWeaponConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserShipConfig {
     pub model_id: u32,
-    pub length: f32,
-    pub width: f32,
-    pub height: f32,
+    pub size_x: f32,
+    pub size_y: f32,
+    pub size_z: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -372,8 +372,14 @@ impl AttackCruiserProjectilePool {
             let yaw = direction.x.atan2(direction.z) + relative_yaw;
             let pitch = wobble;
 
-            let (corner1, corner2) =
-                corners(origin, projectile.length, projectile.width, 0.0, yaw, pitch);
+            let (corner1, corner2) = corners(
+                origin,
+                projectile.size_x,
+                0.0,
+                projectile.size_z,
+                yaw,
+                pitch,
+            );
 
             let now = Instant::now();
             let expiry_time = now
@@ -412,6 +418,19 @@ impl AttackCruiserProjectilePool {
         }
 
         Ok(launched_projectiles)
+    }
+
+    pub fn total_damage(
+        origin: Pos3,
+        size_x: f32,
+        size_y: f32,
+        size_z: f32,
+        yaw: f32,
+        pitch: f32,
+    ) -> i16 {
+        let (ship_corner1, ship_corner2) = corners(origin, size_x, size_y, size_z, yaw, pitch);
+        //
+        0
     }
 
     pub fn expire(&mut self) {
@@ -700,9 +719,9 @@ impl AttackCruiserGame {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 100.0,
-                                    length: self.config.player_ship.length,
-                                    width: self.config.player_ship.width,
-                                    height: self.config.player_ship.height,
+                                    length: self.config.player_ship.size_x,
+                                    width: self.config.player_ship.size_z,
+                                    height: self.config.player_ship.size_y,
                                     center_of_mass_z: 0.0,
                                     max_speed: 100.0,
                                     vertical_speed: 0.0,

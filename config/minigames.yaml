@@ -3170,9 +3170,9 @@ categories:
                   heading: 0.0
                 player_ship:
                   model_id: 167
-                  length: 10
-                  width: 55
-                  height: 28
+                  size_x: 55
+                  size_y: 28
+                  size_z: 120
                 player_weapons:
                   cooldown_millis: 250
                   primary_tiers:
