@@ -95,7 +95,8 @@ struct AttackCruiserPlayerState {
     pub ready: bool,
     pub pos: Pos3,
     pub heading: f32,
-    pub speed: Pos,
+    pub speed: Pos3,
+    pub angular_speed: f32,
     pub forward_multiplier: f32,
     pub turn_multiplier: f32,
     pub score: i32,
@@ -112,7 +113,8 @@ impl AttackCruiserPlayerState {
             ready,
             pos,
             heading,
-            speed: Pos::default(),
+            speed: Pos3::default(),
+            angular_speed: 0.0,
             forward_multiplier: 0.0,
             turn_multiplier: 0.0,
             score: 0,
@@ -629,7 +631,7 @@ impl AttackCruiserGame {
                                 y: 1363.94,
                                 z: 28539.1,
                             },
-                            rotation_speed: 0.01,
+                            angular_speed: 0.01,
                         },
                         players: AttackCruiserVec::new(),
                         events: AttackCruiserVec(
@@ -927,13 +929,10 @@ impl AttackCruiserGame {
         for client_state in client_states.states.into_iter() {
             if client_state.actor_id == self.player_actor_id(player_index) {
                 let player_state = &mut self.player_states[player_index as usize];
-                player_state.pos = Pos3 {
-                    x: client_state.pos.x,
-                    y: client_state.pos.y,
-                    z: client_state.pos.z,
-                };
-                player_state.heading = client_state.pos.w;
+                player_state.pos = client_state.pos;
+                player_state.heading = client_state.heading;
                 player_state.speed = client_state.speed;
+                player_state.angular_speed = client_state.angular_speed;
                 player_state.forward_multiplier = client_state.forward_multiplier;
                 player_state.turn_multiplier = client_state.turn_multiplier;
             }
@@ -952,13 +951,10 @@ impl AttackCruiserGame {
                     },
                     states: vec![AttackCruiserActorUpdate {
                         actor_id: self.player_actor_id(player_index),
-                        pos: Pos {
-                            x: player_state.pos.x,
-                            y: player_state.pos.y,
-                            z: player_state.pos.z,
-                            w: player_state.heading,
-                        },
+                        pos: player_state.pos,
+                        heading: player_state.heading,
                         speed: player_state.speed,
+                        angular_speed: player_state.angular_speed,
                         forward_multiplier: player_state.forward_multiplier,
                         turn_multiplier: player_state.turn_multiplier,
                         health: player_state.health.into(),

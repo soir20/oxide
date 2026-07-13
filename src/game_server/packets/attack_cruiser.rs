@@ -324,7 +324,7 @@ pub struct AttackCruiserGlobalConfig {
 pub struct AttackCruiserPlanetConfig {
     pub model_id: u32,
     pub pos: Pos3,
-    pub rotation_speed: f32,
+    pub angular_speed: f32,
 }
 
 #[derive(SerializePacket)]
@@ -1127,8 +1127,10 @@ impl DeserializePacket for AttackCruiserActorState {
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserActorUpdate {
     pub actor_id: i32,
-    pub pos: Pos,
-    pub speed: Pos,
+    pub pos: Pos3,
+    pub heading: f32,
+    pub speed: Pos3,
+    pub angular_speed: f32,
     pub forward_multiplier: f32,
     pub turn_multiplier: f32,
     pub health: i32,
