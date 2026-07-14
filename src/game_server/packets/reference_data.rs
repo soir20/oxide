@@ -105,7 +105,7 @@ impl GamePacket for CategoryDefinitions {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ItemGroupItem {
-    pub guid: u32,
+    pub guid: i32,
     pub unknown: u32,
 }
 
@@ -125,7 +125,7 @@ pub struct ItemGroupDefinition {
     pub description_id: u32,
     pub sort_order: u32,
     pub icon_set_id: u32,
-    pub category: u32,
+    pub category: i32,
     pub page: u32,
     pub preview_model_id: u32,
     pub preview_animation_id: i32,

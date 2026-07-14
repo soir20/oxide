@@ -44,12 +44,12 @@ use super::{
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct DefaultSaber {
-    hilt_item_guid: u32,
-    shape_item_guid: u32,
-    color_item_guid: u32,
+    hilt_item_guid: i32,
+    shape_item_guid: i32,
+    color_item_guid: i32,
 }
 
-pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSaber>, ConfigError> {
+pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<i32, DefaultSaber>, ConfigError> {
     let mut file = File::open(config_dir.join("default_sabers.yaml"))?;
     let default_sabers: Vec<DefaultSaber> = serde_yaml::from_reader(&mut file)?;
     Ok(default_sabers
@@ -58,7 +58,7 @@ pub fn load_default_sabers(config_dir: &Path) -> Result<BTreeMap<u32, DefaultSab
         .collect())
 }
 
-pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customization>, ConfigError> {
+pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<i32, Customization>, ConfigError> {
     let mut file = File::open(config_dir.join("customizations.yaml"))?;
     let customizations: Vec<Customization> = serde_yaml::from_reader(&mut file)?;
     Ok(customizations
@@ -69,7 +69,7 @@ pub fn load_customizations(config_dir: &Path) -> Result<BTreeMap<u32, Customizat
 
 pub fn load_customization_item_mappings(
     config_dir: &Path,
-) -> Result<BTreeMap<u32, Vec<u32>>, ConfigError> {
+) -> Result<BTreeMap<i32, Vec<i32>>, ConfigError> {
     let mut file = File::open(config_dir.join("customization_item_mappings.yaml"))?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }
@@ -100,7 +100,7 @@ pub fn process_inventory_packet(
 }
 
 pub fn wield_type_from_slot(
-    items: &BTreeMap<EquipmentSlot, u32>,
+    items: &BTreeMap<EquipmentSlot, i32>,
     slot: EquipmentSlot,
     game_server: &GameServer,
 ) -> WieldType {
@@ -116,7 +116,7 @@ pub fn wield_type_from_slot(
 }
 
 pub fn wield_type_from_inventory(
-    items: &BTreeMap<EquipmentSlot, u32>,
+    items: &BTreeMap<EquipmentSlot, i32>,
     game_server: &GameServer,
 ) -> WieldType {
     let primary_wield_type = wield_type_from_slot(items, EquipmentSlot::PrimaryWeapon, game_server);
@@ -133,8 +133,8 @@ pub fn wield_type_from_inventory(
 }
 
 pub fn customizations_from_guids(
-    applied_customizations: impl Iterator<Item = u32>,
-    customizations: &BTreeMap<u32, Customization>,
+    applied_customizations: impl Iterator<Item = i32>,
+    customizations: &BTreeMap<i32, Customization>,
 ) -> Vec<Customization> {
     let mut result = Vec::new();
 
@@ -155,9 +155,9 @@ pub fn customizations_from_guids(
 
 pub fn customizations_from_item_guids(
     sender: u32,
-    applied_customization_item_guids: impl Iterator<Item = u32>,
-    customizations: &BTreeMap<u32, Customization>,
-    customization_item_mappings: &BTreeMap<u32, Vec<u32>>,
+    applied_customization_item_guids: impl Iterator<Item = i32>,
+    customizations: &BTreeMap<i32, Customization>,
+    customization_item_mappings: &BTreeMap<i32, Vec<i32>>,
 ) -> Result<Vec<Customization>, ProcessPacketError> {
     let mut result = Vec::new();
 
@@ -698,7 +698,7 @@ fn process_equip_customization(
 }
 
 fn item_def_from_slot<'a>(
-    items: &BTreeMap<EquipmentSlot, u32>,
+    items: &BTreeMap<EquipmentSlot, i32>,
     slot: EquipmentSlot,
     game_server: &'a GameServer,
 ) -> Option<&'a ItemConfig> {
@@ -721,7 +721,7 @@ pub fn update_saber_tints<'a>(
     >,
     instance_guid: u64,
     chunk: Chunk,
-    equipped_items: &BTreeMap<EquipmentSlot, u32>,
+    equipped_items: &BTreeMap<EquipmentSlot, i32>,
     battle_class: u32,
     wield_type: WieldType,
     game_server: &GameServer,
@@ -838,7 +838,7 @@ pub fn update_saber_tints<'a>(
 pub fn player_has_saber_equipped(
     inventory: &PlayerInventory,
     battle_class: u32,
-    item_configs: &BTreeMap<u32, ItemConfig>,
+    item_configs: &BTreeMap<i32, ItemConfig>,
 ) -> bool {
     inventory
         .equipped_item(battle_class, EquipmentSlot::PrimaryWeapon)
@@ -854,7 +854,7 @@ pub struct ExtendedAttachment {
     pub tint: u32,
     pub composite_effect: u32,
     pub slot: EquipmentSlot,
-    pub item_guid: u32,
+    pub item_guid: i32,
     pub item_class: i32,
 }
 
@@ -872,8 +872,8 @@ impl From<ExtendedAttachment> for Attachment {
 }
 
 pub fn attachments_from_equipped_items(
-    equipped_items: &BTreeMap<EquipmentSlot, u32>,
-    item_configs: &BTreeMap<u32, ItemConfig>,
+    equipped_items: &BTreeMap<EquipmentSlot, i32>,
+    item_configs: &BTreeMap<i32, ItemConfig>,
 ) -> Vec<ExtendedAttachment> {
     equipped_items
         .iter()

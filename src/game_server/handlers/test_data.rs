@@ -26,7 +26,7 @@ use super::{
 pub fn make_test_player(
     guid: u32,
     mounts: &BTreeMap<u32, MountConfig>,
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<i32, ItemConfig>,
 ) -> Player {
     let mut owned_mounts = Vec::new();
     for mount in mounts.values() {
@@ -452,7 +452,7 @@ pub fn make_test_weapon_abilities() -> Vec<PlayerAbilityGroup> {
     }]
 }
 
-pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, u32> {
+pub fn make_test_customizations() -> BTreeMap<CustomizationSlot, i32> {
     let mut customizations = BTreeMap::new();
     customizations.insert(CustomizationSlot::HeadModel, 110000);
     customizations.insert(CustomizationSlot::SkinTone, 60030);

@@ -367,7 +367,7 @@ impl GamePacket for UpdateTemporaryModel {
 }
 
 pub struct ItemDefinitionsReply<'a> {
-    pub definitions: &'a BTreeMap<u32, ItemDefinition>,
+    pub definitions: &'a BTreeMap<i32, ItemDefinition>,
 }
 
 impl SerializePacket for ItemDefinitionsReply<'_> {
@@ -419,7 +419,7 @@ pub struct Customization {
     pub customization_slot: CustomizationSlot,
     pub customization_param1: String,
     pub customization_param2: u32,
-    pub guid: u32,
+    pub guid: i32,
 }
 
 #[derive(SerializePacket)]
@@ -593,7 +593,7 @@ impl GamePacket for SetAnimation {
 #[derive(SerializePacket)]
 pub struct UpdateEquippedItem {
     pub guid: u64,
-    pub item_guid: u32,
+    pub item_guid: i32,
     pub item: Attachment,
     pub battle_class: u32,
     pub wield_type: WieldType,

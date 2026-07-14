@@ -671,8 +671,8 @@ impl ZoneInstance {
         characters_read: &BTreeMap<u64, CharacterReadGuard<'_>>,
         moved_character_handle: &Character,
         mount_configs: &BTreeMap<u32, MountConfig>,
-        item_configs: &BTreeMap<u32, ItemConfig>,
-        customizations: &BTreeMap<u32, Customization>,
+        item_configs: &BTreeMap<i32, ItemConfig>,
+        customizations: &BTreeMap<i32, Customization>,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
 
@@ -1300,7 +1300,7 @@ pub fn interact_with_character(
                                 ));
                             };
 
-                            if !target_read_handle.stats.is_spawned {
+                            if !target_read_handle.stats.is_spawned() {
                                 return Err(ProcessPacketError::new(
                                     ProcessPacketErrorType::ConstraintViolated,
                                     format!("Received request to interact with inactive NPC {target} from {requester}"),

@@ -8,7 +8,13 @@ use serde::Deserialize;
 
 use crate::{
     game_server::{
-        handlers::{item::ItemConfig, store::ItemCostMap},
+        handlers::{
+            item::ItemConfig,
+            store::{
+                ItemCostMap, REDIRECT_ANIMATION_ID, REDIRECT_GUID, REDIRECT_ICON_SET_ID,
+                REDIRECT_MODEL_ID, REDIRECT_NAME_ID,
+            },
+        },
         packets::reference_data::{
             CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
             ItemGroupItem,
@@ -30,7 +36,19 @@ pub fn load_item_classes(config_dir: &Path) -> Result<ItemClassDefinitions, Conf
 
 pub fn load_categories(config_dir: &Path) -> Result<CategoryDefinitions, ConfigError> {
     let mut file = File::open(config_dir.join("item_categories.yaml"))?;
-    Ok(serde_yaml::from_reader(&mut file)?)
+    let categories: CategoryDefinitions = serde_yaml::from_reader(&mut file)?;
+
+    if categories
+        .definitions
+        .iter()
+        .any(|category| category.guid >= REDIRECT_GUID)
+    {
+        return Err(ConfigError::ConstraintViolated(format!(
+            "Item category cannot have GUID >= {REDIRECT_GUID}",
+        )));
+    }
+
+    Ok(categories)
 }
 
 #[derive(Deserialize)]
@@ -46,7 +64,7 @@ pub struct ItemGroupConfig {
     #[serde(default)]
     pub icon_set_id: u32,
     #[serde(default)]
-    pub category: u32,
+    pub category: i32,
     #[serde(default)]
     pub page: u32,
     #[serde(default)]
@@ -89,13 +107,19 @@ impl From<ItemGroupConfig> for ItemGroupDefinition {
 
 pub fn load_item_groups(
     config_dir: &Path,
-    items: &BTreeMap<u32, ItemConfig>,
+    items: &BTreeMap<i32, ItemConfig>,
     costs: &mut ItemCostMap,
 ) -> Result<Vec<ItemGroupDefinition>, ConfigError> {
     let mut file = File::open(config_dir.join("item_groups.yaml"))?;
-    let groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
+    let mut groups: Vec<ItemGroupConfig> = serde_yaml::from_reader(&mut file)?;
 
     for group in groups.iter() {
+        if group.guid >= REDIRECT_GUID {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Item group cannot have GUID >= {REDIRECT_GUID}",
+            )));
+        }
+
         for item in group.items.iter() {
             if !items.contains_key(&item.guid) {
                 return Err(ConfigError::ConstraintViolated(format!(
@@ -106,7 +130,33 @@ pub fn load_item_groups(
         }
     }
 
-    let items_for_sale: HashSet<u32> = groups
+    let for_sale_categories: HashSet<i32> = groups
+        .iter()
+        .filter(|group| group.for_sale)
+        .map(|group| group.category)
+        .collect();
+    for category in for_sale_categories.into_iter() {
+        groups.push(ItemGroupConfig {
+            guid: REDIRECT_GUID | category,
+            name_id: REDIRECT_NAME_ID,
+            description_id: REDIRECT_NAME_ID,
+            sort_order: 0,
+            icon_set_id: REDIRECT_ICON_SET_ID,
+            category,
+            page: 0,
+            preview_model_id: REDIRECT_MODEL_ID,
+            preview_animation_id: REDIRECT_ANIMATION_ID,
+            is_new: false,
+            members_only: false,
+            for_sale: false,
+            items: vec![ItemGroupItem {
+                guid: REDIRECT_GUID,
+                unknown: 0,
+            }],
+        });
+    }
+
+    let items_for_sale: HashSet<i32> = groups
         .iter()
         .filter(|group| group.for_sale)
         .flat_map(|group| group.items.iter().map(|item| item.guid))

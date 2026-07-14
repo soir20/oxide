@@ -583,7 +583,10 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      removal_mode: &starfighter_removal_config
+        !Graceful
+        enable_death_animation: false
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:
@@ -598,7 +601,6 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode: !Graceful {}
               min_duration_millis: 6000
           next_possible_procedures:
             - procedure: spawn
@@ -625,7 +627,8 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      is_spawned: false
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:
@@ -640,7 +643,6 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              removal_mode: !Graceful {}
               min_duration_millis: 6000
           next_possible_procedures:
             - procedure: spawn

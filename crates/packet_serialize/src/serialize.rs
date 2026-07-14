@@ -1,4 +1,4 @@
-use crate::{LengthlessSlice, LengthlessVec, NullTerminatedString};
+use crate::{LengthlessSlice, LengthlessVec, NullTerminatedString, Skip};
 use byteorder::{LittleEndian, WriteBytesExt};
 use serde::de::IgnoredAny;
 use std::{collections::BTreeMap, io::Write};
@@ -172,4 +172,10 @@ impl<K, V: SerializePacket> SerializePacket for BTreeMap<K, V> {
 
 impl SerializePacket for IgnoredAny {
     fn serialize(&self, _: &mut Vec<u8>) {}
+}
+
+impl<const N: usize> SerializePacket for Skip<N> {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        LengthlessVec(vec![0u8; N]).serialize(buffer);
+    }
 }
