@@ -299,8 +299,10 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    #[serde(default = "default_true")]
-    pub is_spawned: bool,
+    #[serde(default)]
+    pub force_despawn: bool,
+    #[serde(default)]
+    pub removal_mode: RemovalMode,
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
@@ -361,7 +363,7 @@ impl BaseNpc {
         character: &CharacterStats,
         override_is_spawned: bool,
     ) -> Vec<Vec<u8>> {
-        if !character.is_spawned && !override_is_spawned {
+        if !character.is_spawned() && !override_is_spawned {
             return Vec::new();
         }
 
@@ -513,7 +515,7 @@ impl BaseNpc {
                     show_hp_delta: false,
                     max_hp: character.max_health as i32,
                     new_hp: character.health as i32,
-                    hp_delta: 0,
+                    hp_delta: (character.health as i32).saturating_sub(character.max_health as i32),
                     critical: false,
                 },
             }));
@@ -701,8 +703,6 @@ pub struct OneShotInteractionConfig {
     #[serde(default)]
     pub hud_message: HudMessageType,
     #[serde(default)]
-    pub removal_mode: RemovalMode,
-    #[serde(default)]
     pub despawn_npc: bool,
     pub duration_millis: u64,
 }
@@ -717,7 +717,6 @@ pub struct OneShotInteractionTemplate {
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
     pub hud_message: HudMessageType,
-    pub removal_mode: RemovalMode,
     pub despawn_npc: bool,
     pub duration_millis: u64,
 }
@@ -751,7 +750,6 @@ impl OneShotInteractionTemplate {
             animation_delay_seconds: config.animation_delay_seconds,
             composite_effect_id: config.composite_effect_id,
             composite_effect_delay_millis: config.composite_effect_delay_millis,
-            removal_mode: config.removal_mode,
             despawn_npc: config.despawn_npc,
             duration_millis: config.duration_millis,
         }
@@ -770,8 +768,8 @@ impl OneShotInteractionTemplate {
         let mut packets_for_sender = Vec::new();
 
         if self.despawn_npc {
-            character.is_spawned = false;
-            packets_for_all.extend(character.remove_packets(self.removal_mode));
+            character.force_despawn = true;
+            packets_for_all.extend(character.remove_packets(character.removal_mode));
         }
 
         if let Some(animation_id) = self.one_shot_animation_id {
@@ -939,8 +937,6 @@ pub struct TickableStep {
     #[serde(default)]
     pub script: ScriptType,
     #[serde(default)]
-    pub removal_mode: RemovalMode,
-    #[serde(default)]
     pub spawned_state: SpawnedState,
     #[serde(default)]
     pub cursor: CursorUpdate,
@@ -948,7 +944,9 @@ pub struct TickableStep {
 }
 
 impl TickableStep {
-    pub fn reselect_possible_pos(&self, character: &CharacterStats) -> Option<NavmeshWaypoint> {
+    pub fn reset_for_spawn(&self, character: &mut CharacterStats) -> Option<NavmeshWaypoint> {
+        character.refresh_health();
+
         if character.possible_pos.is_empty() {
             return None;
         }
@@ -982,9 +980,9 @@ impl TickableStep {
 
         match self.spawned_state {
             SpawnedState::Always => {
-                if !character.is_spawned {
-                    character.is_spawned = true;
-                    pos_update = self.reselect_possible_pos(character);
+                if !character.is_spawned() {
+                    character.force_despawn = false;
+                    pos_update = self.reset_for_spawn(character);
                     packets_for_all.extend(character.add_packets(
                         false,
                         mount_configs,
@@ -994,10 +992,10 @@ impl TickableStep {
                 }
             }
             SpawnedState::OnFirstStepTick => {
-                if !character.is_spawned {
-                    // Spawn the character without updating its state to prevent it from being visible
+                if !character.is_spawned() {
+                    // Spawn the character without updating force_despawn to prevent it from being visible
                     // to players joining the room mid-step
-                    pos_update = self.reselect_possible_pos(character);
+                    pos_update = self.reset_for_spawn(character);
                     packets_for_all.extend(character.add_packets(
                         true, // Override is_spawned
                         mount_configs,
@@ -1007,10 +1005,10 @@ impl TickableStep {
                 }
             }
             SpawnedState::Despawn => {
-                // Skip checking if the character is spawned before despawning it and instead check if
-                // its state needs updating as OnFirstStepTick doesn't maintain states
-                character.is_spawned = false;
-                packets_for_all.extend(character.remove_packets(self.removal_mode));
+                // Skip checking if the character is spawned before despawning it and instead ensure
+                // force_despawn is true as OnFirstStepTick doesn't maintain this field
+                character.force_despawn = true;
+                packets_for_all.extend(character.remove_packets(character.removal_mode));
             }
             SpawnedState::Keep => {}
         }
@@ -1402,7 +1400,7 @@ impl TickableProcedure {
             (WeightedAliasIndex::new(weights), references)
         };
 
-        let procedure = TickableProcedure {
+        TickableProcedure {
             steps: config.steps,
             current_step_index: None,
             last_step_change: Instant::now(),
@@ -1410,11 +1408,7 @@ impl TickableProcedure {
             distribution: distribution.expect("Couldn't create weighted alias index"),
             next_possible_procedures,
             is_interruptible: config.is_interruptible,
-        };
-
-        procedure.panic_if_removal_exceeds_duration();
-
-        procedure
+        }
     }
 
     pub fn tick(
@@ -1532,28 +1526,6 @@ impl TickableProcedure {
 
     pub fn is_interruptible(&self) -> bool {
         self.is_interruptible
-    }
-
-    fn panic_if_removal_exceeds_duration(&self) {
-        for step in &self.steps {
-            if let RemovalMode::Graceful {
-                removal_delay_millis,
-                removal_effect_delay_millis,
-                fade_duration_millis,
-                ..
-            } = step.removal_mode
-            {
-                let total_removal_time =
-                    removal_delay_millis + removal_effect_delay_millis + fade_duration_millis;
-
-                if total_removal_time > step.min_duration_millis as u32 {
-                    panic!(
-                        "(Removal delay: {}) + (Effect Delay: {}) + (Fade duration: {}) exceeded (Step duration: {})",
-                        removal_delay_millis, removal_effect_delay_millis, fade_duration_millis, step.min_duration_millis
-                    );
-                }
-            }
-        }
     }
 }
 
@@ -2142,6 +2114,7 @@ pub struct BaseNpcTemplate {
     pub cursor: Option<u8>,
     pub health: u16,
     pub max_health: u16,
+    pub removal_mode: RemovalMode,
     pub interact_radius: f32,
     pub auto_interact_radius: f32,
     pub move_to_interact_offset: f32,
@@ -2149,7 +2122,7 @@ pub struct BaseNpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
-    pub is_spawned: bool,
+    pub force_despawn: bool,
     pub physics: PhysicsState,
     pub max_distance_from_target: f32,
     pub max_distance_from_origin: f32,
@@ -2238,10 +2211,11 @@ impl BaseNpcTemplate {
             cursor: config.cursor,
             health: config.health,
             max_health: config.max_health.unwrap_or(config.health),
+            removal_mode: config.removal_mode,
             interact_radius: config.interact_radius,
             auto_interact_radius: config.auto_interact_radius.unwrap_or(0.0),
             move_to_interact_offset: config.move_to_interact_offset,
-            is_spawned: config.is_spawned,
+            force_despawn: config.force_despawn,
             physics: config.physics,
             mount_id: None,
             wield_type: WieldType::None,
@@ -2322,7 +2296,7 @@ impl BaseNpcTemplate {
                     mount_multiplier: 1.0,
                 },
                 cursor: self.cursor,
-                is_spawned: self.is_spawned,
+                force_despawn: self.force_despawn,
                 physics: self.physics,
                 name: None,
                 squad_guid: None,
@@ -2334,6 +2308,7 @@ impl BaseNpcTemplate {
                 threat_table: self.enemy_prioritization.clone().into(),
                 health: self.health,
                 max_health: self.max_health,
+                removal_mode: self.removal_mode,
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: self.navmesh.clone(),
                 ability_height: self.ability_height,
@@ -2459,7 +2434,7 @@ pub struct CharacterStats {
     speed: CharacterStat,
     pub jump_height_multiplier: CharacterStat,
     pub cursor: Option<u8>,
-    pub is_spawned: bool,
+    pub force_despawn: bool,
     pub physics: PhysicsState,
     pub name: Option<String>,
     pub squad_guid: Option<u64>,
@@ -2474,11 +2449,20 @@ pub struct CharacterStats {
     pub threat_table: ThreatTable,
     pub health: u16,
     pub max_health: u16,
+    pub removal_mode: RemovalMode,
     pub composite_effect_tags: BTreeMap<u32, u32>,
     pub navmesh: Option<String>,
 }
 
 impl CharacterStats {
+    pub fn is_spawned(&self) -> bool {
+        !self.force_despawn && self.health > 0
+    }
+
+    pub fn refresh_health(&mut self) {
+        self.health = self.max_health;
+    }
+
     pub fn add_packets(
         &self,
         override_is_spawned: bool,
@@ -2706,7 +2690,7 @@ impl Character {
                 character_type,
                 mount: mount_id,
                 cursor,
-                is_spawned: true,
+                force_despawn: false,
                 physics: PhysicsState::default(),
                 name: None,
                 squad_guid: None,
@@ -2734,6 +2718,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: u16::MAX,
                 max_health: u16::MAX,
+                removal_mode: RemovalMode::default(),
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
@@ -2776,7 +2761,7 @@ impl Character {
                 character_type: CharacterType::Player(Box::new(data)),
                 mount: None,
                 cursor: None,
-                is_spawned: true,
+                force_despawn: false,
                 physics: PhysicsState::default(),
                 interact_radius: 0.0,
                 auto_interact_radius: 0.0,
@@ -2805,6 +2790,7 @@ impl Character {
                 threat_table: ThreatTable::default(),
                 health: u16::MAX,
                 max_health: u16::MAX,
+                removal_mode: RemovalMode::default(),
                 composite_effect_tags: BTreeMap::new(),
                 navmesh: None,
                 ability_height: default_ability_height(),
