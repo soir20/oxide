@@ -1,5 +1,6 @@
 use std::{
     collections::VecDeque,
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -388,7 +389,7 @@ impl Navmesh {
 pub enum Collision {
     #[default]
     Empty,
-    Bvh(oxide_bvh::Bvh),
+    Bvh(Arc<oxide_bvh::Bvh>),
 }
 
 pub const DEFAULT_COLLISION: Collision = Collision::Empty;
