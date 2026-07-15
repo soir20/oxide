@@ -245,7 +245,7 @@ pub enum FlashMinigameType {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum MinigameType {
-    AttackCruiser(Box<AttackCruiserConfig>),
+    AttackCruiser(Arc<AttackCruiserConfig>),
     Flash {
         game_swf_name: String,
         #[serde(default)]
@@ -254,7 +254,7 @@ pub enum MinigameType {
     SaberStrike {
         saber_strike_stage_id: u32,
     },
-    SaberDuel(Box<SaberDuelConfig>),
+    SaberDuel(Arc<SaberDuelConfig>),
 }
 
 impl MinigameType {
@@ -485,7 +485,7 @@ impl SharedMinigameTypeData {
         match minigame_type {
             MinigameType::AttackCruiser(config) => SharedMinigameTypeData::AttackCruiser {
                 game: Box::new(AttackCruiserGame::new(
-                    *config.to_owned(),
+                    config.clone(),
                     player1,
                     player2,
                     group,
@@ -514,7 +514,7 @@ impl SharedMinigameTypeData {
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
             MinigameType::SaberDuel(config) => SharedMinigameTypeData::SaberDuel {
                 game: Box::new(SaberDuelGame::new(
-                    *config.to_owned(),
+                    config.clone(),
                     player1,
                     player2,
                     group,

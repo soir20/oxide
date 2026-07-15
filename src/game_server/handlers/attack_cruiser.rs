@@ -2,6 +2,7 @@ use std::{
     cmp::Reverse,
     collections::BTreeMap,
     io::{Cursor, Read},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -68,26 +69,6 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
         y: y2,
         z: z2,
     }
-}
-
-fn corners(
-    origin: Pos3,
-    size_x: f32,
-    size_y: f32,
-    size_z: f32,
-    yaw: f32,
-    pitch: f32,
-) -> (Pos3, Pos3) {
-    let half_size = Pos3 {
-        x: size_x / 2.0,
-        y: size_y / 2.0,
-        z: size_z / 2.0,
-    };
-
-    let corner1 = rotate(origin - half_size, yaw, pitch);
-    let corner2 = rotate(origin + half_size, yaw, pitch);
-
-    (corner1, corner2)
 }
 
 #[derive(Clone, Debug)]
@@ -181,8 +162,6 @@ pub struct AttackCruiserProjectile {
     pub speed: f32,
     #[serde(default = "default_lifetime_millis")]
     pub lifetime_millis: f32,
-    pub size_x: f32,
-    pub size_z: f32,
     #[serde(default = "default_count")]
     pub count: u8,
     #[serde(default = "default_launch_offset")]
@@ -209,9 +188,7 @@ pub struct AttackCruiserPlayerWeaponConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserShipConfig {
     pub model_id: u32,
-    pub size_x: f32,
-    pub size_y: f32,
-    pub size_z: f32,
+    pub bvh_name: String,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -295,8 +272,7 @@ pub fn process_attack_cruiser_packet(
 struct AttackCruiserProjectileInstance {
     launched_by_actor_id: i32,
     speed: Pos3,
-    origin_corner1: Pos3,
-    origin_corner2: Pos3,
+    origin: Pos3,
     launch_time: Instant,
     damage: i16,
 }
@@ -372,15 +348,6 @@ impl AttackCruiserProjectilePool {
             let yaw = direction.x.atan2(direction.z) + relative_yaw;
             let pitch = wobble;
 
-            let (corner1, corner2) = corners(
-                origin,
-                projectile.size_x,
-                0.0,
-                projectile.size_z,
-                yaw,
-                pitch,
-            );
-
             let now = Instant::now();
             let expiry_time = now
                 .checked_add(Duration::from_secs_f32(projectile.lifetime_millis * 1000.0))
@@ -398,8 +365,7 @@ impl AttackCruiserProjectilePool {
                 AttackCruiserProjectileInstance {
                     launched_by_actor_id,
                     speed,
-                    origin_corner1: corner1,
-                    origin_corner2: corner2,
+                    origin,
                     launch_time: now,
                     damage: projectile.damage,
                 },
@@ -428,7 +394,6 @@ impl AttackCruiserProjectilePool {
         yaw: f32,
         pitch: f32,
     ) -> i16 {
-        let (ship_corner1, ship_corner2) = corners(origin, size_x, size_y, size_z, yaw, pitch);
         //
         0
     }
@@ -473,7 +438,7 @@ impl AttackCruiserProjectilePool {
 
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
-    config: AttackCruiserConfig,
+    config: Arc<AttackCruiserConfig>,
     player1: u32,
     player2: Option<u32>,
     player_states: [AttackCruiserPlayerState; 2],
@@ -485,7 +450,7 @@ pub struct AttackCruiserGame {
 
 impl AttackCruiserGame {
     pub fn new(
-        config: AttackCruiserConfig,
+        config: Arc<AttackCruiserConfig>,
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
@@ -719,9 +684,9 @@ impl AttackCruiserGame {
                                 base_config: AttackCruiserBasePhysicsConfig {
                                     contact_response: AttackCruiserBool(true),
                                     mass: 100.0,
-                                    length: self.config.player_ship.size_x,
-                                    width: self.config.player_ship.size_z,
-                                    height: self.config.player_ship.size_y,
+                                    length: 1.0,
+                                    width: 1.0,
+                                    height: 1.0,
                                     center_of_mass_z: 0.0,
                                     max_speed: 100.0,
                                     vertical_speed: 0.0,

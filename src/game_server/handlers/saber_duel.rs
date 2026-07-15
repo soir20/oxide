@@ -1,6 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, VecDeque},
     io::{Cursor, Read},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -535,7 +536,7 @@ enum SaberDuelBoutCompletion {
 
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
-    config: SaberDuelConfig,
+    config: Arc<SaberDuelConfig>,
     pos: Pos,
     basic_bout_animation_distribution: WeightedAliasIndex<u8>,
     special_bout_animation_distribution: WeightedAliasIndex<u8>,
@@ -551,7 +552,7 @@ pub struct SaberDuelGame {
 
 impl SaberDuelGame {
     pub fn new(
-        config: SaberDuelConfig,
+        config: Arc<SaberDuelConfig>,
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,

@@ -3170,31 +3170,21 @@ categories:
                   heading: 0.0
                 player_ship:
                   model_id: 167
-                  size_x: 55
-                  size_y: 28
-                  size_z: 120
+                  bvh_name: attack_cruiser_destroyer
                 player_weapons:
                   cooldown_millis: 250
                   primary_tiers:
                     - projectiles:
                         - composite_effect_id: 1558
-                          length: 10
-                          width: 10
                           count: 2
                           damage: 1
                         - composite_effect_id: 1763
-                          length: 10
-                          width: 10
                           damage: 1
                         - composite_effect_id: 1762
                           yaw_degrees: 5
-                          length: 10
-                          width: 10
                           damage: 1
                         - composite_effect_id: 1762
                           yaw_degrees: -5
-                          length: 10
-                          width: 10
                           damage: 1
               zone_template_guid: 250
               score_to_credits_expression: x / 129
