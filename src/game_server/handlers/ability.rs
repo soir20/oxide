@@ -20,16 +20,27 @@ const fn default_base_damage() -> u32 {
     100
 }
 
-const fn default_damage_deviation() -> u32 {
-    15
+const fn default_damage_deviation() -> f32 {
+    15.0
 }
 
-const fn default_critical_chance() -> u32 {
-    5
+const fn default_critical_chance() -> f32 {
+    5.0
+}
+
+const fn defualt_aoe_radius() -> f32 {
+    3.3
 }
 
 const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+pub enum TargetLimit {
+    #[default]
+    Single,
+    Infinite,
 }
 
 #[derive(Clone, Deserialize)]
@@ -50,10 +61,12 @@ pub struct AbilityConfig {
     #[serde(default = "default_base_damage")]
     pub base_damage: u32,
     #[serde(default = "default_damage_deviation")]
-    pub damage_deviation_percentage: u32,
+    pub damage_deviation_percent: f32,
     #[serde(default = "default_critical_chance")]
-    pub critical_chance: u32,
-    pub critical_bonus_percentage: Option<u32>,
+    pub critical_chance: f32,
+    pub critical_bonus_percent: Option<f32>,
+    #[serde(default)]
+    pub target_limit: TargetLimit,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
