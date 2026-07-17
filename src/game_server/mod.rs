@@ -310,9 +310,10 @@ impl GameServer {
     pub fn tick_minigame(
         &self,
         now: Instant,
+        tick_duration: Duration,
         minigame_group: MinigameMatchmakingGroup,
     ) -> Vec<Broadcast> {
-        tick_minigame(self, now, minigame_group)
+        tick_minigame(self, now, tick_duration, minigame_group)
     }
 
     pub fn reset_daily_minigames(&self) -> Vec<Broadcast> {

@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
     iter, mem,
@@ -11,6 +11,7 @@ use std::{
 use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
+use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use rand::{seq::SliceRandom, thread_rng};
 use serde::{Deserialize, Deserializer};
@@ -380,8 +381,8 @@ impl SharedMinigameData {
         self.data.pause_or_resume(sender, pause)
     }
 
-    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        self.data.tick(now)
+    pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        self.data.tick(now, tick_duration)
     }
 
     pub fn remove_player(
@@ -477,6 +478,7 @@ impl SharedMinigameTypeData {
         group: MinigameMatchmakingGroup,
         difficulty: u32,
         start_pos: Option<Pos>,
+        bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
@@ -489,6 +491,7 @@ impl SharedMinigameTypeData {
                     player1,
                     player2,
                     group,
+                    bvhs,
                 )),
             },
             MinigameType::Flash { game_type, .. } => match game_type {
@@ -538,9 +541,9 @@ impl SharedMinigameTypeData {
         }
     }
 
-    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         match self {
-            SharedMinigameTypeData::AttackCruiser { game } => game.tick(now),
+            SharedMinigameTypeData::AttackCruiser { game } => game.tick(now, tick_duration),
             SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             SharedMinigameTypeData::SaberDuel { game } => game.tick(now),
@@ -2438,6 +2441,7 @@ pub fn prepare_active_minigame_instance(
                 matchmaking_group,
                 stage_config.stage_config.difficulty(),
                 start_pos,
+                game_server.bvhs(),
             );
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(

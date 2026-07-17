@@ -167,15 +167,15 @@ async fn main() {
         &game_server_arc,
     );
 
-    let minigame_tick_dequeue = tick(Duration::from_millis(
-        server_options.minigame_tick_period_millis,
-    ));
+    let minigame_tick_duration = Duration::from_millis(server_options.minigame_tick_period_millis);
+    let minigame_tick_dequeue = tick(minigame_tick_duration);
     spawn_minigame_tick_threads(
         &channel_manager_arc,
         minigame_tick_dequeue,
         client_enqueue.clone(),
         &server_options,
         &game_server_arc,
+        minigame_tick_duration,
     );
 
     spawn_minigame_daily_reset_thread(
@@ -650,6 +650,7 @@ fn spawn_minigame_tick_threads(
     client_enqueue: Sender<SocketAddr>,
     server_options: &Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
+    tick_duration: Duration,
 ) {
     let (minigames_enqueue, minigames_dequeue) = unbounded();
     let (done_enqueue, done_dequeue) = unbounded();
@@ -666,7 +667,7 @@ fn spawn_minigame_tick_threads(
             let group = minigames_dequeue
                 .recv()
                 .expect("Minigame tick channel disconnected");
-            let broadcasts = game_server.tick_minigame(Instant::now(), group);
+            let broadcasts = game_server.tick_minigame(Instant::now(), tick_duration, group);
             channel_manager
                 .read()
                 .broadcast(client_enqueue.clone(), broadcasts, &server_options);

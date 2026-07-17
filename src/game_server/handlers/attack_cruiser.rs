@@ -1,54 +1,60 @@
 use std::{
     cmp::Reverse,
-    collections::BTreeMap,
+    collections::{BTreeMap, HashMap},
     io::{Cursor, Read},
     sync::Arc,
     time::{Duration, Instant},
 };
 
+use glam::{Mat3, Vec3};
+use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
 use rand::{thread_rng, Rng};
 use serde::Deserialize;
 
-use crate::game_server::{
-    handlers::{
-        character::{MinigameMatchmakingGroup, MinigameStatus},
-        direction,
-        minigame::{
-            handle_minigame_packet_write, MinigameRemovePlayerResult, SharedMinigameTypeData,
+use crate::{
+    game_server::{
+        handlers::{
+            character::{MinigameMatchmakingGroup, MinigameStatus},
+            direction,
+            minigame::{
+                handle_minigame_packet_write, MinigameRemovePlayerResult, SharedMinigameTypeData,
+            },
+            unique_guid::player_guid,
         },
-        unique_guid::player_guid,
-    },
-    packets::{
-        attack_cruiser::{
-            AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
-            AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
-            AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
-            AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
-            AttackCruiserCameraConfig, AttackCruiserChallengeMode, AttackCruiserClickedLocation,
-            AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
-            AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-            AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserGameConfig,
-            AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
-            AttackCruiserOpCode, AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
-            AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
-            AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
-            AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
-            AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
-            AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
-            AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-            AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-            AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
-            AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-            AttackCruiserUpdateServerActors, AttackCruiserVec,
+        packets::{
+            attack_cruiser::{
+                AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
+                AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
+                AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
+                AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
+                AttackCruiserCameraConfig, AttackCruiserChallengeMode,
+                AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState,
+                AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
+                AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
+                AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
+                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+                AttackCruiserPlanetConfig, AttackCruiserPlayerStateIndex,
+                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
+                AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
+                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
+                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+                AttackCruiserUpdateServerActors, AttackCruiserVec,
+            },
+            minigame::MinigameHeader,
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithStringParams,
+            GamePacket, Pos, Pos3,
         },
-        minigame::MinigameHeader,
-        tunnel::TunneledPacket,
-        ui::ExecuteScriptWithStringParams,
-        GamePacket, Pos, Pos3,
+        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+    info,
 };
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
@@ -75,7 +81,7 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
 struct AttackCruiserPlayerState {
     pub ready: bool,
     pub pos: Pos3,
-    pub heading: f32,
+    pub yaw: f32,
     pub speed: Pos3,
     pub angular_speed: f32,
     pub forward_multiplier: f32,
@@ -89,11 +95,11 @@ struct AttackCruiserPlayerState {
 }
 
 impl AttackCruiserPlayerState {
-    pub fn new(lives: u8, pos: Pos3, heading: f32, health: u16, ready: bool) -> Self {
+    pub fn new(lives: u8, pos: Pos3, yaw: f32, health: u16, ready: bool) -> Self {
         AttackCruiserPlayerState {
             ready,
             pos,
-            heading,
+            yaw,
             speed: Pos3::default(),
             angular_speed: 0.0,
             forward_multiplier: 0.0,
@@ -119,7 +125,7 @@ enum AttackCruiserGameState {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserSpawnLocation {
     pos: Pos3,
-    heading: f32,
+    yaw: f32,
 }
 
 const fn default_yaw_degrees() -> f32 {
@@ -188,7 +194,7 @@ pub struct AttackCruiserPlayerWeaponConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserShipConfig {
     pub model_id: u32,
-    pub bvh_name: String,
+    pub asset_name: String,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -387,14 +393,68 @@ impl AttackCruiserProjectilePool {
     }
 
     pub fn total_damage(
-        origin: Pos3,
-        size_x: f32,
-        size_y: f32,
-        size_z: f32,
-        yaw: f32,
-        pitch: f32,
+        &mut self,
+        ship_actor_id: i32,
+        ship_bvh: &Bvh,
+        ship_origin: Pos3,
+        ship_yaw: f32,
+        ship_roll: f32,
+        time_delta: Duration,
     ) -> i16 {
-        //
+        let projectile_ids: Vec<i32> = self
+            .live_projectiles
+            .iter()
+            .filter(|(_, projectile)| {
+                if projectile.launched_by_actor_id == ship_actor_id {
+                    return false;
+                }
+
+                let secs_since_launch = Instant::now()
+                    .saturating_duration_since(projectile.launch_time)
+                    .as_secs_f32();
+                let projectile_pos = projectile.origin + projectile.speed * secs_since_launch;
+
+                let (ship_yaw_sin, ship_yaw_cos) = ship_yaw.sin_cos();
+                let (ship_roll_sin, ship_roll_cos) = ship_roll.sin_cos();
+                let inverse_rotation = Mat3::from_cols(
+                    Vec3::new(ship_yaw_cos, 0.0, ship_yaw_sin),
+                    Vec3::new(
+                        ship_yaw_sin * ship_roll_sin,
+                        ship_roll_cos,
+                        -ship_yaw_cos * ship_roll_sin,
+                    ),
+                    Vec3::new(
+                        -ship_yaw_sin * ship_roll_cos,
+                        ship_roll_sin,
+                        ship_yaw_cos * ship_roll_cos,
+                    ),
+                )
+                .transpose();
+
+                let relative_projectile_translation = projectile_pos - ship_origin;
+                let relative_projectile_start = inverse_rotation
+                    * Vec3::new(
+                        relative_projectile_translation.x,
+                        relative_projectile_translation.y,
+                        relative_projectile_translation.z,
+                    );
+                let relative_projectile_speed = inverse_rotation
+                    * Vec3::new(projectile.speed.x, projectile.speed.y, projectile.speed.z);
+                let relative_projectile_end = relative_projectile_start
+                    + relative_projectile_speed * time_delta.as_secs_f32();
+
+                !ship_bvh.has_line_of_sight(
+                    relative_projectile_start.to_array(),
+                    relative_projectile_end.to_array(),
+                )
+            })
+            .map(|(projectile_id, _)| *projectile_id)
+            .collect();
+
+        if !projectile_ids.is_empty() {
+            info!("HITS: {:?}", projectile_ids);
+        }
+
         0
     }
 
@@ -442,6 +502,7 @@ pub struct AttackCruiserGame {
     player1: u32,
     player2: Option<u32>,
     player_states: [AttackCruiserPlayerState; 2],
+    player_bvh: Option<Arc<Bvh>>,
     state: AttackCruiserGameState,
     players: Vec<u32>,
     group: MinigameMatchmakingGroup,
@@ -454,11 +515,21 @@ impl AttackCruiserGame {
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
+        bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
         let mut players = vec![player1];
         if let Some(player2) = player2 {
             players.push(player2);
         }
+
+        let player_bvh = bvhs.get(&config.player_ship.asset_name).cloned();
+        if player_bvh.is_none() {
+            info!(
+                "Missing BVH for Attack Cruiser player ship {}. Defaulting to empty BVH.",
+                config.player_ship.asset_name
+            );
+        }
+
         AttackCruiserGame {
             player1,
             player2,
@@ -466,18 +537,19 @@ impl AttackCruiserGame {
                 AttackCruiserPlayerState::new(
                     config.lives,
                     config.spawn1.pos,
-                    config.spawn1.heading,
+                    config.spawn1.yaw,
                     config.max_health,
                     false,
                 ),
                 AttackCruiserPlayerState::new(
                     config.lives,
                     config.spawn2.pos,
-                    config.spawn2.heading,
+                    config.spawn2.yaw,
                     config.max_health,
                     player2.is_none(),
                 ),
             ],
+            player_bvh,
             state: AttackCruiserGameState::WaitingForPlayersReady,
             players,
             group,
@@ -724,8 +796,10 @@ impl AttackCruiserGame {
                                     death_effect_id: 0,
                                     despawn_effect_id: 0,
                                     explode_offset: 1.0,
-                                    collision_asset_name: "Ship_RepublicDestroyer_bbe.cdt"
-                                        .to_string(),
+                                    collision_asset_name: format!(
+                                        "{}.cdt",
+                                        self.config.player_ship.asset_name
+                                    ),
                                     physics_config: AttackCruiserStartupConfigReference {
                                         class: AttackCruiserStartupConfigClass::ComplexPhysics,
                                         name: "physics config value".to_string(),
@@ -827,7 +901,21 @@ impl AttackCruiserGame {
         Ok(packets)
     }
 
-    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        if let Some(bvh) = &self.player_bvh {
+            for (player_index, _) in self.players.iter().enumerate() {
+                let actor_id = self.player_actor_id(player_index as u8);
+                let player_state = &self.player_states[player_index];
+                self.projectiles.total_damage(
+                    actor_id,
+                    bvh,
+                    player_state.pos,
+                    player_state.yaw,
+                    0.0,
+                    tick_duration,
+                );
+            }
+        }
         Vec::new()
     }
 
@@ -914,7 +1002,7 @@ impl AttackCruiserGame {
             if client_state.actor_id == self.player_actor_id(player_index) {
                 let player_state = &mut self.player_states[player_index as usize];
                 player_state.pos = client_state.pos;
-                player_state.heading = client_state.heading;
+                player_state.yaw = client_state.yaw;
                 player_state.speed = client_state.speed;
                 player_state.angular_speed = client_state.angular_speed;
                 player_state.forward_multiplier = client_state.forward_multiplier;
@@ -936,7 +1024,7 @@ impl AttackCruiserGame {
                     states: vec![AttackCruiserActorUpdate {
                         actor_id: self.player_actor_id(player_index),
                         pos: player_state.pos,
-                        heading: player_state.heading,
+                        yaw: player_state.yaw,
                         speed: player_state.speed,
                         angular_speed: player_state.angular_speed,
                         forward_multiplier: player_state.forward_multiplier,
@@ -1052,7 +1140,7 @@ impl AttackCruiserGame {
                     },
                     pos: player_state.pos,
                     speed: player_state.speed,
-                    heading: player_state.heading,
+                    yaw: player_state.yaw,
                     unknown7: 0,
                 },
             }),

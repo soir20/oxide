@@ -1128,7 +1128,7 @@ impl DeserializePacket for AttackCruiserActorState {
 pub struct AttackCruiserActorUpdate {
     pub actor_id: i32,
     pub pos: Pos3,
-    pub heading: f32,
+    pub yaw: f32,
     pub speed: Pos3,
     pub angular_speed: f32,
     pub forward_multiplier: f32,
@@ -1227,7 +1227,7 @@ pub struct AttackCruiserAddActor {
     pub actor_config: AttackCruiserStartupConfigHash,
     pub pos: Pos3,
     pub speed: Pos3,
-    pub heading: f32,
+    pub yaw: f32,
     pub unknown7: i32,
 }
 

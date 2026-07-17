@@ -296,6 +296,7 @@ pub fn enqueue_tickable_minigames(
 pub fn tick_minigame(
     game_server: &GameServer,
     now: Instant,
+    tick_duration: Duration,
     minigame_group: MinigameMatchmakingGroup,
 ) -> Vec<Broadcast> {
     let minigame_data_lock_enforcer: MinigameDataLockEnforcer = game_server.lock_enforcer().into();
@@ -305,7 +306,7 @@ pub fn tick_minigame(
         minigame_data_consumer: |_, _, mut minigame_data_write, _| {
             let mut broadcasts = Vec::new();
             for minigame_data in minigame_data_write.values_mut() {
-                broadcasts.append(&mut minigame_data.tick(now));
+                broadcasts.append(&mut minigame_data.tick(now, tick_duration));
             }
 
             broadcasts
