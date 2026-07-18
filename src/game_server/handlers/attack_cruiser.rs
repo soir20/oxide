@@ -916,18 +916,28 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut hits = Vec::new();
+        let tick_duration_secs = tick_duration.as_secs_f32();
 
         if let Some(bvh) = &self.player_bvh {
             for (player_index, _) in self.players.iter().enumerate() {
                 let actor_id = self.player_actor_id(player_index as u8);
                 let player_state = &self.player_states[player_index];
+
+                let origin = player_state.pos
+                    + player_state.speed * player_state.forward_multiplier * tick_duration_secs;
+                let yaw = player_state.yaw
+                    + player_state.angular_speed
+                        * player_state.turn_multiplier
+                        * tick_duration_secs;
+                let roll = self.config.player_ship.max_roll_degrees.to_radians()
+                    * player_state.turn_multiplier;
+
                 hits.append(&mut self.projectiles.hits(
                     actor_id,
                     bvh,
-                    player_state.pos,
-                    player_state.yaw,
-                    self.config.player_ship.max_roll_degrees.to_radians()
-                        * player_state.turn_multiplier,
+                    origin,
+                    yaw,
+                    roll,
                     tick_duration,
                 ));
             }
