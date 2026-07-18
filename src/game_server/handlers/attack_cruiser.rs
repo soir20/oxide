@@ -153,7 +153,7 @@ const fn default_launch_offset() -> f32 {
 }
 
 const fn default_launch_height() -> f32 {
-    5.0
+    4.0
 }
 
 #[derive(Clone, Debug, Deserialize)]
