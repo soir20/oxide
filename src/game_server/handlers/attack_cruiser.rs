@@ -125,7 +125,7 @@ enum AttackCruiserGameState {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserSpawnLocation {
     pos: Pos3,
-    yaw: f32,
+    yaw_degrees: f32,
 }
 
 const fn default_yaw_degrees() -> f32 {
@@ -196,6 +196,7 @@ pub struct AttackCruiserPlayerWeaponConfig {
 pub struct AttackCruiserShipConfig {
     pub model_id: u32,
     pub asset_name: String,
+    pub max_roll_degrees: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -549,14 +550,14 @@ impl AttackCruiserGame {
                 AttackCruiserPlayerState::new(
                     config.lives,
                     config.spawn1.pos,
-                    config.spawn1.yaw,
+                    config.spawn1.yaw_degrees.to_radians(),
                     config.max_health,
                     false,
                 ),
                 AttackCruiserPlayerState::new(
                     config.lives,
                     config.spawn2.pos,
-                    config.spawn2.yaw,
+                    config.spawn2.yaw_degrees.to_radians(),
                     config.max_health,
                     player2.is_none(),
                 ),
@@ -856,7 +857,7 @@ impl AttackCruiserGame {
                                 invulnerable_effect_id: 1744,
                                 stun_effect_id: 102,
                                 weapons: AttackCruiserVec::new(),
-                                roll_max_angle: 30.0,
+                                roll_max_angle: self.config.player_ship.max_roll_degrees,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 0.05,
                                 fire_cooldown_seconds: self.config.player_weapons.cooldown_millis
@@ -925,7 +926,8 @@ impl AttackCruiserGame {
                     bvh,
                     player_state.pos,
                     player_state.yaw,
-                    0.0,
+                    self.config.player_ship.max_roll_degrees.to_radians()
+                        * player_state.turn_multiplier,
                     tick_duration,
                 ));
             }

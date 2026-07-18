@@ -3161,16 +3161,17 @@ categories:
                     x: 3.9
                     y: 1000.0
                     z: -1999.0
-                  yaw: 0.0
+                  yaw_degrees: 0.0
                 spawn2:
                   pos:
                     x: 200.9
                     y: 1000.0
                     z: -1999.0
-                  yaw: 0.0
+                  yaw_degrees: 0.0
                 player_ship:
                   model_id: 167
                   asset_name: Ship_RepublicDestroyer_bbe
+                  max_roll_degrees: 30
                 player_weapons:
                   cooldown_millis: 250
                   primary_tiers:
