@@ -40,12 +40,12 @@ use crate::{
                 AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
                 AttackCruiserPlayerStateUnknown5, AttackCruiserPlayerStateUpdate,
                 AttackCruiserPlayerUpdate, AttackCruiserQueueCommand,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
-                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
-                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-                AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserShipStartupConfig, AttackCruiserStartupConfig,
+                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
+                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
+                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             minigame::MinigameHeader,
             tunnel::TunneledPacket,
@@ -160,6 +160,7 @@ const fn default_launch_height() -> f32 {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserProjectile {
     pub composite_effect_id: u32,
+    pub hit_composite_effect_id: u32,
     #[serde(default = "default_yaw_degrees")]
     pub yaw_degrees: f32,
     #[serde(default = "default_wobble_degrees")]
@@ -180,7 +181,7 @@ pub struct AttackCruiserProjectile {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserPlayerPrimaryWeapon {
-    pub projectiles: Vec<AttackCruiserProjectile>,
+    pub projectiles: Vec<Arc<AttackCruiserProjectile>>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -280,7 +281,7 @@ struct AttackCruiserProjectileInstance {
     speed: Pos3,
     origin: Pos3,
     launch_time: Instant,
-    damage: i16,
+    projectile: Arc<AttackCruiserProjectile>,
 }
 
 #[derive(Clone, Debug)]
@@ -313,7 +314,7 @@ impl AttackCruiserProjectilePool {
         launched_by_actor_id: i32,
         actor_origin: Pos3,
         direction: Pos3,
-        projectile: &AttackCruiserProjectile,
+        projectile: &Arc<AttackCruiserProjectile>,
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
         self.expire();
 
@@ -373,7 +374,7 @@ impl AttackCruiserProjectilePool {
                     speed,
                     origin,
                     launch_time: now,
-                    damage: projectile.damage,
+                    projectile: projectile.clone(),
                 },
             );
             self.expiry.push(projectile_id, Reverse(expiry_time));
@@ -392,7 +393,7 @@ impl AttackCruiserProjectilePool {
         Ok(launched_projectiles)
     }
 
-    pub fn total_damage(
+    pub fn hits(
         &mut self,
         ship_actor_id: i32,
         ship_bvh: &Bvh,
@@ -400,7 +401,7 @@ impl AttackCruiserProjectilePool {
         ship_yaw: f32,
         ship_roll: f32,
         time_delta: Duration,
-    ) -> i16 {
+    ) -> Vec<(i32, Arc<AttackCruiserProjectile>)> {
         let projectile_ids: Vec<i32> = self
             .live_projectiles
             .iter()
@@ -451,11 +452,15 @@ impl AttackCruiserProjectilePool {
             .map(|(projectile_id, _)| *projectile_id)
             .collect();
 
-        if !projectile_ids.is_empty() {
-            info!("HITS: {:?}", projectile_ids);
-        }
-
-        0
+        projectile_ids
+            .into_iter()
+            .map(|projectile_id| {
+                (
+                    projectile_id,
+                    self.remove_unchecked(projectile_id).projectile,
+                )
+            })
+            .collect()
     }
 
     pub fn expire(&mut self) {
@@ -493,6 +498,13 @@ impl AttackCruiserProjectilePool {
                 ))
             }
         }
+    }
+
+    fn remove_unchecked(&mut self, projectile_id: i32) -> AttackCruiserProjectileInstance {
+        self.expiry.remove(&projectile_id);
+        self.live_projectiles
+            .remove(&projectile_id)
+            .expect("Projectile should exist")
     }
 }
 
@@ -902,21 +914,43 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        let mut hits = Vec::new();
+
         if let Some(bvh) = &self.player_bvh {
             for (player_index, _) in self.players.iter().enumerate() {
                 let actor_id = self.player_actor_id(player_index as u8);
                 let player_state = &self.player_states[player_index];
-                self.projectiles.total_damage(
+                hits.append(&mut self.projectiles.hits(
                     actor_id,
                     bvh,
                     player_state.pos,
                     player_state.yaw,
                     0.0,
                     tick_duration,
-                );
+                ));
             }
         }
-        Vec::new()
+
+        vec![Broadcast::Multi(
+            self.players.clone(),
+            hits.into_iter()
+                .map(|(projectile_id, projectile)| {
+                    GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserRemoveProjectile {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::RemoveProjectile as i32,
+                                stage_group_guid: self.group.stage_group_guid,
+                            },
+                            projectile_id,
+                            despawn_effect_id: projectile.hit_composite_effect_id,
+                            delay_seconds: tick_duration.as_secs_f32(),
+                        },
+                    })
+                })
+                .collect(),
+        )]
     }
 
     pub fn pause_or_resume(
