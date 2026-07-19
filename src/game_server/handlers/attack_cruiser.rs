@@ -6,7 +6,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use glam::{Mat3, Vec3};
+use glam::{EulerRot, Mat3, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
@@ -60,21 +60,8 @@ use crate::{
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
 fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
-    let (sin_pitch, cos_pitch) = pitch.sin_cos();
-    let x1 = origin.x;
-    let y1 = origin.y * cos_pitch - origin.z * sin_pitch;
-    let z1 = origin.y * sin_pitch + origin.z * cos_pitch;
-
-    let (sin_yaw, cos_yaw) = yaw.sin_cos();
-    let x2 = x1 * cos_yaw + z1 * sin_yaw;
-    let y2 = y1;
-    let z2 = -x1 * sin_yaw + z1 * cos_yaw;
-
-    Pos3 {
-        x: x2,
-        y: y2,
-        z: z2,
-    }
+    let rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, 0.0);
+    (rotation * Vec3::from(origin)).into()
 }
 
 #[derive(Clone, Debug)]
@@ -406,6 +393,9 @@ impl AttackCruiserProjectilePool {
         now: Instant,
         time_delta: Duration,
     ) -> Vec<(i32, Arc<AttackCruiserProjectile>)> {
+        let ship_rotation = Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll);
+        let inverse_rotation = Mat3::from_quat(ship_rotation).transpose();
+
         let projectile_ids: Vec<i32> = self
             .live_projectiles
             .iter()
@@ -417,54 +407,21 @@ impl AttackCruiserProjectilePool {
                 let secs_since_launch = now
                     .saturating_duration_since(projectile.launch_time)
                     .as_secs_f32();
-                let projectile_pos = projectile.origin + projectile.speed * secs_since_launch;
+                let global_start = projectile.origin + projectile.speed * secs_since_launch;
 
-                let (ship_yaw_sin, ship_yaw_cos) = ship_yaw.sin_cos();
-                let (ship_roll_sin, ship_roll_cos) = ship_roll.sin_cos();
-                let inverse_rotation = Mat3::from_cols(
-                    Vec3::new(
-                        ship_yaw_cos * ship_roll_cos,
-                        -ship_yaw_cos * ship_roll_sin,
-                        -ship_yaw_sin,
-                    ),
-                    Vec3::new(ship_roll_sin, ship_roll_cos, 0.0),
-                    Vec3::new(
-                        ship_yaw_sin * ship_roll_cos,
-                        -ship_yaw_sin * ship_roll_sin,
-                        ship_yaw_cos,
-                    ),
-                )
-                .transpose();
+                let local_start = inverse_rotation * Vec3::from(global_start - ship_origin);
+                let local_speed = inverse_rotation * Vec3::from(projectile.speed);
+                let local_end = local_start + local_speed * time_delta.as_secs_f32();
 
-                let relative_projectile_translation = projectile_pos - ship_origin;
-                let relative_projectile_start =
-                    inverse_rotation * Vec3::from(relative_projectile_translation);
-                let relative_projectile_speed = inverse_rotation * Vec3::from(projectile.speed);
-                let relative_projectile_end = relative_projectile_start
-                    + relative_projectile_speed * time_delta.as_secs_f32();
+                let segment_vector = local_end - local_start;
+                let projectile_direction = segment_vector.normalize_or_zero();
+                let half_length_offset =
+                    projectile_direction * (projectile.projectile.length * 0.5);
 
-                let projectile_direction = Pos3::from(direction(
-                    Pos {
-                        x: relative_projectile_start.x,
-                        y: relative_projectile_start.y,
-                        z: relative_projectile_start.z,
-                        w: 0.0,
-                    },
-                    Pos {
-                        x: relative_projectile_end.x,
-                        y: relative_projectile_end.y,
-                        z: relative_projectile_end.z,
-                        w: 0.0,
-                    },
-                ));
+                let check_start = local_start - half_length_offset;
+                let check_end = local_end + half_length_offset;
 
-                let length_offset =
-                    Vec3::from(projectile_direction * projectile.projectile.length * 0.5);
-
-                !ship_bvh.has_line_of_sight(
-                    (relative_projectile_start - length_offset).to_array(),
-                    (relative_projectile_end + length_offset).to_array(),
-                )
+                !ship_bvh.has_line_of_sight(check_start.to_array(), check_end.to_array())
             })
             .map(|(projectile_id, _)| *projectile_id)
             .collect();
