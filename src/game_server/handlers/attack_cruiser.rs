@@ -60,15 +60,15 @@ use crate::{
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
 fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
-    let (sin_yaw, cos_yaw) = yaw.sin_cos();
-    let x1 = origin.x * cos_yaw + origin.z * sin_yaw;
-    let y1 = origin.y;
-    let z1 = -origin.x * sin_yaw + origin.z * cos_yaw;
-
     let (sin_pitch, cos_pitch) = pitch.sin_cos();
-    let x2 = x1;
-    let y2 = y1 * cos_pitch - z1 * sin_pitch;
-    let z2 = y1 * sin_pitch + z1 * cos_pitch;
+    let x1 = origin.x;
+    let y1 = origin.y * cos_pitch - origin.z * sin_pitch;
+    let z1 = origin.y * sin_pitch + origin.z * cos_pitch;
+
+    let (sin_yaw, cos_yaw) = yaw.sin_cos();
+    let x2 = x1 * cos_yaw + z1 * sin_yaw;
+    let y2 = y1;
+    let z2 = -x1 * sin_yaw + z1 * cos_yaw;
 
     Pos3 {
         x: x2,
