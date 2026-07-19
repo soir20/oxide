@@ -437,14 +437,9 @@ impl AttackCruiserProjectilePool {
                 .transpose();
 
                 let relative_projectile_translation = projectile_pos - ship_origin;
-                let relative_projectile_start = inverse_rotation
-                    * Vec3::new(
-                        relative_projectile_translation.x,
-                        relative_projectile_translation.y,
-                        relative_projectile_translation.z,
-                    );
-                let relative_projectile_speed = inverse_rotation
-                    * Vec3::new(projectile.speed.x, projectile.speed.y, projectile.speed.z);
+                let relative_projectile_start =
+                    inverse_rotation * Vec3::from(relative_projectile_translation);
+                let relative_projectile_speed = inverse_rotation * Vec3::from(projectile.speed);
                 let relative_projectile_end = relative_projectile_start
                     + relative_projectile_speed * time_delta.as_secs_f32();
 
