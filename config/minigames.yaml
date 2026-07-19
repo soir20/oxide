@@ -3181,21 +3181,21 @@ categories:
                           hit_composite_effect_id: 1315
                           count: 2
                           damage: 1
-                          length: 100
+                          length: 25
                         - composite_effect_id: 1763
                           hit_composite_effect_id: 1315
                           damage: 1
-                          length: 100
+                          length: 75
                         - composite_effect_id: 1762
                           hit_composite_effect_id: 1315
                           yaw_degrees: 5
                           damage: 1
-                          length: 100
+                          length: 75
                         - composite_effect_id: 1762
                           hit_composite_effect_id: 1315
                           yaw_degrees: -5
                           damage: 1
-                          length: 100
+                          length: 75
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027
