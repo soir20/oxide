@@ -175,6 +175,7 @@ pub struct AttackCruiserProjectile {
     pub launch_offset: f32,
     #[serde(default = "default_launch_height")]
     pub launch_height: f32,
+    pub length: f32,
     pub damage: i16,
 }
 
@@ -202,6 +203,7 @@ pub struct AttackCruiserShipConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
+    projectile_intersection_max_steps: u8,
     lives: u8,
     max_health: u16,
     spawn1: AttackCruiserSpawnLocation,
@@ -445,9 +447,27 @@ impl AttackCruiserProjectilePool {
                 let relative_projectile_end = relative_projectile_start
                     + relative_projectile_speed * time_delta.as_secs_f32();
 
+                let projectile_direction = Pos3::from(direction(
+                    Pos {
+                        x: relative_projectile_start.x,
+                        y: relative_projectile_start.y,
+                        z: relative_projectile_start.z,
+                        w: 0.0,
+                    },
+                    Pos {
+                        x: relative_projectile_end.x,
+                        y: relative_projectile_end.y,
+                        z: relative_projectile_end.z,
+                        w: 0.0,
+                    },
+                ));
+
+                let length_offset =
+                    Vec3::from(projectile_direction * projectile.projectile.length * 0.5);
+
                 !ship_bvh.has_line_of_sight(
-                    relative_projectile_start.to_array(),
-                    relative_projectile_end.to_array(),
+                    (relative_projectile_start - length_offset).to_array(),
+                    (relative_projectile_end + length_offset).to_array(),
                 )
             })
             .map(|(projectile_id, _)| *projectile_id)
@@ -916,30 +936,38 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut hits = Vec::new();
-        let tick_duration_secs = tick_duration.as_secs_f32();
 
         if let Some(bvh) = &self.player_bvh {
-            for (player_index, _) in self.players.iter().enumerate() {
-                let actor_id = self.player_actor_id(player_index as u8);
-                let player_state = &self.player_states[player_index];
+            let step_secs = tick_duration.as_secs_f32()
+                / f32::from(self.config.projectile_intersection_max_steps);
 
-                let origin = player_state.pos
-                    + player_state.speed * player_state.forward_multiplier * tick_duration_secs;
-                let yaw = player_state.yaw
-                    + player_state.angular_speed
-                        * player_state.turn_multiplier
-                        * tick_duration_secs;
-                let roll = self.config.player_ship.max_roll_degrees.to_radians()
-                    * player_state.turn_multiplier;
+            for step in 1..=self.config.projectile_intersection_max_steps {
+                for (player_index, _) in self.players.iter().enumerate() {
+                    let actor_id = self.player_actor_id(player_index as u8);
+                    let player_state = &self.player_states[player_index];
 
-                hits.append(&mut self.projectiles.hits(
-                    actor_id,
-                    bvh,
-                    origin,
-                    yaw,
-                    roll,
-                    tick_duration,
-                ));
+                    let origin = player_state.pos
+                        + player_state.speed
+                            * player_state.forward_multiplier
+                            * step_secs
+                            * f32::from(step);
+                    let yaw = player_state.yaw
+                        + player_state.angular_speed
+                            * player_state.turn_multiplier
+                            * step_secs
+                            * f32::from(step);
+                    let roll = self.config.player_ship.max_roll_degrees.to_radians()
+                        * player_state.turn_multiplier;
+
+                    hits.append(&mut self.projectiles.hits(
+                        actor_id,
+                        bvh,
+                        origin,
+                        yaw,
+                        roll,
+                        tick_duration,
+                    ));
+                }
             }
         }
 
@@ -957,7 +985,7 @@ impl AttackCruiserGame {
                             },
                             projectile_id,
                             despawn_effect_id: projectile.hit_composite_effect_id,
-                            delay_seconds: tick_duration.as_secs_f32(),
+                            delay_seconds: 0.0,
                         },
                     })
                 })

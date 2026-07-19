@@ -31,6 +31,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
 };
 
+use glam::Vec3;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
@@ -380,6 +381,26 @@ impl MulAssign for Pos3 {
 impl DivAssign for Pos3 {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs;
+    }
+}
+
+impl From<Vec3> for Pos3 {
+    fn from(value: Vec3) -> Self {
+        Pos3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
+impl From<Pos3> for Vec3 {
+    fn from(value: Pos3) -> Self {
+        Vec3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
     }
 }
 
