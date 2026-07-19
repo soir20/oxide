@@ -422,17 +422,17 @@ impl AttackCruiserProjectilePool {
                 let (ship_yaw_sin, ship_yaw_cos) = ship_yaw.sin_cos();
                 let (ship_roll_sin, ship_roll_cos) = ship_roll.sin_cos();
                 let inverse_rotation = Mat3::from_cols(
-                    Vec3::new(ship_yaw_cos, 0.0, ship_yaw_sin),
                     Vec3::new(
-                        ship_yaw_sin * ship_roll_sin,
-                        ship_roll_cos,
-                        -ship_yaw_cos * ship_roll_sin,
-                    ),
-                    Vec3::new(
-                        -ship_yaw_sin * ship_roll_cos,
-                        ship_roll_sin,
                         ship_yaw_cos * ship_roll_cos,
+                        ship_roll_sin,
+                        ship_yaw_sin * ship_roll_cos,
                     ),
+                    Vec3::new(
+                        -ship_yaw_cos * ship_roll_sin,
+                        ship_roll_cos,
+                        -ship_yaw_sin * ship_roll_sin,
+                    ),
+                    Vec3::new(-ship_yaw_sin, 0.0, ship_yaw_cos),
                 )
                 .transpose();
 
