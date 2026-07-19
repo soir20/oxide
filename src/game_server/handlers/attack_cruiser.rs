@@ -203,7 +203,7 @@ pub struct AttackCruiserShipConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
-    projectile_intersection_max_steps: u8,
+    projectile_prediction_steps: u32,
     lives: u8,
     max_health: u16,
     spawn1: AttackCruiserSpawnLocation,
@@ -403,6 +403,7 @@ impl AttackCruiserProjectilePool {
         ship_origin: Pos3,
         ship_yaw: f32,
         ship_roll: f32,
+        now: Instant,
         time_delta: Duration,
     ) -> Vec<(i32, Arc<AttackCruiserProjectile>)> {
         let projectile_ids: Vec<i32> = self
@@ -413,7 +414,7 @@ impl AttackCruiserProjectilePool {
                     return false;
                 }
 
-                let secs_since_launch = Instant::now()
+                let secs_since_launch = now
                     .saturating_duration_since(projectile.launch_time)
                     .as_secs_f32();
                 let projectile_pos = projectile.origin + projectile.speed * secs_since_launch;
@@ -938,10 +939,11 @@ impl AttackCruiserGame {
         let mut hits = Vec::new();
 
         if let Some(bvh) = &self.player_bvh {
-            let step_secs = tick_duration.as_secs_f32()
-                / f32::from(self.config.projectile_intersection_max_steps);
+            let step_duration = tick_duration / self.config.projectile_prediction_steps.max(1);
 
-            for step in 1..=self.config.projectile_intersection_max_steps {
+            for step in 1..=self.config.projectile_prediction_steps {
+                let time_delta = step_duration.saturating_mul(step);
+
                 for (player_index, _) in self.players.iter().enumerate() {
                     let actor_id = self.player_actor_id(player_index as u8);
                     let player_state = &self.player_states[player_index];
@@ -949,24 +951,19 @@ impl AttackCruiserGame {
                     let origin = player_state.pos
                         + player_state.speed
                             * player_state.forward_multiplier
-                            * step_secs
-                            * f32::from(step);
+                            * time_delta.as_secs_f32();
                     let yaw = player_state.yaw
                         + player_state.angular_speed
                             * player_state.turn_multiplier
-                            * step_secs
-                            * f32::from(step);
+                            * time_delta.as_secs_f32();
                     let roll = self.config.player_ship.max_roll_degrees.to_radians()
                         * player_state.turn_multiplier;
 
-                    hits.append(&mut self.projectiles.hits(
-                        actor_id,
-                        bvh,
-                        origin,
-                        yaw,
-                        roll,
-                        tick_duration,
-                    ));
+                    hits.append(
+                        &mut self
+                            .projectiles
+                            .hits(actor_id, bvh, origin, yaw, roll, now, time_delta),
+                    );
                 }
             }
         }
