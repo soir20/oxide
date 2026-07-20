@@ -250,7 +250,7 @@ const BVH_MAGIC: &[u8; 9] = b"OXIDE_BVH";
 pub fn write_bvh(file: &mut File, bvh: &Bvh) -> Result<(), pot::Error> {
     file.write_all(BVH_MAGIC)?;
 
-    file.write_all(&1u32.to_be_bytes())?;
+    file.write_all(&1u32.to_le_bytes())?;
 
     let serialized_bvh: Vec<u8> = pot::to_vec(bvh)?;
     let mut encoder = GzEncoder::new(file, Compression::best());
@@ -274,7 +274,7 @@ pub fn read_bvh(file: &File) -> Result<Bvh, pot::Error> {
 
     let mut version_buf = [0u8; 4];
     reader.read_exact(&mut version_buf)?;
-    let version = u32::from_be_bytes(version_buf);
+    let version = u32::from_le_bytes(version_buf);
     if version != 1 {
         return Err(pot::Error::custom(format!(
             "Unknown file version: {}",
