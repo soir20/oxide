@@ -182,10 +182,18 @@ impl Bvh {
     }
 
     pub fn has_line_of_sight(&self, start: [f32; 3], end: [f32; 3]) -> bool {
-        let start = Vec3::from(start);
-        let end = Vec3::from(end);
-        let direction: [f32; 3] = (end - start).normalize().into();
-        let ray = Ray::new(<[f32; 3]>::from(start).into(), direction.into());
+        let start_vec = Vec3::from(start);
+        let end_vec = Vec3::from(end);
+        let delta = end_vec - start_vec;
+        let global_max_distance = delta.length();
+
+        if global_max_distance < f32::EPSILON {
+            return true;
+        }
+
+        let direction = delta / global_max_distance;
+        let ray = Ray::new(start.into(), direction.to_array().into());
+
         for bvh_instance in self.root.traverse(&ray, &self.instances) {
             let Some(bvh_template) = self.templates.get(&bvh_instance.id) else {
                 continue;
@@ -198,15 +206,23 @@ impl Bvh {
                 bvh_instance.rot[2],
             )
             .inverse();
-            let relative_start =
-                (inverse_rotation * (start - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
+            let relative_start = (inverse_rotation * (start_vec - Vec3::from(bvh_instance.pos)))
+                / bvh_instance.scale;
             let relative_end =
-                (inverse_rotation * (end - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
-            let relative_direction: [f32; 3] = (relative_end - relative_start).normalize().into();
-            let relative_max_distance = (relative_end - relative_start).length();
+                (inverse_rotation * (end_vec - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
+
+            let local_delta = relative_end - relative_start;
+            let relative_max_distance = local_delta.length();
+
+            if relative_max_distance < f32::EPSILON {
+                continue;
+            }
+
+            let relative_direction = local_delta / relative_max_distance;
+
             let relative_ray = Ray::new(
                 <[f32; 3]>::from(relative_start).into(),
-                relative_direction.into(),
+                <[f32; 3]>::from(relative_direction).into(),
             );
 
             let triangles_with_vertices =
