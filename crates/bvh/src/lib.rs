@@ -1,7 +1,7 @@
 use std::{
     collections::HashMap,
     fs::File,
-    io::{BufReader, Read},
+    io::{BufReader, Read, Write},
     sync::atomic::{AtomicUsize, Ordering},
 };
 
@@ -13,7 +13,7 @@ use bvh::{
 };
 use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
 use glam::{EulerRot, Quat, Vec3};
-use serde::{Deserialize, Serialize};
+use serde::{de::Error, Deserialize, Serialize};
 
 fn vertex_from_index(vertices: &[[f32; 3]], index: u16) -> [f32; 3] {
     let index = usize::from(index);
@@ -134,14 +134,14 @@ impl BvhInstance {
         pos: [f32; 3],
         rot: [f32; 3],
         scale: f32,
-        triangles: impl Iterator<Item = [[f32; 3]; 3]>,
+        global_triangles: impl Iterator<Item = [[f32; 3]; 3]>,
     ) -> Self {
         BvhInstance {
             id,
             pos,
             rot,
             scale,
-            aabb: triangles
+            aabb: global_triangles
                 .map(|triangle| triangle_to_aabb(triangle[0], triangle[1], triangle[2]))
                 .fold(Aabb::empty(), |acc, next| acc.join(&next)),
             node_index: 0,
@@ -182,10 +182,18 @@ impl Bvh {
     }
 
     pub fn has_line_of_sight(&self, start: [f32; 3], end: [f32; 3]) -> bool {
-        let start = Vec3::from(start);
-        let end = Vec3::from(end);
-        let direction: [f32; 3] = (end - start).normalize().into();
-        let ray = Ray::new(<[f32; 3]>::from(start).into(), direction.into());
+        let start_vec = Vec3::from(start);
+        let end_vec = Vec3::from(end);
+        let delta = end_vec - start_vec;
+        let global_max_distance = delta.length();
+
+        if global_max_distance < f32::EPSILON {
+            return true;
+        }
+
+        let direction = delta / global_max_distance;
+        let ray = Ray::new(start.into(), direction.to_array().into());
+
         for bvh_instance in self.root.traverse(&ray, &self.instances) {
             let Some(bvh_template) = self.templates.get(&bvh_instance.id) else {
                 continue;
@@ -198,15 +206,23 @@ impl Bvh {
                 bvh_instance.rot[2],
             )
             .inverse();
-            let relative_start =
-                (inverse_rotation * (start - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
+            let relative_start = (inverse_rotation * (start_vec - Vec3::from(bvh_instance.pos)))
+                / bvh_instance.scale;
             let relative_end =
-                (inverse_rotation * (end - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
-            let relative_direction: [f32; 3] = (relative_end - relative_start).normalize().into();
-            let relative_max_distance = (relative_end - relative_start).length();
+                (inverse_rotation * (end_vec - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
+
+            let local_delta = relative_end - relative_start;
+            let relative_max_distance = local_delta.length();
+
+            if relative_max_distance < f32::EPSILON {
+                continue;
+            }
+
+            let relative_direction = local_delta / relative_max_distance;
+
             let relative_ray = Ray::new(
                 <[f32; 3]>::from(relative_start).into(),
-                relative_direction.into(),
+                <[f32; 3]>::from(relative_direction).into(),
             );
 
             let triangles_with_vertices =
@@ -229,16 +245,44 @@ impl Bvh {
     }
 }
 
-pub fn write_bvh(file: &File, bvh: &Bvh) -> Result<(), pot::Error> {
+const BVH_MAGIC: &[u8; 9] = b"OXIDE_BVH";
+
+pub fn write_bvh(file: &mut File, bvh: &Bvh) -> Result<(), pot::Error> {
+    file.write_all(BVH_MAGIC)?;
+
+    file.write_all(&1u32.to_le_bytes())?;
+
     let serialized_bvh: Vec<u8> = pot::to_vec(bvh)?;
     let mut encoder = GzEncoder::new(file, Compression::best());
-    std::io::Write::write_all(&mut encoder, &serialized_bvh)?;
+    Write::write_all(&mut encoder, &serialized_bvh)?;
     encoder.finish()?;
     Ok(())
 }
 
 pub fn read_bvh(file: &File) -> Result<Bvh, pot::Error> {
-    let mut decoder = GzDecoder::new(BufReader::new(file));
+    let mut reader = BufReader::new(file);
+
+    let mut magic_buf = [0u8; BVH_MAGIC.len()];
+    reader.read_exact(&mut magic_buf)?;
+    if &magic_buf != BVH_MAGIC {
+        return Err(pot::Error::custom(format!(
+            "Invalid magic header: expected '{}', got '{:?}'",
+            String::from_utf8_lossy(BVH_MAGIC),
+            String::from_utf8_lossy(&magic_buf)
+        )));
+    }
+
+    let mut version_buf = [0u8; 4];
+    reader.read_exact(&mut version_buf)?;
+    let version = u32::from_le_bytes(version_buf);
+    if version != 1 {
+        return Err(pot::Error::custom(format!(
+            "Unknown file version: {}",
+            version
+        )));
+    }
+
+    let mut decoder = GzDecoder::new(reader);
     let mut buffer = Vec::new();
     decoder.read_to_end(&mut buffer)?;
     pot::from_slice(&buffer)
