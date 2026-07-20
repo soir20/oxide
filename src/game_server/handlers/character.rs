@@ -2172,7 +2172,7 @@ impl BaseNpcTemplate {
             if config.triggered_npc_keys_on_interact.contains(base_key) {
                 panic!(
                     "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
-                    npc_name, zone_guid, &config.triggered_npc_keys_on_interact,
+                    npc_name, zone_guid, config.triggered_npc_keys_on_interact,
                 );
             }
         }
