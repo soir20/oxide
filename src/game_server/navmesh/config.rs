@@ -97,7 +97,7 @@ fn load_bvh(path: PathBuf) -> Result<Bvh, ConfigError> {
 }
 
 pub fn load_bvhs(config_dir: &Path) -> Result<HashMap<String, Arc<Bvh>>, ConfigError> {
-    let paths = list_files_with_extension(&config_dir.join("bvhs"), "gz")?;
+    let paths = list_files_with_extension(&config_dir.join("bvhs"), "bvh")?;
     let mut bvhs = HashMap::new();
 
     for path in paths.into_iter() {
