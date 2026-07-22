@@ -3154,7 +3154,6 @@ categories:
               short_name: stage03
               minigame_type:
                 !AttackCruiser
-                projectile_prediction_steps: 2
                 lives: 3
                 max_health: 100
                 spawn1:

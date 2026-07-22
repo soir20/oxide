@@ -209,7 +209,6 @@ pub struct AttackCruiserShipConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
-    projectile_prediction_steps: u32,
     lives: u8,
     max_health: u16,
     spawn1: AttackCruiserSpawnLocation,
@@ -404,43 +403,66 @@ impl AttackCruiserProjectilePool {
 
     pub fn hits(
         &mut self,
-        ship_actor_id: i32,
-        ship_bvh: &Bvh,
-        ship_origin: Pos3,
-        ship_yaw: f32,
-        ship_roll: f32,
+        actor_id: i32,
+        actor: &AttackCruiserActor,
         now: Instant,
-        time_delta: Duration,
+        delta: Duration,
     ) -> Vec<(i32, Arc<AttackCruiserProjectile>)> {
-        let ship_rotation = Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll);
-        let inverse_rotation = Mat3::from_quat(ship_rotation).transpose();
+        let Some(ship_bvh) = &actor.bvh else {
+            return Vec::new();
+        };
+
+        let delta_secs = delta.as_secs_f32();
+        let ship_roll = actor.max_roll * actor.turn_multiplier;
 
         let projectile_ids: Vec<i32> = self
             .live_projectiles
             .iter()
             .filter(|(_, projectile)| {
-                if projectile.launched_by_actor_id == ship_actor_id {
+                if projectile.launched_by_actor_id == actor_id {
                     return false;
                 }
 
-                let secs_since_launch = now
-                    .saturating_duration_since(projectile.launch_time)
-                    .as_secs_f32();
-                let global_start = projectile.origin + projectile.speed * secs_since_launch;
+                let max_steps = (projectile.projectile.speed * delta_secs
+                    / projectile.projectile.length)
+                    .abs()
+                    .ceil() as u32;
+                let step_duration = delta / max_steps.max(1);
 
-                let local_start = inverse_rotation * Vec3::from(global_start - ship_origin);
-                let local_speed = inverse_rotation * Vec3::from(projectile.speed);
-                let local_end = local_start + local_speed * time_delta.as_secs_f32();
+                for step in 1..=max_steps {
+                    let step_delta = step_duration.saturating_mul(step);
+                    let step_delta_secs = step_delta.as_secs_f32();
 
-                let segment_vector = local_end - local_start;
-                let projectile_direction = segment_vector.normalize_or_zero();
-                let half_length_offset =
-                    projectile_direction * (projectile.projectile.length * 0.5);
+                    let ship_origin =
+                        actor.pos + actor.speed * actor.forward_multiplier * step_delta_secs;
+                    let ship_yaw =
+                        actor.yaw + actor.angular_speed * actor.turn_multiplier * step_delta_secs;
+                    let ship_rotation = Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll);
+                    let inverse_rotation = Mat3::from_quat(ship_rotation).transpose();
 
-                let check_start = local_start - half_length_offset;
-                let check_end = local_end + half_length_offset;
+                    let secs_since_launch = now
+                        .saturating_duration_since(projectile.launch_time)
+                        .as_secs_f32();
+                    let global_start = projectile.origin + projectile.speed * secs_since_launch;
 
-                !ship_bvh.has_line_of_sight(check_start.to_array(), check_end.to_array())
+                    let local_start = inverse_rotation * Vec3::from(global_start - ship_origin);
+                    let local_speed = inverse_rotation * Vec3::from(projectile.speed);
+                    let local_end = local_start + local_speed * step_delta.as_secs_f32();
+
+                    let segment_vector = local_end - local_start;
+                    let projectile_direction = segment_vector.normalize_or_zero();
+                    let half_length_offset =
+                        projectile_direction * (projectile.projectile.length * 0.5);
+
+                    let check_start = local_start - half_length_offset;
+                    let check_end = local_end + half_length_offset;
+
+                    if !ship_bvh.has_line_of_sight(check_start.to_array(), check_end.to_array()) {
+                        return true;
+                    }
+                }
+
+                false
             })
             .map(|(projectile_id, _)| *projectile_id)
             .collect();
@@ -914,7 +936,6 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut hits = Vec::new();
-        let step_duration = tick_duration / self.config.projectile_prediction_steps.max(1);
         let actors = (0..self.players.len()).map(|player_index| {
             (
                 player_actor_id(player_index as u8),
@@ -922,24 +943,9 @@ impl AttackCruiserGame {
             )
         });
 
-        for step in 1..=self.config.projectile_prediction_steps {
-            let delta = step_duration.saturating_mul(step);
-            let delta_secs = delta.as_secs_f32();
-
-            for (actor_id, actor) in actors.clone() {
-                if let Some(bvh) = &actor.bvh {
-                    let origin = actor.pos + actor.speed * actor.forward_multiplier * delta_secs;
-                    let yaw = actor.yaw + actor.angular_speed * actor.turn_multiplier * delta_secs;
-                    let roll = actor.max_roll * actor.turn_multiplier;
-
-                    hits.append(
-                        &mut self
-                            .projectiles
-                            .hits(actor_id, bvh, origin, yaw, roll, now, delta),
-                    );
-                }
-            }
-        }
+        actors.for_each(|(actor_id, actor)| {
+            hits.append(&mut self.projectiles.hits(actor_id, actor, now, tick_duration))
+        });
 
         vec![Broadcast::Multi(
             self.players.clone(),
