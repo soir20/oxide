@@ -2,7 +2,7 @@ use std::{
     collections::HashMap,
     fs::File,
     io::{BufReader, Read, Write},
-    sync::atomic::{AtomicUsize, Ordering},
+    sync::atomic::AtomicUsize,
 };
 
 use bvh::{
@@ -37,24 +37,6 @@ fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     )
 }
 
-fn with_vertices<'a>(
-    vertices: &'a [[f32; 3]],
-    triangles: &'a [Triangle],
-) -> Vec<TriangleWithVertices<'a>> {
-    triangles
-        .iter()
-        .map(|triangle| TriangleWithVertices {
-            triangle,
-            vertices: &vertices,
-        })
-        .collect()
-}
-
-fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
-    let mut triangles_with_vertices = with_vertices(vertices, triangles);
-    SubBvh::build(&mut triangles_with_vertices)
-}
-
 #[derive(Debug, Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
@@ -70,55 +52,74 @@ impl From<[u16; 3]> for Triangle {
     }
 }
 
-struct TriangleWithVertices<'a> {
-    triangle: &'a Triangle,
-    vertices: &'a [[f32; 3]],
+#[derive(Debug, Clone)]
+struct TriangleWithVertices {
+    pos: [[f32; 3]; 3],
+    aabb: Aabb<f32, 3>,
 }
 
-impl<'a> Bounded<f32, 3> for TriangleWithVertices<'a> {
+impl Bounded<f32, 3> for TriangleWithVertices {
     fn aabb(&self) -> Aabb<f32, 3> {
-        let v1 = vertex_from_index(self.vertices, self.triangle.indices[0]);
-        let v2 = vertex_from_index(self.vertices, self.triangle.indices[1]);
-        let v3 = vertex_from_index(self.vertices, self.triangle.indices[2]);
-        triangle_to_aabb(v1, v2, v3)
+        self.aabb
     }
 }
 
-impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
-    fn set_bh_node_index(&mut self, node_index: usize) {
-        self.triangle
-            .node_index
-            .store(node_index, Ordering::Relaxed);
-    }
-
-    fn bh_node_index(&self) -> usize {
-        self.triangle.node_index.load(Ordering::Relaxed)
-    }
+#[derive(Deserialize)]
+struct BvhTemplateData {
+    vertices: Vec<[f32; 3]>,
+    triangles: Vec<Triangle>,
+    bvh: SubBvh<f32, 3>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(from = "BvhTemplateData")]
 pub struct BvhTemplate {
     bvh: SubBvh<f32, 3>,
     vertices: Vec<[f32; 3]>,
     triangles: Vec<Triangle>,
+
+    #[serde(skip)]
+    cached_triangles: Vec<TriangleWithVertices>,
 }
 
-impl BvhTemplate {
-    pub fn new(vertices: Vec<[f32; 3]>, triangles: Vec<[u16; 3]>) -> Self {
-        let mut triangles: Vec<Triangle> = triangles
+impl From<BvhTemplateData> for BvhTemplate {
+    fn from(data: BvhTemplateData) -> Self {
+        let cached_triangles = data
+            .triangles
             .iter()
-            .map(|triangle| Triangle::from(*triangle))
+            .map(|triangle| {
+                let v1 = vertex_from_index(&data.vertices, triangle.indices[0]).into();
+                let v2 = vertex_from_index(&data.vertices, triangle.indices[1]).into();
+                let v3 = vertex_from_index(&data.vertices, triangle.indices[2]).into();
+
+                TriangleWithVertices {
+                    pos: [v1, v2, v3],
+                    aabb: triangle_to_aabb(v1, v2, v3),
+                }
+            })
             .collect();
 
         BvhTemplate {
-            bvh: generate_bvh(&vertices, &mut triangles),
-            vertices,
-            triangles,
+            vertices: data.vertices,
+            triangles: data.triangles,
+            bvh: data.bvh,
+            cached_triangles,
         }
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Serialize, Deserialize)]
+struct BvhInstanceData {
+    id: u32,
+    pos: [f32; 3],
+    rot: [f32; 3],
+    scale: f32,
+    aabb: Aabb<f32, 3>,
+    node_index: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(from = "BvhInstanceData")]
 pub struct BvhInstance {
     id: u32,
     pos: [f32; 3],
@@ -126,6 +127,11 @@ pub struct BvhInstance {
     scale: f32,
     aabb: Aabb<f32, 3>,
     node_index: usize,
+
+    #[serde(skip)]
+    inv_rotation: Quat,
+    #[serde(skip)]
+    inv_scale: f32,
 }
 
 impl BvhInstance {
@@ -145,6 +151,28 @@ impl BvhInstance {
                 .map(|triangle| triangle_to_aabb(triangle[0], triangle[1], triangle[2]))
                 .fold(Aabb::empty(), |acc, next| acc.join(&next)),
             node_index: 0,
+            inv_rotation: Quat::default(),
+            inv_scale: f32::default(),
+        }
+    }
+}
+
+impl From<BvhInstanceData> for BvhInstance {
+    fn from(value: BvhInstanceData) -> BvhInstance {
+        let inv_rotation =
+            Quat::from_euler(EulerRot::YXZ, value.rot[0], value.rot[1], value.rot[2]).inverse();
+
+        let inv_scale = 1.0 / value.scale.max(f32::EPSILON);
+
+        BvhInstance {
+            id: value.id,
+            pos: value.pos,
+            rot: value.rot,
+            scale: value.scale,
+            aabb: value.aabb,
+            node_index: value.node_index,
+            inv_rotation,
+            inv_scale,
         }
     }
 }
@@ -199,17 +227,12 @@ impl Bvh {
                 continue;
             };
 
-            let inverse_rotation = Quat::from_euler(
-                EulerRot::YXZ,
-                bvh_instance.rot[0],
-                bvh_instance.rot[1],
-                bvh_instance.rot[2],
-            )
-            .inverse();
-            let relative_start = (inverse_rotation * (start_vec - Vec3::from(bvh_instance.pos)))
-                / bvh_instance.scale;
-            let relative_end =
-                (inverse_rotation * (end_vec - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
+            let inv_rot = bvh_instance.inv_rotation;
+            let inv_scale = bvh_instance.inv_scale;
+
+            let instance_pos = Vec3::from(bvh_instance.pos);
+            let relative_start = (inv_rot * (start_vec - instance_pos)) * inv_scale;
+            let relative_end = (inv_rot * (end_vec - instance_pos)) * inv_scale;
 
             let local_delta = relative_end - relative_start;
             let relative_max_distance = local_delta.length();
@@ -219,21 +242,21 @@ impl Bvh {
             }
 
             let relative_direction = local_delta / relative_max_distance;
-
             let relative_ray = Ray::new(
                 <[f32; 3]>::from(relative_start).into(),
                 <[f32; 3]>::from(relative_direction).into(),
             );
 
-            let triangles_with_vertices =
-                with_vertices(&bvh_template.vertices, &bvh_template.triangles);
-            for triangle in bvh_template
+            let triangles_with_vertices = &bvh_template.cached_triangles;
+
+            for cached_triangle in bvh_template
                 .bvh
-                .traverse(&relative_ray, &triangles_with_vertices)
+                .traverse(&relative_ray, triangles_with_vertices)
             {
-                let v1 = vertex_from_index(triangle.vertices, triangle.triangle.indices[0]).into();
-                let v2 = vertex_from_index(triangle.vertices, triangle.triangle.indices[1]).into();
-                let v3 = vertex_from_index(triangle.vertices, triangle.triangle.indices[2]).into();
+                let v1 = cached_triangle.pos[0].into();
+                let v2 = cached_triangle.pos[1].into();
+                let v3 = cached_triangle.pos[2].into();
+
                 let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
                     return false;
