@@ -65,37 +65,56 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
 }
 
 #[derive(Clone, Debug)]
-struct AttackCruiserPlayerState {
-    pub ready: bool,
+struct AttackCruiserActor {
     pub pos: Pos3,
     pub yaw: f32,
     pub speed: Pos3,
     pub angular_speed: f32,
     pub forward_multiplier: f32,
     pub turn_multiplier: f32,
+    pub health: u16,
+    pub bvh: Option<Arc<Bvh>>,
+    pub max_roll: f32,
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserPlayer {
+    pub ready: bool,
+    pub actor: AttackCruiserActor,
     pub score: i32,
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
     pub lives: u8,
-    pub health: u16,
     pub primary_weapon_tier: usize,
 }
 
-impl AttackCruiserPlayerState {
-    pub fn new(lives: u8, pos: Pos3, yaw: f32, health: u16, ready: bool) -> Self {
-        AttackCruiserPlayerState {
+impl AttackCruiserPlayer {
+    pub fn new(
+        lives: u8,
+        pos: Pos3,
+        yaw: f32,
+        health: u16,
+        ready: bool,
+        bvh: Option<Arc<Bvh>>,
+        max_roll: f32,
+    ) -> Self {
+        AttackCruiserPlayer {
             ready,
-            pos,
-            yaw,
-            speed: Pos3::default(),
-            angular_speed: 0.0,
-            forward_multiplier: 0.0,
-            turn_multiplier: 0.0,
+            actor: AttackCruiserActor {
+                pos,
+                yaw,
+                speed: Pos3::default(),
+                angular_speed: 0.0,
+                forward_multiplier: 0.0,
+                turn_multiplier: 0.0,
+                health,
+                bvh,
+                max_roll,
+            },
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
             lives,
-            health,
             primary_weapon_tier: 0,
         }
     }
@@ -482,13 +501,16 @@ impl AttackCruiserProjectilePool {
     }
 }
 
+fn player_actor_id(player_index: u8) -> i32 {
+    (player_index + 1).into()
+}
+
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
     player1: u32,
     player2: Option<u32>,
-    player_states: [AttackCruiserPlayerState; 2],
-    player_bvh: Option<Arc<Bvh>>,
+    player_states: [AttackCruiserPlayer; 2],
     state: AttackCruiserGameState,
     players: Vec<u32>,
     group: MinigameMatchmakingGroup,
@@ -520,22 +542,25 @@ impl AttackCruiserGame {
             player1,
             player2,
             player_states: [
-                AttackCruiserPlayerState::new(
+                AttackCruiserPlayer::new(
                     config.lives,
                     config.spawn1.pos,
                     config.spawn1.yaw_degrees.to_radians(),
                     config.max_health,
                     false,
+                    player_bvh.clone(),
+                    config.player_ship.max_roll_degrees.to_radians(),
                 ),
-                AttackCruiserPlayerState::new(
+                AttackCruiserPlayer::new(
                     config.lives,
                     config.spawn2.pos,
                     config.spawn2.yaw_degrees.to_radians(),
                     config.max_health,
                     player2.is_none(),
+                    player_bvh,
+                    config.player_ship.max_roll_degrees.to_radians(),
                 ),
             ],
-            player_bvh,
             state: AttackCruiserGameState::WaitingForPlayersReady,
             players,
             group,
@@ -889,32 +914,28 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut hits = Vec::new();
+        let step_duration = tick_duration / self.config.projectile_prediction_steps.max(1);
+        let actors = (0..self.players.len()).map(|player_index| {
+            (
+                player_actor_id(player_index as u8),
+                &self.player_states[player_index].actor,
+            )
+        });
 
-        if let Some(bvh) = &self.player_bvh {
-            let step_duration = tick_duration / self.config.projectile_prediction_steps.max(1);
+        for step in 1..=self.config.projectile_prediction_steps {
+            let delta = step_duration.saturating_mul(step);
+            let delta_secs = delta.as_secs_f32();
 
-            for step in 1..=self.config.projectile_prediction_steps {
-                let time_delta = step_duration.saturating_mul(step);
-
-                for (player_index, _) in self.players.iter().enumerate() {
-                    let actor_id = self.player_actor_id(player_index as u8);
-                    let player_state = &self.player_states[player_index];
-
-                    let origin = player_state.pos
-                        + player_state.speed
-                            * player_state.forward_multiplier
-                            * time_delta.as_secs_f32();
-                    let yaw = player_state.yaw
-                        + player_state.angular_speed
-                            * player_state.turn_multiplier
-                            * time_delta.as_secs_f32();
-                    let roll = self.config.player_ship.max_roll_degrees.to_radians()
-                        * player_state.turn_multiplier;
+            for (actor_id, actor) in actors.clone() {
+                if let Some(bvh) = &actor.bvh {
+                    let origin = actor.pos + actor.speed * actor.forward_multiplier * delta_secs;
+                    let yaw = actor.yaw + actor.angular_speed * actor.turn_multiplier * delta_secs;
+                    let roll = actor.max_roll * actor.turn_multiplier;
 
                     hits.append(
                         &mut self
                             .projectiles
-                            .hits(actor_id, bvh, origin, yaw, roll, now, time_delta),
+                            .hits(actor_id, bvh, origin, yaw, roll, now, delta),
                     );
                 }
             }
@@ -1022,14 +1043,14 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
 
         for client_state in client_states.states.into_iter() {
-            if client_state.actor_id == self.player_actor_id(player_index) {
+            if client_state.actor_id == player_actor_id(player_index) {
                 let player_state = &mut self.player_states[player_index as usize];
-                player_state.pos = client_state.pos;
-                player_state.yaw = client_state.yaw;
-                player_state.speed = client_state.speed;
-                player_state.angular_speed = client_state.angular_speed;
-                player_state.forward_multiplier = client_state.forward_multiplier;
-                player_state.turn_multiplier = client_state.turn_multiplier;
+                player_state.actor.pos = client_state.pos;
+                player_state.actor.yaw = client_state.yaw;
+                player_state.actor.speed = client_state.speed;
+                player_state.actor.angular_speed = client_state.angular_speed;
+                player_state.actor.forward_multiplier = client_state.forward_multiplier;
+                player_state.actor.turn_multiplier = client_state.turn_multiplier;
             }
         }
 
@@ -1045,14 +1066,14 @@ impl AttackCruiserGame {
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     states: vec![AttackCruiserActorUpdate {
-                        actor_id: self.player_actor_id(player_index),
-                        pos: player_state.pos,
-                        yaw: player_state.yaw,
-                        speed: player_state.speed,
-                        angular_speed: player_state.angular_speed,
-                        forward_multiplier: player_state.forward_multiplier,
-                        turn_multiplier: player_state.turn_multiplier,
-                        health: player_state.health.into(),
+                        actor_id: player_actor_id(player_index),
+                        pos: player_state.actor.pos,
+                        yaw: player_state.actor.yaw,
+                        speed: player_state.actor.speed,
+                        angular_speed: player_state.actor.angular_speed,
+                        forward_multiplier: player_state.actor.forward_multiplier,
+                        turn_multiplier: player_state.actor.turn_multiplier,
+                        health: player_state.actor.health.into(),
                         state: AttackCruiserActorState::default(),
                     }],
                 },
@@ -1070,9 +1091,9 @@ impl AttackCruiserGame {
 
         let direction = Pos3::from(direction(
             Pos {
-                x: player_state.pos.x,
+                x: player_state.actor.pos.x,
                 y: 0.0,
-                z: player_state.pos.z,
+                z: player_state.actor.pos.z,
                 w: 1.0,
             },
             Pos {
@@ -1095,8 +1116,8 @@ impl AttackCruiserGame {
                 packets.extend(
                     self.projectiles
                         .launch(
-                            self.player_actor_id(player_index),
-                            player_state.pos,
+                            player_actor_id(player_index),
+                            player_state.actor.pos,
                             direction,
                             projectile,
                         )?
@@ -1155,15 +1176,15 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::AddActor as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: self.player_actor_id(player_index),
+                    actor_id: player_actor_id(player_index),
                     hostility: AttackCruiserHostility::Friendly,
                     actor_config: AttackCruiserStartupConfigHash {
                         name: "ship config value".to_string(),
                         class: AttackCruiserStartupConfigClass::Ship,
                     },
-                    pos: player_state.pos,
-                    speed: player_state.speed,
-                    yaw: player_state.yaw,
+                    pos: player_state.actor.pos,
+                    speed: player_state.actor.speed,
+                    yaw: player_state.actor.yaw,
                     unknown7: 0,
                 },
             }),
@@ -1238,7 +1259,7 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: self.player_actor_id(player_index as u8),
+                    actor_id: player_actor_id(player_index as u8),
                     command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
                         guid: player_guid(*guid),
                         value: true,
@@ -1253,7 +1274,7 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: self.player_actor_id(player_index as u8),
+                    actor_id: player_actor_id(player_index as u8),
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
                         guid: player_guid(*guid),
                         value: true,
@@ -1282,10 +1303,6 @@ impl AttackCruiserGame {
         }
     }
 
-    fn player_actor_id(&self, player_index: u8) -> i32 {
-        (player_index + 1).into()
-    }
-
     fn player_state_update(
         &self,
         player_index: u8,
@@ -1297,7 +1314,7 @@ impl AttackCruiserGame {
             index: match update_type.index {
                 true => Some(AttackCruiserPlayerStateIndex {
                     player_index: (player_index + 1).into(),
-                    actor_id: self.player_actor_id(player_index),
+                    actor_id: player_actor_id(player_index),
                     unknown_value4: 0,
                     unknown4: "".to_string(),
                     unknown5: "".to_string(),
@@ -1321,7 +1338,7 @@ impl AttackCruiserGame {
             },
             unknown3: match update_type.unknown3 {
                 true => Some(AttackCruiserPlayerStateUnknown3 {
-                    actor_id: self.player_actor_id(player_index),
+                    actor_id: player_actor_id(player_index),
                     unknown_value4: 0,
                 }),
                 false => None,
@@ -1340,7 +1357,7 @@ impl AttackCruiserGame {
             },
             unknown5: match update_type.unknown5 {
                 true => Some(AttackCruiserPlayerStateUnknown5 {
-                    actor_id: self.player_actor_id(player_index),
+                    actor_id: player_actor_id(player_index),
                 }),
                 false => None,
             },
