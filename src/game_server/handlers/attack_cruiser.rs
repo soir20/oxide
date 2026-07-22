@@ -414,6 +414,8 @@ impl AttackCruiserProjectilePool {
 
         let delta_secs = delta.as_secs_f32();
         let ship_roll = actor.max_roll * actor.turn_multiplier;
+        let ship_velocity = actor.speed * actor.forward_multiplier;
+        let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
 
         let projectile_ids: Vec<i32> = self
             .live_projectiles
@@ -423,36 +425,39 @@ impl AttackCruiserProjectilePool {
                     return false;
                 }
 
-                let max_steps = (projectile.projectile.speed * delta_secs
-                    / projectile.projectile.length)
+                let projectile_speed = projectile.projectile.speed;
+                let projectile_len = projectile.projectile.length;
+                let max_steps = ((projectile_speed * delta_secs / projectile_len)
                     .abs()
-                    .ceil() as u32;
-                let step_duration = delta / max_steps.max(1);
+                    .ceil() as u32)
+                    .max(1);
+
+                let step_duration = delta / max_steps;
+                let step_secs = step_duration.as_secs_f32();
+
+                let secs_since_launch = now
+                    .saturating_duration_since(projectile.launch_time)
+                    .as_secs_f32();
+                let global_start = projectile.origin + projectile.speed * secs_since_launch;
+                let global_speed = Vec3::from(projectile.speed);
 
                 for step in 1..=max_steps {
-                    let step_delta = step_duration.saturating_mul(step);
-                    let step_delta_secs = step_delta.as_secs_f32();
+                    let step_f32 = step as f32;
+                    let step_delta_secs = step_secs * step_f32;
 
-                    let ship_origin =
-                        actor.pos + actor.speed * actor.forward_multiplier * step_delta_secs;
-                    let ship_yaw =
-                        actor.yaw + actor.angular_speed * actor.turn_multiplier * step_delta_secs;
+                    let ship_origin = actor.pos + ship_velocity * step_delta_secs;
+                    let ship_yaw = actor.yaw + ship_angular_velocity * step_delta_secs;
                     let ship_rotation = Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll);
-                    let inverse_rotation = Mat3::from_quat(ship_rotation).transpose();
 
-                    let secs_since_launch = now
-                        .saturating_duration_since(projectile.launch_time)
-                        .as_secs_f32();
-                    let global_start = projectile.origin + projectile.speed * secs_since_launch;
+                    let inverse_rotation = Mat3::from_quat(ship_rotation.inverse());
 
                     let local_start = inverse_rotation * Vec3::from(global_start - ship_origin);
-                    let local_speed = inverse_rotation * Vec3::from(projectile.speed);
-                    let local_end = local_start + local_speed * step_delta.as_secs_f32();
+                    let local_speed = inverse_rotation * global_speed;
+                    let local_end = local_start + local_speed * step_delta_secs;
 
                     let segment_vector = local_end - local_start;
                     let projectile_direction = segment_vector.normalize_or_zero();
-                    let half_length_offset =
-                        projectile_direction * (projectile.projectile.length * 0.5);
+                    let half_length_offset = projectile_direction * (projectile_len * 0.5);
 
                     let check_start = local_start - half_length_offset;
                     let check_end = local_end + half_length_offset;
