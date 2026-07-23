@@ -10,7 +10,7 @@ use bvh::{
     ray::Ray,
 };
 use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
-use glam::{EulerRot, Quat, Vec3};
+use glam::{Affine3A, EulerRot, Quat, Vec3};
 use serde::{de::Error, Deserialize, Serialize};
 
 fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
@@ -186,9 +186,7 @@ pub struct BvhInstance {
     node_index: usize,
 
     #[serde(skip)]
-    inv_rotation: Quat,
-    #[serde(skip)]
-    inv_scale: f32,
+    global_to_local: Affine3A,
 }
 
 impl BvhInstance {
@@ -215,10 +213,13 @@ impl BvhInstance {
 
 impl From<BvhInstanceData> for BvhInstance {
     fn from(value: BvhInstanceData) -> BvhInstance {
-        let inv_rotation =
-            Quat::from_euler(EulerRot::YXZ, value.rot[0], value.rot[1], value.rot[2]).inverse();
+        let rotation = Quat::from_euler(EulerRot::YXZ, value.rot[0], value.rot[1], value.rot[2]);
+        let translation = Vec3::from(value.pos);
+        let scale = Vec3::splat(value.scale);
 
-        let inv_scale = 1.0 / value.scale.max(f32::EPSILON);
+        let local_to_global =
+            Affine3A::from_scale_rotation_translation(scale, rotation, translation);
+        let global_to_local = local_to_global.inverse();
 
         BvhInstance {
             bvh_index: value.bvh_index,
@@ -227,8 +228,7 @@ impl From<BvhInstanceData> for BvhInstance {
             scale: value.scale,
             aabb: value.aabb,
             node_index: value.node_index,
-            inv_rotation,
-            inv_scale,
+            global_to_local,
         }
     }
 }
@@ -283,12 +283,8 @@ impl Bvh {
                 continue;
             };
 
-            let inv_rot = bvh_instance.inv_rotation;
-            let inv_scale = bvh_instance.inv_scale;
-
-            let instance_pos = Vec3::from(bvh_instance.pos);
-            let relative_start = (inv_rot * (start_vec - instance_pos)) * inv_scale;
-            let relative_end = (inv_rot * (end_vec - instance_pos)) * inv_scale;
+            let relative_start = bvh_instance.global_to_local.transform_point3(start_vec);
+            let relative_end = bvh_instance.global_to_local.transform_point3(end_vec);
 
             let local_delta = relative_end - relative_start;
             let relative_max_distance = local_delta.length();
@@ -299,17 +295,18 @@ impl Bvh {
 
             let relative_direction = local_delta / relative_max_distance;
             let relative_ray = Ray::new(
-                <[f32; 3]>::from(relative_start).into(),
-                <[f32; 3]>::from(relative_direction).into(),
+                relative_start.to_array().into(),
+                relative_direction.to_array().into(),
             );
 
             for triangle in bvh_template
                 .bvh
                 .traverse(&relative_ray, &bvh_template.baked_triangles)
             {
-                let v1 = bvh_template.vertices[triangle.vertex1_index].into();
-                let v2 = bvh_template.vertices[triangle.vertex1_index + 1].into();
-                let v3 = bvh_template.vertices[triangle.vertex1_index + 2].into();
+                let v = &bvh_template.vertices[triangle.vertex1_index..triangle.vertex1_index + 3];
+                let v1 = v[0].into();
+                let v2 = v[1].into();
+                let v3 = v[2].into();
 
                 let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
