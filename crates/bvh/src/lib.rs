@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     fs::File,
     io::{BufReader, Read, Write},
     sync::atomic::AtomicUsize,
@@ -110,7 +109,7 @@ impl From<BvhTemplateData> for BvhTemplate {
 
 #[derive(Serialize, Deserialize)]
 struct BvhInstanceData {
-    id: u32,
+    bvh_index: usize,
     pos: [f32; 3],
     rot: [f32; 3],
     scale: f32,
@@ -121,7 +120,7 @@ struct BvhInstanceData {
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(from = "BvhInstanceData")]
 pub struct BvhInstance {
-    id: u32,
+    bvh_index: usize,
     pos: [f32; 3],
     rot: [f32; 3],
     scale: f32,
@@ -136,14 +135,14 @@ pub struct BvhInstance {
 
 impl BvhInstance {
     pub fn new(
-        id: u32,
+        bvh_index: usize,
         pos: [f32; 3],
         rot: [f32; 3],
         scale: f32,
         global_triangles: impl Iterator<Item = [[f32; 3]; 3]>,
     ) -> Self {
         BvhInstance {
-            id,
+            bvh_index,
             pos,
             rot,
             scale,
@@ -165,7 +164,7 @@ impl From<BvhInstanceData> for BvhInstance {
         let inv_scale = 1.0 / value.scale.max(f32::EPSILON);
 
         BvhInstance {
-            id: value.id,
+            bvh_index: value.bvh_index,
             pos: value.pos,
             rot: value.rot,
             scale: value.scale,
@@ -196,12 +195,12 @@ impl BHShape<f32, 3> for BvhInstance {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Bvh {
     root: SubBvh<f32, 3>,
-    templates: HashMap<u32, BvhTemplate>,
+    templates: Vec<BvhTemplate>,
     instances: Vec<BvhInstance>,
 }
 
 impl Bvh {
-    pub fn new(templates: HashMap<u32, BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
+    pub fn new(templates: Vec<BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
         Bvh {
             root: SubBvh::build(&mut instances),
             templates,
@@ -223,7 +222,7 @@ impl Bvh {
         let ray = Ray::new(start.into(), direction.to_array().into());
 
         for bvh_instance in self.root.traverse(&ray, &self.instances) {
-            let Some(bvh_template) = self.templates.get(&bvh_instance.id) else {
+            let Some(bvh_template) = self.templates.get(bvh_instance.bvh_index) else {
                 continue;
             };
 
