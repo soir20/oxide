@@ -13,11 +13,6 @@ use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
 use glam::{EulerRot, Quat, Vec3};
 use serde::{de::Error, Deserialize, Serialize};
 
-fn vertex_from_index(vertices: &[[f32; 3]], index: u16) -> [f32; 3] {
-    let index = usize::from(index);
-    vertices[index]
-}
-
 fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     Aabb::with_bounds(
         [
@@ -93,7 +88,7 @@ fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32
 
 #[derive(Debug, Clone)]
 struct BakedTriangle {
-    indices: [u16; 3],
+    vertex1_index: usize,
     aabb: Aabb<f32, 3>,
 }
 
@@ -139,23 +134,30 @@ impl BvhTemplate {
 
 impl From<BvhTemplateData> for BvhTemplate {
     fn from(data: BvhTemplateData) -> Self {
+        let mut sequential_vertices = Vec::with_capacity(data.triangles.len() * 3);
+
         let baked_triangles = data
             .triangles
             .iter()
             .map(|triangle| {
-                let v1 = vertex_from_index(&data.vertices, triangle.indices[0]).into();
-                let v2 = vertex_from_index(&data.vertices, triangle.indices[1]).into();
-                let v3 = vertex_from_index(&data.vertices, triangle.indices[2]).into();
+                let v1 = data.vertices[triangle.indices[0] as usize];
+                let v2 = data.vertices[triangle.indices[1] as usize];
+                let v3 = data.vertices[triangle.indices[2] as usize];
+
+                let vertex1_index = sequential_vertices.len();
+                sequential_vertices.push(v1);
+                sequential_vertices.push(v2);
+                sequential_vertices.push(v3);
 
                 BakedTriangle {
-                    indices: triangle.indices,
+                    vertex1_index,
                     aabb: triangle_to_aabb(v1, v2, v3),
                 }
             })
             .collect();
 
         BvhTemplate {
-            vertices: data.vertices,
+            vertices: sequential_vertices,
             triangles: data.triangles,
             bvh: data.bvh,
             baked_triangles,
@@ -305,9 +307,9 @@ impl Bvh {
                 .bvh
                 .traverse(&relative_ray, &bvh_template.baked_triangles)
             {
-                let v1 = vertex_from_index(&bvh_template.vertices, triangle.indices[0]).into();
-                let v2 = vertex_from_index(&bvh_template.vertices, triangle.indices[1]).into();
-                let v3 = vertex_from_index(&bvh_template.vertices, triangle.indices[2]).into();
+                let v1 = bvh_template.vertices[triangle.vertex1_index].into();
+                let v2 = bvh_template.vertices[triangle.vertex1_index + 1].into();
+                let v3 = bvh_template.vertices[triangle.vertex1_index + 2].into();
 
                 let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
