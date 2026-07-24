@@ -98,7 +98,7 @@ fn generate_bvh(
     (bvh, aabbs)
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 struct BakedTriangle {
     vertex1_index: usize,
     aabb: Aabb<f32, 3>,
