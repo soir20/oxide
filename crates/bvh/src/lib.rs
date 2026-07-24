@@ -100,7 +100,7 @@ fn generate_bvh(
 
 #[derive(Clone, Debug)]
 struct BakedTriangle {
-    vertex1_index: usize,
+    indices: [u16; 3],
     aabb: Aabb<f32, 3>,
 }
 
@@ -137,22 +137,12 @@ impl BvhTemplate {
 
         let (bvh, sorted_aabbs) = generate_bvh(&vertices, &mut triangles);
 
-        let mut sequential_vertices = Vec::with_capacity(sorted_aabbs.len() * 3);
         let baked_triangles: Vec<BakedTriangle> = sorted_aabbs
             .iter()
             .map(|aabb| {
                 let triangle = &triangles[aabb.triangle_index];
-                let v1 = vertex_from_index(&vertices, triangle.indices[0]);
-                let v2 = vertex_from_index(&vertices, triangle.indices[1]);
-                let v3 = vertex_from_index(&vertices, triangle.indices[2]);
-
-                let vertex1_index = sequential_vertices.len();
-                sequential_vertices.push(v1);
-                sequential_vertices.push(v2);
-                sequential_vertices.push(v3);
-
                 BakedTriangle {
-                    vertex1_index,
+                    indices: triangle.indices,
                     aabb: aabb.aabb,
                 }
             })
@@ -160,7 +150,7 @@ impl BvhTemplate {
 
         BvhTemplate {
             bvh,
-            vertices: sequential_vertices,
+            vertices,
             triangles,
             baked_triangles,
         }
@@ -172,18 +162,13 @@ impl From<BvhTemplateData> for BvhTemplate {
         let baked_triangles = data
             .triangles
             .iter()
-            .enumerate()
-            .map(|(index, _)| {
-                let vertex1_index = index * 3;
-
-                BakedTriangle {
-                    vertex1_index,
-                    aabb: triangle_to_aabb(
-                        data.vertices[vertex1_index],
-                        data.vertices[vertex1_index + 1],
-                        data.vertices[vertex1_index + 2],
-                    ),
-                }
+            .map(|triangle| BakedTriangle {
+                indices: triangle.indices,
+                aabb: triangle_to_aabb(
+                    vertex_from_index(&data.vertices, triangle.indices[0]),
+                    vertex_from_index(&data.vertices, triangle.indices[1]),
+                    vertex_from_index(&data.vertices, triangle.indices[2]),
+                ),
             })
             .collect();
 
@@ -334,10 +319,9 @@ impl Bvh {
                 .bvh
                 .traverse(&relative_ray, &bvh_template.baked_triangles)
             {
-                let v = &bvh_template.vertices[triangle.vertex1_index..triangle.vertex1_index + 3];
-                let v1 = v[0].into();
-                let v2 = v[1].into();
-                let v3 = v[2].into();
+                let v1 = vertex_from_index(&bvh_template.vertices, triangle.indices[0]).into();
+                let v2 = vertex_from_index(&bvh_template.vertices, triangle.indices[1]).into();
+                let v3 = vertex_from_index(&bvh_template.vertices, triangle.indices[2]).into();
 
                 let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
