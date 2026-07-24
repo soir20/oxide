@@ -285,14 +285,14 @@ impl Bvh {
         let start_vec = Vec3::from(start);
         let end_vec = Vec3::from(end);
         let delta = end_vec - start_vec;
-        let global_max_distance = delta.length();
 
-        if global_max_distance < f32::EPSILON {
+        // Only perform expensive sqrt() when necessary
+        let global_max_distance_sq = delta.length_squared();
+        if global_max_distance_sq < f32::EPSILON * f32::EPSILON {
             return true;
         }
 
-        let direction = delta / global_max_distance;
-        let ray = Ray::new(start.into(), direction.to_array().into());
+        let ray = Ray::new(start.into(), delta.normalize().to_array().into());
 
         for bvh_instance in self.root.traverse(&ray, &self.instances) {
             let Some(bvh_template) = self.templates.get(bvh_instance.bvh_index) else {
@@ -303,17 +303,17 @@ impl Bvh {
             let relative_end = bvh_instance.global_to_local.transform_point3(end_vec);
 
             let local_delta = relative_end - relative_start;
-            let relative_max_distance = local_delta.length();
+            let relative_max_distance_sq = local_delta.length_squared();
 
-            if relative_max_distance < f32::EPSILON {
+            if relative_max_distance_sq < f32::EPSILON * f32::EPSILON {
                 continue;
             }
 
-            let relative_direction = local_delta / relative_max_distance;
             let relative_ray = Ray::new(
                 relative_start.to_array().into(),
-                relative_direction.to_array().into(),
+                local_delta.normalize().to_array().into(),
             );
+            let relative_max_distance = relative_max_distance_sq.sqrt();
 
             for triangle in bvh_template
                 .bvh
