@@ -13,6 +13,11 @@ use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
 use glam::{Affine3A, EulerRot, Quat, Vec3};
 use serde::{de::Error, Deserialize, Serialize};
 
+fn vertex_from_index(vertices: &[[f32; 3]], index: u16) -> [f32; 3] {
+    let index = usize::from(index);
+    vertices[index]
+}
+
 fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     Aabb::with_bounds(
         [
@@ -30,7 +35,7 @@ fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     )
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
     node_index: usize,
@@ -48,6 +53,7 @@ impl From<[u16; 3]> for Triangle {
 struct TriangleAabb {
     aabb: Aabb<f32, 3>,
     node_index: usize,
+    triangle_index: usize,
 }
 
 impl Bounded<f32, 3> for TriangleAabb {
@@ -66,24 +72,30 @@ impl BHShape<f32, 3> for TriangleAabb {
     }
 }
 
-fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
+fn generate_bvh(
+    vertices: &[[f32; 3]],
+    triangles: &mut [Triangle],
+) -> (SubBvh<f32, 3>, Vec<TriangleAabb>) {
     let mut aabbs: Vec<TriangleAabb> = triangles
         .iter()
-        .map(|triangle| TriangleAabb {
+        .enumerate()
+        .map(|(index, triangle)| TriangleAabb {
             aabb: triangle_to_aabb(
                 vertices[triangle.indices[0] as usize],
                 vertices[triangle.indices[1] as usize],
                 vertices[triangle.indices[2] as usize],
             ),
             node_index: triangle.node_index,
+            triangle_index: index,
         })
         .collect();
     let bvh = SubBvh::build(&mut aabbs);
-    aabbs
-        .iter()
-        .enumerate()
-        .for_each(|(index, aabb)| triangles[index].node_index = aabb.node_index);
-    bvh
+
+    aabbs.iter().for_each(|aabb| {
+        triangles[aabb.triangle_index].node_index = aabb.node_index;
+    });
+
+    (bvh, aabbs)
 }
 
 #[derive(Debug, Clone)]
@@ -123,26 +135,16 @@ impl BvhTemplate {
             .map(|triangle| Triangle::from(*triangle))
             .collect();
 
-        BvhTemplateData {
-            bvh: generate_bvh(&vertices, &mut triangles),
-            vertices,
-            triangles,
-        }
-        .into()
-    }
-}
+        let (bvh, sorted_aabbs) = generate_bvh(&vertices, &mut triangles);
 
-impl From<BvhTemplateData> for BvhTemplate {
-    fn from(data: BvhTemplateData) -> Self {
-        let mut sequential_vertices = Vec::with_capacity(data.triangles.len() * 3);
-
-        let baked_triangles = data
-            .triangles
+        let mut sequential_vertices = Vec::with_capacity(sorted_aabbs.len() * 3);
+        let baked_triangles: Vec<BakedTriangle> = sorted_aabbs
             .iter()
-            .map(|triangle| {
-                let v1 = data.vertices[triangle.indices[0] as usize];
-                let v2 = data.vertices[triangle.indices[1] as usize];
-                let v3 = data.vertices[triangle.indices[2] as usize];
+            .map(|aabb| {
+                let triangle = &triangles[aabb.triangle_index];
+                let v1 = vertex_from_index(&vertices, triangle.indices[0]);
+                let v2 = vertex_from_index(&vertices, triangle.indices[1]);
+                let v3 = vertex_from_index(&vertices, triangle.indices[2]);
 
                 let vertex1_index = sequential_vertices.len();
                 sequential_vertices.push(v1);
@@ -151,15 +153,44 @@ impl From<BvhTemplateData> for BvhTemplate {
 
                 BakedTriangle {
                     vertex1_index,
-                    aabb: triangle_to_aabb(v1, v2, v3),
+                    aabb: aabb.aabb,
                 }
             })
             .collect();
 
         BvhTemplate {
+            bvh,
             vertices: sequential_vertices,
-            triangles: data.triangles,
+            triangles,
+            baked_triangles,
+        }
+    }
+}
+
+impl From<BvhTemplateData> for BvhTemplate {
+    fn from(data: BvhTemplateData) -> Self {
+        let baked_triangles = data
+            .triangles
+            .iter()
+            .enumerate()
+            .map(|(index, _)| {
+                let vertex1_index = index * 3;
+
+                BakedTriangle {
+                    vertex1_index,
+                    aabb: triangle_to_aabb(
+                        data.vertices[vertex1_index],
+                        data.vertices[vertex1_index + 1],
+                        data.vertices[vertex1_index + 2],
+                    ),
+                }
+            })
+            .collect();
+
+        BvhTemplate {
             bvh: data.bvh,
+            vertices: data.vertices,
+            triangles: data.triangles,
             baked_triangles,
         }
     }
