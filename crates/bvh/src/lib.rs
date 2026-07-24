@@ -267,11 +267,17 @@ pub struct Bvh {
     root: SubBvh<f32, 3>,
     templates: Vec<BvhTemplate>,
     instances: Vec<BvhInstance>,
+
+    #[serde(skip)]
+    aabb: Aabb<f32, 3>,
 }
 
 impl Bvh {
     pub fn new(templates: Vec<BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
         Bvh {
+            aabb: instances
+                .iter()
+                .fold(Aabb::empty(), |acc, instance| acc.join(&instance.aabb())),
             root: SubBvh::build(&mut instances),
             templates,
             instances,
@@ -328,6 +334,10 @@ impl Bvh {
         }
 
         true
+    }
+
+    pub fn aabb(&self) -> Aabb<f32, 3> {
+        self.aabb
     }
 }
 
