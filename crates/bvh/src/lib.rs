@@ -72,10 +72,7 @@ impl BHShape<f32, 3> for TriangleAabb {
     }
 }
 
-fn generate_bvh(
-    vertices: &[[f32; 3]],
-    triangles: &mut [Triangle],
-) -> (SubBvh<f32, 3>, Vec<TriangleAabb>) {
+fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
     let mut aabbs: Vec<TriangleAabb> = triangles
         .iter()
         .enumerate()
@@ -95,7 +92,7 @@ fn generate_bvh(
         triangles[aabb.triangle_index].node_index = aabb.node_index;
     });
 
-    (bvh, aabbs)
+    bvh
 }
 
 #[derive(Clone, Debug)]
@@ -135,16 +132,16 @@ impl BvhTemplate {
             .map(|triangle| Triangle::from(*triangle))
             .collect();
 
-        let (bvh, sorted_aabbs) = generate_bvh(&vertices, &mut triangles);
-
-        let baked_triangles: Vec<BakedTriangle> = sorted_aabbs
+        let bvh = generate_bvh(&vertices, &mut triangles);
+        let baked_triangles: Vec<BakedTriangle> = triangles
             .iter()
-            .map(|aabb| {
-                let triangle = &triangles[aabb.triangle_index];
-                BakedTriangle {
-                    indices: triangle.indices,
-                    aabb: aabb.aabb,
-                }
+            .map(|triangle| BakedTriangle {
+                indices: triangle.indices,
+                aabb: triangle_to_aabb(
+                    vertex_from_index(&vertices, triangle.indices[0]),
+                    vertex_from_index(&vertices, triangle.indices[1]),
+                    vertex_from_index(&vertices, triangle.indices[2]),
+                ),
             })
             .collect();
 
