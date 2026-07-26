@@ -437,7 +437,7 @@ impl AttackCruiserProjectilePool {
         let mut step_cache = BTreeMap::new();
 
         // There will almost always be fewer than 32 hits. 32 * 4 bytes = 128 bytes,
-        // which fills two 64-byte cache lines on most CPUs
+        // which fills two 64-byte L1 cache lines on most CPUs
         let projectile_ids: SmallVec<[i32; 32]> = self
             .live_projectiles
             .iter()
