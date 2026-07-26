@@ -502,22 +502,12 @@ impl AttackCruiserProjectilePool {
 
     pub fn expire(&mut self) {
         let now = Instant::now();
-        loop {
-            let removable_projectile_id =
-                self.expiry
-                    .peek()
-                    .and_then(|(projectile_id, expiry)| match expiry.0 <= now {
-                        true => Some(*projectile_id),
-                        false => None,
-                    });
-
-            match removable_projectile_id {
-                Some(projectile_id) => {
-                    self.expiry.remove(&projectile_id);
-                    self.live_projectiles.remove(&projectile_id);
-                }
-                None => break,
+        while let Some((&projectile_id, Reverse(expiry))) = self.expiry.peek() {
+            if expiry > &now {
+                break;
             }
+            self.expiry.pop();
+            self.live_projectiles.remove(&projectile_id);
         }
     }
 
