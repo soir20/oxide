@@ -6,12 +6,13 @@ use std::{
     time::{Duration, Instant},
 };
 
-use glam::{EulerRot, Mat3, Quat, Vec3};
+use glam::{EulerRot, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
 use rand::{thread_rng, Rng};
 use serde::Deserialize;
+use smallvec::SmallVec;
 
 use crate::{
     game_server::{
@@ -292,6 +293,13 @@ struct AttackCruiserProjectileInstance {
     projectile: Arc<AttackCruiserProjectile>,
 }
 
+const STEP_CACHE_STACK_LEN: usize = 5;
+struct AttackCruiserProjectileStepCache {
+    inv_rots: SmallVec<[Quat; STEP_CACHE_STACK_LEN]>,
+    origins: SmallVec<[Vec3; STEP_CACHE_STACK_LEN]>,
+    step_delta_secs: SmallVec<[f32; STEP_CACHE_STACK_LEN]>,
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectileSpawn {
     pub projectile_id: i32,
@@ -426,6 +434,8 @@ impl AttackCruiserProjectilePool {
         let max_corner = Vec3::from(max_array);
         let ship_radius = min_corner.distance(max_corner) * 0.5;
 
+        let mut step_cache = BTreeMap::new();
+
         let projectile_ids: Vec<i32> = self
             .live_projectiles
             .iter()
@@ -458,21 +468,40 @@ impl AttackCruiserProjectilePool {
                     .ceil() as u32)
                     .max(1);
 
-                let step_duration = delta / max_steps;
-                let step_secs = step_duration.as_secs_f32();
+                let cache = step_cache.entry(max_steps).or_insert_with(|| {
+                    let mut inv_rots = SmallVec::with_capacity(max_steps as usize);
+                    let mut origins = SmallVec::with_capacity(max_steps as usize);
+                    let mut cached_step_delta_secs = SmallVec::with_capacity(max_steps as usize);
+
+                    let step_secs = delta_secs / (max_steps as f32);
+                    (1..=max_steps).for_each(|step| {
+                        let step_delta_secs = step_secs * step as f32;
+
+                        let ship_origin = actor.pos + ship_velocity * step_delta_secs;
+                        let ship_yaw = actor.yaw + ship_angular_velocity * step_delta_secs;
+
+                        cached_step_delta_secs.push(step_delta_secs);
+                        origins.push(Vec3::from(ship_origin));
+                        inv_rots.push(
+                            Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll).inverse(),
+                        );
+                    });
+
+                    AttackCruiserProjectileStepCache {
+                        inv_rots,
+                        origins,
+                        step_delta_secs: cached_step_delta_secs,
+                    }
+                });
+
                 let global_speed = Vec3::from(projectile.speed);
 
-                (1..=max_steps).any(|step| {
-                    let step_f32 = step as f32;
-                    let step_delta_secs = step_secs * step_f32;
+                (0..(max_steps as usize)).any(|step_index| {
+                    let step_delta_secs = cache.step_delta_secs[step_index];
+                    let ship_origin = cache.origins[step_index];
+                    let inv_rotation = cache.inv_rots[step_index];
 
-                    let ship_origin = actor.pos + ship_velocity * step_delta_secs;
-                    let ship_yaw = actor.yaw + ship_angular_velocity * step_delta_secs;
-                    let ship_rotation = Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll);
-
-                    let inv_rotation = ship_rotation.inverse();
-
-                    let local_start = inv_rotation * (global_start - Vec3::from(ship_origin));
+                    let local_start = inv_rotation * (global_start - ship_origin);
                     let local_speed = inv_rotation * global_speed;
                     let local_end = local_start + local_speed * step_delta_secs;
 
