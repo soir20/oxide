@@ -986,16 +986,16 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut hits = Vec::new();
-        let actors = (0..self.players.len()).map(|player_index| {
-            (
-                player_actor_id(player_index as u8),
-                &self.player_states[player_index].actor,
-            )
-        });
+        for player_index in 0..self.players.len() {
+            let actor_id = player_actor_id(player_index as u8);
+            let actor = &mut self.player_states[player_index].actor;
 
-        actors.for_each(|(actor_id, actor)| {
-            hits.append(&mut self.projectiles.hits(actor_id, actor, now, tick_duration))
-        });
+            let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
+            actor.health = actor
+                .health
+                .saturating_sub_signed(Self::total_damage(&actor_hits));
+            hits.append(&mut actor_hits);
+        }
 
         vec![Broadcast::Multi(
             self.players.clone(),
@@ -1418,5 +1418,11 @@ impl AttackCruiserGame {
                 false => None,
             },
         }
+    }
+
+    fn total_damage(projectiles: &[(i32, Arc<AttackCruiserProjectile>)]) -> i16 {
+        projectiles.iter().fold(0, |total_damage, (_, projectile)| {
+            total_damage.saturating_add(projectile.damage)
+        })
     }
 }
