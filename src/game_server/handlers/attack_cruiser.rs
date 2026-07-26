@@ -1276,7 +1276,7 @@ impl AttackCruiserGame {
                     },
                     states: (0..self.players.len() as u8)
                         .map(|player_index| AttackCruiserPlayerUpdate {
-                            index: player_index.into(),
+                            index: (player_index + 1).into(),
                             state: self.player_state_update(player_index, update_type),
                         })
                         .collect(),
@@ -1363,7 +1363,7 @@ impl AttackCruiserGame {
         AttackCruiserPlayerStateUpdate {
             index: match update_type.index {
                 true => Some(AttackCruiserPlayerStateIndex {
-                    player_index: player_index.into(),
+                    player_index: (player_index + 1).into(),
                     actor_id,
                     unknown_value4: 0,
                     unknown4: "".to_string(),
