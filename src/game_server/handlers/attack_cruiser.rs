@@ -297,7 +297,7 @@ const STEP_CACHE_STACK_LEN: usize = 5;
 struct AttackCruiserProjectileStepCache {
     inv_rots: SmallVec<[Quat; STEP_CACHE_STACK_LEN]>,
     origins: SmallVec<[Vec3; STEP_CACHE_STACK_LEN]>,
-    step_end_secs: SmallVec<[f32; STEP_CACHE_STACK_LEN]>,
+    step_secs_end: SmallVec<[f32; STEP_CACHE_STACK_LEN]>,
 }
 
 #[derive(Clone, Debug)]
@@ -471,16 +471,16 @@ impl AttackCruiserProjectilePool {
                 let cache = step_cache.entry(max_steps).or_insert_with(|| {
                     let mut inv_rots = SmallVec::with_capacity(max_steps as usize);
                     let mut origins = SmallVec::with_capacity(max_steps as usize);
-                    let mut cached_step_end_secs = SmallVec::with_capacity(max_steps as usize);
+                    let mut cached_step_secs_end = SmallVec::with_capacity(max_steps as usize);
 
                     let step_secs = delta_secs / (max_steps as f32);
                     (1..=max_steps).for_each(|step| {
-                        let step_end_secs = step_secs * step as f32;
+                        let step_secs_end = step_secs * step as f32;
 
-                        let ship_origin = actor.pos + ship_velocity * step_end_secs;
-                        let ship_yaw = actor.yaw + ship_angular_velocity * step_end_secs;
+                        let ship_origin = actor.pos + ship_velocity * step_secs_end;
+                        let ship_yaw = actor.yaw + ship_angular_velocity * step_secs_end;
 
-                        cached_step_end_secs.push(step_end_secs);
+                        cached_step_secs_end.push(step_secs_end);
                         origins.push(Vec3::from(ship_origin));
                         inv_rots.push(
                             Quat::from_euler(EulerRot::YXZ, ship_yaw, 0.0, ship_roll).inverse(),
@@ -490,7 +490,7 @@ impl AttackCruiserProjectilePool {
                     AttackCruiserProjectileStepCache {
                         inv_rots,
                         origins,
-                        step_end_secs: cached_step_end_secs,
+                        step_secs_end: cached_step_secs_end,
                     }
                 });
 
@@ -500,17 +500,17 @@ impl AttackCruiserProjectilePool {
                     let step_start_secs = if step_index == 0 {
                         0.0
                     } else {
-                        cache.step_end_secs[step_index - 1]
+                        cache.step_secs_end[step_index - 1]
                     };
-                    let step_end_secs = cache.step_end_secs[step_index];
+                    let step_secs_end = cache.step_secs_end[step_index];
 
-                    let ship_origin = cache.origins[step_index];
-                    let inv_rotation = cache.inv_rots[step_index];
+                    let ship_origin_end = cache.origins[step_index];
+                    let inv_rotation_end = cache.inv_rots[step_index];
 
-                    let local_start = inv_rotation
-                        * (global_start + global_speed * step_start_secs - ship_origin);
-                    let local_end =
-                        inv_rotation * (global_start + global_speed * step_end_secs - ship_origin);
+                    let local_start = inv_rotation_end
+                        * (global_start + global_speed * step_start_secs - ship_origin_end);
+                    let local_end = inv_rotation_end
+                        * (global_start + global_speed * step_secs_end - ship_origin_end);
 
                     let segment_vector = local_end - local_start;
                     let projectile_direction = segment_vector.normalize_or_zero();
