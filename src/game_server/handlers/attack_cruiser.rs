@@ -1274,17 +1274,10 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    states: self
-                        .players
-                        .iter()
-                        .map(|guid| {
-                            let player_index = self
-                                .player_index(*guid)
-                                .expect("GUID in players list is not actually a player");
-                            AttackCruiserPlayerUpdate {
-                                index: player_index.into(),
-                                state: self.player_state_update(player_index, update_type),
-                            }
+                    states: (0..self.players.len() as u8)
+                        .map(|player_index| AttackCruiserPlayerUpdate {
+                            index: (player_index + 1).into(),
+                            state: self.player_state_update(player_index, update_type),
                         })
                         .collect(),
                 },
@@ -1365,12 +1358,13 @@ impl AttackCruiserGame {
         update_type: AttackCruiserPlayerStateType,
     ) -> AttackCruiserPlayerStateUpdate {
         let player_state = &self.player_states[player_index as usize];
+        let actor_id = player_actor_id(player_index);
 
         AttackCruiserPlayerStateUpdate {
             index: match update_type.index {
                 true => Some(AttackCruiserPlayerStateIndex {
                     player_index: (player_index + 1).into(),
-                    actor_id: player_actor_id(player_index),
+                    actor_id,
                     unknown_value4: 0,
                     unknown4: "".to_string(),
                     unknown5: "".to_string(),
@@ -1394,7 +1388,7 @@ impl AttackCruiserGame {
             },
             unknown3: match update_type.unknown3 {
                 true => Some(AttackCruiserPlayerStateUnknown3 {
-                    actor_id: player_actor_id(player_index),
+                    actor_id,
                     unknown_value4: 0,
                 }),
                 false => None,
@@ -1412,9 +1406,7 @@ impl AttackCruiserGame {
                 false => None,
             },
             unknown5: match update_type.unknown5 {
-                true => Some(AttackCruiserPlayerStateUnknown5 {
-                    actor_id: player_actor_id(player_index),
-                }),
+                true => Some(AttackCruiserPlayerStateUnknown5 { actor_id }),
                 false => None,
             },
         }
