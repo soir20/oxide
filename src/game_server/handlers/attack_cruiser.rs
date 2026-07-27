@@ -1271,7 +1271,7 @@ impl AttackCruiserGame {
                 inner: AttackCruiserUpdatePlayers {
                     minigame_header: MinigameHeader {
                         stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
+                        sub_op_code: AttackCruiserOpCode::UpdatePlayers as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     states: (0..self.players.len() as u8)
