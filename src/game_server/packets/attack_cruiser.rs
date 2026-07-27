@@ -992,7 +992,7 @@ pub struct AttackCruiserRequestUpdatePlayers {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserPlayerUpdate {
-    pub index: i32,
+    pub player_index: i32,
     pub state: AttackCruiserPlayerStateUpdate,
 }
 
