@@ -1007,12 +1007,21 @@ impl AttackCruiserGame {
         let mut hits = Vec::new();
         for player_index in 0..self.players.len() {
             let actor_id = player_actor_id(player_index as u8);
-            let actor = &mut self.player_states[player_index].actor;
+            let player_state = &mut self.player_states[player_index];
+            let actor = &mut player_state.actor;
+            if actor.health == 0 {
+                continue;
+            }
 
             let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
             actor.health = actor
                 .health
                 .saturating_sub_signed(Self::total_damage(&actor_hits));
+            if actor.health == 0 {
+                player_state.lives = player_state.lives.saturating_sub(1);
+                // TODO: respawn timer
+            }
+
             hits.append(&mut actor_hits);
         }
 
