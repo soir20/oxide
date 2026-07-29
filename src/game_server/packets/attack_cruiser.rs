@@ -775,6 +775,9 @@ impl GamePacket for AttackCruiserClientConfig {
 pub enum AttackCruiserClientState {
     Intro = 3,
     WaveActive = 4,
+    Victory = 6,
+    Defeat = 7,
+    Quit = 8,
 }
 
 #[derive(SerializePacket, DeserializePacket)]
