@@ -26,6 +26,7 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
+                AttackCruiserActorAnimationConfig, AttackCruiserActorCinematicConfig,
                 AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
                 AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
                 AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
@@ -895,8 +896,26 @@ impl AttackCruiserGame {
                                     bonus_max_age_seconds: 10.0,
                                     overhead_offset_y: 0.0,
                                     overhead_health_scale: 0.5,
-                                    animations: AttackCruiserVec::new(),
-                                    cinematics: AttackCruiserVec::new(),
+                                    animations: AttackCruiserVec(
+                                        "animations".to_string(),
+                                        vec![AttackCruiserActorAnimationConfig {
+                                            animation_type: 2,
+                                            slot_id: 3001,
+                                            loops: AttackCruiserBool(true),
+                                            play_time_seconds: 60.0,
+                                        }],
+                                    ),
+                                    cinematics: AttackCruiserVec(
+                                        "cinematics".to_string(),
+                                        vec![AttackCruiserActorCinematicConfig {
+                                            cinematic_type: 1,
+                                            play_time_seconds: 15.0,
+                                            animation_id: 10308,
+                                            pre_wipe_style: 2,
+                                            post_wipe_style: 2,
+                                            post_camera_ease_in_seconds: 5.0,
+                                        }],
+                                    ),
                                     damage_states: AttackCruiserVec(
                                         "damage states".to_string(),
                                         vec![
