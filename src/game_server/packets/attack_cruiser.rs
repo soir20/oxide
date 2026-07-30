@@ -1029,7 +1029,7 @@ pub struct AttackCruiserActorState {
     pub unknown14: bool,
     pub unknown15: bool,
     pub unknown16: bool,
-    pub unknown17: bool,
+    pub dead: bool,
 }
 
 impl SerializePacket for AttackCruiserActorState {
@@ -1099,7 +1099,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 15;
         }
 
-        if self.unknown17 {
+        if self.dead {
             state |= 1 << 16;
         }
 
@@ -1150,7 +1150,7 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown14,
             unknown15,
             unknown16,
-            unknown17,
+            dead: unknown17,
         })
     }
 }

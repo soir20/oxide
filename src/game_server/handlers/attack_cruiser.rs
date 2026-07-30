@@ -1271,7 +1271,7 @@ impl AttackCruiserGame {
                             unknown14: false,
                             unknown15: false,
                             unknown16: false,
-                            unknown17: player_state.actor.health == 0,
+                            dead: player_state.actor.health == 0,
                         },
                     }],
                 },
