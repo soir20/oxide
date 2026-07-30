@@ -1026,6 +1026,10 @@ pub struct AttackCruiserActorState {
     pub thrusters_on: bool,
     pub end_game_hyperdrive: bool,
     pub reset_damage_state: bool,
+    pub unknown14: bool,
+    pub unknown15: bool,
+    pub unknown16: bool,
+    pub unknown17: bool,
 }
 
 impl SerializePacket for AttackCruiserActorState {
@@ -1083,6 +1087,22 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 12;
         }
 
+        if self.unknown14 {
+            state |= 1 << 13;
+        }
+
+        if self.unknown15 {
+            state |= 1 << 14;
+        }
+
+        if self.unknown16 {
+            state |= 1 << 15;
+        }
+
+        if self.unknown17 {
+            state |= 1 << 16;
+        }
+
         state.serialize(buffer);
     }
 }
@@ -1108,6 +1128,10 @@ impl DeserializePacket for AttackCruiserActorState {
         let thrusters_on = state & (1 << 10) != 0;
         let end_game_hyperdrive = state & (1 << 11) != 0;
         let reset_damage_state = state & (1 << 12) != 0;
+        let unknown14 = state & (1 << 13) != 0;
+        let unknown15 = state & (1 << 14) != 0;
+        let unknown16 = state & (1 << 15) != 0;
+        let unknown17 = state & (1 << 16) != 0;
 
         Ok(AttackCruiserActorState {
             unknown1,
@@ -1123,6 +1147,10 @@ impl DeserializePacket for AttackCruiserActorState {
             thrusters_on,
             end_game_hyperdrive,
             reset_damage_state,
+            unknown14,
+            unknown15,
+            unknown16,
+            unknown17,
         })
     }
 }
