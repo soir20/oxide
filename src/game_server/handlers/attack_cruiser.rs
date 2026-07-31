@@ -1154,7 +1154,7 @@ impl AttackCruiserGame {
             let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
 
             // If the player still has invulnerability time, process the hits but deal no damage
-            if !player_state.timer.time_until_next_event(now).is_zero() {
+            if player_state.timer.time_until_next_event(now).is_zero() {
                 player_state.respawn_invulnerability = false;
                 actor.health = actor
                     .health
