@@ -20,7 +20,8 @@ use crate::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
             direction,
             minigame::{
-                handle_minigame_packet_write, MinigameRemovePlayerResult, SharedMinigameTypeData,
+                handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
+                SharedMinigameTypeData,
             },
             unique_guid::player_guid,
         },
@@ -79,6 +80,12 @@ struct AttackCruiserActor {
     pub max_roll: f32,
 }
 
+impl AttackCruiserActor {
+    pub fn dead(&self) -> bool {
+        self.health == 0
+    }
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayer {
     pub ready: bool,
@@ -88,6 +95,8 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier: u8,
     pub lives: u8,
     pub primary_weapon_tier: usize,
+    pub respawn_invulnerability: bool,
+    pub timer: MinigameCountdown,
 }
 
 impl AttackCruiserPlayer {
@@ -118,7 +127,19 @@ impl AttackCruiserPlayer {
             score_multiplier_tier: 1,
             lives,
             primary_weapon_tier: 0,
+            respawn_invulnerability: false,
+            timer: MinigameCountdown::new(),
         }
+    }
+
+    pub fn is_respawnable(&self, now: Instant) -> bool {
+        self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
+    }
+
+    pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
+        self.actor.health = health;
+        self.respawn_invulnerability = true;
+        self.timer.schedule_event(invulnerability_duration, now);
     }
 }
 
@@ -210,13 +231,21 @@ pub struct AttackCruiserShipConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserConfig {
+pub struct AttackCruiserPlayerConfig {
     lives: u8,
     max_health: u16,
+    respawn_millis: u32,
+    post_respawn_invulnerability_millis: u32,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
-    player_ship: AttackCruiserShipConfig,
-    player_weapons: AttackCruiserPlayerWeaponConfig,
+    ship: AttackCruiserShipConfig,
+    weapons: AttackCruiserPlayerWeaponConfig,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AttackCruiserConfig {
+    player: AttackCruiserPlayerConfig,
 }
 
 pub fn process_attack_cruiser_packet(
@@ -603,11 +632,11 @@ impl AttackCruiserGame {
             players.push(player2);
         }
 
-        let player_bvh = bvhs.get(&config.player_ship.asset_name).cloned();
+        let player_bvh = bvhs.get(&config.player.ship.asset_name).cloned();
         if player_bvh.is_none() {
             info!(
                 "Missing BVH for Attack Cruiser player ship {}. Defaulting to empty BVH.",
-                config.player_ship.asset_name
+                config.player.ship.asset_name
             );
         }
 
@@ -616,22 +645,22 @@ impl AttackCruiserGame {
             player2,
             player_states: [
                 AttackCruiserPlayer::new(
-                    config.lives,
-                    config.spawn1.pos,
-                    config.spawn1.yaw_degrees.to_radians(),
-                    config.max_health,
+                    config.player.lives,
+                    config.player.spawn1.pos,
+                    config.player.spawn1.yaw_degrees.to_radians(),
+                    config.player.max_health,
                     false,
                     player_bvh.clone(),
-                    config.player_ship.max_roll_degrees.to_radians(),
+                    config.player.ship.max_roll_degrees.to_radians(),
                 ),
                 AttackCruiserPlayer::new(
-                    config.lives,
-                    config.spawn2.pos,
-                    config.spawn2.yaw_degrees.to_radians(),
-                    config.max_health,
+                    config.player.lives,
+                    config.player.spawn2.pos,
+                    config.player.spawn2.yaw_degrees.to_radians(),
+                    config.player.max_health,
                     player2.is_none(),
                     player_bvh,
-                    config.player_ship.max_roll_degrees.to_radians(),
+                    config.player.ship.max_roll_degrees.to_radians(),
                 ),
             ],
             state: AttackCruiserGameState::WaitingForPlayersReady,
@@ -875,14 +904,14 @@ impl AttackCruiserGame {
                         AttackCruiserStartupConfigDefinition::Ship(Box::new(
                             AttackCruiserShipStartupConfig {
                                 actor_config: AttackCruiserActorConfig {
-                                    model_id: self.config.player_ship.model_id,
+                                    model_id: self.config.player.ship.model_id,
                                     effect_id: 0,
                                     death_effect_id: 0,
                                     despawn_effect_id: 0,
                                     explode_offset: 1.0,
                                     collision_asset_name: format!(
                                         "{}.cdt",
-                                        self.config.player_ship.asset_name
+                                        self.config.player.ship.asset_name
                                     ),
                                     physics_config: AttackCruiserStartupConfigReference {
                                         class: AttackCruiserStartupConfigClass::ComplexPhysics,
@@ -1042,10 +1071,10 @@ impl AttackCruiserGame {
                                 invulnerable_effect_id: 1744,
                                 stun_effect_id: 102,
                                 weapons: AttackCruiserVec::new(),
-                                roll_max_angle: self.config.player_ship.max_roll_degrees,
+                                roll_max_angle: self.config.player.ship.max_roll_degrees,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 0.05,
-                                fire_cooldown_seconds: self.config.player_weapons.cooldown_millis
+                                fire_cooldown_seconds: self.config.player.weapons.cooldown_millis
                                     / 1000.0,
                             },
                         )),
@@ -1104,18 +1133,39 @@ impl AttackCruiserGame {
         for player_index in 0..self.players.len() {
             let actor_id = player_actor_id(player_index as u8);
             let player_state = &mut self.player_states[player_index];
+            if player_state.is_respawnable(now) {
+                player_state.respawn(
+                    self.config.player.max_health,
+                    Duration::from_millis(
+                        self.config
+                            .player
+                            .post_respawn_invulnerability_millis
+                            .into(),
+                    ),
+                    now,
+                );
+            }
+
             let actor = &mut player_state.actor;
-            if actor.health == 0 {
+            if actor.dead() {
                 continue;
             }
 
             let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
-            actor.health = actor
-                .health
-                .saturating_sub_signed(Self::total_damage(&actor_hits));
-            if actor.health == 0 {
-                player_state.lives = player_state.lives.saturating_sub(1);
-                // TODO: respawn timer
+
+            // If the player still has invulnerability time, process the hits but deal no damage
+            if !player_state.timer.time_until_next_event(now).is_zero() {
+                player_state.respawn_invulnerability = false;
+                actor.health = actor
+                    .health
+                    .saturating_sub_signed(Self::total_damage(&actor_hits));
+
+                if actor.dead() {
+                    player_state.lives = player_state.lives.saturating_sub(1);
+                    player_state.timer = MinigameCountdown::new_with_event(Duration::from_millis(
+                        self.config.player.respawn_millis.into(),
+                    ));
+                }
             }
 
             hits.append(&mut actor_hits);
@@ -1148,6 +1198,15 @@ impl AttackCruiserGame {
         player: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.player_index(player)?;
+
+        if !self.is_singleplayer() {
+            return Ok(Vec::new());
+        }
+
+        self.player_states
+            .iter_mut()
+            .for_each(|player_state| player_state.timer.pause_or_resume(pause));
         Ok(Vec::new())
     }
 
@@ -1271,7 +1330,7 @@ impl AttackCruiserGame {
                             unknown14: false,
                             unknown15: false,
                             unknown16: false,
-                            dead: player_state.actor.health == 0,
+                            dead: player_state.actor.dead(),
                         },
                     }],
                 },
@@ -1306,7 +1365,8 @@ impl AttackCruiserGame {
 
         if let Some(primary_weapon) = self
             .config
-            .player_weapons
+            .player
+            .weapons
             .primary_tiers
             .get(player_state.primary_weapon_tier)
         {

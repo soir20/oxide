@@ -3154,47 +3154,50 @@ categories:
               short_name: stage03
               minigame_type:
                 !AttackCruiser
-                lives: 3
-                max_health: 100
-                spawn1:
-                  pos:
-                    x: 3.9
-                    y: 1000.0
-                    z: -1999.0
-                  yaw_degrees: 0.0
-                spawn2:
-                  pos:
-                    x: 200.9
-                    y: 1000.0
-                    z: -1999.0
-                  yaw_degrees: 0.0
-                player_ship:
-                  model_id: 167
-                  asset_name: Ship_RepublicDestroyer_bbe
-                  max_roll_degrees: 30
-                player_weapons:
-                  cooldown_millis: 250
-                  primary_tiers:
-                    - projectiles:
-                        - composite_effect_id: 1558
-                          hit_composite_effect_id: 1315
-                          count: 2
-                          damage: 1
-                          length: 25
-                        - composite_effect_id: 1763
-                          hit_composite_effect_id: 1315
-                          damage: 1
-                          length: 75
-                        - composite_effect_id: 1762
-                          hit_composite_effect_id: 1315
-                          yaw_degrees: 5
-                          damage: 1
-                          length: 75
-                        - composite_effect_id: 1762
-                          hit_composite_effect_id: 1315
-                          yaw_degrees: -5
-                          damage: 1
-                          length: 75
+                player:
+                  lives: 3
+                  max_health: 100
+                  respawn_millis: 6000
+                  post_respawn_invulnerability_millis: 1000
+                  spawn1:
+                    pos:
+                      x: 3.9
+                      y: 1000.0
+                      z: -1999.0
+                    yaw_degrees: 0.0
+                  spawn2:
+                    pos:
+                      x: 200.9
+                      y: 1000.0
+                      z: -1999.0
+                    yaw_degrees: 0.0
+                  ship:
+                    model_id: 167
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_roll_degrees: 30
+                  weapons:
+                    cooldown_millis: 250
+                    primary_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            damage: 1
+                            length: 25
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            damage: 1
+                            length: 75
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw_degrees: 5
+                            damage: 1
+                            length: 75
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw_degrees: -5
+                            damage: 1
+                            length: 75
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027
