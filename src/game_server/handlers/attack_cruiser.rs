@@ -942,13 +942,13 @@ impl AttackCruiserGame {
                                             },
                                             AttackCruiserActorAnimationConfig {
                                                 animation_type: 4,
-                                                slot_id: 3009,
+                                                slot_id: 3010,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 1.0,
                                             },
                                             AttackCruiserActorAnimationConfig {
                                                 animation_type: 6,
-                                                slot_id: 3010,
+                                                slot_id: 3009,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 1.0,
                                             },
@@ -1040,7 +1040,7 @@ impl AttackCruiserGame {
                                             AttackCruiserActorCinematicConfig {
                                                 cinematic_type: 3,
                                                 play_time_seconds: 1.0,
-                                                animation_id: 10019,
+                                                animation_id: 10020,
                                                 pre_wipe_style: 2,
                                                 post_wipe_style: 2,
                                                 post_camera_ease_in_seconds: 0.0,
@@ -1048,7 +1048,7 @@ impl AttackCruiserGame {
                                             AttackCruiserActorCinematicConfig {
                                                 cinematic_type: 4,
                                                 play_time_seconds: 1.0,
-                                                animation_id: 10020,
+                                                animation_id: 10019,
                                                 pre_wipe_style: 2,
                                                 post_wipe_style: 2,
                                                 post_camera_ease_in_seconds: 0.0,
