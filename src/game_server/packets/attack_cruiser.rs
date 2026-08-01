@@ -798,7 +798,7 @@ pub struct AttackCruiserPlayerStateType {
     pub score: bool,
     pub unknown3: bool,
     pub inventory: bool,
-    pub unknown5: bool,
+    pub actor_id: bool,
 }
 
 impl Default for AttackCruiserPlayerStateType {
@@ -808,7 +808,7 @@ impl Default for AttackCruiserPlayerStateType {
             score: true,
             unknown3: false,
             inventory: false,
-            unknown5: false,
+            actor_id: false,
         }
     }
 }
@@ -828,7 +828,7 @@ impl SerializePacket for AttackCruiserPlayerStateType {
         if self.inventory {
             value |= 0b1000;
         }
-        if self.unknown5 {
+        if self.actor_id {
             value |= 0b10000;
         }
 
@@ -850,7 +850,7 @@ impl DeserializePacket for AttackCruiserPlayerStateType {
             score: state_type & 0b10 != 0,
             unknown3: state_type & 0b100 != 0,
             inventory: state_type & 0b1000 != 0,
-            unknown5: state_type & 0b10000 != 0,
+            actor_id: state_type & 0b10000 != 0,
         })
     }
 }
@@ -891,7 +891,7 @@ pub struct AttackCruiserPlayerStateInventory {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlayerStateUnknown5 {
+pub struct AttackCruiserPlayerStateActorId {
     pub actor_id: i32,
 }
 
@@ -900,7 +900,7 @@ pub struct AttackCruiserPlayerStateUpdate {
     pub score: Option<AttackCruiserPlayerStateScore>,
     pub unknown3: Option<AttackCruiserPlayerStateUnknown3>,
     pub inventory: Option<AttackCruiserPlayerStateInventory>,
-    pub unknown5: Option<AttackCruiserPlayerStateUnknown5>,
+    pub actor_id: Option<AttackCruiserPlayerStateActorId>,
 }
 
 impl SerializePacket for AttackCruiserPlayerStateUpdate {
@@ -910,7 +910,7 @@ impl SerializePacket for AttackCruiserPlayerStateUpdate {
             score: self.score.is_some(),
             unknown3: self.unknown3.is_some(),
             inventory: self.inventory.is_some(),
-            unknown5: self.unknown5.is_some(),
+            actor_id: self.actor_id.is_some(),
         };
         update_type.serialize(buffer);
 
@@ -930,7 +930,7 @@ impl SerializePacket for AttackCruiserPlayerStateUpdate {
             unknown4.serialize(buffer);
         }
 
-        if let Some(unknown5) = &self.unknown5 {
+        if let Some(unknown5) = &self.actor_id {
             unknown5.serialize(buffer);
         }
     }
