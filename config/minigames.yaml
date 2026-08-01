@@ -3158,7 +3158,7 @@ categories:
                   lives: 3
                   max_health: 100
                   respawn_millis: 6000
-                  post_respawn_invulnerability_millis: 1000
+                  post_respawn_invulnerability_millis: 3000
                   spawn1:
                     pos:
                       x: 3.9

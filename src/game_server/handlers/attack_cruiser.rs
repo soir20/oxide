@@ -95,7 +95,7 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier: u8,
     pub lives: u8,
     pub primary_weapon_tier: usize,
-    pub respawning: bool,
+    pub is_respawning: bool,
     pub timer: MinigameCountdown,
 }
 
@@ -127,7 +127,7 @@ impl AttackCruiserPlayer {
             score_multiplier_tier: 1,
             lives,
             primary_weapon_tier: 0,
-            respawning: false,
+            is_respawning: false,
             timer: MinigameCountdown::new(),
         }
     }
@@ -138,7 +138,7 @@ impl AttackCruiserPlayer {
 
     pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
         self.actor.health = health;
-        self.respawning = true;
+        self.is_respawning = true;
         self.timer.schedule_event(invulnerability_duration, now);
     }
 }
@@ -944,13 +944,13 @@ impl AttackCruiserGame {
                                                 animation_type: 4,
                                                 slot_id: 3010,
                                                 loops: AttackCruiserBool(false),
-                                                play_time_seconds: 1.0,
+                                                play_time_seconds: 3.0,
                                             },
                                             AttackCruiserActorAnimationConfig {
                                                 animation_type: 6,
                                                 slot_id: 3009,
                                                 loops: AttackCruiserBool(false),
-                                                play_time_seconds: 1.0,
+                                                play_time_seconds: 2.0,
                                             },
                                         ],
                                     ),
@@ -1039,7 +1039,7 @@ impl AttackCruiserGame {
                                             },
                                             AttackCruiserActorCinematicConfig {
                                                 cinematic_type: 3,
-                                                play_time_seconds: 1.0,
+                                                play_time_seconds: 3.0,
                                                 animation_id: 10020,
                                                 pre_wipe_style: 2,
                                                 post_wipe_style: 2,
@@ -1047,7 +1047,7 @@ impl AttackCruiserGame {
                                             },
                                             AttackCruiserActorCinematicConfig {
                                                 cinematic_type: 4,
-                                                play_time_seconds: 1.0,
+                                                play_time_seconds: 2.0,
                                                 animation_id: 10019,
                                                 pre_wipe_style: 2,
                                                 post_wipe_style: 2,
@@ -1184,7 +1184,7 @@ impl AttackCruiserGame {
 
             // If the player still has invulnerability time, process the hits but deal no damage
             if player_state.timer.time_until_next_event(now).is_zero() {
-                player_state.respawning = false;
+                player_state.is_respawning = false;
                 actor.health = actor
                     .health
                     .saturating_sub_signed(Self::total_damage(&actor_hits));
@@ -1342,8 +1342,6 @@ impl AttackCruiserGame {
         }
 
         let player_state = &self.player_states[player_index as usize];
-        let now = Instant::now();
-        let is_respawning = player_state.respawning && !player_state.timer.time_until_next_event(now).is_zero();
 
         Ok(vec![Broadcast::Multi(
             self.players.clone(),
@@ -1373,7 +1371,7 @@ impl AttackCruiserGame {
                             unknown6: false,
                             unknown7: false,
                             unknown8: false,
-                            unknown9: is_respawning,
+                            unknown9: player_state.is_respawning,
                             thrusters_flicker: false,
                             thrusters_on: false,
                             end_game_hyperdrive: false,
