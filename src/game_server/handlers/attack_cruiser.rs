@@ -1040,7 +1040,7 @@ impl AttackCruiserGame {
                                             AttackCruiserActorCinematicConfig {
                                                 cinematic_type: 3,
                                                 play_time_seconds: 3.0,
-                                                animation_id: 10020,
+                                                animation_id: 10010,
                                                 pre_wipe_style: 2,
                                                 post_wipe_style: 2,
                                                 post_camera_ease_in_seconds: 0.0,
@@ -1172,6 +1172,28 @@ impl AttackCruiserGame {
                     },
                 ));
                 broadcasts.push(Broadcast::Multi(self.players.clone(), actor_packets));
+                broadcasts.push(self.update_server_actor(
+                    player_index as u8,
+                    AttackCruiserActorState {
+                        unknown1: false,
+                        unknown2: false,
+                        invulnerable: false,
+                        unknown4: false,
+                        unknown5: false,
+                        unknown6: false,
+                        unknown7: false,
+                        unknown8: false,
+                        unknown9: false,
+                        thrusters_flicker: false,
+                        thrusters_on: false,
+                        end_game_hyperdrive: false,
+                        reset_damage_state: false,
+                        unknown14: false,
+                        unknown15: false,
+                        unknown16: false,
+                        dead: true,
+                    },
+                ));
             }
 
             let player_state = &mut self.player_states[player_index];
@@ -1205,6 +1227,35 @@ impl AttackCruiserGame {
                             actor_id: false,
                         }),
                     ));
+                    broadcasts.push(self.update_server_actor(
+                        player_index as u8,
+                        AttackCruiserActorState {
+                            unknown1: false,
+                            unknown2: false,
+                            invulnerable: false,
+                            unknown4: false,
+                            unknown5: false,
+                            unknown6: false,
+                            unknown7: false,
+                            unknown8: false,
+                            unknown9: false,
+                            thrusters_flicker: false,
+                            thrusters_on: false,
+                            end_game_hyperdrive: false,
+                            reset_damage_state: false,
+                            unknown14: false,
+                            unknown15: false,
+                            unknown16: false,
+                            dead: true,
+                        },
+                    ));
+                    self.update_client_players_once_ready(AttackCruiserPlayerStateType {
+                        index: false,
+                        score: true,
+                        unknown3: false,
+                        inventory: false,
+                        actor_id: false,
+                    });
                 }
             }
 
@@ -1371,7 +1422,7 @@ impl AttackCruiserGame {
                             unknown6: false,
                             unknown7: false,
                             unknown8: false,
-                            unknown9: player_state.is_respawning,
+                            unknown9: false,
                             thrusters_flicker: false,
                             thrusters_on: false,
                             end_game_hyperdrive: false,
@@ -1379,7 +1430,7 @@ impl AttackCruiserGame {
                             unknown14: false,
                             unknown15: false,
                             unknown16: false,
-                            dead: player_state.actor.dead(),
+                            dead: false,
                         },
                     }],
                 },
@@ -1549,6 +1600,34 @@ impl AttackCruiserGame {
         })]
     }
 
+    fn update_server_actor(&self, player_index: u8, state: AttackCruiserActorState) -> Broadcast {
+        let player_state = &self.player_states[player_index as usize];
+        Broadcast::Multi(
+            self.players.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateServerActors {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    states: vec![AttackCruiserActorUpdate {
+                        actor_id: player_actor_id(player_index),
+                        pos: player_state.actor.pos,
+                        yaw: player_state.actor.yaw,
+                        speed: player_state.actor.speed,
+                        angular_speed: player_state.actor.angular_speed,
+                        forward_multiplier: player_state.actor.forward_multiplier,
+                        turn_multiplier: player_state.actor.turn_multiplier,
+                        health: player_state.actor.health.into(),
+                        state,
+                    }],
+                },
+            })],
+        )
+    }
+
     fn start_first_wave(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.state = AttackCruiserGameState::WaveActive;
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
@@ -1564,7 +1643,6 @@ impl AttackCruiserGame {
         })];
 
         for (player_index, guid) in self.players.iter().enumerate() {
-            let player_state = &self.player_states[player_index];
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserQueueCommand {
