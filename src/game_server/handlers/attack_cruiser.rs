@@ -1183,7 +1183,7 @@ impl AttackCruiserGame {
                         unknown6: false,
                         unknown7: false,
                         unknown8: false,
-                        unknown9: false,
+                        unknown9: true,
                         thrusters_flicker: false,
                         thrusters_on: false,
                         end_game_hyperdrive: false,
@@ -1191,7 +1191,7 @@ impl AttackCruiserGame {
                         unknown14: false,
                         unknown15: false,
                         unknown16: false,
-                        dead: true,
+                        dead: false,
                     },
                 ));
             }
