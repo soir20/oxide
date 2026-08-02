@@ -134,6 +134,16 @@ impl AttackCruiserPlayer {
             timer: MinigameCountdown::new(),
         }
     }
+
+    pub fn is_respawnable(&self, now: Instant) -> bool {
+        self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
+    }
+
+    pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
+        self.actor.health = health;
+        self.is_respawning = true;
+        self.timer.schedule_event(invulnerability_duration, now);
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1144,11 +1154,9 @@ impl AttackCruiserGame {
         for player_index in 0..self.players.len() {
             let player_state = &mut self.player_states[player_index];
             let actor_id = player_state.actor.id;
-            if player_state.actor.dead() && player_state.timer.time_until_next_event(now).is_zero()
-            {
-                player_state.actor.health = self.config.player.max_health;
-                player_state.is_respawning = true;
-                player_state.timer.schedule_event(
+            if player_state.is_respawnable(now) {
+                player_state.respawn(
+                    self.config.player.max_health,
                     Duration::from_millis(
                         self.config
                             .player
