@@ -82,7 +82,7 @@ struct AttackCruiserActor {
 }
 
 impl AttackCruiserActor {
-    pub fn is_dead(&self) -> bool {
+    pub fn dead(&self) -> bool {
         self.health == 0
     }
 }
@@ -133,8 +133,8 @@ impl AttackCruiserPlayer {
         }
     }
 
-    pub fn is_respawnable(&self, now: Instant) -> bool {
-        self.actor.is_dead() && self.timer.time_until_next_event(now).is_zero()
+    pub fn respawnable(&self, now: Instant) -> bool {
+        self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
     }
 
     pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
@@ -142,22 +142,30 @@ impl AttackCruiserPlayer {
         self.timer.schedule_event(invulnerability_duration, now);
     }
 
-    pub fn is_dead(&self) -> bool {
-        self.actor.is_dead()
+    pub fn dead(&self) -> bool {
+        self.actor.dead()
     }
 
-    pub fn is_vulnerable(&self, now: Instant) -> bool {
-        !self.actor.is_dead() && self.timer.time_until_next_event(now).is_zero()
+    pub fn vulnerable(&self, now: Instant) -> bool {
+        !self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant, respawn_millis: u32) {
         self.actor.health = self.actor.health.saturating_sub_signed(damage);
 
-        if self.actor.is_dead() {
+        if self.actor.dead() {
             self.lives = self.lives.saturating_sub(1);
             self.timer
                 .schedule_event(Duration::from_millis(respawn_millis.into()), now);
         }
+    }
+
+    pub fn paused(&self) -> bool {
+        self.timer.paused()
+    }
+
+    pub fn disabled(&self) -> bool {
+        self.dead() || self.paused()
     }
 }
 
@@ -1169,7 +1177,7 @@ impl AttackCruiserGame {
         for player_index in 0..self.players.len() {
             let player_state = &mut self.player_states[player_index];
             let actor_id = player_state.actor.id;
-            if player_state.is_respawnable(now) {
+            if player_state.respawnable(now) {
                 player_state.respawn(
                     self.config.player.max_health,
                     Duration::from_millis(
@@ -1191,6 +1199,7 @@ impl AttackCruiserGame {
                         actor_id: true,
                     },
                 ));
+                actor_packets.append(&mut self.set_player_frozen(player_index, false));
                 broadcasts.push(Broadcast::Multi(self.players.clone(), actor_packets));
                 broadcasts.push(self.update_server_actor(
                     player_index as u8,
@@ -1217,7 +1226,7 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            if player_state.is_dead() {
+            if player_state.dead() {
                 continue;
             }
 
@@ -1226,20 +1235,22 @@ impl AttackCruiserGame {
             let total_damage = Self::total_damage(&actor_hits);
 
             // If the player still has invulnerability time, process the hits but deal no damage
-            if player_state.is_vulnerable(now) {
+            if player_state.vulnerable(now) {
                 player_state.damage(total_damage, now, self.config.player.respawn_millis);
 
-                if player_state.is_dead() {
-                    broadcasts.push(Broadcast::Multi(
-                        self.players.clone(),
-                        self.update_client_players_once_ready(AttackCruiserPlayerStateType {
+                if player_state.dead() {
+                    let mut death_packets = self.set_player_frozen(player_index, true);
+                    death_packets.append(&mut self.update_client_players_once_ready(
+                        AttackCruiserPlayerStateType {
                             index: false,
                             score: true,
                             unknown3: false,
                             inventory: false,
                             actor_id: false,
-                        }),
+                        },
                     ));
+                    broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
+
                     broadcasts.push(self.update_server_actor(
                         player_index as u8,
                         AttackCruiserActorState {
@@ -1262,13 +1273,6 @@ impl AttackCruiserGame {
                             dead: true,
                         },
                     ));
-                    self.update_client_players_once_ready(AttackCruiserPlayerStateType {
-                        index: false,
-                        score: true,
-                        unknown3: false,
-                        inventory: false,
-                        actor_id: false,
-                    });
                 }
             }
 
@@ -1392,9 +1396,13 @@ impl AttackCruiserGame {
         client_states: AttackCruiserUpdateClientActors,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
+        let player_state = &mut self.player_states[player_index as usize];
+
+        if player_state.disabled() {
+            return Ok(Vec::new());
+        }
 
         for client_state in client_states.states.into_iter() {
-            let player_state = &mut self.player_states[player_index as usize];
             if client_state.actor_id == player_state.actor.id {
                 player_state.actor.pos = client_state.pos;
                 player_state.actor.yaw = client_state.yaw;
@@ -1426,25 +1434,7 @@ impl AttackCruiserGame {
                         forward_multiplier: player_state.actor.forward_multiplier,
                         turn_multiplier: player_state.actor.turn_multiplier,
                         health: player_state.actor.health.into(),
-                        state: AttackCruiserActorState {
-                            unknown1: false,
-                            unknown2: false,
-                            invulnerable: false,
-                            unknown4: false,
-                            unknown5: false,
-                            unknown6: false,
-                            unknown7: false,
-                            unknown8: false,
-                            unknown9: false,
-                            thrusters_flicker: false,
-                            thrusters_on: false,
-                            end_game_hyperdrive: false,
-                            reset_damage_state: false,
-                            unknown14: false,
-                            unknown15: false,
-                            unknown16: false,
-                            dead: false,
-                        },
+                        state: AttackCruiserActorState::default(),
                     }],
                 },
             })],
@@ -1458,6 +1448,10 @@ impl AttackCruiserGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
+
+        if player_state.disabled() {
+            return Ok(Vec::new());
+        }
 
         let direction = Pos3::from(direction(
             Pos {
@@ -1648,6 +1642,43 @@ impl AttackCruiserGame {
         )
     }
 
+    fn set_player_frozen(&self, player_index: usize, frozen: bool) -> Vec<Vec<u8>> {
+        let state = &self.player_states[player_index];
+        let guid = self.players[player_index];
+        vec![
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserQueueCommand {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    actor_id: state.actor.id,
+                    command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
+                        guid: player_guid(guid),
+                        value: !frozen,
+                    }),
+                },
+            }),
+            GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserQueueCommand {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    actor_id: state.actor.id,
+                    command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
+                        guid: player_guid(guid),
+                        value: !frozen,
+                    }),
+                },
+            }),
+        ]
+    }
+
     fn start_first_wave(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.state = AttackCruiserGameState::WaveActive;
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
@@ -1662,38 +1693,8 @@ impl AttackCruiserGame {
             },
         })];
 
-        for (player_index, guid) in self.players.iter().enumerate() {
-            let player_state = &self.player_states[player_index];
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserQueueCommand {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    actor_id: player_state.actor.id,
-                    command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
-                        guid: player_guid(*guid),
-                        value: true,
-                    }),
-                },
-            }));
-            packets.push(GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserQueueCommand {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    actor_id: player_state.actor.id,
-                    command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
-                        guid: player_guid(*guid),
-                        value: true,
-                    }),
-                },
-            }));
+        for player_index in 0..self.players.len() {
+            packets.append(&mut self.set_player_frozen(player_index, false));
         }
 
         Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
