@@ -134,7 +134,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
-        self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
+        self.actor.dead() && self.lives > 0 && self.timer.time_until_next_event(now).is_zero()
     }
 
     pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
