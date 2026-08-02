@@ -69,6 +69,7 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
 
 #[derive(Clone, Debug)]
 struct AttackCruiserActor {
+    pub id: i32,
     pub pos: Pos3,
     pub yaw: f32,
     pub speed: Pos3,
@@ -101,6 +102,7 @@ struct AttackCruiserPlayer {
 
 impl AttackCruiserPlayer {
     pub fn new(
+        player_index: u8,
         lives: u8,
         pos: Pos3,
         yaw: f32,
@@ -112,6 +114,7 @@ impl AttackCruiserPlayer {
         AttackCruiserPlayer {
             ready,
             actor: AttackCruiserActor {
+                id: player_actor_id(player_index, lives),
                 pos,
                 yaw,
                 speed: Pos3::default(),
@@ -603,8 +606,8 @@ impl AttackCruiserProjectilePool {
     }
 }
 
-fn player_actor_id(player_index: u8) -> i32 {
-    (player_index + 1).into()
+fn player_actor_id(player_index: u8, lives: u8) -> i32 {
+    (player_index * 2 + 1 + lives.is_multiple_of(2) as u8).into()
 }
 
 #[derive(Clone, Debug)]
@@ -645,6 +648,7 @@ impl AttackCruiserGame {
             player2,
             player_states: [
                 AttackCruiserPlayer::new(
+                    0,
                     config.player.lives,
                     config.player.spawn1.pos,
                     config.player.spawn1.yaw_degrees.to_radians(),
@@ -654,6 +658,7 @@ impl AttackCruiserGame {
                     config.player.ship.max_roll_degrees.to_radians(),
                 ),
                 AttackCruiserPlayer::new(
+                    1,
                     config.player.lives,
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw_degrees.to_radians(),
@@ -1148,7 +1153,7 @@ impl AttackCruiserGame {
 
         for player_index in 0..self.players.len() {
             let player_state = &mut self.player_states[player_index];
-            let actor_id = player_actor_id(player_index as u8);
+            let actor_id = player_state.actor.id;
             if player_state.is_respawnable(now) {
                 player_state.respawn(
                     self.config.player.max_health,
@@ -1161,7 +1166,7 @@ impl AttackCruiserGame {
                     now,
                 );
 
-                let mut actor_packets = self.add_player_actor_to_client(player_index as u8);
+                let mut actor_packets = self.replace_client_player_actor(player_index as u8);
                 actor_packets.append(&mut self.update_client_players_once_ready(
                     AttackCruiserPlayerStateType {
                         index: false,
@@ -1381,8 +1386,8 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
 
         for client_state in client_states.states.into_iter() {
-            if client_state.actor_id == player_actor_id(player_index) {
-                let player_state = &mut self.player_states[player_index as usize];
+            let player_state = &mut self.player_states[player_index as usize];
+            if client_state.actor_id == player_state.actor.id {
                 player_state.actor.pos = client_state.pos;
                 player_state.actor.yaw = client_state.yaw;
                 player_state.actor.speed = client_state.speed;
@@ -1405,7 +1410,7 @@ impl AttackCruiserGame {
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     states: vec![AttackCruiserActorUpdate {
-                        actor_id: player_actor_id(player_index),
+                        actor_id: player_state.actor.id,
                         pos: player_state.actor.pos,
                         yaw: player_state.actor.yaw,
                         speed: player_state.actor.speed,
@@ -1474,7 +1479,7 @@ impl AttackCruiserGame {
                 packets.extend(
                     self.projectiles
                         .launch(
-                            player_actor_id(player_index),
+                            player_state.actor.id,
                             player_state.actor.pos,
                             direction,
                             projectile,
@@ -1512,41 +1517,48 @@ impl AttackCruiserGame {
         Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
     }
 
-    fn add_player_actor_to_client(&self, player_index: u8) -> Vec<Vec<u8>> {
+    fn spawn_client_player_actor(&self, player_index: u8) -> Vec<Vec<u8>> {
         let player_state = &self.player_states[player_index as usize];
-        vec![
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserRemoveActor {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    actor_id: player_actor_id(player_index),
+        vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserAddActor {
+                minigame_header: MinigameHeader {
+                    stage_guid: self.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::AddActor as i32,
+                    stage_group_guid: self.group.stage_group_guid,
                 },
-            }),
-            GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserAddActor {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::AddActor as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    actor_id: player_actor_id(player_index),
-                    hostility: AttackCruiserHostility::Friendly,
-                    actor_config: AttackCruiserStartupConfigHash {
-                        name: "ship config value".to_string(),
-                        class: AttackCruiserStartupConfigClass::Ship,
-                    },
-                    pos: player_state.actor.pos,
-                    speed: player_state.actor.speed,
-                    yaw: player_state.actor.yaw,
-                    unknown7: 0,
+                actor_id: player_state.actor.id,
+                hostility: AttackCruiserHostility::Friendly,
+                actor_config: AttackCruiserStartupConfigHash {
+                    name: "ship config value".to_string(),
+                    class: AttackCruiserStartupConfigClass::Ship,
                 },
-            }),
-        ]
+                pos: player_state.actor.pos,
+                speed: player_state.actor.speed,
+                yaw: player_state.actor.yaw,
+                unknown7: 0,
+            },
+        })]
+    }
+
+    fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
+        let player_state = &mut self.player_states[player_index as usize];
+        let prev_actor_id = player_state.actor.id;
+        player_state.actor.id = player_actor_id(player_index, player_state.lives);
+
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserRemoveActor {
+                minigame_header: MinigameHeader {
+                    stage_guid: self.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
+                    stage_group_guid: self.group.stage_group_guid,
+                },
+                actor_id: prev_actor_id,
+            },
+        })];
+        packets.append(&mut self.spawn_client_player_actor(player_index));
+        packets
     }
 
     fn add_player_to_client(
@@ -1561,7 +1573,7 @@ impl AttackCruiserGame {
             ));
         };
 
-        let mut packets = self.add_player_actor_to_client(player_index);
+        let mut packets = self.spawn_client_player_actor(player_index);
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddPlayer {
@@ -1613,7 +1625,7 @@ impl AttackCruiserGame {
                         stage_group_guid: self.group.stage_group_guid,
                     },
                     states: vec![AttackCruiserActorUpdate {
-                        actor_id: player_actor_id(player_index),
+                        actor_id: player_state.actor.id,
                         pos: player_state.actor.pos,
                         yaw: player_state.actor.yaw,
                         speed: player_state.actor.speed,
@@ -1643,6 +1655,7 @@ impl AttackCruiserGame {
         })];
 
         for (player_index, guid) in self.players.iter().enumerate() {
+            let player_state = &self.player_states[player_index];
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserQueueCommand {
@@ -1651,7 +1664,7 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: player_actor_id(player_index as u8),
+                    actor_id: player_state.actor.id,
                     command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
                         guid: player_guid(*guid),
                         value: true,
@@ -1666,7 +1679,7 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: player_actor_id(player_index as u8),
+                    actor_id: player_state.actor.id,
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
                         guid: player_guid(*guid),
                         value: true,
@@ -1701,13 +1714,11 @@ impl AttackCruiserGame {
         update_type: AttackCruiserPlayerStateType,
     ) -> AttackCruiserPlayerStateUpdate {
         let player_state = &self.player_states[player_index as usize];
-        let actor_id = player_actor_id(player_index);
-
         AttackCruiserPlayerStateUpdate {
             index: match update_type.index {
                 true => Some(AttackCruiserPlayerStateIndex {
                     player_index: player_index.into(),
-                    actor_id,
+                    actor_id: player_state.actor.id,
                     unknown_value4: 0,
                     unknown4: "".to_string(),
                     unknown5: "".to_string(),
@@ -1731,7 +1742,7 @@ impl AttackCruiserGame {
             },
             unknown3: match update_type.unknown3 {
                 true => Some(AttackCruiserPlayerStateUnknown3 {
-                    actor_id,
+                    actor_id: player_state.actor.id,
                     unknown_value4: 0,
                 }),
                 false => None,
@@ -1749,7 +1760,9 @@ impl AttackCruiserGame {
                 false => None,
             },
             actor_id: match update_type.actor_id {
-                true => Some(AttackCruiserPlayerStateActorId { actor_id }),
+                true => Some(AttackCruiserPlayerStateActorId {
+                    actor_id: player_state.actor.id,
+                }),
                 false => None,
             },
         }
