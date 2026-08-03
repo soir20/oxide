@@ -271,8 +271,17 @@ pub struct AttackCruiserPlayerConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+pub struct AttackCruiserPlayfieldConfig {
+    center: Pos3,
+    radius: f32,
+    warning_radius: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
     player: AttackCruiserPlayerConfig,
+    playfield: AttackCruiserPlayfieldConfig,
 }
 
 pub fn process_attack_cruiser_packet(
