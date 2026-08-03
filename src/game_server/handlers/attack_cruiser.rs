@@ -1256,7 +1256,7 @@ impl AttackCruiserGame {
                             unknown5: false,
                             unknown6: false,
                             unknown7: false,
-                            unknown8: false,
+                            dead_unused: false,
                             warp_in: false,
                             global_cinematic: false,
                             warp_out_animation: false,

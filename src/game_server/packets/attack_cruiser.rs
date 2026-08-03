@@ -1038,7 +1038,7 @@ pub struct AttackCruiserActorState {
     pub unknown5: bool,
     pub unknown6: bool,
     pub unknown7: bool,
-    pub unknown8: bool,
+    pub dead_unused: bool,
     pub warp_in: bool,
     pub global_cinematic: bool,
     pub warp_out_animation: bool,
@@ -1081,7 +1081,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 6;
         }
 
-        if self.unknown8 {
+        if self.dead_unused {
             state |= 1 << 7;
         }
 
@@ -1159,7 +1159,7 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown5,
             unknown6,
             unknown7,
-            unknown8,
+            dead_unused: unknown8,
             warp_in: unknown9,
             global_cinematic: thrusters_flicker,
             warp_out_animation: thrusters_on,
