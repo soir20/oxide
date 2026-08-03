@@ -1218,28 +1218,6 @@ impl AttackCruiserGame {
                 ));
                 actor_packets.append(&mut self.set_player_frozen(player_index, false));
                 broadcasts.push(Broadcast::Multi(self.players.clone(), actor_packets));
-                broadcasts.push(self.update_server_actor(
-                    player_index as u8,
-                    AttackCruiserActorState {
-                        unknown1: false,
-                        unknown2: false,
-                        invulnerable: false,
-                        unknown4: false,
-                        unknown5: false,
-                        unknown6: false,
-                        unknown7: false,
-                        unknown8: false,
-                        warp_in: true,
-                        global_cinematic: false,
-                        warp_out_animation: false,
-                        warp_end_game: false,
-                        reset_damage_state: false,
-                        unknown14: false,
-                        unknown15: false,
-                        unknown16: false,
-                        dead: false,
-                    },
-                ));
             }
 
             let player_state = &mut self.player_states[player_index];
