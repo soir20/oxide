@@ -446,17 +446,35 @@ pub struct AttackCruiserEventConfig {
     pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }
 
+#[derive(Clone, Copy, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[repr(i32)]
+pub enum AttackCruiserActorAnimationType {
+    Death1 = 2,
+    WarpIn = 4,
+    WarpOut = 6,
+    Death2 = 8,
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorAnimationConfig {
-    pub animation_type: i32,
+    pub animation_type: AttackCruiserActorAnimationType,
     pub slot_id: u32,
     pub loops: AttackCruiserBool,
     pub play_time_seconds: f32,
 }
 
+#[derive(Clone, Copy, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[repr(i32)]
+pub enum AttackCruiserActorCinematicType {
+    Death1 = 1,
+    Death2 = 2,
+    Warp = 3,
+    Global = 4,
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorCinematicConfig {
-    pub cinematic_type: i32,
+    pub cinematic_type: AttackCruiserActorCinematicType,
     pub play_time_seconds: f32,
     pub animation_id: u32,
     pub pre_wipe_style: i32,
@@ -1021,10 +1039,10 @@ pub struct AttackCruiserActorState {
     pub unknown6: bool,
     pub unknown7: bool,
     pub unknown8: bool,
-    pub unknown9: bool,
-    pub thrusters_flicker: bool,
-    pub thrusters_on: bool,
-    pub end_game_hyperdrive: bool,
+    pub warp_in: bool,
+    pub global_cinematic: bool,
+    pub warp_out_animation_only: bool,
+    pub warp_end_game: bool,
     pub reset_damage_state: bool,
     pub unknown14: bool,
     pub unknown15: bool,
@@ -1067,19 +1085,19 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 7;
         }
 
-        if self.unknown9 {
+        if self.warp_in {
             state |= 1 << 8;
         }
 
-        if self.thrusters_flicker {
+        if self.global_cinematic {
             state |= 1 << 9;
         }
 
-        if self.thrusters_on {
+        if self.warp_out_animation_only {
             state |= 1 << 10;
         }
 
-        if self.end_game_hyperdrive {
+        if self.warp_end_game {
             state |= 1 << 11;
         }
 
@@ -1142,10 +1160,10 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown6,
             unknown7,
             unknown8,
-            unknown9,
-            thrusters_flicker,
-            thrusters_on,
-            end_game_hyperdrive,
+            warp_in: unknown9,
+            global_cinematic: thrusters_flicker,
+            warp_out_animation_only: thrusters_on,
+            warp_end_game: end_game_hyperdrive,
             reset_damage_state,
             unknown14,
             unknown15,

@@ -27,7 +27,8 @@ use crate::{
         },
         packets::{
             attack_cruiser::{
-                AttackCruiserActorAnimationConfig, AttackCruiserActorCinematicConfig,
+                AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType,
+                AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType,
                 AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
                 AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
                 AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
@@ -957,25 +958,29 @@ impl AttackCruiserGame {
                                         "animations".to_string(),
                                         vec![
                                             AttackCruiserActorAnimationConfig {
-                                                animation_type: 2,
+                                                animation_type:
+                                                    AttackCruiserActorAnimationType::Death1,
                                                 slot_id: 3001,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 6.0,
                                             },
                                             AttackCruiserActorAnimationConfig {
-                                                animation_type: 8,
+                                                animation_type:
+                                                    AttackCruiserActorAnimationType::Death2,
                                                 slot_id: 3002,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 6.0,
                                             },
                                             AttackCruiserActorAnimationConfig {
-                                                animation_type: 4,
+                                                animation_type:
+                                                    AttackCruiserActorAnimationType::WarpIn,
                                                 slot_id: 3010,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 3.0,
                                             },
                                             AttackCruiserActorAnimationConfig {
-                                                animation_type: 6,
+                                                animation_type:
+                                                    AttackCruiserActorAnimationType::WarpOut,
                                                 slot_id: 3009,
                                                 loops: AttackCruiserBool(false),
                                                 play_time_seconds: 2.0,
@@ -986,7 +991,8 @@ impl AttackCruiserGame {
                                         "cinematics".to_string(),
                                         vec![
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 1,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10207,
                                                 pre_wipe_style: 2,
@@ -994,7 +1000,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 1,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10208,
                                                 pre_wipe_style: 2,
@@ -1002,7 +1009,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 1,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10209,
                                                 pre_wipe_style: 2,
@@ -1010,7 +1018,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 1,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10210,
                                                 pre_wipe_style: 2,
@@ -1018,7 +1027,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 1,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10211,
                                                 pre_wipe_style: 2,
@@ -1026,7 +1036,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 2,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10308,
                                                 pre_wipe_style: 2,
@@ -1034,7 +1045,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 2,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10309,
                                                 pre_wipe_style: 2,
@@ -1042,7 +1054,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 2,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10310,
                                                 pre_wipe_style: 2,
@@ -1050,7 +1063,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 2,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10311,
                                                 pre_wipe_style: 2,
@@ -1058,7 +1072,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 2,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10312,
                                                 pre_wipe_style: 2,
@@ -1066,7 +1081,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 3,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Warp,
                                                 play_time_seconds: 3.0,
                                                 animation_id: 10010,
                                                 pre_wipe_style: 2,
@@ -1074,7 +1090,8 @@ impl AttackCruiserGame {
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
-                                                cinematic_type: 4,
+                                                cinematic_type:
+                                                    AttackCruiserActorCinematicType::Global,
                                                 play_time_seconds: 2.0,
                                                 animation_id: 10019,
                                                 pre_wipe_style: 2,
@@ -1212,10 +1229,10 @@ impl AttackCruiserGame {
                         unknown6: false,
                         unknown7: false,
                         unknown8: false,
-                        unknown9: true,
-                        thrusters_flicker: false,
-                        thrusters_on: false,
-                        end_game_hyperdrive: false,
+                        warp_in: true,
+                        global_cinematic: false,
+                        warp_out_animation_only: false,
+                        warp_end_game: false,
                         reset_damage_state: false,
                         unknown14: false,
                         unknown15: false,
@@ -1262,10 +1279,10 @@ impl AttackCruiserGame {
                             unknown6: false,
                             unknown7: false,
                             unknown8: false,
-                            unknown9: false,
-                            thrusters_flicker: false,
-                            thrusters_on: false,
-                            end_game_hyperdrive: false,
+                            warp_in: false,
+                            global_cinematic: false,
+                            warp_out_animation_only: false,
+                            warp_end_game: false,
                             reset_damage_state: false,
                             unknown14: false,
                             unknown15: false,
