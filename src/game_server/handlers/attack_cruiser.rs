@@ -1248,25 +1248,7 @@ impl AttackCruiserGame {
 
                     broadcasts.push(self.update_server_actor(
                         player_index as u8,
-                        AttackCruiserActorState {
-                            unknown1: false,
-                            unknown2: false,
-                            invulnerable: false,
-                            unknown4: false,
-                            unknown5: false,
-                            unknown6: false,
-                            unknown7: false,
-                            dead_unused: false,
-                            warp_in: false,
-                            global_cinematic: false,
-                            warp_out_animation: false,
-                            warp_end_game: false,
-                            reset_damage_state: false,
-                            unknown14: false,
-                            unknown15: false,
-                            unknown16: false,
-                            dead: true,
-                        },
+                        AttackCruiserActorState::default(),
                     ));
                 }
             }
@@ -1408,31 +1390,9 @@ impl AttackCruiserGame {
             }
         }
 
-        let player_state = &self.player_states[player_index as usize];
-
-        Ok(vec![Broadcast::Multi(
-            self.players.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateServerActors {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    states: vec![AttackCruiserActorUpdate {
-                        actor_id: player_state.actor.id,
-                        pos: player_state.actor.pos,
-                        yaw: player_state.actor.yaw,
-                        speed: player_state.actor.speed,
-                        angular_speed: player_state.actor.angular_speed,
-                        forward_multiplier: player_state.actor.forward_multiplier,
-                        turn_multiplier: player_state.actor.turn_multiplier,
-                        health: player_state.actor.health.into(),
-                        state: AttackCruiserActorState::default(),
-                    }],
-                },
-            })],
+        Ok(vec![self.update_server_actor(
+            player_index,
+            AttackCruiserActorState::default(),
         )])
     }
 
