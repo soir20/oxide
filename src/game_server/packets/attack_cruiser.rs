@@ -1041,7 +1041,7 @@ pub struct AttackCruiserActorState {
     pub unknown8: bool,
     pub warp_in: bool,
     pub global_cinematic: bool,
-    pub warp_out_animation_only: bool,
+    pub warp_out_animation: bool,
     pub warp_end_game: bool,
     pub reset_damage_state: bool,
     pub unknown14: bool,
@@ -1093,7 +1093,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 9;
         }
 
-        if self.warp_out_animation_only {
+        if self.warp_out_animation {
             state |= 1 << 10;
         }
 
@@ -1162,7 +1162,7 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown8,
             warp_in: unknown9,
             global_cinematic: thrusters_flicker,
-            warp_out_animation_only: thrusters_on,
+            warp_out_animation: thrusters_on,
             warp_end_game: end_game_hyperdrive,
             reset_damage_state,
             unknown14,
