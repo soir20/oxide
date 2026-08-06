@@ -1004,7 +1004,7 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorAnimationType::WarpOut,
                                                 slot_id: 3009,
                                                 loops: AttackCruiserBool(false),
-                                                play_time_seconds: 3.0,
+                                                play_time_seconds: 2.0,
                                             },
                                         ],
                                     ),
@@ -1612,8 +1612,13 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_actor(&self, player_index: u8, allow_warp_out_animation: bool) -> Broadcast {
+    fn update_server_actor(&self, player_index: u8, allow_warp_out: bool) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
+        let warp_out = match &player_state.bounds_state {
+            AttackCruiserPlayerBoundsState::Inside => false,
+            AttackCruiserPlayerBoundsState::Outside { .. } => allow_warp_out,
+        };
+
         Broadcast::Multi(
             self.players.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1644,23 +1649,12 @@ impl AttackCruiserGame {
                             dead_unused: false,
                             warp_in: false,
                             global_cinematic: false,
-                            warp_out_animation: match &player_state.bounds_state {
-                                AttackCruiserPlayerBoundsState::Inside => false,
-                                AttackCruiserPlayerBoundsState::Outside { .. } => {
-                                    allow_warp_out_animation
-                                }
-                            },
+                            warp_out_animation: warp_out,
                             warp_end_game: false,
-                            reset_speed_damage_state: matches!(
-                                player_state.bounds_state,
-                                AttackCruiserPlayerBoundsState::Outside { .. }
-                            ),
+                            reset_speed_damage_state: warp_out,
                             unknown14: false,
                             unknown15: false,
-                            hide_ring: matches!(
-                                player_state.bounds_state,
-                                AttackCruiserPlayerBoundsState::Outside { .. }
-                            ),
+                            hide_ring: warp_out,
                             dead: false,
                         },
                     }],
