@@ -97,6 +97,15 @@ enum AttackCruiserPlayerBoundsState {
     },
 }
 
+impl AttackCruiserPlayerBoundsState {
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        match self {
+            AttackCruiserPlayerBoundsState::Outside { timer } => timer.pause_or_resume(pause),
+            _ => {}
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayer {
     pub ready: bool,
@@ -1321,9 +1330,10 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
-        self.player_states
-            .iter_mut()
-            .for_each(|player_state| player_state.timer.pause_or_resume(pause));
+        self.player_states.iter_mut().for_each(|player_state| {
+            player_state.timer.pause_or_resume(pause);
+            player_state.bounds_state.pause_or_resume(pause);
+        });
         Ok(Vec::new())
     }
 
