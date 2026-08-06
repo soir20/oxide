@@ -1680,7 +1680,7 @@ impl AttackCruiserGame {
 
     fn update_server_actor(&self, player_index: u8) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
-        let warp_out = matches!(
+        let warp_out = !player_state.dead() && matches!(
             &player_state.bounds_state,
             AttackCruiserPlayerBoundsState::Outside { .. }
         );
@@ -1715,13 +1715,13 @@ impl AttackCruiserGame {
                             dead_unused: false,
                             warp_in: false,
                             global_cinematic: false,
-                            warp_out_animation: !player_state.dead() && warp_out,
+                            warp_out_animation: warp_out,
                             warp_end_game: false,
-                            reset_speed_damage_state: !player_state.dead() && warp_out,
+                            reset_speed_damage_state: warp_out,
                             unknown14: false,
                             unknown15: false,
-                            hide_ring: !player_state.dead() && warp_out,
-                            dead: false,
+                            hide_ring: warp_out,
+                            dead: player_state.dead(),
                         },
                     }],
                 },
