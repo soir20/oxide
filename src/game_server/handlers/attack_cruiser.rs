@@ -99,9 +99,8 @@ enum AttackCruiserPlayerBoundsState {
 
 impl AttackCruiserPlayerBoundsState {
     pub fn pause_or_resume(&mut self, pause: bool) {
-        match self {
-            AttackCruiserPlayerBoundsState::Outside { timer } => timer.pause_or_resume(pause),
-            _ => {}
+        if let AttackCruiserPlayerBoundsState::Outside { timer } = self {
+            timer.pause_or_resume(pause);
         }
     }
 }
