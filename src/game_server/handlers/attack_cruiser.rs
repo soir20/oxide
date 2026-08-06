@@ -184,7 +184,12 @@ impl AttackCruiserPlayer {
     }
 
     pub fn vulnerable(&self, now: Instant) -> bool {
-        !self.actor.dead() && self.timer.time_until_next_event(now).is_zero()
+        !self.actor.dead()
+            && self.timer.time_until_next_event(now).is_zero()
+            && !matches!(
+                self.bounds_state,
+                AttackCruiserPlayerBoundsState::Outside { .. }
+            )
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant, respawn_millis: u32) {
