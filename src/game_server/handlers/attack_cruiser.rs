@@ -183,13 +183,16 @@ impl AttackCruiserPlayer {
         self.actor.dead()
     }
 
-    pub fn vulnerable(&self, now: Instant) -> bool {
+    pub fn trackable(&self) -> bool {
         !self.actor.dead()
-            && self.timer.time_until_next_event(now).is_zero()
             && !matches!(
                 self.bounds_state,
                 AttackCruiserPlayerBoundsState::Outside { .. }
             )
+    }
+
+    pub fn vulnerable(&self, now: Instant) -> bool {
+        self.trackable() && self.timer.time_until_next_event(now).is_zero()
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant, respawn_millis: u32) {
@@ -1330,36 +1333,34 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            if player_state.dead() {
-                continue;
-            }
+            if player_state.trackable() {
+                let actor = &mut player_state.actor;
+                let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
+                let total_damage = Self::total_damage(&actor_hits);
 
-            let actor = &mut player_state.actor;
-            let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
-            let total_damage = Self::total_damage(&actor_hits);
+                // If the player still has invulnerability time, process the hits but deal no damage
+                if player_state.vulnerable(now) {
+                    player_state.damage(total_damage, now, self.config.player.respawn_millis);
 
-            // If the player still has invulnerability time, process the hits but deal no damage
-            if player_state.vulnerable(now) {
-                player_state.damage(total_damage, now, self.config.player.respawn_millis);
+                    if player_state.dead() {
+                        let mut death_packets = self.set_player_frozen(player_index, true);
+                        death_packets.append(&mut self.update_client_players_once_ready(
+                            AttackCruiserPlayerStateType {
+                                index: false,
+                                score: true,
+                                unknown3: false,
+                                inventory: false,
+                                actor_id: false,
+                            },
+                        ));
+                        broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
 
-                if player_state.dead() {
-                    let mut death_packets = self.set_player_frozen(player_index, true);
-                    death_packets.append(&mut self.update_client_players_once_ready(
-                        AttackCruiserPlayerStateType {
-                            index: false,
-                            score: true,
-                            unknown3: false,
-                            inventory: false,
-                            actor_id: false,
-                        },
-                    ));
-                    broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
-
-                    update_clients = true;
+                        update_clients = true;
+                    }
                 }
-            }
 
-            hits.append(&mut actor_hits);
+                hits.append(&mut actor_hits);
+            }
 
             if update_clients {
                 broadcasts.push(self.update_server_actor(player_index as u8));
