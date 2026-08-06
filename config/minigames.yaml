@@ -3159,7 +3159,8 @@ categories:
                   max_health: 100
                   respawn_millis: 6000
                   post_respawn_invulnerability_millis: 3000
-                  out_of_bounds_warp_millis: 3250
+                  out_of_bounds_warp_millis: 3000
+                  out_of_bounds_warp_delay_millis: 250
                   spawn1:
                     pos:
                       x: 3.9

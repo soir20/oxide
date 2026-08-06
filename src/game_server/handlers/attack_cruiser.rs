@@ -105,12 +105,19 @@ enum AttackCruiserPlayerBoundsState {
     Outside {
         timer: MinigameCountdown,
     },
+    OutsideWaitingToWarp {
+        timer: MinigameCountdown,
+    },
 }
 
 impl AttackCruiserPlayerBoundsState {
     pub fn pause_or_resume(&mut self, pause: bool) {
-        if let AttackCruiserPlayerBoundsState::Outside { timer } = self {
-            timer.pause_or_resume(pause);
+        match self {
+            AttackCruiserPlayerBoundsState::Outside { timer } => timer.pause_or_resume(pause),
+            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer } => {
+                timer.pause_or_resume(pause)
+            }
+            _ => {}
         }
     }
 }
@@ -198,11 +205,12 @@ impl AttackCruiserPlayer {
         self.dead() || self.paused()
     }
 
-    pub fn out_of_bounds(&self) -> bool {
-        matches!(
-            self.bounds_state,
-            AttackCruiserPlayerBoundsState::Outside { .. }
-        )
+    pub fn disarmed(&self) -> bool {
+        self.disabled()
+            || matches!(
+                self.bounds_state,
+                AttackCruiserPlayerBoundsState::Outside { .. }
+            )
     }
 }
 
@@ -300,6 +308,7 @@ pub struct AttackCruiserPlayerConfig {
     respawn_millis: u32,
     post_respawn_invulnerability_millis: u32,
     out_of_bounds_warp_millis: u32,
+    out_of_bounds_warp_delay_millis: u32,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: AttackCruiserShipConfig,
@@ -1239,18 +1248,53 @@ impl AttackCruiserGame {
         let mut hits = Vec::new();
 
         for player_index in 0..self.players.len() {
-            if let AttackCruiserPlayerBoundsState::Outside { timer } =
-                &mut self.player_states[player_index].bounds_state
-            {
-                let allow_warp_out = !timer.time_until_next_event(now).is_zero();
-                if !allow_warp_out {
-                    timer.schedule_event(
-                        Duration::from_millis(self.config.player.out_of_bounds_warp_millis.into()),
-                        now,
-                    );
+            let player_state = &mut self.player_states[player_index];
+            let in_bounds = is_inside_oval(
+                player_state.actor.pos,
+                self.config.playfield.center,
+                self.config.playfield.radius_x,
+                self.config.playfield.radius_z,
+            );
+
+            let mut update_clients = match (&mut player_state.bounds_state, in_bounds) {
+                (AttackCruiserPlayerBoundsState::Inside, true) => false,
+                (AttackCruiserPlayerBoundsState::Inside, false) => {
+                    self.player_states[player_index].bounds_state =
+                        AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
+                            timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                self.config.player.out_of_bounds_warp_delay_millis.into(),
+                            )),
+                        };
+                    true
                 }
-                broadcasts.push(self.update_server_actor(player_index as u8, allow_warp_out));
-            }
+                (AttackCruiserPlayerBoundsState::Outside { timer }, _) => {
+                    if timer.time_until_next_event(now).is_zero() {
+                        self.player_states[player_index].bounds_state =
+                            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
+                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
+                                )),
+                            };
+                    }
+                    true
+                }
+                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { .. }, true) => {
+                    self.player_states[player_index].bounds_state =
+                        AttackCruiserPlayerBoundsState::Inside;
+                    true
+                }
+                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer }, false) => {
+                    if timer.time_until_next_event(now).is_zero() {
+                        self.player_states[player_index].bounds_state =
+                            AttackCruiserPlayerBoundsState::Outside {
+                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                    self.config.player.out_of_bounds_warp_millis.into(),
+                                )),
+                            };
+                    }
+                    true
+                }
+            };
 
             let player_state = &mut self.player_states[player_index];
             let actor_id = player_state.actor.id;
@@ -1306,11 +1350,15 @@ impl AttackCruiserGame {
                     ));
                     broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
 
-                    broadcasts.push(self.update_server_actor(player_index as u8, true));
+                    update_clients = true;
                 }
             }
 
             hits.append(&mut actor_hits);
+
+            if update_clients {
+                broadcasts.push(self.update_server_actor(player_index as u8));
+            }
         }
 
         broadcasts.push(Broadcast::Multi(
@@ -1448,26 +1496,7 @@ impl AttackCruiserGame {
             }
         }
 
-        let in_bounds = is_inside_oval(
-            player_state.actor.pos,
-            self.config.playfield.center,
-            self.config.playfield.radius_x,
-            self.config.playfield.radius_z,
-        );
-        if in_bounds {
-            player_state.bounds_state = AttackCruiserPlayerBoundsState::Inside;
-        } else if matches!(
-            player_state.bounds_state,
-            AttackCruiserPlayerBoundsState::Inside
-        ) {
-            player_state.bounds_state = AttackCruiserPlayerBoundsState::Outside {
-                timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                    self.config.player.out_of_bounds_warp_millis.into(),
-                )),
-            };
-        }
-
-        Ok(vec![self.update_server_actor(player_index, true)])
+        Ok(vec![self.update_server_actor(player_index)])
     }
 
     pub fn handle_click(
@@ -1478,7 +1507,7 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
 
-        if player_state.disabled() || player_state.out_of_bounds() {
+        if player_state.disarmed() {
             return Ok(Vec::new());
         }
 
@@ -1643,12 +1672,12 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_actor(&self, player_index: u8, allow_warp_out: bool) -> Broadcast {
+    fn update_server_actor(&self, player_index: u8) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
-        let warp_out = match &player_state.bounds_state {
-            AttackCruiserPlayerBoundsState::Inside => false,
-            AttackCruiserPlayerBoundsState::Outside { .. } => allow_warp_out,
-        };
+        let warp_out = matches!(
+            &player_state.bounds_state,
+            AttackCruiserPlayerBoundsState::Outside { .. }
+        );
 
         Broadcast::Multi(
             self.players.clone(),
