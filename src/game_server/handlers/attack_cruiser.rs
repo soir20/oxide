@@ -187,6 +187,13 @@ impl AttackCruiserPlayer {
     pub fn disabled(&self) -> bool {
         self.dead() || self.paused()
     }
+
+    pub fn out_of_bounds(&self) -> bool {
+        matches!(
+            self.bounds_state,
+            AttackCruiserPlayerBoundsState::Outside { .. }
+        )
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1456,7 +1463,7 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &self.player_states[player_index as usize];
 
-        if player_state.disabled() {
+        if player_state.disabled() || player_state.out_of_bounds() {
             return Ok(Vec::new());
         }
 
