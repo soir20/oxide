@@ -88,6 +88,15 @@ impl AttackCruiserActor {
     }
 }
 
+#[derive(Clone, Debug, Default)]
+enum AttackCruiserPlayerBoundsState {
+    #[default]
+    Inside,
+    Outside {
+        timer: MinigameCountdown,
+    },
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayer {
     pub ready: bool,
@@ -98,6 +107,7 @@ struct AttackCruiserPlayer {
     pub lives: u8,
     pub primary_weapon_tier: usize,
     pub timer: MinigameCountdown,
+    pub bounds_state: AttackCruiserPlayerBoundsState,
 }
 
 impl AttackCruiserPlayer {
@@ -131,6 +141,7 @@ impl AttackCruiserPlayer {
             lives,
             primary_weapon_tier: 0,
             timer: MinigameCountdown::new(),
+            bounds_state: AttackCruiserPlayerBoundsState::default(),
         }
     }
 
@@ -263,6 +274,7 @@ pub struct AttackCruiserPlayerConfig {
     max_health: u16,
     respawn_millis: u32,
     post_respawn_invulnerability_millis: u32,
+    out_of_bounds_warp_millis: u32,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: AttackCruiserShipConfig,
@@ -992,7 +1004,7 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorAnimationType::WarpOut,
                                                 slot_id: 3009,
                                                 loops: AttackCruiserBool(false),
-                                                play_time_seconds: 2.0,
+                                                play_time_seconds: 3.0,
                                             },
                                         ],
                                     ),
@@ -1201,6 +1213,18 @@ impl AttackCruiserGame {
         let mut hits = Vec::new();
 
         for player_index in 0..self.players.len() {
+            if let AttackCruiserPlayerBoundsState::Outside { timer } =
+                &mut self.player_states[player_index].bounds_state
+            {
+                if timer.time_until_next_event(now).is_zero() {
+                    timer.schedule_event(
+                        Duration::from_millis(self.config.player.out_of_bounds_warp_millis.into()),
+                        now,
+                    );
+                    broadcasts.push(self.update_server_actor(player_index as u8, false));
+                }
+            }
+
             let player_state = &mut self.player_states[player_index];
             let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
@@ -1255,10 +1279,7 @@ impl AttackCruiserGame {
                     ));
                     broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
 
-                    broadcasts.push(self.update_server_actor(
-                        player_index as u8,
-                        AttackCruiserActorState::default(),
-                    ));
+                    broadcasts.push(self.update_server_actor(player_index as u8, true));
                 }
             }
 
@@ -1399,10 +1420,23 @@ impl AttackCruiserGame {
             }
         }
 
-        Ok(vec![self.update_server_actor(
-            player_index,
-            AttackCruiserActorState::default(),
-        )])
+        let in_bounds = Vec3::from(player_state.actor.pos)
+            .distance_squared(Vec3::from(self.config.playfield.center))
+            <= self.config.playfield.radius * self.config.playfield.radius;
+        if in_bounds {
+            player_state.bounds_state = AttackCruiserPlayerBoundsState::Inside;
+        } else if matches!(
+            player_state.bounds_state,
+            AttackCruiserPlayerBoundsState::Inside
+        ) {
+            player_state.bounds_state = AttackCruiserPlayerBoundsState::Outside {
+                timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                    self.config.player.out_of_bounds_warp_millis.into(),
+                )),
+            };
+        }
+
+        Ok(vec![self.update_server_actor(player_index, true)])
     }
 
     pub fn handle_click(
@@ -1578,7 +1612,7 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_actor(&self, player_index: u8, state: AttackCruiserActorState) -> Broadcast {
+    fn update_server_actor(&self, player_index: u8, allow_warp_out_animation: bool) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
         Broadcast::Multi(
             self.players.clone(),
@@ -1599,7 +1633,36 @@ impl AttackCruiserGame {
                         forward_multiplier: player_state.actor.forward_multiplier,
                         turn_multiplier: player_state.actor.turn_multiplier,
                         health: player_state.actor.health.into(),
-                        state,
+                        state: AttackCruiserActorState {
+                            unknown1: false,
+                            unknown2: false,
+                            invulnerable: false,
+                            unknown4: false,
+                            unknown5: false,
+                            unknown6: false,
+                            unknown7: false,
+                            dead_unused: false,
+                            warp_in: false,
+                            global_cinematic: false,
+                            warp_out_animation: match &player_state.bounds_state {
+                                AttackCruiserPlayerBoundsState::Inside => false,
+                                AttackCruiserPlayerBoundsState::Outside { .. } => {
+                                    allow_warp_out_animation
+                                }
+                            },
+                            warp_end_game: false,
+                            reset_speed_damage_state: matches!(
+                                player_state.bounds_state,
+                                AttackCruiserPlayerBoundsState::Outside { .. }
+                            ),
+                            unknown14: false,
+                            unknown15: false,
+                            hide_ring: matches!(
+                                player_state.bounds_state,
+                                AttackCruiserPlayerBoundsState::Outside { .. }
+                            ),
+                            dead: false,
+                        },
                     }],
                 },
             })],
