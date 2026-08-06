@@ -63,6 +63,16 @@ use crate::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
+fn is_inside_oval(pos: Pos3, oval_center: Pos3, oval_radius_x: f32, oval_radius_z: f32) -> bool {
+    let delta_x = pos.x - oval_center.x;
+    let delta_z = pos.z - oval_center.z;
+
+    let rx_sq = oval_radius_x * oval_radius_x;
+    let rz_sq = oval_radius_z * oval_radius_z;
+
+    (delta_x * delta_x) * rz_sq + (delta_z * delta_z) * rx_sq <= rx_sq * rz_sq
+}
+
 fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
     let rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, 0.0);
     (rotation * Vec3::from(origin)).into()
@@ -300,8 +310,9 @@ pub struct AttackCruiserPlayerConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserPlayfieldConfig {
     center: Pos3,
-    radius: f32,
-    warning_radius: f32,
+    radius_x: f32,
+    radius_z: f32,
+    warning_radius_ratio: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1231,13 +1242,14 @@ impl AttackCruiserGame {
             if let AttackCruiserPlayerBoundsState::Outside { timer } =
                 &mut self.player_states[player_index].bounds_state
             {
-                if timer.time_until_next_event(now).is_zero() {
+                let allow_warp_out = !timer.time_until_next_event(now).is_zero();
+                if !allow_warp_out {
                     timer.schedule_event(
                         Duration::from_millis(self.config.player.out_of_bounds_warp_millis.into()),
                         now,
                     );
-                    broadcasts.push(self.update_server_actor(player_index as u8, false));
                 }
+                broadcasts.push(self.update_server_actor(player_index as u8, allow_warp_out));
             }
 
             let player_state = &mut self.player_states[player_index];
@@ -1436,9 +1448,12 @@ impl AttackCruiserGame {
             }
         }
 
-        let in_bounds = Vec3::from(player_state.actor.pos)
-            .distance_squared(Vec3::from(self.config.playfield.center))
-            <= self.config.playfield.radius * self.config.playfield.radius;
+        let in_bounds = is_inside_oval(
+            player_state.actor.pos,
+            self.config.playfield.center,
+            self.config.playfield.radius_x,
+            self.config.playfield.radius_z,
+        );
         if in_bounds {
             player_state.bounds_state = AttackCruiserPlayerBoundsState::Inside;
         } else if matches!(
