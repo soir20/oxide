@@ -1680,10 +1680,11 @@ impl AttackCruiserGame {
 
     fn update_server_actor(&self, player_index: u8) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
-        let warp_out = !player_state.dead() && matches!(
-            &player_state.bounds_state,
-            AttackCruiserPlayerBoundsState::Outside { .. }
-        );
+        let warp_out = !player_state.dead()
+            && matches!(
+                &player_state.bounds_state,
+                AttackCruiserPlayerBoundsState::Outside { .. }
+            );
 
         Broadcast::Multi(
             self.players.clone(),
