@@ -398,7 +398,7 @@ pub struct AttackCruiserStartupCameraConfig {
     pub pitch: f32,
     pub min_pitch: f32,
     pub max_pitch: f32,
-    pub z_offset: f32,
+    pub offset_z: f32,
     pub target_tracking_high_level_quotient: f32,
     pub zoom_step_quantization: f32,
     pub zoom_step_high_level_quotient: f32,
