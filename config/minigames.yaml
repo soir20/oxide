@@ -3154,6 +3154,15 @@ categories:
               short_name: stage03
               minigame_type:
                 !AttackCruiser
+                camera:
+                  default_distance: 1000
+                  min_distance: 500
+                  max_distance: 1000
+                  pitch: 30
+                  target_tracking_high_level_quotient: 0.1
+                  zoom_step_quantization: 0.1
+                  zoom_step_high_level_quotient: 0.1
+                  near_clip_distance: 100
                 player:
                   lives: 3
                   max_health: 100

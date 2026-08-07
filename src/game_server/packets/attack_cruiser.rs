@@ -391,8 +391,8 @@ pub struct AttackCruiserShipStartupConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserCameraConfig {
-    pub distance: f32,
+pub struct AttackCruiserStartupCameraConfig {
+    pub default_distance: f32,
     pub min_distance: f32,
     pub max_distance: f32,
     pub pitch: f32,
@@ -660,7 +660,7 @@ pub struct AttackCruiserGameConfig {
 pub enum AttackCruiserStartupConfigDefinition {
     Actor(Box<AttackCruiserActorConfig>),
     Blaster(Box<AttackCruiserBlasterConfig>),
-    Camera(Box<AttackCruiserCameraConfig>),
+    Camera(Box<AttackCruiserStartupCameraConfig>),
     ComplexPhysics(Box<AttackCruiserComplexPhysicsConfig>),
     Condition(Box<AttackCruiserConditionConfig>),
     DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),

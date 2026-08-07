@@ -33,19 +33,19 @@ use crate::{
                 AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
                 AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
                 AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
-                AttackCruiserCameraConfig, AttackCruiserChallengeMode,
-                AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState,
-                AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
-                AttackCruiserComplexPhysicsGear, AttackCruiserEventCinematicConfig,
-                AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-                AttackCruiserPlanetConfig, AttackCruiserPlayerStateActorId,
-                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
-                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
-                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
-                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserShipStartupConfig, AttackCruiserStartupConfig,
+                AttackCruiserChallengeMode, AttackCruiserClickedLocation,
+                AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
+                AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
+                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
+                AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility,
+                AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
+                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
+                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
+                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemoveProjectile,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
                 AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
                 AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
                 AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
@@ -266,7 +266,22 @@ const fn default_launch_height() -> f32 {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserProjectile {
+struct AttackCruiserCameraConfig {
+    default_distance: f32,
+    min_distance: f32,
+    max_distance: f32,
+    pitch: f32,
+    #[serde(default)]
+    z_offset: f32,
+    target_tracking_high_level_quotient: f32,
+    zoom_step_quantization: f32,
+    zoom_step_high_level_quotient: f32,
+    near_clip_distance: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserProjectile {
     pub composite_effect_id: u32,
     pub hit_composite_effect_id: u32,
     #[serde(default = "default_yaw_degrees")]
@@ -289,20 +304,20 @@ pub struct AttackCruiserProjectile {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserPlayerPrimaryWeapon {
+struct AttackCruiserPlayerPrimaryWeapon {
     pub projectiles: Vec<Arc<AttackCruiserProjectile>>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserPlayerWeaponConfig {
+struct AttackCruiserPlayerWeaponConfig {
     pub cooldown_millis: f32,
     pub primary_tiers: Vec<AttackCruiserPlayerPrimaryWeapon>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserShipConfig {
+struct AttackCruiserShipConfig {
     pub model_id: u32,
     pub asset_name: String,
     pub max_roll_degrees: f32,
@@ -310,31 +325,32 @@ pub struct AttackCruiserShipConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserPlayerConfig {
-    lives: u8,
-    max_health: u16,
-    respawn_millis: u32,
-    post_respawn_invulnerability_millis: u32,
-    out_of_bounds_warp_millis: u32,
-    out_of_bounds_warp_delay_millis: u32,
-    spawn1: AttackCruiserSpawnLocation,
-    spawn2: AttackCruiserSpawnLocation,
-    ship: AttackCruiserShipConfig,
-    weapons: AttackCruiserPlayerWeaponConfig,
+struct AttackCruiserPlayerConfig {
+    pub lives: u8,
+    pub max_health: u16,
+    pub respawn_millis: u32,
+    pub post_respawn_invulnerability_millis: u32,
+    pub out_of_bounds_warp_millis: u32,
+    pub out_of_bounds_warp_delay_millis: u32,
+    pub spawn1: AttackCruiserSpawnLocation,
+    pub spawn2: AttackCruiserSpawnLocation,
+    pub ship: AttackCruiserShipConfig,
+    pub weapons: AttackCruiserPlayerWeaponConfig,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct AttackCruiserPlayfieldConfig {
-    center: Pos3,
-    radius_x: f32,
-    radius_z: f32,
-    warning_radius_ratio: f32,
+struct AttackCruiserPlayfieldConfig {
+    pub center: Pos3,
+    pub radius_x: f32,
+    pub radius_z: f32,
+    pub warning_radius_ratio: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
+    camera: AttackCruiserCameraConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
 }
@@ -931,20 +947,26 @@ impl AttackCruiserGame {
                 camera_config: AttackCruiserStartupConfig::new(
                     "main camera config value".to_string(),
                     AttackCruiserStartupConfigDefinition::Camera(Box::new(
-                        AttackCruiserCameraConfig {
-                            distance: 1000.0,
-                            min_distance: 500.0,
-                            max_distance: 1000.0,
-                            pitch: 30.0,
-                            min_pitch: 30.0,
-                            max_pitch: 30.0,
-                            z_offset: 0.0,
-                            target_tracking_high_level_quotient: 0.1,
-                            zoom_step_quantization: 0.1,
-                            zoom_step_high_level_quotient: 0.1,
+                        AttackCruiserStartupCameraConfig {
+                            default_distance: self.config.camera.default_distance,
+                            min_distance: self.config.camera.min_distance,
+                            max_distance: self.config.camera.max_distance,
+                            pitch: self.config.camera.pitch,
+                            min_pitch: self.config.camera.pitch,
+                            max_pitch: self.config.camera.pitch,
+                            z_offset: self.config.camera.z_offset,
+                            target_tracking_high_level_quotient: self
+                                .config
+                                .camera
+                                .target_tracking_high_level_quotient,
+                            zoom_step_quantization: self.config.camera.zoom_step_quantization,
+                            zoom_step_high_level_quotient: self
+                                .config
+                                .camera
+                                .zoom_step_high_level_quotient,
                             forward_tether: AttackCruiserBool(false),
                             forward_tether_seconds: 1.0,
-                            near_clip_distance: 1.0,
+                            near_clip_distance: self.config.camera.near_clip_distance,
                             particle_update_distance: 100000.0,
                             actor_update_radius: 100000.0,
                             shadow_quality: 20,
