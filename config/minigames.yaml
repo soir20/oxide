@@ -3205,8 +3205,8 @@ categories:
                     x: 3.9
                     y: 1000.0
                     z: -1999.0
-                  radius_x: 1000.0
-                  radius_z: 750.0
+                  radius_x: 1100.0
+                  radius_z: 850.0
                   warning_radius_ratio: 0.9
               zone_template_guid: 250
               score_to_credits_expression: x / 129
