@@ -51,7 +51,7 @@ use crate::{
                 AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
                 AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
-            minigame::MinigameHeader,
+            minigame::{LeaveActiveMinigame, MinigameHeader},
             player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -200,12 +200,11 @@ impl AttackCruiserPlayer {
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
-        self.actor.dead()
-            && self.lives > 0
-            && self
-                .invulnerability_timer
-                .time_until_next_event(now)
-                .is_zero()
+        self.lives > 0 && self.completed_death(now)
+    }
+
+    pub fn lost(&self, now: Instant) -> bool {
+        self.lives == 0 && self.completed_death(now)
     }
 
     pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
@@ -258,6 +257,14 @@ impl AttackCruiserPlayer {
                 self.bounds_state,
                 AttackCruiserPlayerBoundsState::Outside { .. }
             )
+    }
+
+    fn completed_death(&self, now: Instant) -> bool {
+        self.actor.dead()
+            && self
+                .invulnerability_timer
+                .time_until_next_event(now)
+                .is_zero()
     }
 }
 
@@ -1367,6 +1374,20 @@ impl AttackCruiserGame {
                 ));
                 actor_packets.append(&mut self.set_player_frozen(player_index, false));
                 broadcasts.push(Broadcast::Multi(self.players.clone(), actor_packets));
+            } else if player_state.lost(now) {
+                broadcasts.push(Broadcast::Single(
+                    self.players[player_index],
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: LeaveActiveMinigame {
+                            header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: -1,
+                                stage_group_guid: self.group.stage_group_guid,
+                            },
+                        },
+                    })],
+                ));
             }
 
             let player_state = &mut self.player_states[player_index];
