@@ -52,6 +52,7 @@ use crate::{
                 AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             minigame::MinigameHeader,
+            player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
             GamePacket, Pos, Pos3,
@@ -76,6 +77,32 @@ fn is_inside_oval(pos: Pos3, oval_center: Pos3, oval_radius_x: f32, oval_radius_
 fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
     let rotation = Quat::from_euler(EulerRot::YXZ, yaw, pitch, 0.0);
     (rotation * Vec3::from(origin)).into()
+}
+
+fn show_hud_message(
+    recipients: &[u32],
+    message_id: u32,
+    duration_millis: u32,
+    name_id: Option<u32>,
+    image_id: Option<u32>,
+    sound_id: Option<u32>,
+) -> Broadcast {
+    Broadcast::Multi(
+        recipients.to_vec(),
+        vec![GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: HudMessage {
+                unknown1: 0,
+                unknown2: 0,
+                name_id: name_id.unwrap_or_default(),
+                image_id: image_id.unwrap_or_default(),
+                message_id,
+                sound_id: sound_id.unwrap_or_default(),
+                duration_millis,
+                unknown5: 0,
+            },
+        })],
+    )
 }
 
 #[derive(Clone, Debug)]
@@ -131,8 +158,9 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier: u8,
     pub lives: u8,
     pub primary_weapon_tier: usize,
-    pub timer: MinigameCountdown,
+    pub invulnerability_timer: MinigameCountdown,
     pub bounds_state: AttackCruiserPlayerBoundsState,
+    pub bounds_warning_hud_timer: MinigameCountdown,
 }
 
 impl AttackCruiserPlayer {
@@ -165,18 +193,25 @@ impl AttackCruiserPlayer {
             score_multiplier_tier: 1,
             lives,
             primary_weapon_tier: 0,
-            timer: MinigameCountdown::new(),
+            invulnerability_timer: MinigameCountdown::new(),
             bounds_state: AttackCruiserPlayerBoundsState::default(),
+            bounds_warning_hud_timer: MinigameCountdown::new(),
         }
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
-        self.actor.dead() && self.lives > 0 && self.timer.time_until_next_event(now).is_zero()
+        self.actor.dead()
+            && self.lives > 0
+            && self
+                .invulnerability_timer
+                .time_until_next_event(now)
+                .is_zero()
     }
 
     pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
         self.actor.health = health;
-        self.timer.schedule_event(invulnerability_duration, now);
+        self.invulnerability_timer
+            .schedule_event(invulnerability_duration, now);
     }
 
     pub fn dead(&self) -> bool {
@@ -192,7 +227,11 @@ impl AttackCruiserPlayer {
     }
 
     pub fn vulnerable(&self, now: Instant) -> bool {
-        self.trackable() && self.timer.time_until_next_event(now).is_zero()
+        self.trackable()
+            && self
+                .invulnerability_timer
+                .time_until_next_event(now)
+                .is_zero()
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant, respawn_millis: u32) {
@@ -200,13 +239,13 @@ impl AttackCruiserPlayer {
 
         if self.actor.dead() {
             self.lives = self.lives.saturating_sub(1);
-            self.timer
+            self.invulnerability_timer
                 .schedule_event(Duration::from_millis(respawn_millis.into()), now);
         }
     }
 
     pub fn paused(&self) -> bool {
-        self.timer.paused()
+        self.invulnerability_timer.paused()
     }
 
     pub fn disabled(&self) -> bool {
@@ -345,6 +384,8 @@ struct AttackCruiserPlayfieldConfig {
     pub radius_x: f32,
     pub radius_z: f32,
     pub warning_radius_ratio: f32,
+    pub warning_message_id: u32,
+    pub warning_millis: u32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -964,7 +1005,7 @@ impl AttackCruiserGame {
                                 .config
                                 .camera
                                 .zoom_step_high_level_quotient,
-                            forward_tether: AttackCruiserBool(false),
+                            forward_tether: AttackCruiserBool(true),
                             forward_tether_seconds: 1.0,
                             near_clip_distance: self.config.camera.near_clip_distance,
                             particle_update_distance: 100000.0,
@@ -1399,8 +1440,9 @@ impl AttackCruiserGame {
         }
 
         self.player_states.iter_mut().for_each(|player_state| {
-            player_state.timer.pause_or_resume(pause);
+            player_state.invulnerability_timer.pause_or_resume(pause);
             player_state.bounds_state.pause_or_resume(pause);
+            player_state.bounds_warning_hud_timer.pause_or_resume(pause);
         });
         Ok(Vec::new())
     }
@@ -1487,6 +1529,9 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
+        let mut broadcasts = Vec::new();
+        let now = Instant::now();
+
         for client_state in client_states.states.into_iter() {
             if client_state.actor_id == player_state.actor.id {
                 player_state.actor.pos = client_state.pos;
@@ -1495,10 +1540,39 @@ impl AttackCruiserGame {
                 player_state.actor.angular_speed = client_state.angular_speed;
                 player_state.actor.forward_multiplier = client_state.forward_multiplier;
                 player_state.actor.turn_multiplier = client_state.turn_multiplier;
+
+                let almost_outside_bounds = !is_inside_oval(
+                    player_state.actor.pos,
+                    self.config.playfield.center,
+                    self.config.playfield.radius_x * self.config.playfield.warning_radius_ratio,
+                    self.config.playfield.radius_z * self.config.playfield.warning_radius_ratio,
+                );
+
+                if almost_outside_bounds
+                    && player_state
+                        .bounds_warning_hud_timer
+                        .time_until_next_event(now)
+                        .is_zero()
+                {
+                    player_state.bounds_warning_hud_timer.schedule_event(
+                        Duration::from_millis(self.config.playfield.warning_millis.into()),
+                        now,
+                    );
+                    broadcasts.push(show_hud_message(
+                        &[sender],
+                        self.config.playfield.warning_message_id,
+                        self.config.playfield.warning_millis,
+                        None,
+                        None,
+                        None,
+                    ));
+                }
             }
         }
 
-        Ok(vec![self.update_server_actor(player_index)])
+        broadcasts.push(self.update_server_actor(player_index));
+
+        Ok(broadcasts)
     }
 
     pub fn handle_click(
