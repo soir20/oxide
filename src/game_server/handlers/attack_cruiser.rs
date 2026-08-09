@@ -43,13 +43,14 @@ use crate::{
                 AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
                 AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
                 AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemoveProjectile,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
-                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
-                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
-                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
-                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
+                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
+                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
+                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
+                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+                AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             minigame::{LeaveActiveMinigame, MinigameHeader},
             player_update::HudMessage,
@@ -214,7 +215,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn dead(&self) -> bool {
-        self.actor.dead()
+        self.actor.dead() || self.lives == 0
     }
 
     pub fn trackable(&self) -> bool {
@@ -769,6 +770,7 @@ pub struct AttackCruiserGame {
     player2: Option<u32>,
     player_states: [AttackCruiserPlayer; 2],
     state: AttackCruiserGameState,
+    active_players: Vec<u32>,
     players: Vec<u32>,
     group: MinigameMatchmakingGroup,
     projectiles: AttackCruiserProjectilePool,
@@ -821,6 +823,7 @@ impl AttackCruiserGame {
                 ),
             ],
             state: AttackCruiserGameState::WaitingForPlayersReady,
+            active_players: players.clone(),
             players,
             group,
             config,
@@ -1373,7 +1376,7 @@ impl AttackCruiserGame {
                     },
                 ));
                 actor_packets.append(&mut self.set_player_frozen(player_index, false));
-                broadcasts.push(Broadcast::Multi(self.players.clone(), actor_packets));
+                broadcasts.push(Broadcast::Multi(self.active_players.clone(), actor_packets));
             } else if player_state.lost(now) {
                 broadcasts.push(Broadcast::Single(
                     self.players[player_index],
@@ -1411,7 +1414,8 @@ impl AttackCruiserGame {
                                 actor_id: false,
                             },
                         ));
-                        broadcasts.push(Broadcast::Multi(self.players.clone(), death_packets));
+                        broadcasts
+                            .push(Broadcast::Multi(self.active_players.clone(), death_packets));
 
                         update_clients = true;
                     }
@@ -1426,7 +1430,7 @@ impl AttackCruiserGame {
         }
 
         broadcasts.push(Broadcast::Multi(
-            self.players.clone(),
+            self.active_players.clone(),
             hits.into_iter()
                 .map(|(projectile_id, projectile)| {
                     GamePacket::serialize(&TunneledPacket {
@@ -1469,12 +1473,33 @@ impl AttackCruiserGame {
     }
 
     pub fn remove_player(
-        &self,
+        &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
+        let player_index = self.player_index(player)? as usize;
+        let broadcasts = vec![Broadcast::Multi(
+            self.active_players.clone(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserRemovePlayer {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::RemovePlayer as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    guid: player_guid(player),
+                },
+            })],
+        )];
+
+        self.active_players
+            .retain(|active_player| *active_player != player);
+        self.player_states[player_index].lives = 0;
+
+        minigame_status.total_score = self.player_states[player_index].score;
         Ok(MinigameRemovePlayerResult {
-            broadcasts: Vec::new(),
+            broadcasts,
             characters_to_remove: Vec::new(),
             end_game_for_all: false,
         })
@@ -1671,7 +1696,7 @@ impl AttackCruiserGame {
             }
         }
 
-        Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
+        Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
 
     fn spawn_client_player_actor(&self, player_index: u8) -> Vec<Vec<u8>> {
@@ -1778,7 +1803,7 @@ impl AttackCruiserGame {
             );
 
         Broadcast::Multi(
-            self.players.clone(),
+            self.active_players.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserUpdateServerActors {
@@ -1876,7 +1901,7 @@ impl AttackCruiserGame {
             packets.append(&mut self.set_player_frozen(player_index, false));
         }
 
-        Ok(vec![Broadcast::Multi(self.players.clone(), packets)])
+        Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
 
     fn is_singleplayer(&self) -> bool {

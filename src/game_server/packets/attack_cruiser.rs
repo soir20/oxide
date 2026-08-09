@@ -967,6 +967,18 @@ impl GamePacket for AttackCruiserAddPlayer {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(SerializePacket)]
+pub struct AttackCruiserRemovePlayer {
+    pub minigame_header: MinigameHeader,
+    pub guid: u64,
+}
+
+impl GamePacket for AttackCruiserRemovePlayer {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
 pub struct AttackCruiserConfigPlayer {
     pub minigame_header: MinigameHeader,
     pub guid: u64,
