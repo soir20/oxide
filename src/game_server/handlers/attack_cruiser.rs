@@ -1478,20 +1478,20 @@ impl AttackCruiserGame {
         minigame_status: &mut MinigameStatus,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
-        let broadcasts = vec![Broadcast::Multi(
-            self.active_players.clone(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserRemovePlayer {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::RemovePlayer as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    guid: player_guid(player),
+
+        let mut packets = self.despawn_client_player_actor(&self.player_states[player_index]);
+        packets.push(GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserRemovePlayer {
+                minigame_header: MinigameHeader {
+                    stage_guid: self.group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::RemovePlayer as i32,
+                    stage_group_guid: self.group.stage_group_guid,
                 },
-            })],
-        )];
+                guid: player_guid(player),
+            },
+        }));
+        let broadcasts = vec![Broadcast::Multi(self.active_players.clone(), packets)];
 
         self.active_players
             .retain(|active_player| *active_player != player);
@@ -1699,8 +1699,7 @@ impl AttackCruiserGame {
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
 
-    fn spawn_client_player_actor(&self, player_index: u8) -> Vec<Vec<u8>> {
-        let player_state = &self.player_states[player_index as usize];
+    fn spawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddActor {
@@ -1723,12 +1722,8 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
-        let player_state = &mut self.player_states[player_index as usize];
-        let prev_actor_id = player_state.actor.id;
-        player_state.actor.id = player_actor_id(player_index, player_state.lives);
-
-        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
+    fn despawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
+        vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserRemoveActor {
                 minigame_header: MinigameHeader {
@@ -1736,10 +1731,19 @@ impl AttackCruiserGame {
                     sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
                     stage_group_guid: self.group.stage_group_guid,
                 },
-                actor_id: prev_actor_id,
+                actor_id: player_state.actor.id,
             },
-        })];
-        packets.append(&mut self.spawn_client_player_actor(player_index));
+        })]
+    }
+
+    fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
+        let mut packets =
+            self.despawn_client_player_actor(&self.player_states[player_index as usize]);
+        let player_state = &mut self.player_states[player_index as usize];
+        player_state.actor.id = player_actor_id(player_index, player_state.lives);
+        packets.append(
+            &mut self.spawn_client_player_actor(&self.player_states[player_index as usize]),
+        );
         packets
     }
 
@@ -1755,7 +1759,8 @@ impl AttackCruiserGame {
             ));
         };
 
-        let mut packets = self.spawn_client_player_actor(player_index);
+        let player_state = &self.player_states[player_index as usize];
+        let mut packets = self.spawn_client_player_actor(player_state);
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddPlayer {
