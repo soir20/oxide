@@ -317,7 +317,7 @@ struct AttackCruiserCameraConfig {
     default_distance: f32,
     min_distance: f32,
     max_distance: f32,
-    pitch: f32,
+    pitch_degrees: f32,
     #[serde(default)]
     offset_z: f32,
     target_tracking_high_level_quotient: f32,
@@ -1002,9 +1002,9 @@ impl AttackCruiserGame {
                             default_distance: self.config.camera.default_distance,
                             min_distance: self.config.camera.min_distance,
                             max_distance: self.config.camera.max_distance,
-                            pitch: self.config.camera.pitch,
-                            min_pitch: self.config.camera.pitch,
-                            max_pitch: self.config.camera.pitch,
+                            pitch: self.config.camera.pitch_degrees,
+                            min_pitch: self.config.camera.pitch_degrees,
+                            max_pitch: self.config.camera.pitch_degrees,
                             offset_z: self.config.camera.offset_z,
                             target_tracking_high_level_quotient: self
                                 .config

@@ -3158,7 +3158,7 @@ categories:
                   default_distance: 1000
                   min_distance: 500
                   max_distance: 1000
-                  pitch: 30
+                  pitch_degrees: 30
                   target_tracking_high_level_quotient: 0.1
                   zoom_step_quantization: 0.1
                   zoom_step_high_level_quotient: 0.1
