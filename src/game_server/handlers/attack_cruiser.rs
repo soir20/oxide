@@ -52,7 +52,7 @@ use crate::{
                 AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
                 AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
-            minigame::{LeaveActiveMinigame, MinigameHeader},
+            minigame::MinigameHeader,
             player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
@@ -1382,12 +1382,9 @@ impl AttackCruiserGame {
                     self.players[player_index],
                     vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
-                        inner: LeaveActiveMinigame {
-                            header: MinigameHeader {
-                                stage_guid: self.group.stage_guid,
-                                sub_op_code: -1,
-                                stage_group_guid: self.group.stage_group_guid,
-                            },
+                        inner: ExecuteScriptWithStringParams {
+                            script_name: "StarDestroyerHandler.quitGame".to_string(),
+                            params: vec![],
                         },
                     })],
                 ));
