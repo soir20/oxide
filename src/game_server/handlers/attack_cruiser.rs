@@ -907,8 +907,8 @@ impl AttackCruiserGame {
                             score_decay_exponent: 0.0,
                             health_foreground_image_id: self.config.health_bar.foreground_image_id,
                             health_background_image_id: self.config.health_bar.background_image_id,
-                            health_foreground_internal_id: 0,
-                            health_background_internal_id: 0,
+                            health_foreground_internal_id: 1,
+                            health_background_internal_id: 2,
                             enable_weapon_tiers: AttackCruiserBool(false),
                             player_death_spawn_config: AttackCruiserStartupConfigReference {
                                 class: AttackCruiserStartupConfigClass::DeathSpawn,
