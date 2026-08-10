@@ -489,8 +489,6 @@ struct AttackCruiserProjectileStepCache {
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectileSpawn {
     pub projectile_id: i32,
-    pub effect_id: u32,
-    pub lifetime_millis: f32,
     pub origin: Pos3,
     pub speed: Pos3,
     pub yaw: f32,
@@ -583,8 +581,6 @@ impl AttackCruiserProjectilePool {
 
             launched_projectiles.push(AttackCruiserProjectileSpawn {
                 projectile_id,
-                effect_id: projectile.composite_effect_id,
-                lifetime_millis: projectile.lifetime_millis,
                 origin,
                 speed,
                 yaw,
