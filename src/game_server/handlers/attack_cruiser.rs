@@ -311,6 +311,10 @@ const fn default_launch_height() -> f32 {
     4.0
 }
 
+const fn default_screen_relative_turning() -> bool {
+    true
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserCameraConfig {
@@ -324,7 +328,7 @@ struct AttackCruiserCameraConfig {
     zoom_step_quantization: f32,
     zoom_step_high_level_quotient: f32,
     near_clip_distance: f32,
-    #[serde(default)]
+    #[serde(default = "default_screen_relative_turning")]
     screen_relative_turning: bool,
 }
 
