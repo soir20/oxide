@@ -1083,7 +1083,7 @@ impl AttackCruiserGame {
                                         class: AttackCruiserStartupConfigClass::ComplexPhysics,
                                         name: "physics config value".to_string(),
                                     },
-                                    max_health: 100,
+                                    max_health: self.config.player.max_health.into(),
                                     explosive_collision: AttackCruiserBool(false),
                                     collision_damage: 0,
                                     score: 0,
