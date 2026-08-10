@@ -883,7 +883,9 @@ impl AttackCruiserGame {
                             advance_interception_time: 0.0,
                             collisionless_time: 0,
                             tractionless_time: 0,
-                            screen_relative_turning: AttackCruiserBool(self.config.camera.screen_relative_turning),
+                            screen_relative_turning: AttackCruiserBool(
+                                self.config.camera.screen_relative_turning,
+                            ),
                             ship_to_ship_collision: AttackCruiserBool(false),
                             player_death_animation_delay_seconds: 0.0,
                             respawn_damage_area: 0.0,
