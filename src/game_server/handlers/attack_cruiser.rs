@@ -324,6 +324,15 @@ struct AttackCruiserCameraConfig {
     zoom_step_quantization: f32,
     zoom_step_high_level_quotient: f32,
     near_clip_distance: f32,
+    #[serde(default)]
+    screen_relative_turning: bool,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserHealthBarConfig {
+    foreground_image_id: u32,
+    background_image_id: u32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -400,6 +409,7 @@ struct AttackCruiserPlayfieldConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
     camera: AttackCruiserCameraConfig,
+    health_bar: AttackCruiserHealthBarConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
 }
@@ -873,7 +883,7 @@ impl AttackCruiserGame {
                             advance_interception_time: 0.0,
                             collisionless_time: 0,
                             tractionless_time: 0,
-                            screen_relative_turning: AttackCruiserBool(true),
+                            screen_relative_turning: AttackCruiserBool(self.config.camera.screen_relative_turning),
                             ship_to_ship_collision: AttackCruiserBool(false),
                             player_death_animation_delay_seconds: 0.0,
                             respawn_damage_area: 0.0,
@@ -893,10 +903,10 @@ impl AttackCruiserGame {
                             score_decay_tier1: 0,
                             score_meter_exponent: 0.0,
                             score_decay_exponent: 0.0,
-                            health_foreground_image_id: 163,
-                            health_background_image_id: 164,
-                            health_foreground_internal_id: 300,
-                            health_background_internal_id: 400,
+                            health_foreground_image_id: self.config.health_bar.foreground_image_id,
+                            health_background_image_id: self.config.health_bar.background_image_id,
+                            health_foreground_internal_id: 0,
+                            health_background_internal_id: 0,
                             enable_weapon_tiers: AttackCruiserBool(false),
                             player_death_spawn_config: AttackCruiserStartupConfigReference {
                                 class: AttackCruiserStartupConfigClass::DeathSpawn,
@@ -916,7 +926,7 @@ impl AttackCruiserGame {
                 game_config: AttackCruiserStartupConfig::new(
                     "game config value".to_string(),
                     AttackCruiserStartupConfigDefinition::Game(Box::new(AttackCruiserGameConfig {
-                        id: 27001,
+                        id: self.group.stage_guid,
                         encounter_id: 0,
                         sound_id: 2413,
                         challenge_mode: AttackCruiserChallengeMode::Unlimited,

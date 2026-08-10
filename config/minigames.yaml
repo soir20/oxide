@@ -3163,6 +3163,9 @@ categories:
                   zoom_step_quantization: 0.1
                   zoom_step_high_level_quotient: 0.1
                   near_clip_distance: 1
+                health_bar:
+                  foreground_image_id: 163
+                  background_image_id: 164
                 player:
                   lives: 3
                   max_health: 100
