@@ -321,7 +321,7 @@ pub struct AttackCruiserGlobalConfig {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserPlanetConfig {
+pub struct AttackCruiserPlanetStartupConfig {
     pub model_id: u32,
     pub pos: Pos3,
     pub angular_speed: f32,
@@ -650,7 +650,7 @@ pub struct AttackCruiserGameConfig {
     pub global_tilt_init_z: f32,
     pub global_tilt_rate_x: f32,
     pub global_tilt_rate_z: f32,
-    pub planet: AttackCruiserPlanetConfig,
+    pub planet: AttackCruiserPlanetStartupConfig,
     pub players: AttackCruiserVec<AttackCruiserPlayerConfig>,
     pub events: AttackCruiserVec<AttackCruiserEventConfig>,
     pub actor_pools: AttackCruiserVec<AttackCruiserActorPoolConfig>,

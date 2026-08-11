@@ -38,19 +38,19 @@ use crate::{
                 AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
                 AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
                 AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility,
-                AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPlanetConfig,
-                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
-                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
-                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
-                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
-                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
-                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-                AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+                AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
+                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
+                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
+                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
+                AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
+                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
+                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
+                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             minigame::MinigameHeader,
             player_update::HudMessage,
@@ -341,6 +341,14 @@ struct AttackCruiserHealthBarConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserPlanetConfig {
+    model_id: u32,
+    center: Pos3,
+    angular_speed_radians: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserProjectile {
     pub composite_effect_id: u32,
     pub hit_composite_effect_id: u32,
@@ -414,6 +422,7 @@ struct AttackCruiserPlayfieldConfig {
 pub struct AttackCruiserConfig {
     camera: AttackCruiserCameraConfig,
     health_bar: AttackCruiserHealthBarConfig,
+    planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
 }
@@ -965,14 +974,10 @@ impl AttackCruiserGame {
                         global_tilt_init_z: 0.0,
                         global_tilt_rate_x: 0.0,
                         global_tilt_rate_z: 0.0,
-                        planet: AttackCruiserPlanetConfig {
-                            model_id: 583,
-                            pos: Pos3 {
-                                x: 0.0,
-                                y: 1363.94,
-                                z: 28539.1,
-                            },
-                            angular_speed: 0.01,
+                        planet: AttackCruiserPlanetStartupConfig {
+                            model_id: self.config.planet.model_id,
+                            pos: self.config.planet.center,
+                            angular_speed: self.config.planet.angular_speed_radians,
                         },
                         players: AttackCruiserVec::new(),
                         events: AttackCruiserVec(
