@@ -417,8 +417,8 @@ pub struct AttackCruiserStartupCameraConfig {
 pub struct AttackCruiserEventCinematicConfig {
     pub total_seconds: f32,
     pub animation_id: i32,
-    pub camera_heading: f32,
-    pub camera_fov: f32,
+    pub camera_heading_degrees: f32,
+    pub camera_fov_degrees: f32,
     pub flip_camera_z: AttackCruiserBool,
     pub pre_wipe_style: i32,
     pub post_wipe_style: i32,

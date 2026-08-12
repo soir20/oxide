@@ -989,9 +989,9 @@ impl AttackCruiserGame {
                                     vec![AttackCruiserEventCinematicConfig {
                                         total_seconds: 15.0,
                                         animation_id: 10317,
-                                        camera_heading: 0.0,
-                                        camera_fov: 50.0,
-                                        flip_camera_z: AttackCruiserBool(false),
+                                        camera_heading_degrees: 270.0,
+                                        camera_fov_degrees: 50.0,
+                                        flip_camera_z: AttackCruiserBool(true),
                                         pre_wipe_style: 2,
                                         post_wipe_style: 2,
                                     }],
