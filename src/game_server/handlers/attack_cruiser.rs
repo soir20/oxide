@@ -36,9 +36,9 @@ use crate::{
                 AttackCruiserChallengeMode, AttackCruiserClickedLocation,
                 AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
                 AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
-                AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility,
-                AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+                AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
+                AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
+                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
                 AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
                 AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
                 AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
@@ -996,7 +996,13 @@ impl AttackCruiserGame {
                                         post_wipe_style: 2,
                                     }],
                                 ),
-                                event_actors: AttackCruiserVec::new(),
+                                event_actors: AttackCruiserVec(
+                                    "event actors".to_string(),
+                                    vec![AttackCruiserEventActorConfig {
+                                        model_id: 580,
+                                        animation_id: 1,
+                                    }],
+                                ),
                             }],
                         ),
                         actor_pools: AttackCruiserVec(
