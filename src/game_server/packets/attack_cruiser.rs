@@ -413,6 +413,19 @@ pub struct AttackCruiserStartupCameraConfig {
     pub overhead_render_distance: f32,
 }
 
+#[derive(Copy, Clone, SerializePacket, IntoPrimitive)]
+#[repr(i32)]
+pub enum AttackCruiserCinematicStyle {
+    Random = 1,
+    Line = 2,
+    TwoLinesOutward = 3,
+    TwoLinesInward = 4,
+    CircleOutward = 5,
+    CircleInward = 6,
+    SwipeCounterclockwise = 7,
+    SwipeClockwise = 8,
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventCinematicConfig {
     pub total_seconds: f32,
@@ -420,8 +433,8 @@ pub struct AttackCruiserEventCinematicConfig {
     pub camera_heading_degrees: f32,
     pub camera_fov_degrees: f32,
     pub flip_camera_z: AttackCruiserBool,
-    pub pre_wipe_style: i32,
-    pub post_wipe_style: i32,
+    pub pre_wipe_style: AttackCruiserCinematicStyle,
+    pub post_wipe_style: AttackCruiserCinematicStyle,
 }
 
 #[derive(SerializePacket)]
@@ -477,8 +490,8 @@ pub struct AttackCruiserActorCinematicConfig {
     pub cinematic_type: AttackCruiserActorCinematicType,
     pub play_time_seconds: f32,
     pub animation_id: u32,
-    pub pre_wipe_style: i32,
-    pub post_wipe_style: i32,
+    pub pre_wipe_style: AttackCruiserCinematicStyle,
+    pub post_wipe_style: AttackCruiserCinematicStyle,
     pub post_camera_ease_in_seconds: f32,
 }
 

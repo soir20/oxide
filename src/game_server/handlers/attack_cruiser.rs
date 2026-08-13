@@ -33,12 +33,13 @@ use crate::{
                 AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate,
                 AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile,
                 AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
-                AttackCruiserChallengeMode, AttackCruiserClickedLocation,
-                AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
-                AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-                AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-                AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+                AttackCruiserChallengeMode, AttackCruiserCinematicStyle,
+                AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState,
+                AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
+                AttackCruiserComplexPhysicsGear, AttackCruiserEventActorConfig,
+                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
+                AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility,
+                AttackCruiserHudMessageConfig, AttackCruiserOpCode,
                 AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
                 AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
                 AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
@@ -992,8 +993,8 @@ impl AttackCruiserGame {
                                         camera_heading_degrees: 270.0,
                                         camera_fov_degrees: 50.0,
                                         flip_camera_z: AttackCruiserBool(true),
-                                        pre_wipe_style: 2,
-                                        post_wipe_style: 2,
+                                        pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                        post_wipe_style: AttackCruiserCinematicStyle::Random,
                                     }],
                                 ),
                                 event_actors: AttackCruiserVec(
@@ -1155,8 +1156,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10207,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1164,8 +1166,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10208,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1173,8 +1176,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10209,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1182,8 +1186,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10210,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1191,8 +1196,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death1,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10211,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1200,8 +1206,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10308,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1209,8 +1216,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10309,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1218,8 +1226,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10310,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1227,8 +1236,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10311,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1236,8 +1246,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Death2,
                                                 play_time_seconds: 6.0,
                                                 animation_id: 10312,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1245,8 +1256,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Warp,
                                                 play_time_seconds: 3.0,
                                                 animation_id: 10010,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                             AttackCruiserActorCinematicConfig {
@@ -1254,8 +1266,9 @@ impl AttackCruiserGame {
                                                     AttackCruiserActorCinematicType::Global,
                                                 play_time_seconds: 2.0,
                                                 animation_id: 10019,
-                                                pre_wipe_style: 2,
-                                                post_wipe_style: 2,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
+                                                post_wipe_style:
+                                                    AttackCruiserCinematicStyle::Random,
                                                 post_camera_ease_in_seconds: 0.0,
                                             },
                                         ],
