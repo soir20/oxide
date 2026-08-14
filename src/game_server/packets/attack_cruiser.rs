@@ -413,9 +413,11 @@ pub struct AttackCruiserStartupCameraConfig {
     pub overhead_render_distance: f32,
 }
 
-#[derive(Copy, Clone, SerializePacket, IntoPrimitive)]
+#[derive(Copy, Clone, Default, SerializePacket, IntoPrimitive)]
 #[repr(i32)]
 pub enum AttackCruiserCinematicStyle {
+    #[default]
+    None = 0,
     Random = 1,
     Line = 2,
     TwoLinesOutward = 3,
