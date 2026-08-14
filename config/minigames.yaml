@@ -3208,7 +3208,7 @@ categories:
                         duration_seconds: 3.0
                       - animation_type: WarpOut
                         animation_id: 3009
-                        duration_seconds: 3.0
+                        duration_seconds: 2.0
                     cinematics:
                       - cinematic_type: Death1
                         camera_animation_id: 10207
