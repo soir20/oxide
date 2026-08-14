@@ -386,10 +386,32 @@ struct AttackCruiserPlayerWeaponConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserShipAnimationConfig {
+    pub animation_type: AttackCruiserActorAnimationType,
+    pub animation_id: i32,
+    pub duration_seconds: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserShipCinematicConfig {
+    pub cinematic_type: AttackCruiserActorCinematicType,
+    pub camera_animation_id: i32,
+    pub duration_seconds: f32,
+    #[serde(default)]
+    pub pre_wipe_style: AttackCruiserCinematicStyle,
+    #[serde(default)]
+    pub post_wipe_style: AttackCruiserCinematicStyle,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
     pub model_id: u32,
     pub asset_name: String,
     pub max_roll_degrees: f32,
+    pub animations: Vec<AttackCruiserShipAnimationConfig>,
+    pub cinematics: Vec<AttackCruiserShipCinematicConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1117,161 +1139,36 @@ impl AttackCruiserGame {
                                     overhead_health_scale: 0.5,
                                     animations: AttackCruiserVec(
                                         "animations".to_string(),
-                                        vec![
-                                            AttackCruiserActorAnimationConfig {
-                                                animation_type:
-                                                    AttackCruiserActorAnimationType::Death1,
-                                                slot_id: 3001,
+                                        self.config
+                                            .player
+                                            .ship
+                                            .animations
+                                            .iter()
+                                            .map(|animation| AttackCruiserActorAnimationConfig {
+                                                animation_type: animation.animation_type,
+                                                animation_id: animation.animation_id,
                                                 loops: AttackCruiserBool(false),
-                                                play_time_seconds: 6.0,
-                                            },
-                                            AttackCruiserActorAnimationConfig {
-                                                animation_type:
-                                                    AttackCruiserActorAnimationType::Death2,
-                                                slot_id: 3002,
-                                                loops: AttackCruiserBool(false),
-                                                play_time_seconds: 6.0,
-                                            },
-                                            AttackCruiserActorAnimationConfig {
-                                                animation_type:
-                                                    AttackCruiserActorAnimationType::WarpIn,
-                                                slot_id: 3010,
-                                                loops: AttackCruiserBool(false),
-                                                play_time_seconds: 3.0,
-                                            },
-                                            AttackCruiserActorAnimationConfig {
-                                                animation_type:
-                                                    AttackCruiserActorAnimationType::WarpOut,
-                                                slot_id: 3009,
-                                                loops: AttackCruiserBool(false),
-                                                play_time_seconds: 2.0,
-                                            },
-                                        ],
+                                                duration_seconds: animation.duration_seconds,
+                                            })
+                                            .collect(),
                                     ),
                                     cinematics: AttackCruiserVec(
                                         "cinematics".to_string(),
-                                        vec![
-                                            AttackCruiserActorCinematicConfig {
+                                        self.config
+                                            .player
+                                            .ship
+                                            .cinematics
+                                            .iter()
+                                            .map(|cinematic| AttackCruiserActorCinematicConfig {
                                                 cinematic_type:
                                                     AttackCruiserActorCinematicType::Death1,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10207,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
+                                                duration_seconds: cinematic.duration_seconds,
+                                                camera_animation_id: cinematic.camera_animation_id,
+                                                pre_wipe_style: cinematic.pre_wipe_style,
+                                                post_wipe_style: cinematic.post_wipe_style,
                                                 post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death1,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10208,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death1,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10209,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death1,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10210,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death1,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10211,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death2,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10308,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death2,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10309,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death2,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10310,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death2,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10311,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death2,
-                                                play_time_seconds: 6.0,
-                                                animation_id: 10312,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Warp,
-                                                play_time_seconds: 3.0,
-                                                animation_id: 10010,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                            AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Global,
-                                                play_time_seconds: 2.0,
-                                                animation_id: 10019,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                                post_wipe_style:
-                                                    AttackCruiserCinematicStyle::Random,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            },
-                                        ],
+                                            })
+                                            .collect(),
                                     ),
                                     damage_states: AttackCruiserVec(
                                         "damage states".to_string(),

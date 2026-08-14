@@ -1,5 +1,6 @@
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
+use serde::Deserialize;
 
 use crate::game_server::packets::{
     minigame::{MinigameHeader, MinigameOpCode},
@@ -413,7 +414,7 @@ pub struct AttackCruiserStartupCameraConfig {
     pub overhead_render_distance: f32,
 }
 
-#[derive(Copy, Clone, Default, SerializePacket, IntoPrimitive)]
+#[derive(Copy, Clone, Debug, Default, Deserialize, SerializePacket, IntoPrimitive)]
 #[repr(i32)]
 pub enum AttackCruiserCinematicStyle {
     #[default]
@@ -461,7 +462,7 @@ pub struct AttackCruiserEventConfig {
     pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }
 
-#[derive(Clone, Copy, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
 #[repr(i32)]
 pub enum AttackCruiserActorAnimationType {
     Death1 = 2,
@@ -473,12 +474,12 @@ pub enum AttackCruiserActorAnimationType {
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorAnimationConfig {
     pub animation_type: AttackCruiserActorAnimationType,
-    pub slot_id: u32,
+    pub animation_id: i32,
     pub loops: AttackCruiserBool,
-    pub play_time_seconds: f32,
+    pub duration_seconds: f32,
 }
 
-#[derive(Clone, Copy, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
 #[repr(i32)]
 pub enum AttackCruiserActorCinematicType {
     Death1 = 1,
@@ -490,8 +491,8 @@ pub enum AttackCruiserActorCinematicType {
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorCinematicConfig {
     pub cinematic_type: AttackCruiserActorCinematicType,
-    pub play_time_seconds: f32,
-    pub animation_id: u32,
+    pub duration_seconds: f32,
+    pub camera_animation_id: i32,
     pub pre_wipe_style: AttackCruiserCinematicStyle,
     pub post_wipe_style: AttackCruiserCinematicStyle,
     pub post_camera_ease_in_seconds: f32,
@@ -876,7 +877,7 @@ impl DeserializePacket for AttackCruiserPlayerStateType {
     where
         Self: Sized,
     {
-        let state_type = i32::deserialize(cursor)?;
+        let state_type: i32 = DeserializePacket::deserialize(cursor)?;
 
         Ok(AttackCruiserPlayerStateType {
             index: state_type & 0b1 != 0,
@@ -1159,7 +1160,7 @@ impl DeserializePacket for AttackCruiserActorState {
     where
         Self: Sized,
     {
-        let state = i32::deserialize(cursor)?;
+        let state: i32 = DeserializePacket::deserialize(cursor)?;
         let unknown1 = state & (1 << 0) != 0;
         let unknown2 = state & (1 << 1) != 0;
         let invulnerable = state & (1 << 2) != 0;

@@ -3196,6 +3196,56 @@ categories:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll_degrees: 30
+                    animations:
+                      - animation_type: Death1
+                        animation_id: 3001
+                        duration_seconds: 6.0
+                      - animation_type: Death2
+                        animation_id: 3002
+                        duration_seconds: 6.0
+                      - animation_type: WarpIn
+                        animation_id: 3010
+                        duration_seconds: 3.0
+                      - animation_type: WarpOut
+                        animation_id: 3009
+                        duration_seconds: 3.0
+                    cinematics:
+                      - cinematic_type: Death1
+                        camera_animation_id: 10207
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10208
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10209
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10210
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10211
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10308
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10309
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10310
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10311
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10312
+                        duration_seconds: 6.0
+                      - cinematic_type: Warp
+                        camera_animation_id: 10010
+                        duration_seconds: 6.0
+                      - cinematic_type: Global
+                        camera_animation_id: 10019
+                        duration_seconds: 6.0
                   weapons:
                     cooldown_millis: 250
                     primary_tiers:
