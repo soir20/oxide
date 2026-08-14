@@ -1160,8 +1160,7 @@ impl AttackCruiserGame {
                                             .cinematics
                                             .iter()
                                             .map(|cinematic| AttackCruiserActorCinematicConfig {
-                                                cinematic_type:
-                                                    AttackCruiserActorCinematicType::Death1,
+                                                cinematic_type: cinematic.cinematic_type,
                                                 duration_seconds: cinematic.duration_seconds,
                                                 camera_animation_id: cinematic.camera_animation_id,
                                                 pre_wipe_style: cinematic.pre_wipe_style,
