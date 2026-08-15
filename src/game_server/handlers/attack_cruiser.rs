@@ -1010,7 +1010,7 @@ impl AttackCruiserGame {
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
                                     vec![AttackCruiserEventCinematicConfig {
-                                        total_seconds: 15.0,
+                                        total_seconds: 20.0,
                                         animation_id: 10317,
                                         camera_heading_degrees: 270.0,
                                         camera_fov_degrees: 50.0,
