@@ -406,6 +406,10 @@ struct AttackCruiserShipConfig {
     pub model_id: u32,
     pub asset_name: String,
     pub max_roll_degrees: f32,
+    pub max_health: u16,
+    pub overhead_health_scale: f32,
+    pub thruster_effect_id: u32,
+    pub invulnerable_effect_id: u32,
     pub animations: Vec<AttackCruiserShipAnimationConfig>,
     pub cinematics: Vec<AttackCruiserShipCinematicConfig>,
 }
@@ -414,7 +418,6 @@ struct AttackCruiserShipConfig {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
     pub lives: u8,
-    pub max_health: u16,
     pub respawn_millis: u32,
     pub post_respawn_invulnerability_millis: u32,
     pub out_of_bounds_warp_millis: u32,
@@ -844,7 +847,7 @@ impl AttackCruiserGame {
                     config.player.lives,
                     config.player.spawn1.pos,
                     config.player.spawn1.yaw_degrees.to_radians(),
-                    config.player.max_health,
+                    config.player.ship.max_health,
                     false,
                     player_bvh.clone(),
                     config.player.ship.max_roll_degrees.to_radians(),
@@ -854,7 +857,7 @@ impl AttackCruiserGame {
                     config.player.lives,
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw_degrees.to_radians(),
-                    config.player.max_health,
+                    config.player.ship.max_health,
                     player2.is_none(),
                     player_bvh,
                     config.player.ship.max_roll_degrees.to_radians(),
@@ -1125,14 +1128,18 @@ impl AttackCruiserGame {
                                         class: AttackCruiserStartupConfigClass::ComplexPhysics,
                                         name: "physics config value".to_string(),
                                     },
-                                    max_health: self.config.player.max_health.into(),
+                                    max_health: self.config.player.ship.max_health.into(),
                                     explosive_collision: AttackCruiserBool(false),
                                     collision_damage: 0,
                                     score: 0,
                                     bonus_score: 0,
                                     bonus_max_age_seconds: 0.0,
                                     overhead_offset_y: 0.0,
-                                    overhead_health_scale: 0.5,
+                                    overhead_health_scale: self
+                                        .config
+                                        .player
+                                        .ship
+                                        .overhead_health_scale,
                                     animations: AttackCruiserVec(
                                         "animations".to_string(),
                                         self.config
@@ -1191,9 +1198,13 @@ impl AttackCruiserGame {
                                         ],
                                     ),
                                 },
-                                thruster_effect_id: 1707,
-                                invulnerable_effect_id: 1744,
-                                stun_effect_id: 102,
+                                thruster_effect_id: self.config.player.ship.thruster_effect_id,
+                                invulnerable_effect_id: self
+                                    .config
+                                    .player
+                                    .ship
+                                    .invulnerable_effect_id,
+                                stun_effect_id: 0,
                                 weapons: AttackCruiserVec::new(),
                                 roll_max_angle: self.config.player.ship.max_roll_degrees,
                                 pitch_max_angle: 0.0,
@@ -1283,7 +1294,7 @@ impl AttackCruiserGame {
             let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
                 player_state.respawn(
-                    self.config.player.max_health,
+                    self.config.player.ship.max_health,
                     Duration::from_millis(
                         self.config
                             .player

@@ -3175,7 +3175,6 @@ categories:
                   angular_speed_radians: 0.01
                 player:
                   lives: 3
-                  max_health: 100
                   respawn_millis: 6000
                   post_respawn_invulnerability_millis: 3000
                   out_of_bounds_warp_millis: 3000
@@ -3196,6 +3195,10 @@ categories:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll_degrees: 30
+                    max_health: 100
+                    overhead_health_scale: 0.5
+                    thruster_effect_id: 1707
+                    invulnerable_effect_id: 1744
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
