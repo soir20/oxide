@@ -398,10 +398,6 @@ struct AttackCruiserShipCinematicConfig {
     pub cinematic_type: AttackCruiserActorCinematicType,
     pub camera_animation_id: i32,
     pub duration_seconds: f32,
-    #[serde(default)]
-    pub pre_wipe_style: AttackCruiserCinematicStyle,
-    #[serde(default)]
-    pub post_wipe_style: AttackCruiserCinematicStyle,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1163,8 +1159,8 @@ impl AttackCruiserGame {
                                                 cinematic_type: cinematic.cinematic_type,
                                                 duration_seconds: cinematic.duration_seconds,
                                                 camera_animation_id: cinematic.camera_animation_id,
-                                                pre_wipe_style: cinematic.pre_wipe_style,
-                                                post_wipe_style: cinematic.post_wipe_style,
+                                                pre_wipe_style: AttackCruiserCinematicStyle::None,
+                                                post_wipe_style: AttackCruiserCinematicStyle::None,
                                                 post_camera_ease_in_seconds: 0.0,
                                             })
                                             .collect(),
