@@ -501,9 +501,7 @@ pub struct AttackCruiserActorCinematicConfig {
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorDamageStateEffectConfig {
     pub effect_id: u32,
-    pub offset_x: f32,
-    pub offset_y: f32,
-    pub offset_z: f32,
+    pub offset: Pos3,
 }
 
 #[derive(SerializePacket)]

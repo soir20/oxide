@@ -1188,9 +1188,11 @@ impl AttackCruiserGame {
                                                     vec![
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1345,
-                                                            offset_x: -5.14109,
-                                                            offset_y: 2.59693,
-                                                            offset_z: 50.5737,
+                                                            offset: Pos3 {
+                                                                x: -5.14109,
+                                                                y: 2.59693,
+                                                                z: 50.5737,
+                                                            },
                                                         },
                                                     ],
                                                 ),
@@ -1203,21 +1205,27 @@ impl AttackCruiserGame {
                                                     vec![
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1574,
-                                                            offset_x: -5.14109,
-                                                            offset_y: 2.59693,
-                                                            offset_z: 50.5737,
+                                                            offset: Pos3 {
+                                                                x: -5.14109,
+                                                                y: 2.59693,
+                                                                z: 50.5737,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1346,
-                                                            offset_x: -3.251,
-                                                            offset_y: 12.041,
-                                                            offset_z: -11.255,
+                                                            offset: Pos3 {
+                                                                x: -3.251,
+                                                                y: 12.041,
+                                                                z: -11.255,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1346,
-                                                            offset_x: 20.4703,
-                                                            offset_y: 1.89752,
-                                                            offset_z: -19.0574,
+                                                            offset: Pos3 {
+                                                                x: 20.4703,
+                                                                y: 1.89752,
+                                                                z: -19.0574,
+                                                            },
                                                         },
                                                     ],
                                                 ),
@@ -1230,39 +1238,51 @@ impl AttackCruiserGame {
                                                     vec![
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1574,
-                                                            offset_x: -5.14109,
-                                                            offset_y: 2.59693,
-                                                            offset_z: 50.5737,
+                                                            offset: Pos3 {
+                                                                x: -5.14109,
+                                                                y: 2.59693,
+                                                                z: 50.5737,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1347,
-                                                            offset_x: 10.4945,
-                                                            offset_y: 1.45443,
-                                                            offset_z: 20.5566,
+                                                            offset: Pos3 {
+                                                                x: 10.4945,
+                                                                y: 1.45443,
+                                                                z: 20.5566,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1347,
-                                                            offset_x: -11.0462,
-                                                            offset_y: 1.16923,
-                                                            offset_z: 11.1481,
+                                                            offset: Pos3 {
+                                                                x: -11.0462,
+                                                                y: 1.16923,
+                                                                z: 11.1481,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1574,
-                                                            offset_x: -3.251,
-                                                            offset_y: 12.041,
-                                                            offset_z: -11.255,
+                                                            offset: Pos3 {
+                                                                x: -3.251,
+                                                                y: 12.041,
+                                                                z: -11.255,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1574,
-                                                            offset_x: 20.4703,
-                                                            offset_y: 1.89752,
-                                                            offset_z: -19.0574,
+                                                            offset: Pos3 {
+                                                                x: 20.4703,
+                                                                y: 1.89752,
+                                                                z: -19.0574,
+                                                            },
                                                         },
                                                         AttackCruiserActorDamageStateEffectConfig {
                                                             effect_id: 1347,
-                                                            offset_x: 1.69803,
-                                                            offset_y: 4.46827,
-                                                            offset_z: -45.8687,
+                                                            offset: Pos3 {
+                                                                x: 1.69803,
+                                                                y: 4.46827,
+                                                                z: -45.8687,
+                                                            },
                                                         },
                                                     ],
                                                 ),
