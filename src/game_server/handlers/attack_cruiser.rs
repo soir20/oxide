@@ -53,11 +53,12 @@ use crate::{
                 AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
                 AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
+            command::PlaySoundIdOnTarget,
             minigame::MinigameHeader,
             player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, Pos3,
+            GamePacket, Pos, Pos3, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -163,6 +164,7 @@ struct AttackCruiserPlayer {
     pub invulnerability_timer: MinigameCountdown,
     pub bounds_state: AttackCruiserPlayerBoundsState,
     pub bounds_warning_hud_timer: MinigameCountdown,
+    pub damage_alarm_sound_timer: MinigameCountdown,
 }
 
 impl AttackCruiserPlayer {
@@ -198,6 +200,7 @@ impl AttackCruiserPlayer {
             invulnerability_timer: MinigameCountdown::new(),
             bounds_state: AttackCruiserPlayerBoundsState::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
+            damage_alarm_sound_timer: MinigameCountdown::new(),
         }
     }
 
@@ -418,6 +421,9 @@ struct AttackCruiserShipConfig {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
     pub lives: u8,
+    pub damage_alarm_sound_id: u32,
+    pub damage_alarm_health_percent: f32,
+    pub damage_alarm_interval_millis: u32,
     pub respawn_millis: u32,
     pub post_respawn_invulnerability_millis: u32,
     pub out_of_bounds_warp_millis: u32,
@@ -1450,6 +1456,32 @@ impl AttackCruiserGame {
                 }
 
                 hits.append(&mut actor_hits);
+            }
+
+            let player_state = &mut self.player_states[player_index];
+            let health_percent = player_state.actor.health as f32
+                / self.config.player.ship.max_health as f32
+                * 100.0;
+            let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
+            let is_damage_alarm_timer_expired = player_state
+                .damage_alarm_sound_timer
+                .time_until_next_event(now)
+                .is_zero();
+            if is_low_health && !player_state.dead() && is_damage_alarm_timer_expired {
+                broadcasts.push(Broadcast::Single(
+                    self.players[player_index],
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: PlaySoundIdOnTarget {
+                            sound_id: self.config.player.damage_alarm_sound_id,
+                            target: Target::None,
+                        },
+                    })],
+                ));
+                player_state.damage_alarm_sound_timer.schedule_event(
+                    Duration::from_millis(self.config.player.damage_alarm_interval_millis.into()),
+                    now,
+                );
             }
 
             if update_clients {

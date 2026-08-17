@@ -3175,6 +3175,9 @@ categories:
                   angular_speed_radians: 0.01
                 player:
                   lives: 3
+                  damage_alarm_sound_id: 2426
+                  damage_alarm_health_percent: 21.0
+                  damage_alarm_interval_millis: 2500
                   respawn_millis: 6000
                   post_respawn_invulnerability_millis: 3000
                   out_of_bounds_warp_millis: 3000
