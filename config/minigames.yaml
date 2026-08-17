@@ -3197,7 +3197,7 @@ categories:
                   ship:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll_degrees: 30
+                    max_roll_degrees: 15
                     max_health: 100
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707
