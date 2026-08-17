@@ -16,20 +16,20 @@ use crate::{
     ConfigError,
 };
 
-const fn default_base_damage() -> u32 {
+const fn default_base_damage() -> u16 {
     100
 }
 
-const fn default_damage_deviation() -> f32 {
+const fn default_damage_deviation() -> u32 {
+    15
+}
+
+const fn default_critical_chance() -> u32 {
+    5
+}
+
+const fn default_max_distance_from_player() -> f32 {
     15.0
-}
-
-const fn default_critical_chance() -> f32 {
-    5.0
-}
-
-const fn defualt_aoe_radius() -> f32 {
-    3.3
 }
 
 const fn default_ability_sub_type() -> AbilitySubType {
@@ -56,17 +56,24 @@ pub struct AbilityConfig {
     pub init_cooldown_millis: u32,
     #[serde(default)]
     pub area_of_effect_radius: f32,
-    #[serde(default)]
+    #[serde(default = "default_max_distance_from_player")]
     pub max_distance_from_player: f32,
     #[serde(default = "default_base_damage")]
-    pub base_damage: u32,
+    pub base_damage: u16,
     #[serde(default = "default_damage_deviation")]
-    pub damage_deviation_percent: f32,
+    pub damage_deviation_percent: u32,
     #[serde(default = "default_critical_chance")]
-    pub critical_chance: f32,
-    pub critical_bonus_percent: Option<f32>,
+    pub critical_chance: u32,
+    pub critical_bonus_percent: Option<u32>,
     #[serde(default)]
     pub target_limit: TargetLimit,
+    pub cast_animation_id: Option<u32>,
+    pub cast_composite_effect_id: Option<u32>,
+    pub cast_composite_effect_seconds: Option<f32>,
+    pub impact_animation_id: Option<u32>,
+    pub impact_composite_effect_id: Option<u32>,
+    #[serde(default)]
+    pub target_bone_name: String,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
