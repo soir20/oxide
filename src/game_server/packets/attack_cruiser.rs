@@ -633,7 +633,7 @@ pub struct AttackCruiserGameWaveConfig {
 #[derive(Clone, Copy, TryFromPrimitive, IntoPrimitive, SerializePacket, DeserializePacket)]
 #[repr(u32)]
 pub enum AttackCruiserChallengeMode {
-    Unlimited,
+    None,
     Timed,
     ScoreTarget,
 }
@@ -647,7 +647,7 @@ pub struct AttackCruiserGameConfig {
     pub global_config: AttackCruiserStartupConfigReference,
     pub end_condition_config: AttackCruiserStartupConfigReference,
     pub win_condition_config: AttackCruiserStartupConfigReference,
-    pub target_value1: u32,
+    pub target_value: u32,
     pub target_value2: u32,
     pub playfield_height: f32,
     pub playfield_length: f32,

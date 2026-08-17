@@ -336,6 +336,41 @@ struct AttackCruiserCameraConfig {
     screen_relative_turning: bool,
 }
 
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserChallengeConfig {
+    #[default]
+    None,
+    Timed {
+        limit_seconds: u32,
+    },
+    ScoreTarget {
+        score: u32,
+    },
+}
+
+impl From<&AttackCruiserChallengeConfig> for AttackCruiserChallengeMode {
+    fn from(value: &AttackCruiserChallengeConfig) -> Self {
+        match value {
+            AttackCruiserChallengeConfig::None => AttackCruiserChallengeMode::None,
+            AttackCruiserChallengeConfig::Timed { .. } => AttackCruiserChallengeMode::Timed,
+            AttackCruiserChallengeConfig::ScoreTarget { .. } => {
+                AttackCruiserChallengeMode::ScoreTarget
+            }
+        }
+    }
+}
+
+impl AttackCruiserChallengeConfig {
+    pub fn value(&self) -> u32 {
+        match self {
+            AttackCruiserChallengeConfig::None => 0,
+            AttackCruiserChallengeConfig::Timed { limit_seconds } => *limit_seconds,
+            AttackCruiserChallengeConfig::ScoreTarget { score } => *score,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserHealthBarConfig {
@@ -449,10 +484,13 @@ struct AttackCruiserPlayfieldConfig {
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
     camera: AttackCruiserCameraConfig,
+    #[serde(default)]
+    challenge: AttackCruiserChallengeConfig,
     health_bar: AttackCruiserHealthBarConfig,
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
+    sound_id: i32,
 }
 
 pub fn process_attack_cruiser_packet(
@@ -971,8 +1009,8 @@ impl AttackCruiserGame {
                     AttackCruiserStartupConfigDefinition::Game(Box::new(AttackCruiserGameConfig {
                         id: self.group.stage_guid,
                         encounter_id: 0,
-                        sound_id: 2413,
-                        challenge_mode: AttackCruiserChallengeMode::Unlimited,
+                        sound_id: self.config.sound_id,
+                        challenge_mode: (&self.config.challenge).into(),
                         global_config: AttackCruiserStartupConfigReference {
                             class: AttackCruiserStartupConfigClass::Global,
                             name: "global config value".to_string(),
@@ -985,8 +1023,8 @@ impl AttackCruiserGame {
                             class: AttackCruiserStartupConfigClass::Condition,
                             name: "".to_string(),
                         },
-                        target_value1: 999,
-                        target_value2: 888,
+                        target_value: self.config.challenge.value(),
+                        target_value2: 0,
                         playfield_height: self.config.playfield.center.y,
                         playfield_length: self.config.playfield.radius_x * 2.0,
                         playfield_width: self.config.playfield.radius_z * 2.0,

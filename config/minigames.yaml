@@ -3285,6 +3285,7 @@ categories:
                   warning_radius_ratio: 0.9
                   warning_message_id: 13628
                   warning_millis: 5000
+                sound_id: 2413
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027
