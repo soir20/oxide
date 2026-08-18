@@ -3172,7 +3172,7 @@ categories:
                     x: 0.0
                     y: 1363.94
                     z: 28539.1
-                  angular_speed_radians: -0.01
+                  angular_speed_radians: -0.008
                 player:
                   lives: 3
                   damage_alarm_sound_id: 2426
