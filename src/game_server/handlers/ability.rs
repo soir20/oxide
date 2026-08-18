@@ -13,7 +13,7 @@ use crate::{
         packets::{ability::AbilityOpCode, AbilitySubType},
         Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    ConfigError,
+    ConfigError, GameServer,
 };
 
 const fn default_base_damage() -> u16 {
@@ -43,6 +43,13 @@ pub enum TargetLimit {
     Infinite,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+pub enum TargetType {
+    #[default]
+    Enemy,
+    Friendly,
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AbilityConfig {
@@ -67,6 +74,8 @@ pub struct AbilityConfig {
     pub critical_bonus_percent: Option<u32>,
     #[serde(default)]
     pub target_limit: TargetLimit,
+    #[serde(default)]
+    pub target_type: TargetType,
     pub cast_animation_id: Option<u32>,
     pub cast_composite_effect_id: Option<u32>,
     pub cast_composite_effect_seconds: Option<f32>,
@@ -85,7 +94,11 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
     Ok(abilities)
 }
 
-pub fn process_ability(cursor: &mut Cursor<&[u8]>) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn process_ability(
+    game_server: &GameServer,
+    sender: u32,
+    cursor: &mut Cursor<&[u8]>,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code: u16 = DeserializePacket::deserialize(cursor)?;
     match AbilityOpCode::try_from(raw_op_code) {
         Ok(op_code) => match op_code {
