@@ -1,10 +1,11 @@
 use std::{
     collections::HashMap,
     fs::File,
-    io::{Cursor, Read},
+    io::{Cursor, Error, ErrorKind, Read},
     path::Path,
 };
 
+use evalexpr::{context_map, eval_with_context, Value};
 use packet_serialize::DeserializePacket;
 use serde::Deserialize;
 
@@ -16,12 +17,10 @@ use crate::{
     ConfigError, GameServer,
 };
 
-const fn default_base_damage() -> u16 {
-    100
-}
+const DEFAULT_DAMAGE_EXPRESSION: &str = "x * random(0.84, 1.15)";
 
-const fn default_damage_deviation() -> u32 {
-    15
+const fn default_base_damage() -> i16 {
+    100
 }
 
 const fn default_critical_chance() -> u32 {
@@ -34,6 +33,51 @@ const fn default_max_distance_from_player() -> f32 {
 
 const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
+}
+
+fn default_damage_expression() -> String {
+    DEFAULT_DAMAGE_EXPRESSION.to_string()
+}
+
+fn evaluate_damage_expression(
+    damage_expression: &str,
+    damage: i16,
+    ability_name: String,
+) -> Result<i16, Error> {
+    let context = context_map! {
+        "x" => evalexpr::Value::Float(damage as f64),
+    }
+    .map_err(|err| {
+        Error::new(
+            ErrorKind::InvalidData,
+            format!("Couldn't build expression evaluation context for ability {ability_name}"),
+        )
+    })?;
+
+    let result = eval_with_context(damage_expression, &context).map_err(|err| {
+        Error::new(
+            ErrorKind::InvalidData,
+            format!("Unable to evaluate cost expression for ability {ability_name}: {err}"),
+        )
+    })?;
+
+    let Value::Float(damage) = result else {
+        return Err(Error::new(
+            ErrorKind::InvalidData,
+            format!(
+                "Damage expression did not return an integer for ability {ability_name}, returned: {result}"
+            ),
+        ));
+    };
+
+    i16::try_from(damage.round() as i64).map_err(|err| {
+        Error::new(
+            ErrorKind::InvalidData,
+            format!(
+                "Damage expression returned float that could not be converted to an integer for ability {ability_name}: {damage}, {err}"
+            ),
+        )
+    })
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Deserialize, Default)]
@@ -66,9 +110,9 @@ pub struct AbilityConfig {
     #[serde(default = "default_max_distance_from_player")]
     pub max_distance_from_player: f32,
     #[serde(default = "default_base_damage")]
-    pub base_damage: u16,
-    #[serde(default = "default_damage_deviation")]
-    pub damage_deviation_percent: u32,
+    pub base_damage: i16,
+    #[serde(default = "default_damage_expression")]
+    pub damage_expression: String,
     #[serde(default = "default_critical_chance")]
     pub critical_chance: u32,
     pub critical_bonus_percent: Option<u32>,
