@@ -7,6 +7,7 @@ use std::{
 
 use evalexpr::{context_map, eval_with_context, Value};
 use packet_serialize::DeserializePacket;
+use rand::{thread_rng, Rng};
 use serde::Deserialize;
 
 use crate::{
@@ -136,6 +137,29 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
     let abilities: HashMap<String, AbilityConfig> = serde_yaml::from_reader(file)?;
 
     Ok(abilities)
+}
+
+fn compute_ability_damage(
+    config: &AbilityConfig,
+    ability_name: String,
+) -> Result<(i16, bool), Error> {
+    let evaluated_damage =
+        evaluate_damage_expression(&config.damage_expression, config.base_damage, ability_name)?;
+
+    let mut rng = thread_rng();
+    let is_critical = rng.gen_range(0..100) < config.critical_chance;
+
+    let final_damage = if is_critical {
+        let bonus_percent = config.critical_bonus_percent.unwrap_or(0);
+        let multiplier = 1.0 + (bonus_percent as f64 / 100.0);
+
+        let crit_damage = (evaluated_damage as f64) * multiplier;
+        i16::try_from(crit_damage.round() as i64).unwrap_or(evaluated_damage)
+    } else {
+        evaluated_damage
+    };
+
+    Ok((final_damage, is_critical))
 }
 
 pub fn process_ability(
