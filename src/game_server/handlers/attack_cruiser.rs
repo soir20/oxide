@@ -1113,8 +1113,8 @@ impl AttackCruiserGame {
                                 .config
                                 .camera
                                 .zoom_step_high_level_quotient,
-                            forward_tether: AttackCruiserBool(true),
-                            forward_tether_seconds: 1.0,
+                            forward_tether: AttackCruiserBool(false),
+                            forward_tether_seconds: 0.0,
                             near_clip_distance: self.config.camera.near_clip_distance,
                             particle_update_distance: self.config.actor_update_radius,
                             actor_update_radius: self.config.actor_update_radius,
