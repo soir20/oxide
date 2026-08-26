@@ -3198,6 +3198,12 @@ categories:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll_degrees: 15
+                    max_speed: 100.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: 2.0
+                    angular_acceleration: 2.0
+                    angular_deceleration: 2.0
                     max_health: 100
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707

@@ -444,6 +444,14 @@ struct AttackCruiserShipConfig {
     pub model_id: u32,
     pub asset_name: String,
     pub max_roll_degrees: f32,
+    pub max_speed: f32,
+    pub acceleration: f32,
+    pub deceleration: f32,
+    pub max_angular_speed: f32,
+    pub angular_acceleration: f32,
+    pub angular_deceleration: f32,
+    #[serde(default)]
+    pub stationary_turn: f32,
     pub max_health: u16,
     pub overhead_health_scale: f32,
     pub thruster_effect_id: u32,
@@ -1128,26 +1136,38 @@ impl AttackCruiserGame {
                                     width: 1.0,
                                     height: 1.0,
                                     center_of_mass_z: 0.0,
-                                    max_speed: 100.0,
+                                    max_speed: self.config.player.ship.max_speed,
                                     vertical_speed: 0.0,
                                 },
-                                reverse_speed: -100.0,
+                                reverse_speed: -self.config.player.ship.max_speed,
                                 turbo_speed: 0.0,
-                                stationary_turn: 1.0,
+                                stationary_turn: self.config.player.ship.stationary_turn,
                                 gears: AttackCruiserVec(
                                     "physics config gears".to_string(),
                                     vec![AttackCruiserComplexPhysicsGear {
                                         shift_up_speed: 0.0,
                                         shift_down_speed: 0.0,
-                                        base_acceleration: 25.0,
-                                        base_deceleration: 25.0,
+                                        base_acceleration: self.config.player.ship.acceleration,
+                                        base_deceleration: self.config.player.ship.deceleration,
                                         turbo_acceleration: 0.0,
                                         brake_deceleration: 0.0,
                                         sideways_deceleration: 0.0,
-                                        angular_acceleration: 2.0,
+                                        angular_acceleration: self
+                                            .config
+                                            .player
+                                            .ship
+                                            .angular_acceleration,
                                         turbo_angular_acceleration: 0.0,
-                                        angular_deceleration: 2.0,
-                                        max_angular_speed: 2.0,
+                                        angular_deceleration: self
+                                            .config
+                                            .player
+                                            .ship
+                                            .angular_deceleration,
+                                        max_angular_speed: self
+                                            .config
+                                            .player
+                                            .ship
+                                            .max_angular_speed,
                                         turbo_max_angular_speed: 0.0,
                                     }],
                                 ),
