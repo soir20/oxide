@@ -1073,10 +1073,16 @@ impl AttackCruiserGame {
                                 ),
                                 event_actors: AttackCruiserVec(
                                     "event actors".to_string(),
-                                    vec![AttackCruiserEventActorConfig {
-                                        model_id: 580,
-                                        animation_id: 1,
-                                    }],
+                                    vec![
+                                        AttackCruiserEventActorConfig {
+                                            model_id: 580,
+                                            animation_id: 1,
+                                        },
+                                        AttackCruiserEventActorConfig {
+                                            model_id: 167,
+                                            animation_id: 10317,
+                                        },
+                                    ],
                                 ),
                             }],
                         ),
