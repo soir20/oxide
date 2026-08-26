@@ -38,20 +38,21 @@ use crate::{
                 AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
                 AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
                 AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-                AttackCruiserEventConfig, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-                AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
-                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
-                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
-                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
-                AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
-                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
-                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
-                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
-                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig,
+                AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
+                AttackCruiserOpCode, AttackCruiserPlanetStartupConfig,
+                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
+                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
+                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
+                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
+                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
+                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
+                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+                AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             command::PlaySoundIdOnTarget,
             minigame::MinigameHeader,
@@ -319,6 +320,10 @@ const fn default_screen_relative_turning() -> bool {
     true
 }
 
+const fn default_wipe_style() -> AttackCruiserCinematicStyle {
+    AttackCruiserCinematicStyle::Random
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserCameraConfig {
@@ -376,6 +381,60 @@ impl AttackCruiserChallengeConfig {
 struct AttackCruiserHealthBarConfig {
     foreground_image_id: u32,
     background_image_id: u32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserIntroActorConfig {
+    model_id: u32,
+    animation_id: i32,
+}
+
+impl From<&AttackCruiserIntroActorConfig> for AttackCruiserEventActorConfig {
+    fn from(value: &AttackCruiserIntroActorConfig) -> Self {
+        AttackCruiserEventActorConfig {
+            model_id: value.model_id,
+            animation_id: value.animation_id,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserIntroCinematicConfig {
+    duration_seconds: f32,
+    camera_animation_id: i32,
+    camera_heading_degrees: f32,
+    camera_fov_degrees: f32,
+    #[serde(default)]
+    flip_camera_z: bool,
+    #[serde(default = "default_wipe_style")]
+    pre_wipe_style: AttackCruiserCinematicStyle,
+    #[serde(default = "default_wipe_style")]
+    post_wipe_style: AttackCruiserCinematicStyle,
+}
+
+impl From<&AttackCruiserIntroCinematicConfig> for AttackCruiserEventCinematicConfig {
+    fn from(value: &AttackCruiserIntroCinematicConfig) -> Self {
+        AttackCruiserEventCinematicConfig {
+            duration_seconds: value.duration_seconds,
+            camera_animation_id: value.camera_animation_id,
+            camera_heading_degrees: value.camera_heading_degrees,
+            camera_fov_degrees: value.camera_fov_degrees,
+            flip_camera_z: AttackCruiserBool(value.flip_camera_z),
+            pre_wipe_style: value.pre_wipe_style,
+            post_wipe_style: value.post_wipe_style,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserIntroConfig {
+    #[serde(default)]
+    actors: Vec<AttackCruiserIntroActorConfig>,
+    #[serde(default)]
+    cinematics: Vec<AttackCruiserIntroCinematicConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -447,7 +506,7 @@ struct AttackCruiserShipConfig {
     pub max_speed: f32,
     pub acceleration: f32,
     pub deceleration: f32,
-    pub max_angular_speed: f32,
+    pub max_angular_speed_radians: f32,
     pub angular_acceleration: f32,
     pub angular_deceleration: f32,
     #[serde(default)]
@@ -496,6 +555,7 @@ pub struct AttackCruiserConfig {
     #[serde(default)]
     challenge: AttackCruiserChallengeConfig,
     health_bar: AttackCruiserHealthBarConfig,
+    intro: AttackCruiserIntroConfig,
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
@@ -1058,31 +1118,24 @@ impl AttackCruiserGame {
                         events: AttackCruiserVec(
                             "events".to_string(),
                             vec![AttackCruiserEventConfig {
-                                event_type: 1,
+                                event_type: AttackCruiserEventType::Intro,
                                 cinematics: AttackCruiserVec(
                                     "event cinematics".to_string(),
-                                    vec![AttackCruiserEventCinematicConfig {
-                                        total_seconds: 20.0,
-                                        animation_id: 10317,
-                                        camera_heading_degrees: 270.0,
-                                        camera_fov_degrees: 50.0,
-                                        flip_camera_z: AttackCruiserBool(true),
-                                        pre_wipe_style: AttackCruiserCinematicStyle::Random,
-                                        post_wipe_style: AttackCruiserCinematicStyle::Random,
-                                    }],
+                                    self.config
+                                        .intro
+                                        .cinematics
+                                        .iter()
+                                        .map(|cinematic| cinematic.into())
+                                        .collect(),
                                 ),
                                 event_actors: AttackCruiserVec(
                                     "event actors".to_string(),
-                                    vec![
-                                        AttackCruiserEventActorConfig {
-                                            model_id: 580,
-                                            animation_id: 1,
-                                        },
-                                        AttackCruiserEventActorConfig {
-                                            model_id: 167,
-                                            animation_id: 10317,
-                                        },
-                                    ],
+                                    self.config
+                                        .intro
+                                        .actors
+                                        .iter()
+                                        .map(|actor| actor.into())
+                                        .collect(),
                                 ),
                             }],
                         ),
@@ -1174,7 +1227,7 @@ impl AttackCruiserGame {
                                             .config
                                             .player
                                             .ship
-                                            .max_angular_speed,
+                                            .max_angular_speed_radians,
                                         turbo_max_angular_speed: 0.0,
                                     }],
                                 ),

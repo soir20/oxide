@@ -3167,6 +3167,18 @@ categories:
                 health_bar:
                   foreground_image_id: 163
                   background_image_id: 164
+                intro:
+                  actors:
+                    - model_id: 580
+                      animation_id: 1
+                    - model_id: 167
+                      animation_id: 10317
+                  cinematics:
+                    - duration_seconds: 20.0
+                      camera_animation_id: 10317
+                      camera_heading_degrees: 270.0
+                      camera_fov_degrees: 50.0
+                      flip_camera_z: true
                 planet:
                   model_id: 583
                   center:
@@ -3202,7 +3214,7 @@ categories:
                     max_speed: 100.0
                     acceleration: 25.0
                     deceleration: 25.0
-                    max_angular_speed: 2.0
+                    max_angular_speed_radians: 2.0
                     angular_acceleration: 2.0
                     angular_deceleration: 2.0
                     max_health: 100

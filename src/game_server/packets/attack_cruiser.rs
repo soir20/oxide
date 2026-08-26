@@ -431,8 +431,8 @@ pub enum AttackCruiserCinematicStyle {
 
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventCinematicConfig {
-    pub total_seconds: f32,
-    pub animation_id: i32,
+    pub duration_seconds: f32,
+    pub camera_animation_id: i32,
     pub camera_heading_degrees: f32,
     pub camera_fov_degrees: f32,
     pub flip_camera_z: AttackCruiserBool,
@@ -455,9 +455,15 @@ pub struct AttackCruiserPlayerConfig {
     pub spawn_heading: f32,
 }
 
+#[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[repr(i32)]
+pub enum AttackCruiserEventType {
+    Intro = 1,
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserEventConfig {
-    pub event_type: i32,
+    pub event_type: AttackCruiserEventType,
     pub cinematics: AttackCruiserVec<AttackCruiserEventCinematicConfig>,
     pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }
