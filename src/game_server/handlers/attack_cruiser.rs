@@ -491,6 +491,7 @@ struct AttackCruiserPlayfieldConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackCruiserConfig {
+    actor_update_radius: f32,
     camera: AttackCruiserCameraConfig,
     #[serde(default)]
     challenge: AttackCruiserChallengeConfig,
@@ -1115,12 +1116,12 @@ impl AttackCruiserGame {
                             forward_tether: AttackCruiserBool(true),
                             forward_tether_seconds: 1.0,
                             near_clip_distance: self.config.camera.near_clip_distance,
-                            particle_update_distance: 100000.0,
-                            actor_update_radius: 100000.0,
-                            shadow_quality: 20,
-                            shadow_draw_distance: 30000.0,
-                            shadow_blob_render_distance: 20000.0,
-                            overhead_render_distance: 10000.0,
+                            particle_update_distance: self.config.actor_update_radius,
+                            actor_update_radius: self.config.actor_update_radius,
+                            shadow_quality: 3,
+                            shadow_draw_distance: self.config.actor_update_radius,
+                            shadow_blob_render_distance: self.config.actor_update_radius,
+                            overhead_render_distance: self.config.actor_update_radius,
                         },
                     )),
                 ),

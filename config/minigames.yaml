@@ -3154,6 +3154,7 @@ categories:
               short_name: stage03
               minigame_type:
                 !AttackCruiser
+                actor_update_radius: 4000
                 camera:
                   default_distance: 1000
                   min_distance: 500
