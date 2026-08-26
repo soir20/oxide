@@ -1139,7 +1139,7 @@ impl AttackCruiserGame {
                                     vec![AttackCruiserComplexPhysicsGear {
                                         shift_up_speed: 0.0,
                                         shift_down_speed: 0.0,
-                                        base_acceleration: 20.0,
+                                        base_acceleration: 25.0,
                                         base_deceleration: 25.0,
                                         turbo_acceleration: 0.0,
                                         brake_deceleration: 0.0,
