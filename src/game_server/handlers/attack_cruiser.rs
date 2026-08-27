@@ -447,104 +447,104 @@ struct AttackCruiserPlanetConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserProjectile {
-    pub composite_effect_id: u32,
-    pub hit_composite_effect_id: u32,
+struct AttackCruiserProjectileConfig {
+    composite_effect_id: u32,
+    hit_composite_effect_id: u32,
     #[serde(default = "default_yaw_degrees")]
-    pub yaw_degrees: f32,
+    yaw_degrees: f32,
     #[serde(default = "default_wobble_degrees")]
-    pub wobble_degrees: f32,
+    wobble_degrees: f32,
     #[serde(default = "default_speed")]
-    pub speed: f32,
+    speed: f32,
     #[serde(default = "default_lifetime_millis")]
-    pub lifetime_millis: f32,
+    lifetime_millis: f32,
     #[serde(default = "default_count")]
-    pub count: u8,
+    count: u8,
     #[serde(default = "default_launch_offset")]
-    pub launch_offset: f32,
+    launch_offset: f32,
     #[serde(default = "default_launch_height")]
-    pub launch_height: f32,
-    pub length: f32,
-    pub damage: i16,
+    launch_height: f32,
+    length: f32,
+    damage: i16,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserPlayerPrimaryWeapon {
-    pub projectiles: Vec<Arc<AttackCruiserProjectile>>,
+struct AttackCruiserPlayerPrimaryWeaponConfig {
+    projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerWeaponConfig {
-    pub cooldown_millis: f32,
-    pub primary_tiers: Vec<AttackCruiserPlayerPrimaryWeapon>,
+    cooldown_millis: f32,
+    primary_tiers: Vec<AttackCruiserPlayerPrimaryWeaponConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAnimationConfig {
-    pub animation_type: AttackCruiserActorAnimationType,
-    pub animation_id: i32,
-    pub duration_seconds: f32,
+    animation_type: AttackCruiserActorAnimationType,
+    animation_id: i32,
+    duration_seconds: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipCinematicConfig {
-    pub cinematic_type: AttackCruiserActorCinematicType,
-    pub camera_animation_id: i32,
-    pub duration_seconds: f32,
+    cinematic_type: AttackCruiserActorCinematicType,
+    camera_animation_id: i32,
+    duration_seconds: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
-    pub model_id: u32,
-    pub asset_name: String,
-    pub max_roll_degrees: f32,
-    pub max_speed: f32,
-    pub acceleration: f32,
-    pub deceleration: f32,
-    pub max_angular_speed_radians: f32,
-    pub angular_acceleration: f32,
-    pub angular_deceleration: f32,
+    model_id: u32,
+    asset_name: String,
+    max_roll_degrees: f32,
+    max_speed: f32,
+    acceleration: f32,
+    deceleration: f32,
+    max_angular_speed_radians: f32,
+    angular_acceleration: f32,
+    angular_deceleration: f32,
     #[serde(default)]
-    pub stationary_turn: f32,
-    pub max_health: u16,
-    pub overhead_health_scale: f32,
-    pub thruster_effect_id: u32,
-    pub invulnerable_effect_id: u32,
-    pub animations: Vec<AttackCruiserShipAnimationConfig>,
-    pub cinematics: Vec<AttackCruiserShipCinematicConfig>,
+    stationary_turn: f32,
+    max_health: u16,
+    overhead_health_scale: f32,
+    thruster_effect_id: u32,
+    invulnerable_effect_id: u32,
+    animations: Vec<AttackCruiserShipAnimationConfig>,
+    cinematics: Vec<AttackCruiserShipCinematicConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
-    pub lives: u8,
-    pub damage_alarm_sound_id: u32,
-    pub damage_alarm_health_percent: f32,
-    pub damage_alarm_interval_millis: u32,
-    pub respawn_millis: u32,
-    pub post_respawn_invulnerability_millis: u32,
-    pub out_of_bounds_warp_millis: u32,
-    pub out_of_bounds_warp_delay_millis: u32,
-    pub spawn1: AttackCruiserSpawnLocation,
-    pub spawn2: AttackCruiserSpawnLocation,
-    pub ship: AttackCruiserShipConfig,
-    pub weapons: AttackCruiserPlayerWeaponConfig,
+    lives: u8,
+    damage_alarm_sound_id: u32,
+    damage_alarm_health_percent: f32,
+    damage_alarm_interval_millis: u32,
+    respawn_millis: u32,
+    post_respawn_invulnerability_millis: u32,
+    out_of_bounds_warp_millis: u32,
+    out_of_bounds_warp_delay_millis: u32,
+    spawn1: AttackCruiserSpawnLocation,
+    spawn2: AttackCruiserSpawnLocation,
+    ship: AttackCruiserShipConfig,
+    weapons: AttackCruiserPlayerWeaponConfig,
 }
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayfieldConfig {
-    pub center: Pos3,
-    pub radius_x: f32,
-    pub radius_z: f32,
-    pub warning_radius_ratio: f32,
-    pub warning_message_id: u32,
-    pub warning_millis: u32,
+    center: Pos3,
+    radius_x: f32,
+    radius_z: f32,
+    warning_radius_ratio: f32,
+    warning_message_id: u32,
+    warning_millis: u32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -634,7 +634,7 @@ struct AttackCruiserProjectileInstance {
     speed: Pos3,
     origin: Pos3,
     launch_time: Instant,
-    projectile: Arc<AttackCruiserProjectile>,
+    projectile: Arc<AttackCruiserProjectileConfig>,
 }
 
 const STEP_CACHE_STACK_LEN: usize = 5;
@@ -672,7 +672,7 @@ impl AttackCruiserProjectilePool {
         launched_by_actor_id: i32,
         actor_origin: Pos3,
         direction: Pos3,
-        projectile: &Arc<AttackCruiserProjectile>,
+        projectile: &Arc<AttackCruiserProjectileConfig>,
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
         self.expire();
 
@@ -755,7 +755,7 @@ impl AttackCruiserProjectilePool {
         actor: &AttackCruiserActor,
         now: Instant,
         delta: Duration,
-    ) -> Vec<(i32, Arc<AttackCruiserProjectile>)> {
+    ) -> Vec<(i32, Arc<AttackCruiserProjectileConfig>)> {
         let Some(ship_bvh) = &actor.bvh else {
             return Vec::new();
         };
@@ -2164,7 +2164,7 @@ impl AttackCruiserGame {
         }
     }
 
-    fn total_damage(projectiles: &[(i32, Arc<AttackCruiserProjectile>)]) -> i16 {
+    fn total_damage(projectiles: &[(i32, Arc<AttackCruiserProjectileConfig>)]) -> i16 {
         projectiles.iter().fold(0, |total_damage, (_, projectile)| {
             total_damage.saturating_add(projectile.damage)
         })
