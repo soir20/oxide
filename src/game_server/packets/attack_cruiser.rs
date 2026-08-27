@@ -415,6 +415,7 @@ pub struct AttackCruiserStartupCameraConfig {
 }
 
 #[derive(Copy, Clone, Debug, Default, Deserialize, SerializePacket, IntoPrimitive)]
+#[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserCinematicStyle {
     #[default]
@@ -456,6 +457,7 @@ pub struct AttackCruiserPlayerConfig {
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserEventType {
     Intro = 1,
@@ -469,6 +471,7 @@ pub struct AttackCruiserEventConfig {
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserActorAnimationType {
     Death1 = 2,
@@ -486,6 +489,7 @@ pub struct AttackCruiserActorAnimationConfig {
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserActorCinematicType {
     Death1 = 1,
@@ -504,7 +508,8 @@ pub struct AttackCruiserActorCinematicConfig {
     pub post_camera_ease_in_seconds: f32,
 }
 
-#[derive(SerializePacket)]
+#[derive(Clone, Debug, Deserialize, SerializePacket)]
+#[serde(deny_unknown_fields)]
 pub struct AttackCruiserActorDamageStateEffectConfig {
     pub effect_id: u32,
     pub offset: Pos3,

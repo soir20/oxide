@@ -474,7 +474,7 @@ struct AttackCruiserPlayerPrimaryWeaponConfig {
     projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerWeaponConfig {
     cooldown_millis: f32,
@@ -523,6 +523,25 @@ impl From<&AttackCruiserShipCinematicConfig> for AttackCruiserActorCinematicConf
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserShipDamageStateConfig {
+    min_health_percent: f32,
+    texture_alias: String,
+    #[serde(default)]
+    effects: Vec<AttackCruiserActorDamageStateEffectConfig>,
+}
+
+impl From<&AttackCruiserShipDamageStateConfig> for AttackCruiserActorDamageStateConfig {
+    fn from(value: &AttackCruiserShipDamageStateConfig) -> Self {
+        AttackCruiserActorDamageStateConfig {
+            min_health_percent: value.min_health_percent,
+            texture_alias: value.texture_alias.clone(),
+            effects: AttackCruiserVec("".to_string(), value.effects.clone()),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
     model_id: u32,
     asset_name: String,
@@ -539,8 +558,12 @@ struct AttackCruiserShipConfig {
     overhead_health_scale: f32,
     thruster_effect_id: u32,
     invulnerable_effect_id: u32,
+    #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
+    #[serde(default)]
     cinematics: Vec<AttackCruiserShipCinematicConfig>,
+    #[serde(default)]
+    damage_states: Vec<AttackCruiserShipDamageStateConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -557,6 +580,7 @@ struct AttackCruiserPlayerConfig {
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: AttackCruiserShipConfig,
+    #[serde(default)]
     weapons: AttackCruiserPlayerWeaponConfig,
 }
 
@@ -1310,120 +1334,13 @@ impl AttackCruiserGame {
                                     ),
                                     damage_states: AttackCruiserVec(
                                         "damage states".to_string(),
-                                        vec![
-                                            AttackCruiserActorDamageStateConfig {
-                                                min_health_percent: 81.0,
-                                                texture_alias: "damage0".to_string(),
-                                                effects: AttackCruiserVec::new(),
-                                            },
-                                            AttackCruiserActorDamageStateConfig {
-                                                min_health_percent: 61.0,
-                                                texture_alias: "damage1".to_string(),
-                                                effects: AttackCruiserVec(
-                                                    "effects".to_string(),
-                                                    vec![
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1345,
-                                                            offset: Pos3 {
-                                                                x: -5.14109,
-                                                                y: 2.59693,
-                                                                z: 50.5737,
-                                                            },
-                                                        },
-                                                    ],
-                                                ),
-                                            },
-                                            AttackCruiserActorDamageStateConfig {
-                                                min_health_percent: 41.0,
-                                                texture_alias: "damage2".to_string(),
-                                                effects: AttackCruiserVec(
-                                                    "effects".to_string(),
-                                                    vec![
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1574,
-                                                            offset: Pos3 {
-                                                                x: -5.14109,
-                                                                y: 2.59693,
-                                                                z: 50.5737,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1346,
-                                                            offset: Pos3 {
-                                                                x: -3.251,
-                                                                y: 12.041,
-                                                                z: -11.255,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1346,
-                                                            offset: Pos3 {
-                                                                x: 20.4703,
-                                                                y: 1.89752,
-                                                                z: -19.0574,
-                                                            },
-                                                        },
-                                                    ],
-                                                ),
-                                            },
-                                            AttackCruiserActorDamageStateConfig {
-                                                min_health_percent: 0.0,
-                                                texture_alias: "damage3".to_string(),
-                                                effects: AttackCruiserVec(
-                                                    "effects".to_string(),
-                                                    vec![
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1574,
-                                                            offset: Pos3 {
-                                                                x: -5.14109,
-                                                                y: 2.59693,
-                                                                z: 50.5737,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1347,
-                                                            offset: Pos3 {
-                                                                x: 10.4945,
-                                                                y: 1.45443,
-                                                                z: 20.5566,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1347,
-                                                            offset: Pos3 {
-                                                                x: -11.0462,
-                                                                y: 1.16923,
-                                                                z: 11.1481,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1574,
-                                                            offset: Pos3 {
-                                                                x: -3.251,
-                                                                y: 12.041,
-                                                                z: -11.255,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1574,
-                                                            offset: Pos3 {
-                                                                x: 20.4703,
-                                                                y: 1.89752,
-                                                                z: -19.0574,
-                                                            },
-                                                        },
-                                                        AttackCruiserActorDamageStateEffectConfig {
-                                                            effect_id: 1347,
-                                                            offset: Pos3 {
-                                                                x: 1.69803,
-                                                                y: 4.46827,
-                                                                z: -45.8687,
-                                                            },
-                                                        },
-                                                    ],
-                                                ),
-                                            },
-                                        ],
+                                        self.config
+                                            .player
+                                            .ship
+                                            .damage_states
+                                            .iter()
+                                            .map(|damage_state| damage_state.into())
+                                            .collect(),
                                     ),
                                 },
                                 thruster_effect_id: self.config.player.ship.thruster_effect_id,

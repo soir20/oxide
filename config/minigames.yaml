@@ -3271,6 +3271,69 @@ categories:
                       - cinematic_type: Global
                         camera_animation_id: 10019
                         duration_seconds: 6.0
+                    damage_states:
+                      - min_health_percent: 81.0
+                        texture_alias: "damage0"
+                        effects: []
+                      - min_health_percent: 61.0
+                        texture_alias: "damage1"
+                        effects:
+                          - effect_id: 1345
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                      - min_health_percent: 41.0
+                        texture_alias: "damage2"
+                        effects:
+                          - effect_id: 1574
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                          - effect_id: 1346
+                            offset:
+                              x: -3.251
+                              y: 12.041
+                              z: -11.255
+                          - effect_id: 1346
+                            offset:
+                              x: 20.4703
+                              y: 1.89752
+                              z: -19.0574
+                      - min_health_percent: 0.0
+                        texture_alias: "damage3"
+                        effects:
+                          - effect_id: 1574
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                          - effect_id: 1347
+                            offset:
+                              x: 10.4945
+                              y: 1.45443
+                              z: 20.5566
+                          - effect_id: 1347
+                            offset:
+                              x: -11.0462
+                              y: 1.16923
+                              z: 11.1481
+                          - effect_id: 1574
+                            offset:
+                              x: -3.251
+                              y: 12.041
+                              z: -11.255
+                          - effect_id: 1574
+                            offset:
+                              x: 20.4703
+                              y: 1.89752
+                              z: -19.0574
+                          - effect_id: 1347
+                            offset:
+                              x: 1.69803
+                              y: 4.46827
+                              z: -45.8687
                   weapons:
                     cooldown_millis: 250
                     primary_tiers:
