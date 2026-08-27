@@ -1045,7 +1045,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 global_config: AttackCruiserStartupConfig::new(
-                    "global config value".to_string(),
+                    "global_config".to_string(),
                     AttackCruiserStartupConfigDefinition::Global(Box::new(
                         AttackCruiserGlobalConfig {
                             physics_speed: 1.0,
@@ -1122,7 +1122,7 @@ impl AttackCruiserGame {
                     )),
                 ),
                 game_config: AttackCruiserStartupConfig::new(
-                    "game config value".to_string(),
+                    "".to_string(),
                     AttackCruiserStartupConfigDefinition::Game(Box::new(AttackCruiserGameConfig {
                         id: self.group.stage_guid,
                         encounter_id: 0,
@@ -1130,7 +1130,7 @@ impl AttackCruiserGame {
                         challenge_mode: (&self.config.challenge).into(),
                         global_config: AttackCruiserStartupConfigReference {
                             class: AttackCruiserStartupConfigClass::Global,
-                            name: "global config value".to_string(),
+                            name: "global_config".to_string(),
                         },
                         end_condition_config: AttackCruiserStartupConfigReference {
                             class: AttackCruiserStartupConfigClass::Condition,
@@ -1164,11 +1164,11 @@ impl AttackCruiserGame {
                         },
                         players: AttackCruiserVec::new(),
                         events: AttackCruiserVec(
-                            "events".to_string(),
+                            "".to_string(),
                             vec![AttackCruiserEventConfig {
                                 event_type: AttackCruiserEventType::Intro,
                                 cinematics: AttackCruiserVec(
-                                    "event cinematics".to_string(),
+                                    "".to_string(),
                                     self.config
                                         .intro
                                         .cinematics
@@ -1177,7 +1177,7 @@ impl AttackCruiserGame {
                                         .collect(),
                                 ),
                                 event_actors: AttackCruiserVec(
-                                    "event actors".to_string(),
+                                    "".to_string(),
                                     self.config
                                         .intro
                                         .actors
@@ -1188,7 +1188,7 @@ impl AttackCruiserGame {
                             }],
                         ),
                         actor_pools: AttackCruiserVec(
-                            "actor pools".to_string(),
+                            "".to_string(),
                             vec![AttackCruiserActorPoolConfig {
                                 actor_config: AttackCruiserStartupConfigReference {
                                     class: AttackCruiserStartupConfigClass::Ship,
@@ -1201,7 +1201,7 @@ impl AttackCruiserGame {
                     })),
                 ),
                 camera_config: AttackCruiserStartupConfig::new(
-                    "main camera config value".to_string(),
+                    "".to_string(),
                     AttackCruiserStartupConfigDefinition::Camera(Box::new(
                         AttackCruiserStartupCameraConfig {
                             default_distance: self.config.camera.default_distance,
@@ -1251,7 +1251,7 @@ impl AttackCruiserGame {
                                 turbo_speed: 0.0,
                                 stationary_turn: self.config.player.ship.stationary_turn,
                                 gears: AttackCruiserVec(
-                                    "physics config gears".to_string(),
+                                    "".to_string(),
                                     vec![AttackCruiserComplexPhysicsGear {
                                         shift_up_speed: 0.0,
                                         shift_down_speed: 0.0,
@@ -1313,7 +1313,7 @@ impl AttackCruiserGame {
                                         .ship
                                         .overhead_health_scale,
                                     animations: AttackCruiserVec(
-                                        "animations".to_string(),
+                                        "".to_string(),
                                         self.config
                                             .player
                                             .ship
@@ -1323,7 +1323,7 @@ impl AttackCruiserGame {
                                             .collect(),
                                     ),
                                     cinematics: AttackCruiserVec(
-                                        "cinematics".to_string(),
+                                        "".to_string(),
                                         self.config
                                             .player
                                             .ship
@@ -1333,7 +1333,7 @@ impl AttackCruiserGame {
                                             .collect(),
                                     ),
                                     damage_states: AttackCruiserVec(
-                                        "damage states".to_string(),
+                                        "".to_string(),
                                         self.config
                                             .player
                                             .ship
