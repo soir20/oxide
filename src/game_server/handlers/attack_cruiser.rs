@@ -489,12 +489,36 @@ struct AttackCruiserShipAnimationConfig {
     duration_seconds: f32,
 }
 
+impl From<&AttackCruiserShipAnimationConfig> for AttackCruiserActorAnimationConfig {
+    fn from(value: &AttackCruiserShipAnimationConfig) -> Self {
+        AttackCruiserActorAnimationConfig {
+            animation_type: value.animation_type,
+            animation_id: value.animation_id,
+            loops: AttackCruiserBool(false),
+            duration_seconds: value.duration_seconds,
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipCinematicConfig {
     cinematic_type: AttackCruiserActorCinematicType,
     camera_animation_id: i32,
     duration_seconds: f32,
+}
+
+impl From<&AttackCruiserShipCinematicConfig> for AttackCruiserActorCinematicConfig {
+    fn from(value: &AttackCruiserShipCinematicConfig) -> Self {
+        AttackCruiserActorCinematicConfig {
+            cinematic_type: value.cinematic_type,
+            duration_seconds: value.duration_seconds,
+            camera_animation_id: value.camera_animation_id,
+            pre_wipe_style: AttackCruiserCinematicStyle::None,
+            post_wipe_style: AttackCruiserCinematicStyle::None,
+            post_camera_ease_in_seconds: 0.0,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1271,12 +1295,7 @@ impl AttackCruiserGame {
                                             .ship
                                             .animations
                                             .iter()
-                                            .map(|animation| AttackCruiserActorAnimationConfig {
-                                                animation_type: animation.animation_type,
-                                                animation_id: animation.animation_id,
-                                                loops: AttackCruiserBool(false),
-                                                duration_seconds: animation.duration_seconds,
-                                            })
+                                            .map(|animation| animation.into())
                                             .collect(),
                                     ),
                                     cinematics: AttackCruiserVec(
@@ -1286,14 +1305,7 @@ impl AttackCruiserGame {
                                             .ship
                                             .cinematics
                                             .iter()
-                                            .map(|cinematic| AttackCruiserActorCinematicConfig {
-                                                cinematic_type: cinematic.cinematic_type,
-                                                duration_seconds: cinematic.duration_seconds,
-                                                camera_animation_id: cinematic.camera_animation_id,
-                                                pre_wipe_style: AttackCruiserCinematicStyle::None,
-                                                post_wipe_style: AttackCruiserCinematicStyle::None,
-                                                post_camera_ease_in_seconds: 0.0,
-                                            })
+                                            .map(|cinematic| cinematic.into())
                                             .collect(),
                                     ),
                                     damage_states: AttackCruiserVec(
