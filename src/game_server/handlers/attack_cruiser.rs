@@ -2,7 +2,7 @@ use std::{
     cmp::Reverse,
     collections::{BTreeMap, HashMap},
     io::{Cursor, Read},
-    sync::Arc,
+    sync::{Arc, LazyLock},
     time::{Duration, Instant},
 };
 
@@ -540,7 +540,7 @@ impl From<&AttackCruiserShipDamageStateConfig> for AttackCruiserActorDamageState
     }
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
     model_id: u32,
@@ -566,6 +566,9 @@ struct AttackCruiserShipConfig {
     damage_states: Vec<AttackCruiserShipDamageStateConfig>,
 }
 
+static EMPTY_SHIP_CONFIG: LazyLock<AttackCruiserShipConfig> =
+    LazyLock::new(AttackCruiserShipConfig::default);
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
@@ -579,7 +582,7 @@ struct AttackCruiserPlayerConfig {
     out_of_bounds_warp_delay_millis: u32,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
-    ship: AttackCruiserShipConfig,
+    ship: String,
     #[serde(default)]
     weapons: AttackCruiserPlayerWeaponConfig,
 }
@@ -607,7 +610,17 @@ pub struct AttackCruiserConfig {
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
+    ships: HashMap<String, AttackCruiserShipConfig>,
     sound_id: i32,
+}
+
+impl AttackCruiserConfig {
+    fn ship(&self, ship_name: &String) -> &AttackCruiserShipConfig {
+        self.ships.get(ship_name).unwrap_or_else(|| {
+            info!("Attack Cruiser has no ship {ship_name}. Defaulting to empty ship.");
+            &EMPTY_SHIP_CONFIG
+        })
+    }
 }
 
 pub fn process_attack_cruiser_packet(
@@ -991,11 +1004,13 @@ impl AttackCruiserGame {
             players.push(player2);
         }
 
-        let player_bvh = bvhs.get(&config.player.ship.asset_name).cloned();
+        let player_ship = config.ship(&config.player.ship);
+
+        let player_bvh = bvhs.get(&player_ship.asset_name).cloned();
         if player_bvh.is_none() {
             info!(
                 "Missing BVH for Attack Cruiser player ship {}. Defaulting to empty BVH.",
-                config.player.ship.asset_name
+                player_ship.asset_name
             );
         }
 
@@ -1008,20 +1023,20 @@ impl AttackCruiserGame {
                     config.player.lives,
                     config.player.spawn1.pos,
                     config.player.spawn1.yaw_degrees.to_radians(),
-                    config.player.ship.max_health,
+                    player_ship.max_health,
                     false,
                     player_bvh.clone(),
-                    config.player.ship.max_roll_degrees.to_radians(),
+                    player_ship.max_roll_degrees.to_radians(),
                 ),
                 AttackCruiserPlayer::new(
                     1,
                     config.player.lives,
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw_degrees.to_radians(),
-                    config.player.ship.max_health,
+                    player_ship.max_health,
                     player2.is_none(),
                     player_bvh,
-                    config.player.ship.max_roll_degrees.to_radians(),
+                    player_ship.max_roll_degrees.to_radians(),
                 ),
             ],
             state: AttackCruiserGameState::WaitingForPlayersReady,
@@ -1035,6 +1050,7 @@ impl AttackCruiserGame {
 
     pub fn start(&self, sender: u32) -> Result<Vec<Vec<u8>>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
+        let player_ship = self.config.ship(&self.config.player.ship);
 
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -1244,38 +1260,26 @@ impl AttackCruiserGame {
                                     width: 1.0,
                                     height: 1.0,
                                     center_of_mass_z: 0.0,
-                                    max_speed: self.config.player.ship.max_speed,
+                                    max_speed: player_ship.max_speed,
                                     vertical_speed: 0.0,
                                 },
-                                reverse_speed: -self.config.player.ship.max_speed,
+                                reverse_speed: -player_ship.max_speed,
                                 turbo_speed: 0.0,
-                                stationary_turn: self.config.player.ship.stationary_turn,
+                                stationary_turn: player_ship.stationary_turn,
                                 gears: AttackCruiserVec(
                                     "".to_string(),
                                     vec![AttackCruiserComplexPhysicsGear {
                                         shift_up_speed: 0.0,
                                         shift_down_speed: 0.0,
-                                        base_acceleration: self.config.player.ship.acceleration,
-                                        base_deceleration: self.config.player.ship.deceleration,
+                                        base_acceleration: player_ship.acceleration,
+                                        base_deceleration: player_ship.deceleration,
                                         turbo_acceleration: 0.0,
                                         brake_deceleration: 0.0,
                                         sideways_deceleration: 0.0,
-                                        angular_acceleration: self
-                                            .config
-                                            .player
-                                            .ship
-                                            .angular_acceleration,
+                                        angular_acceleration: player_ship.angular_acceleration,
                                         turbo_angular_acceleration: 0.0,
-                                        angular_deceleration: self
-                                            .config
-                                            .player
-                                            .ship
-                                            .angular_deceleration,
-                                        max_angular_speed: self
-                                            .config
-                                            .player
-                                            .ship
-                                            .max_angular_speed_radians,
+                                        angular_deceleration: player_ship.angular_deceleration,
+                                        max_angular_speed: player_ship.max_angular_speed_radians,
                                         turbo_max_angular_speed: 0.0,
                                     }],
                                 ),
@@ -1287,36 +1291,27 @@ impl AttackCruiserGame {
                         AttackCruiserStartupConfigDefinition::Ship(Box::new(
                             AttackCruiserShipStartupConfig {
                                 actor_config: AttackCruiserActorConfig {
-                                    model_id: self.config.player.ship.model_id,
+                                    model_id: player_ship.model_id,
                                     effect_id: 0,
                                     death_effect_id: 0,
                                     despawn_effect_id: 0,
                                     explode_offset: 0.0,
-                                    collision_asset_name: format!(
-                                        "{}.cdt",
-                                        self.config.player.ship.asset_name
-                                    ),
+                                    collision_asset_name: format!("{}.cdt", player_ship.asset_name),
                                     physics_config: AttackCruiserStartupConfigReference {
                                         class: AttackCruiserStartupConfigClass::ComplexPhysics,
                                         name: "physics config value".to_string(),
                                     },
-                                    max_health: self.config.player.ship.max_health.into(),
+                                    max_health: player_ship.max_health.into(),
                                     explosive_collision: AttackCruiserBool(false),
                                     collision_damage: 0,
                                     score: 0,
                                     bonus_score: 0,
                                     bonus_max_age_seconds: 0.0,
                                     overhead_offset_y: 0.0,
-                                    overhead_health_scale: self
-                                        .config
-                                        .player
-                                        .ship
-                                        .overhead_health_scale,
+                                    overhead_health_scale: player_ship.overhead_health_scale,
                                     animations: AttackCruiserVec(
                                         "".to_string(),
-                                        self.config
-                                            .player
-                                            .ship
+                                        player_ship
                                             .animations
                                             .iter()
                                             .map(|animation| animation.into())
@@ -1324,9 +1319,7 @@ impl AttackCruiserGame {
                                     ),
                                     cinematics: AttackCruiserVec(
                                         "".to_string(),
-                                        self.config
-                                            .player
-                                            .ship
+                                        player_ship
                                             .cinematics
                                             .iter()
                                             .map(|cinematic| cinematic.into())
@@ -1334,24 +1327,18 @@ impl AttackCruiserGame {
                                     ),
                                     damage_states: AttackCruiserVec(
                                         "".to_string(),
-                                        self.config
-                                            .player
-                                            .ship
+                                        player_ship
                                             .damage_states
                                             .iter()
                                             .map(|damage_state| damage_state.into())
                                             .collect(),
                                     ),
                                 },
-                                thruster_effect_id: self.config.player.ship.thruster_effect_id,
-                                invulnerable_effect_id: self
-                                    .config
-                                    .player
-                                    .ship
-                                    .invulnerable_effect_id,
+                                thruster_effect_id: player_ship.thruster_effect_id,
+                                invulnerable_effect_id: player_ship.invulnerable_effect_id,
                                 stun_effect_id: 0,
                                 weapons: AttackCruiserVec::new(),
-                                roll_max_angle: self.config.player.ship.max_roll_degrees,
+                                roll_max_angle: player_ship.max_roll_degrees,
                                 pitch_max_angle: 0.0,
                                 continuous_fire_seconds: 0.05,
                                 fire_cooldown_seconds: self.config.player.weapons.cooldown_millis
@@ -1383,6 +1370,8 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        let player_max_health = self.config.ship(&self.config.player.ship).max_health;
+
         let mut broadcasts = Vec::new();
         let mut hits = Vec::new();
 
@@ -1439,7 +1428,7 @@ impl AttackCruiserGame {
             let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
                 player_state.respawn(
-                    self.config.player.ship.max_health,
+                    player_max_health,
                     Duration::from_millis(
                         self.config
                             .player
@@ -1506,9 +1495,8 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            let health_percent = player_state.actor.health as f32
-                / self.config.player.ship.max_health as f32
-                * 100.0;
+            let health_percent =
+                player_state.actor.health as f32 / player_max_health as f32 * 100.0;
             let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
             let is_damage_alarm_timer_expired = player_state
                 .damage_alarm_sound_timer

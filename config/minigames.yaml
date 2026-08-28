@@ -3207,7 +3207,42 @@ categories:
                       y: 1000.0
                       z: -1999.0
                     yaw_degrees: 0.0
-                  ship:
+                  ship: venator
+                  weapons:
+                    cooldown_millis: 250
+                    primary_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            damage: 1
+                            length: 25
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            damage: 1
+                            length: 75
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw_degrees: 5
+                            damage: 1
+                            length: 75
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw_degrees: -5
+                            damage: 1
+                            length: 75
+                playfield:
+                  center:
+                    x: 3.9
+                    y: 1000.0
+                    z: -1999.0
+                  radius_x: 1100.0
+                  radius_z: 850.0
+                  warning_radius_ratio: 0.9
+                  warning_message_id: 13628
+                  warning_millis: 5000
+                ships:
+                  venator:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll_degrees: 15
@@ -3334,39 +3369,6 @@ categories:
                               x: 1.69803
                               y: 4.46827
                               z: -45.8687
-                  weapons:
-                    cooldown_millis: 250
-                    primary_tiers:
-                      - projectiles:
-                          - composite_effect_id: 1558
-                            hit_composite_effect_id: 1315
-                            count: 2
-                            damage: 1
-                            length: 25
-                          - composite_effect_id: 1763
-                            hit_composite_effect_id: 1315
-                            damage: 1
-                            length: 75
-                          - composite_effect_id: 1762
-                            hit_composite_effect_id: 1315
-                            yaw_degrees: 5
-                            damage: 1
-                            length: 75
-                          - composite_effect_id: 1762
-                            hit_composite_effect_id: 1315
-                            yaw_degrees: -5
-                            damage: 1
-                            length: 75
-                playfield:
-                  center:
-                    x: 3.9
-                    y: 1000.0
-                    z: -1999.0
-                  radius_x: 1100.0
-                  radius_z: 850.0
-                  warning_radius_ratio: 0.9
-                  warning_message_id: 13628
-                  warning_millis: 5000
                 sound_id: 2413
               zone_template_guid: 250
               score_to_credits_expression: x / 129
