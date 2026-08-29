@@ -3243,6 +3243,7 @@ categories:
                   warning_millis: 5000
                 ships:
                   venator:
+                    max_alive: 2
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll_degrees: 15
