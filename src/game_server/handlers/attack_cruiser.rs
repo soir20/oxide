@@ -568,8 +568,8 @@ struct AttackCruiserShipConfig {
     damage_states: Vec<AttackCruiserShipDamageStateConfig>,
 }
 
-static EMPTY_SHIP_CONFIG: LazyLock<AttackCruiserShipConfig> =
-    LazyLock::new(AttackCruiserShipConfig::default);
+static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
+    LazyLock::new(|| Arc::new(AttackCruiserShipConfig::default()));
 
 fn ship_startup_config_name(ship_name: &String) -> String {
     format!("ship_{ship_name}")
@@ -620,16 +620,19 @@ pub struct AttackCruiserConfig {
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
-    ships: HashMap<String, AttackCruiserShipConfig>,
+    ships: HashMap<String, Arc<AttackCruiserShipConfig>>,
     sound_id: i32,
 }
 
 impl AttackCruiserConfig {
-    fn ship(&self, ship_name: &String) -> &AttackCruiserShipConfig {
-        self.ships.get(ship_name).unwrap_or_else(|| {
-            info!("Attack Cruiser has no ship {ship_name}. Defaulting to empty ship.");
-            &EMPTY_SHIP_CONFIG
-        })
+    fn ship(&self, ship_name: &String) -> Arc<AttackCruiserShipConfig> {
+        self.ships
+            .get(ship_name)
+            .unwrap_or_else(|| {
+                info!("Attack Cruiser has no ship {ship_name}. Defaulting to empty ship.");
+                &EMPTY_SHIP_CONFIG
+            })
+            .clone()
     }
 }
 
@@ -993,6 +996,7 @@ pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
     player1: u32,
     player2: Option<u32>,
+    player_ship: Arc<AttackCruiserShipConfig>,
     player_states: [AttackCruiserPlayer; 2],
     state: AttackCruiserGameState,
     active_players: Vec<u32>,
@@ -1049,6 +1053,7 @@ impl AttackCruiserGame {
                     player_ship.max_roll_degrees.to_radians(),
                 ),
             ],
+            player_ship,
             state: AttackCruiserGameState::WaitingForPlayersReady,
             active_players: players.clone(),
             players,
@@ -1395,7 +1400,7 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
-        let player_max_health = self.config.ship(&self.config.player.ship).max_health;
+        let player_max_health = self.player_ship.max_health;
 
         let mut broadcasts = Vec::new();
         let mut hits = Vec::new();
