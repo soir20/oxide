@@ -3159,7 +3159,7 @@ categories:
                   default_distance: 1000
                   min_distance: 500
                   max_distance: 1000
-                  pitch_degrees: 30
+                  pitch: !Degrees 30
                   target_tracking_high_level_quotient: 0.1
                   zoom_step_quantization: 0.1
                   zoom_step_high_level_quotient: 0.1
@@ -3176,8 +3176,8 @@ categories:
                   cinematics:
                     - duration_seconds: 20.0
                       camera_animation_id: 10317
-                      camera_heading_degrees: 270.0
-                      camera_fov_degrees: 50.0
+                      camera_heading: !Degrees 270.0
+                      camera_fov: !Degrees 50.0
                       flip_camera_z: true
                 planet:
                   model_id: 583
@@ -3185,7 +3185,7 @@ categories:
                     x: 0.0
                     y: 1363.94
                     z: 28539.1
-                  angular_speed_radians: -0.008
+                  angular_speed: !Radians -0.008
                 player:
                   lives: 3
                   damage_alarm_sound_id: 2426
@@ -3200,13 +3200,13 @@ categories:
                       x: 3.9
                       y: 1000.0
                       z: -1999.0
-                    yaw_degrees: 0.0
+                    yaw: !Degrees 0.0
                   spawn2:
                     pos:
                       x: 200.9
                       y: 1000.0
                       z: -1999.0
-                    yaw_degrees: 0.0
+                    yaw: !Degrees 0.0
                   ship: venator
                   weapons:
                     cooldown_millis: 250
@@ -3223,12 +3223,12 @@ categories:
                             length: 75
                           - composite_effect_id: 1762
                             hit_composite_effect_id: 1315
-                            yaw_degrees: 5
+                            yaw: !Degrees 5
                             damage: 1
                             length: 75
                           - composite_effect_id: 1762
                             hit_composite_effect_id: 1315
-                            yaw_degrees: -5
+                            yaw: !Degrees -5
                             damage: 1
                             length: 75
                 playfield:
@@ -3246,13 +3246,13 @@ categories:
                     max_alive: 2
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll_degrees: 15
+                    max_roll: !Degrees 15
                     max_speed: 100.0
                     acceleration: 25.0
                     deceleration: 25.0
-                    max_angular_speed_radians: 2.0
-                    angular_acceleration: 2.0
-                    angular_deceleration: 2.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 120
+                    angular_deceleration: !Degrees 120
                     max_health: 100
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707

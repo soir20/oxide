@@ -16,6 +16,7 @@ use serde::Deserialize;
 use smallvec::SmallVec;
 
 use crate::{
+    config::Angle,
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
@@ -282,19 +283,12 @@ enum AttackCruiserGameState {
     GameOver,
 }
 
-#[derive(Clone, Debug, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct AttackCruiserSpawnLocation {
-    pos: Pos3,
-    yaw_degrees: f32,
+const fn default_yaw() -> Angle {
+    Angle::Degrees(0.0)
 }
 
-const fn default_yaw_degrees() -> f32 {
-    0.0
-}
-
-const fn default_wobble_degrees() -> f32 {
-    3.0
+const fn default_wobble() -> Angle {
+    Angle::Degrees(3.0)
 }
 
 const fn default_speed() -> f32 {
@@ -331,7 +325,7 @@ struct AttackCruiserCameraConfig {
     default_distance: f32,
     min_distance: f32,
     max_distance: f32,
-    pitch_degrees: f32,
+    pitch: Angle,
     #[serde(default)]
     offset_z: f32,
     target_tracking_high_level_quotient: f32,
@@ -405,8 +399,8 @@ impl From<&AttackCruiserIntroActorConfig> for AttackCruiserEventActorConfig {
 struct AttackCruiserIntroCinematicConfig {
     duration_seconds: f32,
     camera_animation_id: i32,
-    camera_heading_degrees: f32,
-    camera_fov_degrees: f32,
+    camera_heading: Angle,
+    camera_fov: Angle,
     #[serde(default)]
     flip_camera_z: bool,
     #[serde(default = "default_wipe_style")]
@@ -420,8 +414,8 @@ impl From<&AttackCruiserIntroCinematicConfig> for AttackCruiserEventCinematicCon
         AttackCruiserEventCinematicConfig {
             duration_seconds: value.duration_seconds,
             camera_animation_id: value.camera_animation_id,
-            camera_heading_degrees: value.camera_heading_degrees,
-            camera_fov_degrees: value.camera_fov_degrees,
+            camera_heading_degrees: value.camera_heading.to_degrees(),
+            camera_fov_degrees: value.camera_fov.to_degrees(),
             flip_camera_z: AttackCruiserBool(value.flip_camera_z),
             pre_wipe_style: value.pre_wipe_style,
             post_wipe_style: value.post_wipe_style,
@@ -443,7 +437,7 @@ struct AttackCruiserIntroConfig {
 struct AttackCruiserPlanetConfig {
     model_id: u32,
     center: Pos3,
-    angular_speed_radians: f32,
+    angular_speed: Angle,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -451,10 +445,10 @@ struct AttackCruiserPlanetConfig {
 struct AttackCruiserProjectileConfig {
     composite_effect_id: u32,
     hit_composite_effect_id: u32,
-    #[serde(default = "default_yaw_degrees")]
-    yaw_degrees: f32,
-    #[serde(default = "default_wobble_degrees")]
-    wobble_degrees: f32,
+    #[serde(default = "default_yaw")]
+    yaw: Angle,
+    #[serde(default = "default_wobble")]
+    wobble: Angle,
     #[serde(default = "default_speed")]
     speed: f32,
     #[serde(default = "default_lifetime_millis")]
@@ -547,13 +541,13 @@ struct AttackCruiserShipConfig {
     max_alive: u16,
     model_id: u32,
     asset_name: String,
-    max_roll_degrees: f32,
+    max_roll: Angle,
     max_speed: f32,
     acceleration: f32,
     deceleration: f32,
-    max_angular_speed_radians: f32,
-    angular_acceleration: f32,
-    angular_deceleration: f32,
+    max_angular_speed: Angle,
+    angular_acceleration: Angle,
+    angular_deceleration: Angle,
     #[serde(default)]
     stationary_turn: f32,
     max_health: u16,
@@ -577,6 +571,13 @@ fn ship_startup_config_name(ship_name: &String) -> String {
 
 fn ship_physics_startup_config_name(ship_name: &String) -> String {
     format!("ship_{ship_name}_physics")
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserSpawnLocation {
+    pos: Pos3,
+    yaw: Angle,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -756,10 +757,9 @@ impl AttackCruiserProjectilePool {
         for _ in 0..projectile.count {
             let projectile_id = self.next_id()?;
 
-            let wobble = rng
-                .gen_range(-projectile.wobble_degrees..=projectile.wobble_degrees)
-                .to_radians();
-            let relative_yaw = projectile.yaw_degrees.to_radians() + wobble;
+            let wobble =
+                rng.gen_range(-projectile.wobble.to_radians()..=projectile.wobble.to_radians());
+            let relative_yaw = projectile.yaw.to_radians() + wobble;
 
             let launch_offset = direction
                 + direction
@@ -836,7 +836,7 @@ impl AttackCruiserProjectilePool {
 
         let delta_secs = delta.as_secs_f32();
         let ship_pos = Vec3::from(actor.pos);
-        let ship_roll = actor.ship.max_roll_degrees.to_radians() * actor.turn_multiplier;
+        let ship_roll = actor.ship.max_roll.to_radians() * actor.turn_multiplier;
         let ship_velocity = actor.speed * actor.forward_multiplier;
         let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
 
@@ -1042,7 +1042,7 @@ impl AttackCruiserGame {
                     player_ship.clone(),
                     config.player.lives,
                     config.player.spawn1.pos,
-                    config.player.spawn1.yaw_degrees.to_radians(),
+                    config.player.spawn1.yaw.to_radians(),
                     max_health,
                     false,
                     player_bvh.clone(),
@@ -1052,7 +1052,7 @@ impl AttackCruiserGame {
                     player_ship,
                     config.player.lives,
                     config.player.spawn2.pos,
-                    config.player.spawn2.yaw_degrees.to_radians(),
+                    config.player.spawn2.yaw.to_radians(),
                     max_health,
                     player2.is_none(),
                     player_bvh,
@@ -1194,7 +1194,7 @@ impl AttackCruiserGame {
                         planet: AttackCruiserPlanetStartupConfig {
                             model_id: self.config.planet.model_id,
                             pos: self.config.planet.center,
-                            angular_speed: self.config.planet.angular_speed_radians,
+                            angular_speed: self.config.planet.angular_speed.to_radians(),
                         },
                         players: AttackCruiserVec::new(),
                         events: AttackCruiserVec(
@@ -1245,9 +1245,9 @@ impl AttackCruiserGame {
                             default_distance: self.config.camera.default_distance,
                             min_distance: self.config.camera.min_distance,
                             max_distance: self.config.camera.max_distance,
-                            pitch: self.config.camera.pitch_degrees,
-                            min_pitch: self.config.camera.pitch_degrees,
-                            max_pitch: self.config.camera.pitch_degrees,
+                            pitch_degrees: self.config.camera.pitch.to_degrees(),
+                            min_pitch_degrees: self.config.camera.pitch.to_degrees(),
+                            max_pitch_degrees: self.config.camera.pitch.to_degrees(),
                             offset_z: self.config.camera.offset_z,
                             target_tracking_high_level_quotient: self
                                 .config
@@ -1302,10 +1302,14 @@ impl AttackCruiserGame {
                                             turbo_acceleration: 0.0,
                                             brake_deceleration: 0.0,
                                             sideways_deceleration: 0.0,
-                                            angular_acceleration: ship.angular_acceleration,
+                                            angular_acceleration: ship
+                                                .angular_acceleration
+                                                .to_radians(),
                                             turbo_angular_acceleration: 0.0,
-                                            angular_deceleration: ship.angular_deceleration,
-                                            max_angular_speed: ship.max_angular_speed_radians,
+                                            angular_deceleration: ship
+                                                .angular_deceleration
+                                                .to_radians(),
+                                            max_angular_speed: ship.max_angular_speed.to_radians(),
                                             turbo_max_angular_speed: 0.0,
                                         }],
                                     ),
@@ -1366,7 +1370,7 @@ impl AttackCruiserGame {
                                         invulnerable_effect_id: ship.invulnerable_effect_id,
                                         stun_effect_id: 0,
                                         weapons: AttackCruiserVec::new(),
-                                        roll_max_angle: ship.max_roll_degrees,
+                                        roll_max_angle: ship.max_roll.to_degrees(),
                                         pitch_max_angle: 0.0,
                                         continuous_fire_seconds: 0.05,
                                         fire_cooldown_seconds: self
