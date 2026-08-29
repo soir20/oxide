@@ -113,6 +113,7 @@ fn show_hud_message(
 #[derive(Clone, Debug)]
 struct AttackCruiserActor {
     pub id: i32,
+    pub ship: Arc<AttackCruiserShipConfig>,
     pub pos: Pos3,
     pub yaw: f32,
     pub speed: Pos3,
@@ -121,7 +122,6 @@ struct AttackCruiserActor {
     pub turn_multiplier: f32,
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
-    pub max_roll: f32,
 }
 
 impl AttackCruiserActor {
@@ -172,18 +172,19 @@ struct AttackCruiserPlayer {
 impl AttackCruiserPlayer {
     pub fn new(
         player_index: u8,
+        ship: Arc<AttackCruiserShipConfig>,
         lives: u8,
         pos: Pos3,
         yaw: f32,
         health: u16,
         ready: bool,
         bvh: Option<Arc<Bvh>>,
-        max_roll: f32,
     ) -> Self {
         AttackCruiserPlayer {
             ready,
             actor: AttackCruiserActor {
                 id: player_actor_id(player_index, lives),
+                ship,
                 pos,
                 yaw,
                 speed: Pos3::default(),
@@ -192,7 +193,6 @@ impl AttackCruiserPlayer {
                 turn_multiplier: 0.0,
                 health,
                 bvh,
-                max_roll,
             },
             score: 0,
             score_multiplier_tier_progress: 0,
@@ -836,7 +836,7 @@ impl AttackCruiserProjectilePool {
 
         let delta_secs = delta.as_secs_f32();
         let ship_pos = Vec3::from(actor.pos);
-        let ship_roll = actor.max_roll * actor.turn_multiplier;
+        let ship_roll = actor.ship.max_roll_degrees.to_radians() * actor.turn_multiplier;
         let ship_velocity = actor.speed * actor.forward_multiplier;
         let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
 
@@ -991,12 +991,15 @@ fn player_actor_id(player_index: u8, lives: u8) -> i32 {
     (player_index * 2 + 1 + lives.is_multiple_of(2) as u8).into()
 }
 
+struct AttackCruiserNpcBrain {
+    actors: Vec<AttackCruiserActor>,
+}
+
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
     player1: u32,
     player2: Option<u32>,
-    player_ship: Arc<AttackCruiserShipConfig>,
     player_states: [AttackCruiserPlayer; 2],
     state: AttackCruiserGameState,
     active_players: Vec<u32>,
@@ -1028,32 +1031,33 @@ impl AttackCruiserGame {
             );
         }
 
+        let max_health = player_ship.max_health;
+
         AttackCruiserGame {
             player1,
             player2,
             player_states: [
                 AttackCruiserPlayer::new(
                     0,
+                    player_ship.clone(),
                     config.player.lives,
                     config.player.spawn1.pos,
                     config.player.spawn1.yaw_degrees.to_radians(),
-                    player_ship.max_health,
+                    max_health,
                     false,
                     player_bvh.clone(),
-                    player_ship.max_roll_degrees.to_radians(),
                 ),
                 AttackCruiserPlayer::new(
                     1,
+                    player_ship,
                     config.player.lives,
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw_degrees.to_radians(),
-                    player_ship.max_health,
+                    max_health,
                     player2.is_none(),
                     player_bvh,
-                    player_ship.max_roll_degrees.to_radians(),
                 ),
             ],
-            player_ship,
             state: AttackCruiserGameState::WaitingForPlayersReady,
             active_players: players.clone(),
             players,
@@ -1400,8 +1404,6 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
-        let player_max_health = self.player_ship.max_health;
-
         let mut broadcasts = Vec::new();
         let mut hits = Vec::new();
 
@@ -1458,7 +1460,7 @@ impl AttackCruiserGame {
             let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
                 player_state.respawn(
-                    player_max_health,
+                    player_state.actor.ship.max_health,
                     Duration::from_millis(
                         self.config
                             .player
@@ -1525,8 +1527,9 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            let health_percent =
-                player_state.actor.health as f32 / player_max_health as f32 * 100.0;
+            let health_percent = player_state.actor.health as f32
+                / player_state.actor.ship.max_health as f32
+                * 100.0;
             let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
             let is_damage_alarm_timer_expired = player_state
                 .damage_alarm_sound_timer
