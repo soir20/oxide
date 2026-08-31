@@ -2463,6 +2463,23 @@ impl CharacterStats {
         self.health = self.max_health;
     }
 
+    pub fn knock_out(&self, nearby_player_guids: &[u32]) -> Vec<Broadcast> {
+        let mut broadcasts = Vec::new();
+
+        match &self.character_type {
+            CharacterType::AmbientNpc(_) | CharacterType::Fixture(_, _) => {
+                broadcasts.push(Broadcast::Multi(
+                    nearby_player_guids.to_vec(),
+                    self.remove_packets(self.removal_mode),
+                ));
+            }
+            // TODO
+            CharacterType::Player(_) => {}
+        }
+
+        broadcasts
+    }
+
     pub fn add_packets(
         &self,
         override_is_spawned: bool,
