@@ -44,7 +44,7 @@ fn default_damage_expression() -> String {
 fn evaluate_damage_expression(
     damage_expression: &str,
     damage: i16,
-    ability_name: String,
+    ability_name: &str,
 ) -> Result<i16, Error> {
     let context = context_map! {
         "x" => evalexpr::Value::Float(damage as f64),
@@ -142,7 +142,7 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
 
 fn compute_ability_damage(
     config: &AbilityConfig,
-    ability_name: String,
+    ability_name: &str,
 ) -> Result<(i16, bool), Error> {
     let evaluated_damage =
         evaluate_damage_expression(&config.damage_expression, config.base_damage, ability_name)?;
@@ -168,7 +168,7 @@ fn deal_ability_damage(
     target: &mut CharacterStats,
     nearby_player_guids: &[u32],
     ability_config: &AbilityConfig,
-    ability_name: String,
+    ability_name: &str,
 ) -> Result<Vec<Broadcast>, Error> {
     let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_name)?;
     let damaged = damage_dealt > 0;
