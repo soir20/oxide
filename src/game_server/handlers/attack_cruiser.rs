@@ -546,6 +546,8 @@ struct AttackCruiserShipConfig {
     acceleration: f32,
     deceleration: f32,
     max_angular_speed: Angle,
+    angular_acceleration: Angle,
+    angular_deceleration: Angle,
     #[serde(default)]
     stationary_turn: f32,
     max_health: u16,
@@ -989,18 +991,7 @@ fn player_actor_id(player_index: u8, lives: u8) -> i32 {
     (player_index * 2 + 1 + lives.is_multiple_of(2) as u8).into()
 }
 
-enum AttackCruiserBrainTarget {
-    FixedPos,
-    NearestEnemy,
-}
-
-enum AttackCruiserBrainMoveDecision {
-    Turn,
-}
-
-enum AttackCruiserBrainAttackDecision {}
-
-struct AttackCruiserBrain {
+struct AttackCruiserNpcBrain {
     actors: Vec<AttackCruiserActor>,
 }
 
@@ -1312,11 +1303,11 @@ impl AttackCruiserGame {
                                             brake_deceleration: 0.0,
                                             sideways_deceleration: 0.0,
                                             angular_acceleration: ship
-                                                .max_angular_speed
+                                                .angular_acceleration
                                                 .to_radians(),
                                             turbo_angular_acceleration: 0.0,
                                             angular_deceleration: ship
-                                                .max_angular_speed
+                                                .angular_deceleration
                                                 .to_radians(),
                                             max_angular_speed: ship.max_angular_speed.to_radians(),
                                             turbo_max_angular_speed: 0.0,
