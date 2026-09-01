@@ -3251,8 +3251,6 @@ categories:
                     acceleration: 25.0
                     deceleration: 25.0
                     max_angular_speed: !Degrees 120
-                    angular_acceleration: !Degrees 120
-                    angular_deceleration: !Degrees 120
                     max_health: 100
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707
