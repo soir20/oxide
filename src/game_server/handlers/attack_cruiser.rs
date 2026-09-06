@@ -213,10 +213,9 @@ impl AttackCruiserActor {
 
             let delta_angular_speed = desired_angular_speed - self.angular_speed;
 
-            let is_angular_braking = self.angular_speed != 0.0
-                && delta_angular_speed.abs() > 1e-5
-                && delta_angular_speed.signum() != self.angular_speed.signum();
-            let angular_acceleration = if is_angular_braking {
+            let change_angular_direction =
+                delta_angular_speed.signum() != self.angular_speed.signum();
+            let angular_acceleration = if change_angular_direction {
                 max_angular_deceleration
             } else {
                 max_angular_acceleration
