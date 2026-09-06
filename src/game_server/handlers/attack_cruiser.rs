@@ -194,17 +194,9 @@ impl AttackCruiserActor {
         let max_angular_acceleration = self.ship.angular_acceleration.to_radians();
         let max_angular_deceleration = self.ship.angular_deceleration.to_radians();
         let max_angular_speed = self.ship.max_angular_speed.to_radians();
-        let max_delta_angular_speed = max_angular_acceleration * delta_secs;
         let max_delta_yaw = max_angular_speed * delta_secs;
 
-        let min_delta_yaw = (max_delta_yaw * 1.2).max(0.005);
-        let min_delta_angular_speed = max_delta_angular_speed * 2.0;
-
-        let mut new_angular_speed = if delta_yaw.abs() < min_delta_yaw
-            && self.angular_speed.abs() < min_delta_angular_speed
-        {
-            0.0
-        } else {
+        let new_angular_speed = {
             // Brake half a frame early to avoid large spikes in angular speed when delta_yaw is small
             let angular_braking_distance = (delta_yaw.abs() - (max_delta_yaw * 0.5)).max(0.0);
             // v^2 = 2ad
@@ -240,9 +232,8 @@ impl AttackCruiserActor {
             }
 
             new_angular_speed
-        };
-
-        new_angular_speed = new_angular_speed.clamp(-max_angular_speed, max_angular_speed);
+        }
+        .clamp(-max_angular_speed, max_angular_speed);
 
         let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
         self.speed.x = new_yaw.sin() * speed;
