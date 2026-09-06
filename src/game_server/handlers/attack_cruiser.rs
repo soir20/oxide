@@ -1,6 +1,7 @@
 use std::{
     cmp::Reverse,
     collections::{BTreeMap, HashMap},
+    f32::consts::PI,
     io::{Cursor, Read},
     iter,
     sync::{Arc, LazyLock},
@@ -111,6 +112,10 @@ fn show_hud_message(
     )
 }
 
+fn normalize_angle(angle_radians: f32) -> f32 {
+    (angle_radians + PI).rem_euclid(2.0 * PI) - PI
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserActor {
     pub id: i32,
@@ -126,8 +131,169 @@ struct AttackCruiserActor {
 }
 
 impl AttackCruiserActor {
+    pub fn new(
+        id: i32,
+        ship: Arc<AttackCruiserShipConfig>,
+        pos: Pos3,
+        yaw: f32,
+        speed: f32,
+        angular_speed: f32,
+        bvh: Option<Arc<Bvh>>,
+    ) -> Self {
+        AttackCruiserActor {
+            id,
+            pos,
+            yaw,
+            speed: Pos3 {
+                x: yaw.sin() * speed,
+                y: 0.0,
+                z: yaw.cos() * speed,
+            },
+            angular_speed,
+            forward_multiplier: speed / ship.max_speed,
+            turn_multiplier: angular_speed / ship.max_angular_speed.to_radians(),
+            health: ship.max_health,
+            bvh,
+            ship,
+        }
+    }
+
     pub fn dead(&self) -> bool {
         self.health == 0
+    }
+
+    pub fn seek_target(&mut self, target_pos: Pos3, target_speed: Pos3, delta_secs: f32) {
+        if delta_secs <= 0.0 {
+            return;
+        }
+
+        let speed = (self.speed.x.powi(2) + self.speed.z.powi(2)).sqrt();
+        let secs_to_intercept = Self::calculate_time_to_intercept(
+            self.pos.x,
+            self.pos.z,
+            speed,
+            target_pos.x,
+            target_pos.z,
+            target_speed.x,
+            target_speed.z,
+        );
+        let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept;
+        let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept;
+
+        let delta_x = predicted_target_x - self.pos.x;
+        let delta_z = predicted_target_z - self.pos.z;
+
+        // Avoid large directional swings for small positional changes
+        let desired_yaw = if delta_x.abs() < 1e-4 && delta_z.abs() < 1e-4 {
+            self.yaw
+        } else {
+            delta_x.atan2(delta_z)
+        };
+        let delta_yaw = normalize_angle(desired_yaw - self.yaw);
+
+        let max_angular_acceleration = self.ship.angular_acceleration.to_radians();
+        let max_angular_deceleration = self.ship.angular_deceleration.to_radians();
+        let max_angular_speed = self.ship.max_angular_speed.to_radians();
+        let max_delta_angular_speed = max_angular_acceleration * delta_secs;
+        let max_delta_yaw = max_angular_speed * delta_secs;
+
+        let min_delta_yaw = (max_delta_yaw * 1.2).max(0.005);
+        let min_delta_angular_speed = max_delta_angular_speed * 2.0;
+
+        let mut new_angular_speed = if delta_yaw.abs() < min_delta_yaw
+            && self.angular_speed.abs() < min_delta_angular_speed
+        {
+            0.0
+        } else {
+            // Brake half a frame early to avoid large spikes in angular speed when delta_yaw is small
+            let angular_braking_distance = (delta_yaw.abs() - (max_delta_yaw * 0.5)).max(0.0);
+            // v^2 = 2ad
+            let max_safe_angular_speed =
+                (2.0 * max_angular_deceleration * angular_braking_distance).sqrt();
+
+            let target_direction = if delta_yaw == 0.0 {
+                0.0
+            } else {
+                delta_yaw.signum()
+            };
+            let desired_angular_speed = (target_direction * max_safe_angular_speed)
+                .clamp(-max_angular_speed, max_angular_speed);
+
+            let delta_angular_speed = desired_angular_speed - self.angular_speed;
+
+            let is_angular_braking = self.angular_speed != 0.0
+                && delta_angular_speed.abs() > 1e-5
+                && delta_angular_speed.signum() != self.angular_speed.signum();
+            let angular_acceleration = if is_angular_braking {
+                max_angular_deceleration
+            } else {
+                max_angular_acceleration
+            } * delta_angular_speed.signum();
+
+            let mut new_angular_speed = self.angular_speed + angular_acceleration * delta_secs;
+
+            // Snap angular speed if beyond desired speed
+            if (delta_angular_speed > 0.0 && new_angular_speed > desired_angular_speed)
+                || (delta_angular_speed < 0.0 && new_angular_speed < desired_angular_speed)
+            {
+                new_angular_speed = desired_angular_speed;
+            }
+
+            new_angular_speed
+        };
+
+        new_angular_speed = new_angular_speed.clamp(-max_angular_speed, max_angular_speed);
+
+        let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
+        self.speed.x = new_yaw.sin() * speed;
+        self.speed.z = new_yaw.cos() * speed;
+        self.yaw = new_yaw;
+        self.angular_speed = new_angular_speed;
+
+        self.pos.x += self.speed.x * delta_secs;
+        self.pos.z += self.speed.z * delta_secs;
+    }
+
+    fn calculate_time_to_intercept(
+        pos_x: f32,
+        pos_z: f32,
+        speed: f32,
+        target_x: f32,
+        target_z: f32,
+        target_speed_x: f32,
+        target_speed_z: f32,
+    ) -> f32 {
+        let to_target_x = target_x - pos_x;
+        let to_target_z = target_z - pos_z;
+
+        // Quadratic terms derived from the vector intersection equation:
+        // (to_target_x + target_speed_x * t)^2 + (to_target_z + target_speed_z * t)^2 = (speed * t)^2
+        // Rearranged into standard form: a*t^2 + b*t + c = 0
+        let a = target_speed_x * target_speed_x + target_speed_z * target_speed_z - speed.powi(2);
+        let b = 2.0 * (to_target_x * target_speed_x + to_target_z * target_speed_z);
+        let c = to_target_x * to_target_x + to_target_z * to_target_z;
+
+        if a.abs() < 1e-6 {
+            // Target speed magnitude equals ship speed (a == 0)
+            return if b.abs() < 1e-6 { 0.0 } else { -c / b }.max(0.0);
+        }
+
+        let discriminant = b * b - 4.0 * a * c;
+        if discriminant < 0.0 {
+            // Target is moving too fast to intercept
+            return 0.0;
+        }
+
+        let sqrt_discriminant = discriminant.sqrt();
+        let time1 = (-b - sqrt_discriminant) / (2.0 * a);
+        let time2 = (-b + sqrt_discriminant) / (2.0 * a);
+
+        match (time1 > 1e-6, time2 > 1e-6) {
+            (true, true) => time1.min(time2),
+            (true, false) => time1,
+            (false, true) => time2,
+            (false, false) => 0.0,
+        }
     }
 }
 
