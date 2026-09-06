@@ -184,7 +184,7 @@ impl AttackCruiserActor {
         let delta_z = predicted_target_z - self.pos.z;
 
         // Avoid large directional swings for small positional changes
-        let desired_yaw = if delta_x.abs() < 1e-4 && delta_z.abs() < 1e-4 {
+        let desired_yaw = if delta_x.abs() < 1.0 && delta_z.abs() < 1.0 {
             self.yaw
         } else {
             delta_x.atan2(delta_z)
@@ -256,16 +256,29 @@ impl AttackCruiserActor {
         let to_target_x = target_x - pos_x;
         let to_target_z = target_z - pos_z;
 
+        let base_epsilon = 1e-5;
+
         // Quadratic terms derived from the vector intersection equation:
         // (to_target_x + target_speed_x * t)^2 + (to_target_z + target_speed_z * t)^2 = (speed * t)^2
-        // Rearranged into standard form: a*t^2 + b*t + c = 0
-        let a = target_speed_x * target_speed_x + target_speed_z * target_speed_z - speed.powi(2);
+        let a_target_term = target_speed_x * target_speed_x + target_speed_z * target_speed_z;
+        let a = a_target_term - speed.powi(2);
         let b = 2.0 * (to_target_x * target_speed_x + to_target_z * target_speed_z);
         let c = to_target_x * to_target_x + to_target_z * to_target_z;
 
-        if a.abs() < 1e-6 {
-            // Target speed magnitude equals ship speed (a == 0)
-            return if b.abs() < 1e-6 { 0.0 } else { -c / b }.max(0.0);
+        let max_speed_sq = a_target_term.max(speed * speed);
+        let a_epsilon = max_speed_sq * base_epsilon;
+
+        if a.abs() < a_epsilon {
+            // Find the maximum 'b' could reach in this frame
+            let target_speed_magnitude =
+                (target_speed_x * target_speed_x + target_speed_z * target_speed_z).sqrt();
+            let distance_magnitude = c.sqrt();
+            let max_b = 2.0 * distance_magnitude * target_speed_magnitude;
+
+            let b_epsilon = max_b * base_epsilon;
+
+            // If b is effectively zero relative to map scale, the paths are completely parallel/perpendicular
+            return if b.abs() < b_epsilon { 0.0 } else { -c / b }.max(0.0);
         }
 
         let discriminant = b * b - 4.0 * a * c;
@@ -278,7 +291,7 @@ impl AttackCruiserActor {
         let time1 = (-b - sqrt_discriminant) / (2.0 * a);
         let time2 = (-b + sqrt_discriminant) / (2.0 * a);
 
-        match (time1 > 1e-6, time2 > 1e-6) {
+        match (time1 > base_epsilon, time2 > base_epsilon) {
             (true, true) => time1.min(time2),
             (true, false) => time1,
             (false, true) => time2,
