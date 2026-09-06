@@ -239,6 +239,7 @@ impl AttackCruiserActor {
         self.speed.z = new_yaw.cos() * speed;
         self.yaw = new_yaw;
         self.angular_speed = new_angular_speed;
+        self.turn_multiplier = new_angular_speed / max_angular_speed;
 
         self.pos.x += self.speed.x * delta_secs;
         self.pos.z += self.speed.z * delta_secs;
