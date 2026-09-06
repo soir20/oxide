@@ -232,8 +232,7 @@ impl AttackCruiserActor {
             }
 
             new_angular_speed
-        }
-        .clamp(-max_angular_speed, max_angular_speed);
+        };
 
         let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
         self.speed.x = new_yaw.sin() * speed;
