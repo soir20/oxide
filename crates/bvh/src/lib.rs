@@ -291,7 +291,7 @@ impl Bvh {
 
         // Only perform expensive sqrt() when necessary
         let global_max_distance_sq = delta.length_squared();
-        if global_max_distance_sq < f32::EPSILON * f32::EPSILON {
+        if global_max_distance_sq < 1e-3 * 1e-3 {
             return true;
         }
 
@@ -308,7 +308,7 @@ impl Bvh {
             let local_delta = relative_end - relative_start;
             let relative_max_distance_sq = local_delta.length_squared();
 
-            if relative_max_distance_sq < f32::EPSILON * f32::EPSILON {
+            if relative_max_distance_sq < 1e-3 * 1e-3 {
                 continue;
             }
 
