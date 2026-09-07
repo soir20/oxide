@@ -3145,7 +3145,7 @@ categories:
               stage_icon_id: 379
               start_screen_icon_id: 2091
               min_players: 1
-              max_players: 1
+              max_players: 2
               difficulty: 1
               start_sound_id: 2245
               members_only: false
@@ -3244,13 +3244,13 @@ categories:
                 ships:
                   test:
                     max_alive: 2
-                    model_id: 167
+                    model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll: !Degrees 15
                     max_speed: 200.0
                     acceleration: 25.0
                     deceleration: 25.0
-                    max_angular_speed: !Degrees 120
+                    max_angular_speed: !Degrees 60
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
                     max_health: 100
