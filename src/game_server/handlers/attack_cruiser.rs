@@ -133,12 +133,12 @@ struct AttackCruiserActor {
 impl AttackCruiserActor {
     pub fn new(
         id: i32,
-        ship: Arc<AttackCruiserShipConfig>,
         pos: Pos3,
         yaw: f32,
         speed: f32,
         angular_speed: f32,
         bvh: Option<Arc<Bvh>>,
+        ship: Arc<AttackCruiserShipConfig>,
     ) -> Self {
         AttackCruiserActor {
             id,
@@ -346,24 +346,20 @@ impl AttackCruiserPlayer {
         lives: u8,
         pos: Pos3,
         yaw: f32,
-        health: u16,
         ready: bool,
         bvh: Option<Arc<Bvh>>,
     ) -> Self {
         AttackCruiserPlayer {
             ready,
-            actor: AttackCruiserActor {
-                id: player_actor_id(player_index, lives),
-                ship,
+            actor: AttackCruiserActor::new(
+                player_actor_id(player_index, lives),
                 pos,
                 yaw,
-                speed: Pos3::default(),
-                angular_speed: 0.0,
-                forward_multiplier: 0.0,
-                turn_multiplier: 0.0,
-                health,
+                0.0,
+                0.0,
                 bvh,
-            },
+                ship,
+            ),
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -1171,6 +1167,7 @@ pub struct AttackCruiserGame {
     players: Vec<u32>,
     group: MinigameMatchmakingGroup,
     projectiles: AttackCruiserProjectilePool,
+    npcs: Vec<AttackCruiserActor>,
 }
 
 impl AttackCruiserGame {
@@ -1196,9 +1193,16 @@ impl AttackCruiserGame {
             );
         }
 
-        let max_health = player_ship.max_health;
-
         AttackCruiserGame {
+            npcs: vec![AttackCruiserActor::new(
+                1000,
+                config.player.spawn2.pos,
+                config.player.spawn2.yaw.to_radians(),
+                player_ship.max_speed,
+                0.0,
+                player_bvh.clone(),
+                player_ship.clone(),
+            )],
             player1,
             player2,
             player_states: [
@@ -1208,7 +1212,6 @@ impl AttackCruiserGame {
                     config.player.lives,
                     config.player.spawn1.pos,
                     config.player.spawn1.yaw.to_radians(),
-                    max_health,
                     false,
                     player_bvh.clone(),
                 ),
@@ -1218,7 +1221,6 @@ impl AttackCruiserGame {
                     config.player.lives,
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw.to_radians(),
-                    max_health,
                     player2.is_none(),
                     player_bvh,
                 ),
