@@ -1160,10 +1160,6 @@ fn player_actor_id(player_index: u8, lives: u8) -> i32 {
     (player_index * 2 + 1 + lives.is_multiple_of(2) as u8).into()
 }
 
-struct AttackCruiserNpcBrain {
-    actors: Vec<AttackCruiserActor>,
-}
-
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
