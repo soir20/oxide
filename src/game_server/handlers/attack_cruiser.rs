@@ -1573,11 +1573,6 @@ impl AttackCruiserGame {
             },
         }));
 
-        // TODO: remove and spawn in waves
-        self.npcs.iter().for_each(|npc| {
-            packets.append(&mut self.spawn_client_actor(npc, &String::from("test")));
-        });
-
         Ok(packets)
     }
 
@@ -2276,6 +2271,11 @@ impl AttackCruiserGame {
         for player_index in 0..self.players.len() {
             packets.append(&mut self.set_player_frozen(player_index, false));
         }
+
+        // TODO: remove and spawn in waves
+        self.npcs.iter().for_each(|npc| {
+            packets.append(&mut self.spawn_client_actor(npc, &String::from("test")));
+        });
 
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
