@@ -3164,6 +3164,7 @@ categories:
                   zoom_step_quantization: 0.1
                   zoom_step_high_level_quotient: 0.1
                   near_clip_distance: 1
+                client_actor_update_interval_millis: 100
                 health_bar:
                   foreground_image_id: 163
                   background_image_id: 164
