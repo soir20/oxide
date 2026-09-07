@@ -224,9 +224,9 @@ impl AttackCruiserActor {
             let mut new_angular_speed = self.angular_speed + angular_acceleration * delta_secs;
 
             // Snap angular speed if beyond desired speed
-            if (delta_angular_speed > 0.0 && new_angular_speed > desired_angular_speed)
-                || (delta_angular_speed < 0.0 && new_angular_speed < desired_angular_speed)
-            {
+            let error_sign_changed = delta_angular_speed.is_sign_negative()
+                != (desired_angular_speed - new_angular_speed).is_sign_negative();
+            if delta_angular_speed == 0.0 || error_sign_changed {
                 new_angular_speed = desired_angular_speed;
             }
 
