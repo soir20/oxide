@@ -13,6 +13,8 @@ use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
 use glam::{Affine3A, EulerRot, Quat, Vec3};
 use serde::{de::Error, Deserialize, Serialize};
 
+const EPSILON: f32 = 1e-3;
+
 fn vertex_from_index(vertices: &[[f32; 3]], index: u16) -> [f32; 3] {
     let index = usize::from(index);
     vertices[index]
@@ -291,7 +293,7 @@ impl Bvh {
 
         // Only perform expensive sqrt() when necessary
         let global_max_distance_sq = delta.length_squared();
-        if global_max_distance_sq < f32::EPSILON * f32::EPSILON {
+        if global_max_distance_sq < EPSILON * EPSILON {
             return true;
         }
 
@@ -308,7 +310,7 @@ impl Bvh {
             let local_delta = relative_end - relative_start;
             let relative_max_distance_sq = local_delta.length_squared();
 
-            if relative_max_distance_sq < f32::EPSILON * f32::EPSILON {
+            if relative_max_distance_sq < EPSILON * EPSILON {
                 continue;
             }
 
