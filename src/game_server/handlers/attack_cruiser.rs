@@ -1263,7 +1263,7 @@ impl AttackCruiserGame {
                             server_draw_debug_data_interval_seconds: 0.0,
                             client_update_actors_interval_seconds: f32::from(
                                 self.config.client_actor_update_interval_millis,
-                            ) * 1000.0,
+                            ) / 1000.0,
                             max_interpolation_step: 0.0,
                             small_mass_threshold: 0.0,
                             dodge_prediction_time: 0.0,
