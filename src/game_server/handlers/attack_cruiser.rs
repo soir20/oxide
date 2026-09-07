@@ -1193,15 +1193,17 @@ impl AttackCruiserGame {
             );
         }
 
+        // TODO: remove test NPC
+        let test_npc_ship = config.ship(&String::from("test"));
         AttackCruiserGame {
             npcs: vec![AttackCruiserActor::new(
                 1000,
                 config.player.spawn2.pos,
                 config.player.spawn2.yaw.to_radians(),
-                player_ship.max_speed,
+                test_npc_ship.max_speed,
                 0.0,
                 player_bvh.clone(),
-                player_ship.clone(),
+                test_npc_ship.clone(),
             )],
             player1,
             player2,
@@ -1571,6 +1573,11 @@ impl AttackCruiserGame {
             },
         }));
 
+        // TODO: remove and spawn in waves
+        self.npcs.iter().for_each(|npc| {
+            packets.append(&mut self.spawn_client_actor(npc, &String::from("test")));
+        });
+
         Ok(packets)
     }
 
@@ -1724,7 +1731,7 @@ impl AttackCruiserGame {
             }
 
             if update_clients {
-                broadcasts.push(self.update_server_actor(player_index as u8));
+                broadcasts.push(self.update_server_player_actor(player_index as u8));
             }
         }
 
@@ -1745,6 +1752,21 @@ impl AttackCruiserGame {
                             delay_seconds: 0.0,
                         },
                     })
+                })
+                .collect(),
+        ));
+
+        broadcasts.push(Broadcast::Multi(
+            self.active_players.clone(),
+            self.npcs
+                .iter_mut()
+                .map(|npc| {
+                    npc.seek_target(
+                        self.player_states[0].actor.pos,
+                        self.player_states[0].actor.speed,
+                        tick_duration.as_secs_f32(),
+                    );
+                    Self::update_server_npc_actor(npc, false, self.group)
                 })
                 .collect(),
         ));
@@ -1915,7 +1937,7 @@ impl AttackCruiserGame {
             }
         }
 
-        broadcasts.push(self.update_server_actor(player_index));
+        broadcasts.push(self.update_server_player_actor(player_index));
 
         Ok(broadcasts)
     }
@@ -1998,7 +2020,7 @@ impl AttackCruiserGame {
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
 
-    fn spawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
+    fn spawn_client_actor(&self, actor: &AttackCruiserActor, ship_config: &String) -> Vec<Vec<u8>> {
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddActor {
@@ -2007,18 +2029,22 @@ impl AttackCruiserGame {
                     sub_op_code: AttackCruiserOpCode::AddActor as i32,
                     stage_group_guid: self.group.stage_group_guid,
                 },
-                actor_id: player_state.actor.id,
+                actor_id: actor.id,
                 hostility: AttackCruiserHostility::Friendly,
                 actor_config: AttackCruiserStartupConfigHash {
-                    name: ship_startup_config_name(&self.config.player.ship),
+                    name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
                 },
-                pos: player_state.actor.pos,
-                speed: player_state.actor.speed,
-                yaw: player_state.actor.yaw,
+                pos: actor.pos,
+                speed: actor.speed,
+                yaw: actor.yaw,
                 unknown7: 0,
             },
         })]
+    }
+
+    fn spawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
+        self.spawn_client_actor(&player_state.actor, &self.config.player.ship)
     }
 
     fn despawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
@@ -2098,7 +2124,7 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_actor(&self, player_index: u8) -> Broadcast {
+    fn update_server_player_actor(&self, player_index: u8) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
         let warp_out = !player_state.dead()
             && matches!(
@@ -2148,6 +2174,52 @@ impl AttackCruiserGame {
                 },
             })],
         )
+    }
+
+    fn update_server_npc_actor(
+        actor: &AttackCruiserActor,
+        warp_out: bool,
+        group: MinigameMatchmakingGroup,
+    ) -> Vec<u8> {
+        GamePacket::serialize(&TunneledPacket {
+            unknown1: true,
+            inner: AttackCruiserUpdateServerActors {
+                minigame_header: MinigameHeader {
+                    stage_guid: group.stage_guid,
+                    sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                    stage_group_guid: group.stage_group_guid,
+                },
+                states: vec![AttackCruiserActorUpdate {
+                    actor_id: actor.id,
+                    pos: actor.pos,
+                    yaw: actor.yaw,
+                    speed: actor.speed,
+                    angular_speed: actor.angular_speed,
+                    forward_multiplier: actor.forward_multiplier,
+                    turn_multiplier: actor.turn_multiplier,
+                    health: actor.health.into(),
+                    state: AttackCruiserActorState {
+                        unknown1: false,
+                        unknown2: false,
+                        invulnerable: false,
+                        unknown4: false,
+                        unknown5: false,
+                        unknown6: false,
+                        unknown7: false,
+                        dead_unused: false,
+                        warp_in: false,
+                        global_cinematic: false,
+                        warp_out_animation: warp_out,
+                        warp_end_game: false,
+                        reset_speed_damage_state: warp_out,
+                        unknown14: false,
+                        unknown15: false,
+                        hide_ring: warp_out,
+                        dead: actor.dead(),
+                    },
+                }],
+            },
+        })
     }
 
     fn set_player_frozen(&self, player_index: usize, frozen: bool) -> Vec<Vec<u8>> {
