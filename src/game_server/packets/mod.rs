@@ -9,6 +9,7 @@ pub mod housing;
 pub mod inventory;
 pub mod item;
 pub mod login;
+pub mod metrics;
 pub mod minigame;
 pub mod mount;
 pub mod player_data;
