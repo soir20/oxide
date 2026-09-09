@@ -1197,15 +1197,45 @@ impl AttackCruiserGame {
         // TODO: remove test NPC
         let test_npc_ship = config.ship(&String::from("test"));
         AttackCruiserGame {
-            npcs: vec![AttackCruiserActor::new(
-                1000,
-                config.player.spawn2.pos,
-                config.player.spawn2.yaw.to_radians(),
-                test_npc_ship.max_speed,
-                0.0,
-                player_bvh.clone(),
-                test_npc_ship.clone(),
-            )],
+            npcs: vec![
+                AttackCruiserActor::new(
+                    1000,
+                    config.player.spawn2.pos,
+                    config.player.spawn2.yaw.to_radians(),
+                    test_npc_ship.max_speed,
+                    0.0,
+                    player_bvh.clone(),
+                    test_npc_ship.clone(),
+                ),
+                AttackCruiserActor::new(
+                    1001,
+                    config.player.spawn2.pos
+                        + Pos3 {
+                            x: 100.0,
+                            y: 0.0,
+                            z: 100.0,
+                        },
+                    config.player.spawn2.yaw.to_radians(),
+                    test_npc_ship.max_speed,
+                    0.0,
+                    player_bvh.clone(),
+                    test_npc_ship.clone(),
+                ),
+                AttackCruiserActor::new(
+                    1002,
+                    config.player.spawn2.pos
+                        - Pos3 {
+                            x: 100.0,
+                            y: 0.0,
+                            z: 100.0,
+                        },
+                    config.player.spawn2.yaw.to_radians(),
+                    test_npc_ship.max_speed,
+                    0.0,
+                    player_bvh.clone(),
+                    test_npc_ship.clone(),
+                ),
+            ],
             player1,
             player2,
             player_states: [
