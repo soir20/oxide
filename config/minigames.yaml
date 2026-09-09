@@ -3244,7 +3244,7 @@ categories:
                   warning_millis: 5000
                 ships:
                   test:
-                    max_alive: 2
+                    max_alive: 50
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll: !Degrees 15
