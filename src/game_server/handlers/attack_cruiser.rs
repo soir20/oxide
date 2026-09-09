@@ -2020,7 +2020,12 @@ impl AttackCruiserGame {
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
     }
 
-    fn spawn_client_actor(&self, actor: &AttackCruiserActor, ship_config: &String) -> Vec<Vec<u8>> {
+    fn spawn_client_actor(
+        &self,
+        actor: &AttackCruiserActor,
+        ship_config: &String,
+        hostility: AttackCruiserHostility,
+    ) -> Vec<Vec<u8>> {
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddActor {
@@ -2030,7 +2035,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: AttackCruiserHostility::Friendly,
+                hostility,
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
@@ -2044,7 +2049,11 @@ impl AttackCruiserGame {
     }
 
     fn spawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
-        self.spawn_client_actor(&player_state.actor, &self.config.player.ship)
+        self.spawn_client_actor(
+            &player_state.actor,
+            &self.config.player.ship,
+            AttackCruiserHostility::Friendly,
+        )
     }
 
     fn despawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
@@ -2279,7 +2288,11 @@ impl AttackCruiserGame {
 
         // TODO: remove and spawn in waves
         self.npcs.iter().for_each(|npc| {
-            packets.append(&mut self.spawn_client_actor(npc, &String::from("test")));
+            packets.append(&mut self.spawn_client_actor(
+                npc,
+                &String::from("test"),
+                AttackCruiserHostility::Hostile,
+            ));
         });
 
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
