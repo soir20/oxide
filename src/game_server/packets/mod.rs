@@ -8,6 +8,7 @@ pub mod daily;
 pub mod housing;
 pub mod inventory;
 pub mod item;
+pub mod kick_client;
 pub mod login;
 pub mod metrics;
 pub mod minigame;
