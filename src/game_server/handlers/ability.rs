@@ -165,20 +165,20 @@ fn compute_ability_damage(
 
 fn deal_ability_damage(
     caster: u64,
-    target: &mut CharacterStats,
+    target_stats: &mut CharacterStats,
     nearby_player_guids: &[u32],
     ability_config: &AbilityConfig,
     ability_name: &str,
 ) -> Result<Vec<Broadcast>, Error> {
     let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_name)?;
     let damaged = damage_dealt > 0;
-    let current_health = target.health as i32;
-    let max_health = target.max_health as i32;
+    let current_health = target_stats.health as i32;
+    let max_health = target_stats.max_health as i32;
 
     let new_health = (current_health - damage_dealt as i32).clamp(0, max_health) as u16;
     let hp_delta = (new_health as i32) - current_health;
 
-    target.health = new_health;
+    target_stats.health = new_health;
 
     let mut broadcasts = vec![Broadcast::Multi(
         nearby_player_guids.to_vec(),
@@ -186,9 +186,9 @@ fn deal_ability_damage(
             unknown1: true,
             inner: HitPointModification {
                 attacker_guid: caster,
-                receiver_guid: Guid::guid(target),
+                receiver_guid: Guid::guid(target_stats),
                 show_hp_delta: true,
-                max_hp: target.max_health as i32,
+                max_hp: target_stats.max_health as i32,
                 new_hp: new_health as i32,
                 hp_delta,
                 critical,
@@ -197,7 +197,7 @@ fn deal_ability_damage(
     )];
 
     if damaged && new_health == 0 {
-        broadcasts.extend(target.knock_out(nearby_player_guids));
+        broadcasts.extend(target_stats.knock_out(nearby_player_guids));
     }
 
     Ok(broadcasts)
