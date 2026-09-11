@@ -168,10 +168,6 @@ impl AttackCruiserActor {
         self.invulnerability_timer.paused()
     }
 
-    pub fn disabled(&self) -> bool {
-        self.dead() || self.paused()
-    }
-
     pub fn pause_or_resume(&mut self, pause: bool) {
         self.invulnerability_timer.pause_or_resume(pause);
     }
@@ -212,6 +208,20 @@ impl AttackCruiserActor {
         }
 
         let speed = (self.speed.x.powi(2) + self.speed.z.powi(2)).sqrt();
+
+        if self.dead() {
+            let new_speed = (speed - self.ship.deceleration * delta_secs).max(0.0);
+            let scaling_factor = new_speed / speed;
+            self.speed.x *= scaling_factor;
+            self.speed.z *= scaling_factor;
+
+            self.angular_speed = (self.angular_speed
+                - self.ship.angular_deceleration.to_radians() * delta_secs)
+                .max(0.0);
+
+            return;
+        }
+
         let secs_to_intercept = Self::calculate_time_to_intercept(
             self.pos.x,
             self.pos.z,
@@ -418,6 +428,7 @@ impl AttackCruiserPlayer {
         self.actor.pause_or_resume(pause);
         self.bounds_warning_hud_timer.pause_or_resume(pause);
         self.damage_alarm_sound_timer.pause_or_resume(pause);
+        self.bounds_state.pause_or_resume(pause);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
@@ -2509,34 +2520,34 @@ impl AttackCruiserGame {
         broadcasts: &mut Vec<Broadcast>,
         hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
     ) {
-        for npc in self.npcs.iter_mut() {
-            if npc.completed_death(now) {
-                broadcasts.push(Broadcast::Multi(
-                    self.active_players.clone(),
-                    Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
-                ));
-                continue;
+        let _ = self.npcs.extract_if(.., |npc| {
+            if npc.paused() {
+                return false;
             }
 
-            if npc.disabled() {
-                continue;
-            }
+            npc.seek_target(
+                self.player_states[0].actor.pos,
+                self.player_states[0].actor.speed,
+                tick_duration.as_secs_f32(),
+            );
 
-            let mut actor_hits = self.projectiles.hits(npc.id, npc, now, tick_duration);
-            let total_damage = Self::total_damage(&actor_hits);
-            npc.damage(total_damage, now);
+            if !npc.dead() {
+                let mut actor_hits = self.projectiles.hits(npc.id, npc, now, tick_duration);
+                let total_damage = Self::total_damage(&actor_hits);
+                npc.damage(total_damage, now);
 
-            if npc.dead() {
-                broadcasts.push(Broadcast::Multi(
-                    self.active_players.clone(),
-                    Self::spawn_client_effect(npc.ship.death_start_effect_id, npc.pos, self.group),
-                ));
-            } else {
-                npc.seek_target(
-                    self.player_states[0].actor.pos,
-                    self.player_states[0].actor.speed,
-                    tick_duration.as_secs_f32(),
-                );
+                if npc.dead() {
+                    broadcasts.push(Broadcast::Multi(
+                        self.active_players.clone(),
+                        Self::spawn_client_effect(
+                            npc.ship.death_start_effect_id,
+                            npc.pos,
+                            self.group,
+                        ),
+                    ));
+                }
+
+                hits.append(&mut actor_hits);
             }
 
             broadcasts.push(Broadcast::Multi(
@@ -2544,7 +2555,15 @@ impl AttackCruiserGame {
                 vec![Self::update_server_npc_actor(npc, false, self.group)],
             ));
 
-            hits.append(&mut actor_hits);
-        }
+            if npc.completed_death(now) {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.clone(),
+                    Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
+                ));
+                return true;
+            }
+
+            false
+        });
     }
 }

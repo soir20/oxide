@@ -3253,7 +3253,7 @@ categories:
                     max_angular_speed: !Degrees 60
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
-                    max_health: 100
+                    max_health: 20
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707
                     invulnerable_effect_id: 1744
