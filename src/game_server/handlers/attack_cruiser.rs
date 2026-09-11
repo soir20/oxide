@@ -1986,7 +1986,7 @@ impl AttackCruiserGame {
                     inner: AttackCruiserWorldEffect {
                         minigame_header: MinigameHeader {
                             stage_guid: group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
+                            sub_op_code: AttackCruiserOpCode::WorldEffect as i32,
                             stage_group_guid: group.stage_group_guid,
                         },
                         effect_id,
