@@ -2523,7 +2523,7 @@ impl AttackCruiserGame {
         broadcasts: &mut Vec<Broadcast>,
         hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
     ) {
-        let _ = self.npcs.extract_if(.., |npc| {
+        self.npcs.retain_mut(|npc| {
             if npc.paused() {
                 return false;
             }
