@@ -211,6 +211,8 @@ fn make_cast_and_land_packet(
     caster: u64,
     targets: &[u64],
     ability_config: &AbilityConfig,
+    action_bar_type: ActionBarType,
+    ability_slot_index: i32,
 ) -> Vec<Vec<u8>> {
     vec![GamePacket::serialize(&TunneledPacket {
         unknown1: true,
@@ -230,7 +232,7 @@ fn make_cast_and_land_packet(
             unknown2: 0,
             cast_animation_id: ability_config.cast_animation_id.unwrap_or(0),
             cast_composite_effect_id: ability_config.cast_composite_effect_id.unwrap_or(0),
-            slot_cooldown_millis: 0,
+            slot_cooldown_millis: ability_config.use_cooldown_millis,
             disable_slot_cooldown: false,
             unknown7: false,
             impact_animation_id: ability_config.impact_animation_id.unwrap_or(0),
@@ -242,8 +244,8 @@ fn make_cast_and_land_packet(
                 .unwrap_or(0.0),
             unknown13: 0.0,
             unknown14: 0,
-            action_bar_type: ActionBarType::Weapon,
-            slot_index: -1,
+            action_bar_type,
+            slot_index: ability_slot_index,
             unknown17: 0,
             override_launcher_guid: 0,
             unknown19: false,
