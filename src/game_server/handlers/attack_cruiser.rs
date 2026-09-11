@@ -774,8 +774,7 @@ struct AttackCruiserShipConfig {
     overhead_health_scale: f32,
     thruster_effect_id: u32,
     invulnerable_effect_id: u32,
-    death_start_effect_id: Option<u32>,
-    death_end_effect_id: Option<u32>,
+    death_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
@@ -2043,7 +2042,7 @@ impl AttackCruiserGame {
             self.player_states[player_index as usize]
                 .actor
                 .ship
-                .death_end_effect_id,
+                .death_effect_id,
             self.group,
         );
         let player_state = &mut self.player_states[player_index as usize];
@@ -2459,12 +2458,7 @@ impl AttackCruiserGame {
                     player_state.damage(total_damage, now);
 
                     if player_state.dead() {
-                        let mut death_packets = Self::spawn_client_effect(
-                            player_state.actor.ship.death_start_effect_id,
-                            player_state.actor.pos,
-                            self.group,
-                        );
-                        death_packets.append(&mut self.set_player_frozen(player_index, true));
+                        let mut death_packets = self.set_player_frozen(player_index, true);
                         death_packets.append(&mut self.update_client_players_once_ready(
                             AttackCruiserPlayerStateType {
                                 index: false,
@@ -2539,17 +2533,6 @@ impl AttackCruiserGame {
                 let total_damage = Self::total_damage(&actor_hits);
                 npc.damage(total_damage, now);
 
-                if npc.dead() {
-                    broadcasts.push(Broadcast::Multi(
-                        self.active_players.clone(),
-                        Self::spawn_client_effect(
-                            npc.ship.death_start_effect_id,
-                            npc.pos,
-                            self.group,
-                        ),
-                    ));
-                }
-
                 hits.append(&mut actor_hits);
             }
 
@@ -2561,7 +2544,7 @@ impl AttackCruiserGame {
             if npc.completed_death(now) {
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.clone(),
-                    Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
+                    Self::despawn_client_actor(npc, npc.ship.death_effect_id, self.group),
                 ));
                 return false;
             }
