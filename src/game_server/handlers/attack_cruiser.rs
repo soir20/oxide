@@ -128,6 +128,7 @@ struct AttackCruiserActor {
     pub turn_multiplier: f32,
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
+    pub invulnerability_timer: MinigameCountdown,
 }
 
 impl AttackCruiserActor {
@@ -155,11 +156,54 @@ impl AttackCruiserActor {
             health: ship.max_health,
             bvh,
             ship,
+            invulnerability_timer: MinigameCountdown::new(),
         }
     }
 
     pub fn dead(&self) -> bool {
         self.health == 0
+    }
+
+    pub fn paused(&self) -> bool {
+        self.invulnerability_timer.paused()
+    }
+
+    pub fn disabled(&self) -> bool {
+        self.dead() || self.paused()
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.invulnerability_timer.pause_or_resume(pause);
+    }
+
+    pub fn damage(&mut self, damage: i16, now: Instant) {
+        self.health = self.health.saturating_sub_signed(damage);
+
+        if self.dead() {
+            let respawn_secs: f32 = self
+                .ship
+                .animations
+                .iter()
+                .filter(|animation| animation.animation_type.is_death())
+                .map(|animation| animation.duration_seconds)
+                .fold(0.0, |a, b| a.max(b));
+            self.invulnerability_timer
+                .schedule_event(Duration::from_secs_f32(respawn_secs), now);
+        }
+    }
+
+    pub fn completed_death(&self, now: Instant) -> bool {
+        self.dead()
+            && self
+                .invulnerability_timer
+                .time_until_next_event(now)
+                .is_zero()
+    }
+
+    pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
+        self.health = self.ship.max_health;
+        self.invulnerability_timer
+            .schedule_event(invulnerability_duration, now);
     }
 
     pub fn seek_target(&mut self, target_pos: Pos3, target_speed: Pos3, delta_secs: f32) {
@@ -333,7 +377,6 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier: u8,
     pub lives: u8,
     pub primary_weapon_tier: usize,
-    pub invulnerability_timer: MinigameCountdown,
     pub bounds_state: AttackCruiserPlayerBoundsState,
     pub bounds_warning_hud_timer: MinigameCountdown,
     pub damage_alarm_sound_timer: MinigameCountdown,
@@ -365,11 +408,16 @@ impl AttackCruiserPlayer {
             score_multiplier_tier: 1,
             lives,
             primary_weapon_tier: 0,
-            invulnerability_timer: MinigameCountdown::new(),
             bounds_state: AttackCruiserPlayerBoundsState::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
             damage_alarm_sound_timer: MinigameCountdown::new(),
         }
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.actor.pause_or_resume(pause);
+        self.bounds_warning_hud_timer.pause_or_resume(pause);
+        self.damage_alarm_sound_timer.pause_or_resume(pause);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
@@ -380,10 +428,8 @@ impl AttackCruiserPlayer {
         self.lives == 0 && self.completed_death(now)
     }
 
-    pub fn respawn(&mut self, health: u16, invulnerability_duration: Duration, now: Instant) {
-        self.actor.health = health;
-        self.invulnerability_timer
-            .schedule_event(invulnerability_duration, now);
+    pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
+        self.actor.respawn(invulnerability_duration, now);
     }
 
     pub fn dead(&self) -> bool {
@@ -401,23 +447,22 @@ impl AttackCruiserPlayer {
     pub fn vulnerable(&self, now: Instant) -> bool {
         self.trackable()
             && self
+                .actor
                 .invulnerability_timer
                 .time_until_next_event(now)
                 .is_zero()
     }
 
-    pub fn damage(&mut self, damage: i16, now: Instant, respawn_millis: u32) {
-        self.actor.health = self.actor.health.saturating_sub_signed(damage);
+    pub fn damage(&mut self, damage: i16, now: Instant) {
+        self.actor.damage(damage, now);
 
         if self.actor.dead() {
             self.lives = self.lives.saturating_sub(1);
-            self.invulnerability_timer
-                .schedule_event(Duration::from_millis(respawn_millis.into()), now);
         }
     }
 
     pub fn paused(&self) -> bool {
-        self.invulnerability_timer.paused()
+        self.actor.paused()
     }
 
     pub fn disabled(&self) -> bool {
@@ -433,11 +478,7 @@ impl AttackCruiserPlayer {
     }
 
     fn completed_death(&self, now: Instant) -> bool {
-        self.actor.dead()
-            && self
-                .invulnerability_timer
-                .time_until_next_event(now)
-                .is_zero()
+        self.actor.completed_death(now)
     }
 }
 
@@ -752,7 +793,6 @@ struct AttackCruiserPlayerConfig {
     damage_alarm_sound_id: u32,
     damage_alarm_health_percent: f32,
     damage_alarm_interval_millis: u32,
-    respawn_millis: u32,
     post_respawn_invulnerability_millis: u32,
     out_of_bounds_warp_millis: u32,
     out_of_bounds_warp_delay_millis: u32,
@@ -1653,9 +1693,10 @@ impl AttackCruiserGame {
         }
 
         self.player_states.iter_mut().for_each(|player_state| {
-            player_state.invulnerability_timer.pause_or_resume(pause);
-            player_state.bounds_state.pause_or_resume(pause);
-            player_state.bounds_warning_hud_timer.pause_or_resume(pause);
+            player_state.pause_or_resume(pause);
+        });
+        self.npcs.iter_mut().for_each(|npc| {
+            npc.pause_or_resume(pause);
         });
         Ok(Vec::new())
     }
@@ -2308,7 +2349,6 @@ impl AttackCruiserGame {
             let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
                 player_state.respawn(
-                    player_state.actor.ship.max_health,
                     Duration::from_millis(
                         self.config
                             .player
@@ -2351,7 +2391,7 @@ impl AttackCruiserGame {
 
                 // If the player still has invulnerability time, process the hits but deal no damage
                 if player_state.vulnerable(now) {
-                    player_state.damage(total_damage, now, self.config.player.respawn_millis);
+                    player_state.damage(total_damage, now);
 
                     if player_state.dead() {
                         let mut death_packets = self.set_player_frozen(player_index, true);
@@ -2414,13 +2454,13 @@ impl AttackCruiserGame {
         hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
     ) {
         for npc in self.npcs.iter_mut() {
-            if npc.dead() {
+            if npc.disabled() {
                 continue;
             }
 
             let mut actor_hits = self.projectiles.hits(npc.id, npc, now, tick_duration);
             let total_damage = Self::total_damage(&actor_hits);
-            npc.health = npc.health.saturating_sub_signed(total_damage);
+            npc.damage(total_damage, now);
 
             npc.seek_target(
                 self.player_states[0].actor.pos,

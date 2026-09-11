@@ -480,6 +480,15 @@ pub enum AttackCruiserActorAnimationType {
     Death2 = 8,
 }
 
+impl AttackCruiserActorAnimationType {
+    pub fn is_death(&self) -> bool {
+        matches!(
+            self,
+            AttackCruiserActorAnimationType::Death1 | AttackCruiserActorAnimationType::Death2
+        )
+    }
+}
+
 #[derive(SerializePacket)]
 pub struct AttackCruiserActorAnimationConfig {
     pub animation_type: AttackCruiserActorAnimationType,
