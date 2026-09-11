@@ -1614,156 +1614,8 @@ impl AttackCruiserGame {
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
         let mut hits = Vec::new();
-
-        for player_index in 0..self.players.len() {
-            let player_state = &mut self.player_states[player_index];
-            let in_bounds = is_inside_oval(
-                player_state.actor.pos,
-                self.config.playfield.center,
-                self.config.playfield.radius_x,
-                self.config.playfield.radius_z,
-            );
-
-            let mut update_clients = match (&mut player_state.bounds_state, in_bounds) {
-                (AttackCruiserPlayerBoundsState::Inside, true) => false,
-                (AttackCruiserPlayerBoundsState::Inside, false) => {
-                    self.player_states[player_index].bounds_state =
-                        AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                            timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                self.config.player.out_of_bounds_warp_delay_millis.into(),
-                            )),
-                        };
-                    true
-                }
-                (AttackCruiserPlayerBoundsState::Outside { timer }, _) => {
-                    if timer.time_until_next_event(now).is_zero() {
-                        self.player_states[player_index].bounds_state =
-                            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
-                                )),
-                            };
-                    }
-                    true
-                }
-                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { .. }, true) => {
-                    self.player_states[player_index].bounds_state =
-                        AttackCruiserPlayerBoundsState::Inside;
-                    true
-                }
-                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer }, false) => {
-                    if timer.time_until_next_event(now).is_zero() {
-                        self.player_states[player_index].bounds_state =
-                            AttackCruiserPlayerBoundsState::Outside {
-                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                    self.config.player.out_of_bounds_warp_millis.into(),
-                                )),
-                            };
-                    }
-                    true
-                }
-            };
-
-            let player_state = &mut self.player_states[player_index];
-            let actor_id = player_state.actor.id;
-            if player_state.respawnable(now) {
-                player_state.respawn(
-                    player_state.actor.ship.max_health,
-                    Duration::from_millis(
-                        self.config
-                            .player
-                            .post_respawn_invulnerability_millis
-                            .into(),
-                    ),
-                    now,
-                );
-
-                let mut actor_packets = self.replace_client_player_actor(player_index as u8);
-                actor_packets.append(&mut self.update_client_players_once_ready(
-                    AttackCruiserPlayerStateType {
-                        index: false,
-                        score: false,
-                        unknown3: false,
-                        inventory: false,
-                        actor_id: true,
-                    },
-                ));
-                actor_packets.append(&mut self.set_player_frozen(player_index, false));
-                broadcasts.push(Broadcast::Multi(self.active_players.clone(), actor_packets));
-            } else if player_state.lost(now) {
-                broadcasts.push(Broadcast::Single(
-                    self.players[player_index],
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithStringParams {
-                            script_name: "StarDestroyerHandler.quitGame".to_string(),
-                            params: vec![],
-                        },
-                    })],
-                ));
-            }
-
-            let player_state = &mut self.player_states[player_index];
-            if player_state.trackable() {
-                let actor = &mut player_state.actor;
-                let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
-                let total_damage = Self::total_damage(&actor_hits);
-
-                // If the player still has invulnerability time, process the hits but deal no damage
-                if player_state.vulnerable(now) {
-                    player_state.damage(total_damage, now, self.config.player.respawn_millis);
-
-                    if player_state.dead() {
-                        let mut death_packets = self.set_player_frozen(player_index, true);
-                        death_packets.append(&mut self.update_client_players_once_ready(
-                            AttackCruiserPlayerStateType {
-                                index: false,
-                                score: true,
-                                unknown3: false,
-                                inventory: false,
-                                actor_id: false,
-                            },
-                        ));
-                        broadcasts
-                            .push(Broadcast::Multi(self.active_players.clone(), death_packets));
-
-                        update_clients = true;
-                    }
-                }
-
-                hits.append(&mut actor_hits);
-            }
-
-            let player_state = &mut self.player_states[player_index];
-            let health_percent = player_state.actor.health as f32
-                / player_state.actor.ship.max_health as f32
-                * 100.0;
-            let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
-            let is_damage_alarm_timer_expired = player_state
-                .damage_alarm_sound_timer
-                .time_until_next_event(now)
-                .is_zero();
-            if is_low_health && !player_state.dead() && is_damage_alarm_timer_expired {
-                broadcasts.push(Broadcast::Single(
-                    self.players[player_index],
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: PlaySoundIdOnTarget {
-                            sound_id: self.config.player.damage_alarm_sound_id,
-                            target: Target::None,
-                        },
-                    })],
-                ));
-                player_state.damage_alarm_sound_timer.schedule_event(
-                    Duration::from_millis(self.config.player.damage_alarm_interval_millis.into()),
-                    now,
-                );
-            }
-
-            if update_clients {
-                broadcasts.push(self.update_server_player_actor(player_index as u8));
-            }
-        }
+        self.tick_players(now, tick_duration, &mut broadcasts, &mut hits);
+        self.tick_npcs(now, tick_duration, &mut broadcasts, &mut hits);
 
         broadcasts.push(Broadcast::Multi(
             self.active_players.clone(),
@@ -1782,21 +1634,6 @@ impl AttackCruiserGame {
                             delay_seconds: 0.0,
                         },
                     })
-                })
-                .collect(),
-        ));
-
-        broadcasts.push(Broadcast::Multi(
-            self.active_players.clone(),
-            self.npcs
-                .iter_mut()
-                .map(|npc| {
-                    npc.seek_target(
-                        self.player_states[0].actor.pos,
-                        self.player_states[0].actor.speed,
-                        tick_duration.as_secs_f32(),
-                    );
-                    Self::update_server_npc_actor(npc, false, self.group)
                 })
                 .collect(),
         ));
@@ -2409,5 +2246,198 @@ impl AttackCruiserGame {
         projectiles.iter().fold(0, |total_damage, (_, projectile)| {
             total_damage.saturating_add(projectile.damage)
         })
+    }
+
+    fn tick_players(
+        &mut self,
+        now: Instant,
+        tick_duration: Duration,
+        broadcasts: &mut Vec<Broadcast>,
+        hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
+    ) {
+        for player_index in 0..self.players.len() {
+            let player_state = &mut self.player_states[player_index];
+            let in_bounds = is_inside_oval(
+                player_state.actor.pos,
+                self.config.playfield.center,
+                self.config.playfield.radius_x,
+                self.config.playfield.radius_z,
+            );
+
+            let mut update_clients = match (&mut player_state.bounds_state, in_bounds) {
+                (AttackCruiserPlayerBoundsState::Inside, true) => false,
+                (AttackCruiserPlayerBoundsState::Inside, false) => {
+                    self.player_states[player_index].bounds_state =
+                        AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
+                            timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                self.config.player.out_of_bounds_warp_delay_millis.into(),
+                            )),
+                        };
+                    true
+                }
+                (AttackCruiserPlayerBoundsState::Outside { timer }, _) => {
+                    if timer.time_until_next_event(now).is_zero() {
+                        self.player_states[player_index].bounds_state =
+                            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
+                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
+                                )),
+                            };
+                    }
+                    true
+                }
+                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { .. }, true) => {
+                    self.player_states[player_index].bounds_state =
+                        AttackCruiserPlayerBoundsState::Inside;
+                    true
+                }
+                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer }, false) => {
+                    if timer.time_until_next_event(now).is_zero() {
+                        self.player_states[player_index].bounds_state =
+                            AttackCruiserPlayerBoundsState::Outside {
+                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
+                                    self.config.player.out_of_bounds_warp_millis.into(),
+                                )),
+                            };
+                    }
+                    true
+                }
+            };
+
+            let player_state = &mut self.player_states[player_index];
+            let actor_id = player_state.actor.id;
+            if player_state.respawnable(now) {
+                player_state.respawn(
+                    player_state.actor.ship.max_health,
+                    Duration::from_millis(
+                        self.config
+                            .player
+                            .post_respawn_invulnerability_millis
+                            .into(),
+                    ),
+                    now,
+                );
+
+                let mut actor_packets = self.replace_client_player_actor(player_index as u8);
+                actor_packets.append(&mut self.update_client_players_once_ready(
+                    AttackCruiserPlayerStateType {
+                        index: false,
+                        score: false,
+                        unknown3: false,
+                        inventory: false,
+                        actor_id: true,
+                    },
+                ));
+                actor_packets.append(&mut self.set_player_frozen(player_index, false));
+                broadcasts.push(Broadcast::Multi(self.active_players.clone(), actor_packets));
+            } else if player_state.lost(now) {
+                broadcasts.push(Broadcast::Single(
+                    self.players[player_index],
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: ExecuteScriptWithStringParams {
+                            script_name: "StarDestroyerHandler.quitGame".to_string(),
+                            params: vec![],
+                        },
+                    })],
+                ));
+            }
+
+            let player_state = &mut self.player_states[player_index];
+            if player_state.trackable() {
+                let actor = &mut player_state.actor;
+                let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
+                let total_damage = Self::total_damage(&actor_hits);
+
+                // If the player still has invulnerability time, process the hits but deal no damage
+                if player_state.vulnerable(now) {
+                    player_state.damage(total_damage, now, self.config.player.respawn_millis);
+
+                    if player_state.dead() {
+                        let mut death_packets = self.set_player_frozen(player_index, true);
+                        death_packets.append(&mut self.update_client_players_once_ready(
+                            AttackCruiserPlayerStateType {
+                                index: false,
+                                score: true,
+                                unknown3: false,
+                                inventory: false,
+                                actor_id: false,
+                            },
+                        ));
+                        broadcasts
+                            .push(Broadcast::Multi(self.active_players.clone(), death_packets));
+
+                        update_clients = true;
+                    }
+                }
+
+                hits.append(&mut actor_hits);
+            }
+
+            let player_state = &mut self.player_states[player_index];
+            let health_percent = player_state.actor.health as f32
+                / player_state.actor.ship.max_health as f32
+                * 100.0;
+            let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
+            let is_damage_alarm_timer_expired = player_state
+                .damage_alarm_sound_timer
+                .time_until_next_event(now)
+                .is_zero();
+            if is_low_health && !player_state.dead() && is_damage_alarm_timer_expired {
+                broadcasts.push(Broadcast::Single(
+                    self.players[player_index],
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: PlaySoundIdOnTarget {
+                            sound_id: self.config.player.damage_alarm_sound_id,
+                            target: Target::None,
+                        },
+                    })],
+                ));
+                player_state.damage_alarm_sound_timer.schedule_event(
+                    Duration::from_millis(self.config.player.damage_alarm_interval_millis.into()),
+                    now,
+                );
+            }
+
+            if update_clients {
+                broadcasts.push(self.update_server_player_actor(player_index as u8));
+            }
+        }
+    }
+
+    fn tick_npcs(
+        &mut self,
+        now: Instant,
+        tick_duration: Duration,
+        broadcasts: &mut Vec<Broadcast>,
+        hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
+    ) {
+        for npc in self.npcs.iter_mut() {
+            if npc.dead() {
+                continue;
+            }
+
+            let mut actor_hits = self.projectiles.hits(npc.id, npc, now, tick_duration);
+            let total_damage = Self::total_damage(&actor_hits);
+            npc.health = npc.health.saturating_sub_signed(total_damage);
+
+            npc.seek_target(
+                self.player_states[0].actor.pos,
+                self.player_states[0].actor.speed,
+                tick_duration.as_secs_f32(),
+            );
+
+            broadcasts.push(Broadcast::Multi(
+                self.active_players.clone(),
+                vec![Self::update_server_npc_actor(npc, false, self.group)],
+            ));
+
+            if npc.dead() {
+                // TODO: remove actor and process score change, if any
+            }
+
+            hits.append(&mut actor_hits);
+        }
     }
 }
