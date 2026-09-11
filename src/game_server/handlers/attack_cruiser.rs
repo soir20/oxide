@@ -2525,7 +2525,7 @@ impl AttackCruiserGame {
     ) {
         self.npcs.retain_mut(|npc| {
             if npc.paused() {
-                return false;
+                return true;
             }
 
             npc.seek_target(
@@ -2563,10 +2563,10 @@ impl AttackCruiserGame {
                     self.active_players.clone(),
                     Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
                 ));
-                return true;
+                return false;
             }
 
-            false
+            true
         });
     }
 }
