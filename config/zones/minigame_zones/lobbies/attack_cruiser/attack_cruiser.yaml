@@ -1,7 +1,7 @@
 ---
 attack_cruiser:
   guid: 250
-  max_players: 2
+  max_players: 1
   template_name: 9
   asset_name: SD_Twin_Suns_bbe
   hide_ui: false
