@@ -214,10 +214,13 @@ impl AttackCruiserActor {
             let scaling_factor = new_speed / speed;
             self.speed.x *= scaling_factor;
             self.speed.z *= scaling_factor;
+            self.pos.x += self.speed.x * delta_secs;
+            self.pos.z += self.speed.z * delta_secs;
 
             self.angular_speed = (self.angular_speed
                 - self.ship.angular_deceleration.to_radians() * delta_secs)
                 .max(0.0);
+            self.yaw = normalize_angle(self.yaw + self.angular_speed * delta_secs);
 
             return;
         }
