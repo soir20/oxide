@@ -13,7 +13,11 @@ use serde::Deserialize;
 use crate::{
     game_server::{
         handlers::{character::CharacterStats, guid::Guid},
-        packets::{ability::AbilityOpCode, player_update::HitPointModification, AbilitySubType},
+        packets::{
+            ability::{AbilityOpCode, CastAndLand},
+            player_update::HitPointModification,
+            AbilitySubType, ActionBarType, CharacterBoneNameTarget, Pos, Target,
+        },
         Broadcast, GamePacket, ProcessPacketError, ProcessPacketErrorType, TunneledPacket,
     },
     ConfigError, GameServer,
@@ -167,8 +171,8 @@ fn deal_ability_damage(
     caster: u64,
     target_stats: &mut CharacterStats,
     nearby_player_guids: &[u32],
-    ability_config: &AbilityConfig,
     ability_name: &str,
+    ability_config: &AbilityConfig,
 ) -> Result<Vec<Broadcast>, Error> {
     let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_name)?;
     let damaged = damage_dealt > 0;
@@ -201,6 +205,84 @@ fn deal_ability_damage(
     }
 
     Ok(broadcasts)
+}
+
+fn make_cast_and_land_packet(
+    caster: u64,
+    targets: &[u64],
+    ability_config: &AbilityConfig,
+) -> Vec<Vec<u8>> {
+    vec![GamePacket::serialize(&TunneledPacket {
+        unknown1: true,
+        inner: CastAndLand {
+            caster_guid: caster,
+            targets: targets
+                .iter()
+                .map(|&target| {
+                    Target::CharacterBone(CharacterBoneNameTarget {
+                        fallback_pos: Pos::default(),
+                        character_guid: target,
+                        bone_name: ability_config.target_bone_name.clone(),
+                    })
+                })
+                .collect(),
+            unknown1: -1,
+            unknown2: 0,
+            cast_animation_id: ability_config.cast_animation_id.unwrap_or(0),
+            cast_composite_effect_id: ability_config.cast_composite_effect_id.unwrap_or(0),
+            slot_cooldown_millis: 0,
+            disable_slot_cooldown: false,
+            unknown7: false,
+            impact_animation_id: ability_config.impact_animation_id.unwrap_or(0),
+            impact_composite_effect_id1: ability_config.impact_composite_effect_id.unwrap_or(0),
+            unknown10: 0,
+            unknown11: Pos::default(),
+            cast_composite_effect_seconds: ability_config
+                .cast_composite_effect_seconds
+                .unwrap_or(0.0),
+            unknown13: 0.0,
+            unknown14: 0,
+            action_bar_type: ActionBarType::Weapon,
+            slot_index: -1,
+            unknown17: 0,
+            override_launcher_guid: 0,
+            unknown19: false,
+            unknown20: 0,
+            unknown21: 0,
+            projectile_start_speed: 60.0,
+            projectile_end_speed: 60.0,
+            unknown24: 0,
+            unknown25: 0,
+            unknown26: Pos::default(),
+            unknown27: Pos::default(),
+            projectile_adr_name: "".to_string(),
+            projectile_origin: Target::CharacterBone(CharacterBoneNameTarget {
+                fallback_pos: Pos::default(),
+                character_guid: caster,
+                bone_name: "".to_string(),
+            }),
+            unknown_target: Target::default(),
+            unknown29: Pos::default(),
+            projectile_angular_speed: 0.0,
+            unknown31: false,
+            projectile_start_size: 1.0,
+            projectile_end_size: 1.0,
+            projectile_trail_composite_effect_id: 0,
+            impact_composite_effect_id2: ability_config.impact_composite_effect_id.unwrap_or(0),
+            unknown36: 0,
+            unknown37: 0,
+            unknown38: 0.0,
+            unknown39: 0.0,
+            unknown40: 0.0,
+            unknown41: 0.0,
+            unknown42: 0.0,
+            unknown43: 0.0,
+            unknown44: 0.0,
+            missfire_travel_units: 20.0,
+            unknown46: "".to_string(),
+            unknown47: 0,
+        },
+    })]
 }
 
 pub fn process_ability(
