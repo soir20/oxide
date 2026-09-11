@@ -55,7 +55,7 @@ use crate::{
                 AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
                 AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
                 AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-                AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserUpdateServerActors, AttackCruiserVec, AttackCruiserWorldEffect,
             },
             command::PlaySoundIdOnTarget,
             minigame::MinigameHeader,
@@ -760,6 +760,9 @@ struct AttackCruiserShipConfig {
     overhead_health_scale: f32,
     thruster_effect_id: u32,
     invulnerable_effect_id: u32,
+    death_start_effect_id: Option<u32>,
+    death_end_effect_id: Option<u32>,
+    despawn_effect_id: Option<u32>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -1708,7 +1711,14 @@ impl AttackCruiserGame {
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
-        let mut packets = self.despawn_client_player_actor(&self.player_states[player_index]);
+        let mut packets = Self::despawn_client_actor(
+            &self.player_states[player_index].actor,
+            self.player_states[player_index]
+                .actor
+                .ship
+                .despawn_effect_id,
+            self.group,
+        );
         packets.push(GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserRemovePlayer {
@@ -1964,23 +1974,64 @@ impl AttackCruiserGame {
         )
     }
 
-    fn despawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
-        vec![GamePacket::serialize(&TunneledPacket {
+    fn spawn_client_effect(
+        effect_id: Option<u32>,
+        pos: Pos3,
+        group: MinigameMatchmakingGroup,
+    ) -> Vec<Vec<u8>> {
+        effect_id
+            .map(|effect_id| {
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserWorldEffect {
+                        minigame_header: MinigameHeader {
+                            stage_guid: group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
+                            stage_group_guid: group.stage_group_guid,
+                        },
+                        effect_id,
+                        pos,
+                    },
+                })]
+            })
+            .unwrap_or_default()
+    }
+
+    fn despawn_client_actor(
+        actor: &AttackCruiserActor,
+        despawn_effect_id: Option<u32>,
+        group: MinigameMatchmakingGroup,
+    ) -> Vec<Vec<u8>> {
+        let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserRemoveActor {
                 minigame_header: MinigameHeader {
-                    stage_guid: self.group.stage_guid,
+                    stage_guid: group.stage_guid,
                     sub_op_code: AttackCruiserOpCode::RemoveActor as i32,
-                    stage_group_guid: self.group.stage_group_guid,
+                    stage_group_guid: group.stage_group_guid,
                 },
-                actor_id: player_state.actor.id,
+                actor_id: actor.id,
             },
-        })]
+        })];
+
+        packets.append(&mut Self::spawn_client_effect(
+            despawn_effect_id,
+            actor.pos,
+            group,
+        ));
+
+        packets
     }
 
     fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
-        let mut packets =
-            self.despawn_client_player_actor(&self.player_states[player_index as usize]);
+        let mut packets = Self::despawn_client_actor(
+            &self.player_states[player_index as usize].actor,
+            self.player_states[player_index as usize]
+                .actor
+                .ship
+                .death_end_effect_id,
+            self.group,
+        );
         let player_state = &mut self.player_states[player_index as usize];
         player_state.actor.id = player_actor_id(player_index, player_state.lives);
         packets.append(
@@ -2394,7 +2445,12 @@ impl AttackCruiserGame {
                     player_state.damage(total_damage, now);
 
                     if player_state.dead() {
-                        let mut death_packets = self.set_player_frozen(player_index, true);
+                        let mut death_packets = Self::spawn_client_effect(
+                            player_state.actor.ship.death_start_effect_id,
+                            player_state.actor.pos,
+                            self.group,
+                        );
+                        death_packets.append(&mut self.set_player_frozen(player_index, true));
                         death_packets.append(&mut self.update_client_players_once_ready(
                             AttackCruiserPlayerStateType {
                                 index: false,
@@ -2454,6 +2510,14 @@ impl AttackCruiserGame {
         hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
     ) {
         for npc in self.npcs.iter_mut() {
+            if npc.completed_death(now) {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.clone(),
+                    Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
+                ));
+                continue;
+            }
+
             if npc.disabled() {
                 continue;
             }
@@ -2462,20 +2526,23 @@ impl AttackCruiserGame {
             let total_damage = Self::total_damage(&actor_hits);
             npc.damage(total_damage, now);
 
-            npc.seek_target(
-                self.player_states[0].actor.pos,
-                self.player_states[0].actor.speed,
-                tick_duration.as_secs_f32(),
-            );
+            if npc.dead() {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.clone(),
+                    Self::spawn_client_effect(npc.ship.death_start_effect_id, npc.pos, self.group),
+                ));
+            } else {
+                npc.seek_target(
+                    self.player_states[0].actor.pos,
+                    self.player_states[0].actor.speed,
+                    tick_duration.as_secs_f32(),
+                );
+            }
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.clone(),
                 vec![Self::update_server_npc_actor(npc, false, self.group)],
             ));
-
-            if npc.dead() {
-                // TODO: remove actor and process score change, if any
-            }
 
             hits.append(&mut actor_hits);
         }

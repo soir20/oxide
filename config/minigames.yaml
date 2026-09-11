@@ -3257,6 +3257,9 @@ categories:
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707
                     invulnerable_effect_id: 1744
+                    death_start_effect_id: 1576
+                    death_end_effect_id: 1668
+                    despawn_effect_id: 1718
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
