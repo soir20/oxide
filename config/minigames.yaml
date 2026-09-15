@@ -3208,29 +3208,6 @@ categories:
                       z: -1999.0
                     yaw: !Degrees 0.0
                   ship: venator
-                  weapons:
-                    cooldown_millis: 250
-                    primary_tiers:
-                      - projectiles:
-                          - composite_effect_id: 1558
-                            hit_composite_effect_id: 1315
-                            count: 2
-                            damage: 1
-                            length: 25
-                          - composite_effect_id: 1763
-                            hit_composite_effect_id: 1315
-                            damage: 1
-                            length: 75
-                          - composite_effect_id: 1762
-                            hit_composite_effect_id: 1315
-                            yaw: !Degrees 5
-                            damage: 1
-                            length: 75
-                          - composite_effect_id: 1762
-                            hit_composite_effect_id: 1315
-                            yaw: !Degrees -5
-                            damage: 1
-                            length: 75
                 playfield:
                   center:
                     x: 3.9
@@ -3395,6 +3372,32 @@ categories:
                               x: 1.69803
                               y: 4.46827
                               z: -45.8687
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - composite_effect_id: 1558
+                              hit_composite_effect_id: 1315
+                              count: 2
+                              damage: 1
+                              length: 25
+                              cooldown_millis: 250
+                            - composite_effect_id: 1763
+                              hit_composite_effect_id: 1315
+                              damage: 1
+                              length: 75
+                              cooldown_millis: 250
+                            - composite_effect_id: 1762
+                              hit_composite_effect_id: 1315
+                              yaw: !Degrees 5
+                              damage: 1
+                              length: 75
+                              cooldown_millis: 250
+                            - composite_effect_id: 1762
+                              hit_composite_effect_id: 1315
+                              yaw: !Degrees -5
+                              damage: 1
+                              length: 75
+                              cooldown_millis: 250
                 sound_id: 2413
               zone_template_guid: 250
               score_to_credits_expression: x / 129

@@ -86,6 +86,15 @@ fn rotate(origin: Pos3, yaw: f32, pitch: f32) -> Pos3 {
     (rotation * Vec3::from(origin)).into()
 }
 
+fn gcd_u16(mut a: u16, mut b: u16) -> u16 {
+    while b != 0 {
+        let prev_divisor = b;
+        b = a % b;
+        a = prev_divisor;
+    }
+    a
+}
+
 fn show_hud_message(
     recipients: &[u32],
     message_id: u32,
@@ -129,6 +138,8 @@ struct AttackCruiserActor {
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
     pub invulnerability_timer: MinigameCountdown,
+    pub primary_weapon_tier: usize,
+    pub primary_weapon_last_used: Vec<Option<Instant>>,
 }
 
 impl AttackCruiserActor {
@@ -141,7 +152,7 @@ impl AttackCruiserActor {
         bvh: Option<Arc<Bvh>>,
         ship: Arc<AttackCruiserShipConfig>,
     ) -> Self {
-        AttackCruiserActor {
+        let mut actor = AttackCruiserActor {
             id,
             pos,
             yaw,
@@ -155,9 +166,15 @@ impl AttackCruiserActor {
             turn_multiplier: angular_speed / ship.max_angular_speed.to_radians(),
             health: ship.max_health,
             bvh,
-            ship,
             invulnerability_timer: MinigameCountdown::new(),
-        }
+            primary_weapon_tier: 0,
+            primary_weapon_last_used: Vec::new(),
+            ship,
+        };
+
+        actor.set_primary_weapon_tier(0);
+
+        actor
     }
 
     pub fn dead(&self) -> bool {
@@ -200,6 +217,53 @@ impl AttackCruiserActor {
         self.health = self.ship.max_health;
         self.invulnerability_timer
             .schedule_event(invulnerability_duration, now);
+    }
+
+    pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
+        self.primary_weapon_tier = new_tier;
+        self.primary_weapon_last_used = vec![
+            None;
+            self.ship
+                .weapons
+                .primary_tiers
+                .first()
+                .map(|weapon| weapon.projectiles.len())
+                .unwrap_or_default()
+        ];
+    }
+
+    pub fn attack_primary(
+        &mut self,
+        now: Instant,
+    ) -> impl Iterator<Item = &Arc<AttackCruiserProjectileConfig>> + use<'_> {
+        let last_used_slice = &mut self.primary_weapon_last_used;
+
+        let projectiles_opt = self
+            .ship
+            .weapons
+            .primary_tiers
+            .get(self.primary_weapon_tier)
+            .map(|weapon| &weapon.projectiles);
+
+        projectiles_opt
+            .into_iter()
+            .flatten()
+            .enumerate()
+            .filter_map(move |(index, projectile)| {
+                if let Some(last_used_opt) = last_used_slice.get_mut(index) {
+                    if let Some(last_used) = last_used_opt {
+                        if now.saturating_duration_since(*last_used)
+                            < Duration::from_millis(projectile.cooldown_millis.into())
+                        {
+                            return None;
+                        }
+                    }
+
+                    *last_used_opt = Some(now);
+                    return Some(projectile);
+                }
+                None
+            })
     }
 
     pub fn seek_target(&mut self, target_pos: Pos3, target_speed: Pos3, delta_secs: f32) {
@@ -389,7 +453,6 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
     pub lives: u8,
-    pub primary_weapon_tier: usize,
     pub bounds_state: AttackCruiserPlayerBoundsState,
     pub bounds_warning_hud_timer: MinigameCountdown,
     pub damage_alarm_sound_timer: MinigameCountdown,
@@ -420,7 +483,6 @@ impl AttackCruiserPlayer {
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
             lives,
-            primary_weapon_tier: 0,
             bounds_state: AttackCruiserPlayerBoundsState::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
             damage_alarm_sound_timer: MinigameCountdown::new(),
@@ -515,8 +577,8 @@ const fn default_speed() -> f32 {
     500.0
 }
 
-const fn default_lifetime_millis() -> f32 {
-    3.0
+const fn default_lifetime_millis() -> u16 {
+    3000
 }
 
 const fn default_count() -> u8 {
@@ -671,8 +733,9 @@ struct AttackCruiserProjectileConfig {
     wobble: Angle,
     #[serde(default = "default_speed")]
     speed: f32,
+    cooldown_millis: u16,
     #[serde(default = "default_lifetime_millis")]
-    lifetime_millis: f32,
+    lifetime_millis: u16,
     #[serde(default = "default_count")]
     count: u8,
     #[serde(default = "default_launch_offset")]
@@ -685,15 +748,28 @@ struct AttackCruiserProjectileConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserPlayerPrimaryWeaponConfig {
+struct AttackCruiserPrimaryWeaponConfig {
     projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserPlayerWeaponConfig {
-    cooldown_millis: f32,
-    primary_tiers: Vec<AttackCruiserPlayerPrimaryWeaponConfig>,
+struct AttackCruiserWeaponConfig {
+    primary_tiers: Vec<AttackCruiserPrimaryWeaponConfig>,
+}
+
+impl AttackCruiserWeaponConfig {
+    pub fn cooldown_millis(&self) -> u16 {
+        self.primary_tiers
+            .iter()
+            .flat_map(|tier| {
+                tier.projectiles
+                    .iter()
+                    .map(|projectile| projectile.cooldown_millis)
+            })
+            .reduce(gcd_u16)
+            .unwrap_or_default()
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -783,6 +859,8 @@ struct AttackCruiserShipConfig {
     cinematics: Vec<AttackCruiserShipCinematicConfig>,
     #[serde(default)]
     damage_states: Vec<AttackCruiserShipDamageStateConfig>,
+    #[serde(default)]
+    weapons: AttackCruiserWeaponConfig,
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -816,8 +894,6 @@ struct AttackCruiserPlayerConfig {
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: String,
-    #[serde(default)]
-    weapons: AttackCruiserPlayerWeaponConfig,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -971,8 +1047,9 @@ impl AttackCruiserProjectilePool {
         actor_origin: Pos3,
         direction: Pos3,
         projectile: &Arc<AttackCruiserProjectileConfig>,
+        now: Instant,
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
-        self.expire();
+        self.expire(now);
 
         let rng = &mut thread_rng();
         let mut launched_projectiles = Vec::new();
@@ -1010,9 +1087,8 @@ impl AttackCruiserProjectilePool {
             let yaw = direction.x.atan2(direction.z) + relative_yaw;
             let pitch = wobble;
 
-            let now = Instant::now();
             let expiry_time = now
-                .checked_add(Duration::from_secs_f32(projectile.lifetime_millis * 1000.0))
+                .checked_add(Duration::from_millis(projectile.lifetime_millis.into()))
                 .ok_or_else(|| {
                     ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
@@ -1175,8 +1251,7 @@ impl AttackCruiserProjectilePool {
             .collect()
     }
 
-    pub fn expire(&mut self) {
-        let now = Instant::now();
+    pub fn expire(&mut self, now: Instant) {
         while let Some((&projectile_id, Reverse(expiry))) = self.expiry.peek() {
             if expiry > &now {
                 break;
@@ -1634,12 +1709,9 @@ impl AttackCruiserGame {
                                         roll_max_angle: ship.max_roll.to_degrees(),
                                         pitch_max_angle: 0.0,
                                         continuous_fire_seconds: 0.05,
-                                        fire_cooldown_seconds: self
-                                            .config
-                                            .player
-                                            .weapons
-                                            .cooldown_millis
-                                            / 1000.0,
+                                        fire_cooldown_seconds: f32::from(
+                                            ship.weapons.cooldown_millis(),
+                                        ) / 1000.0,
                                     },
                                 )),
                             ),
@@ -1880,7 +1952,7 @@ impl AttackCruiserGame {
         click: AttackCruiserClickedLocation,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
-        let player_state = &self.player_states[player_index as usize];
+        let player_state = &mut self.player_states[player_index as usize];
 
         if player_state.disarmed() {
             return Ok(Vec::new());
@@ -1903,50 +1975,40 @@ impl AttackCruiserGame {
 
         let mut packets = Vec::new();
 
-        if let Some(primary_weapon) = self
-            .config
-            .player
-            .weapons
-            .primary_tiers
-            .get(player_state.primary_weapon_tier)
-        {
-            for projectile in primary_weapon.projectiles.iter() {
-                packets.extend(
-                    self.projectiles
-                        .launch(
-                            player_state.actor.id,
-                            player_state.actor.pos,
-                            direction,
-                            projectile,
-                        )?
-                        .into_iter()
-                        .map(|launched_projectile| {
-                            GamePacket::serialize(&TunneledPacket {
-                                unknown1: true,
-                                inner: AttackCruiserAddProjectile {
-                                    minigame_header: MinigameHeader {
-                                        stage_guid: self.group.stage_guid,
-                                        sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                                        stage_group_guid: self.group.stage_group_guid,
-                                    },
-                                    projectile_id: launched_projectile.projectile_id,
-                                    unknown2: 0,
-                                    effect_id: projectile.composite_effect_id,
-                                    despawn_effect_id: 0,
-                                    lifetime_seconds: projectile.lifetime_millis * 1000.0,
-                                    origin: launched_projectile.origin,
-                                    speed: launched_projectile.speed,
-                                    unknown8: Pos3::default(),
-                                    yaw: launched_projectile.yaw,
-                                    pitch: launched_projectile.pitch,
-                                    unknown11: 0.0,
-                                    unknown12: 0.0,
-                                    unknown13: 0,
+        let now = Instant::now();
+        let actor_id = player_state.actor.id;
+        let actor_pos = player_state.actor.pos;
+        for projectile in player_state.actor.attack_primary(now) {
+            packets.extend(
+                self.projectiles
+                    .launch(actor_id, actor_pos, direction, projectile, now)?
+                    .into_iter()
+                    .map(|launched_projectile| {
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AttackCruiserAddProjectile {
+                                minigame_header: MinigameHeader {
+                                    stage_guid: self.group.stage_guid,
+                                    sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                                    stage_group_guid: self.group.stage_group_guid,
                                 },
-                            })
-                        }),
-                );
-            }
+                                projectile_id: launched_projectile.projectile_id,
+                                unknown2: 0,
+                                effect_id: projectile.composite_effect_id,
+                                despawn_effect_id: 0,
+                                lifetime_seconds: f32::from(projectile.lifetime_millis) * 1000.0,
+                                origin: launched_projectile.origin,
+                                speed: launched_projectile.speed,
+                                unknown8: Pos3::default(),
+                                yaw: launched_projectile.yaw,
+                                pitch: launched_projectile.pitch,
+                                unknown11: 0.0,
+                                unknown12: 0.0,
+                                unknown13: 0,
+                            },
+                        })
+                    }),
+            );
         }
 
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
