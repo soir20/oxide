@@ -1093,7 +1093,7 @@ pub struct AttackCruiserActorState {
     pub unknown14: bool,
     pub unknown15: bool,
     pub hide_ring: bool,
-    pub show_boss_ring_or_player_death: bool,
+    pub show_boss_ring: bool,
 }
 
 impl SerializePacket for AttackCruiserActorState {
@@ -1163,7 +1163,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 15;
         }
 
-        if self.show_boss_ring_or_player_death {
+        if self.show_boss_ring {
             state |= 1 << 16;
         }
 
@@ -1214,7 +1214,7 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown14,
             unknown15,
             hide_ring: unknown16,
-            show_boss_ring_or_player_death: unknown17,
+            show_boss_ring: unknown17,
         })
     }
 }
