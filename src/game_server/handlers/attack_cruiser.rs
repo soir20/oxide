@@ -1958,60 +1958,20 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
-        let direction = Pos3::from(direction(
-            Pos {
-                x: player_state.actor.pos.x,
-                y: 0.0,
-                z: player_state.actor.pos.z,
-                w: 1.0,
-            },
-            Pos {
-                x: click.clicked_pos.x,
-                y: 0.0,
-                z: click.clicked_pos.y,
-                w: 1.0,
-            },
-        ));
-
-        let mut packets = Vec::new();
-
         let now = Instant::now();
-        let actor_id = player_state.actor.id;
-        let actor_pos = player_state.actor.pos;
-        for projectile in player_state.actor.attack_primary(now) {
-            packets.extend(
-                self.projectiles
-                    .launch(actor_id, actor_pos, direction, projectile, now)?
-                    .into_iter()
-                    .map(|launched_projectile| {
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: AttackCruiserAddProjectile {
-                                minigame_header: MinigameHeader {
-                                    stage_guid: self.group.stage_guid,
-                                    sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
-                                    stage_group_guid: self.group.stage_group_guid,
-                                },
-                                projectile_id: launched_projectile.projectile_id,
-                                unknown2: 0,
-                                effect_id: projectile.composite_effect_id,
-                                despawn_effect_id: 0,
-                                lifetime_seconds: f32::from(projectile.lifetime_millis) * 1000.0,
-                                origin: launched_projectile.origin,
-                                speed: launched_projectile.speed,
-                                unknown8: Pos3::default(),
-                                yaw: launched_projectile.yaw,
-                                pitch: launched_projectile.pitch,
-                                unknown11: 0.0,
-                                unknown12: 0.0,
-                                unknown13: 0,
-                            },
-                        })
-                    }),
-            );
-        }
-
-        Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
+        let target_pos = Pos3 {
+            x: click.clicked_pos.x,
+            y: player_state.actor.pos.y,
+            z: click.clicked_pos.y,
+        };
+        Self::actor_attack_primary(
+            &mut player_state.actor,
+            target_pos,
+            now,
+            &mut self.projectiles,
+            self.group,
+            &self.active_players,
+        )
     }
 
     fn spawn_client_actor(
@@ -2331,6 +2291,69 @@ impl AttackCruiserGame {
         });
 
         Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
+    }
+
+    fn actor_attack_primary(
+        actor: &mut AttackCruiserActor,
+        target_pos: Pos3,
+        now: Instant,
+        projectile_pool: &mut AttackCruiserProjectilePool,
+        group: MinigameMatchmakingGroup,
+        active_players: &[u32],
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let mut packets = Vec::new();
+
+        let direction = Pos3::from(direction(
+            Pos {
+                x: actor.pos.x,
+                y: actor.pos.y,
+                z: actor.pos.z,
+                w: 1.0,
+            },
+            Pos {
+                x: target_pos.x,
+                y: target_pos.y,
+                z: target_pos.z,
+                w: 1.0,
+            },
+        ));
+
+        let actor_id = actor.id;
+        let actor_pos = actor.pos;
+        for projectile in actor.attack_primary(now) {
+            packets.extend(
+                projectile_pool
+                    .launch(actor_id, actor_pos, direction, projectile, now)?
+                    .into_iter()
+                    .map(|launched_projectile| {
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AttackCruiserAddProjectile {
+                                minigame_header: MinigameHeader {
+                                    stage_guid: group.stage_guid,
+                                    sub_op_code: AttackCruiserOpCode::AddProjectile as i32,
+                                    stage_group_guid: group.stage_group_guid,
+                                },
+                                projectile_id: launched_projectile.projectile_id,
+                                unknown2: 0,
+                                effect_id: projectile.composite_effect_id,
+                                despawn_effect_id: 0,
+                                lifetime_seconds: f32::from(projectile.lifetime_millis) * 1000.0,
+                                origin: launched_projectile.origin,
+                                speed: launched_projectile.speed,
+                                unknown8: Pos3::default(),
+                                yaw: launched_projectile.yaw,
+                                pitch: launched_projectile.pitch,
+                                unknown11: 0.0,
+                                unknown12: 0.0,
+                                unknown13: 0,
+                            },
+                        })
+                    }),
+            );
+        }
+
+        Ok(vec![Broadcast::Multi(active_players.to_vec(), packets)])
     }
 
     fn is_singleplayer(&self) -> bool {
