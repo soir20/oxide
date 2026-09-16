@@ -3245,7 +3245,7 @@ categories:
                         animation_id: 3002
                         duration_seconds: 6.0
                   venator:
-                    max_alive: 2
+                    max_alive: 4
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll: !Degrees 15
