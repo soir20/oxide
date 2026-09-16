@@ -1079,7 +1079,7 @@ impl GamePacket for AttackCruiserUpdatePlayers {
 pub struct AttackCruiserActorState {
     pub unknown1: bool,
     pub unknown2: bool,
-    pub invulnerable: bool,
+    pub show_invulnerablity_effect: bool,
     pub unknown4: bool,
     pub unknown5: bool,
     pub unknown6: bool,
@@ -1093,7 +1093,7 @@ pub struct AttackCruiserActorState {
     pub unknown14: bool,
     pub unknown15: bool,
     pub hide_ring: bool,
-    pub dead: bool,
+    pub show_boss_ring_or_player_death: bool,
 }
 
 impl SerializePacket for AttackCruiserActorState {
@@ -1107,7 +1107,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 1;
         }
 
-        if self.invulnerable {
+        if self.show_invulnerablity_effect {
             state |= 1 << 2;
         }
 
@@ -1163,7 +1163,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 15;
         }
 
-        if self.dead {
+        if self.show_boss_ring_or_player_death {
             state |= 1 << 16;
         }
 
@@ -1200,7 +1200,7 @@ impl DeserializePacket for AttackCruiserActorState {
         Ok(AttackCruiserActorState {
             unknown1,
             unknown2,
-            invulnerable,
+            show_invulnerablity_effect: invulnerable,
             unknown4,
             unknown5,
             unknown6,
@@ -1214,7 +1214,7 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown14,
             unknown15,
             hide_ring: unknown16,
-            dead: unknown17,
+            show_boss_ring_or_player_death: unknown17,
         })
     }
 }

@@ -126,6 +126,42 @@ fn normalize_angle(angle_radians: f32) -> f32 {
 }
 
 #[derive(Clone, Debug)]
+enum AttackCruiserActorInvulnerability {
+    Dead(MinigameCountdown),
+    Respawning(MinigameCountdown),
+    UsedPowerup(MinigameCountdown),
+    Vulnerable { paused: bool },
+}
+
+impl Default for AttackCruiserActorInvulnerability {
+    fn default() -> Self {
+        AttackCruiserActorInvulnerability::Vulnerable { paused: false }
+    }
+}
+
+impl AttackCruiserActorInvulnerability {
+    pub fn paused(&self) -> bool {
+        match self {
+            AttackCruiserActorInvulnerability::Dead(timer) => timer.paused(),
+            AttackCruiserActorInvulnerability::Respawning(timer) => timer.paused(),
+            AttackCruiserActorInvulnerability::UsedPowerup(timer) => timer.paused(),
+            AttackCruiserActorInvulnerability::Vulnerable { paused } => *paused,
+        }
+    }
+
+    pub fn pause_or_resume(&mut self, paused: bool) {
+        match self {
+            AttackCruiserActorInvulnerability::Dead(timer) => timer.pause_or_resume(paused),
+            AttackCruiserActorInvulnerability::Respawning(timer) => timer.pause_or_resume(paused),
+            AttackCruiserActorInvulnerability::UsedPowerup(timer) => timer.pause_or_resume(paused),
+            AttackCruiserActorInvulnerability::Vulnerable {
+                paused: already_paused,
+            } => *already_paused = paused,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 struct AttackCruiserActor {
     pub id: i32,
     pub ship: Arc<AttackCruiserShipConfig>,
@@ -137,7 +173,7 @@ struct AttackCruiserActor {
     pub turn_multiplier: f32,
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
-    pub invulnerability_timer: MinigameCountdown,
+    pub invulnerability: AttackCruiserActorInvulnerability,
     pub primary_weapon_tier: usize,
     pub primary_weapon_last_used: Vec<Option<Instant>>,
 }
@@ -166,7 +202,7 @@ impl AttackCruiserActor {
             turn_multiplier: angular_speed / ship.max_angular_speed.to_radians(),
             health: ship.max_health,
             bvh,
-            invulnerability_timer: MinigameCountdown::new(),
+            invulnerability: AttackCruiserActorInvulnerability::default(),
             primary_weapon_tier: 0,
             primary_weapon_last_used: Vec::new(),
             ship,
@@ -182,41 +218,59 @@ impl AttackCruiserActor {
     }
 
     pub fn paused(&self) -> bool {
-        self.invulnerability_timer.paused()
+        self.invulnerability.paused()
     }
 
     pub fn pause_or_resume(&mut self, pause: bool) {
-        self.invulnerability_timer.pause_or_resume(pause);
+        self.invulnerability.pause_or_resume(pause);
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
         self.health = self.health.saturating_sub_signed(damage);
 
         if self.dead() {
-            let respawn_secs: f32 = self
+            let death_secs: f32 = self
                 .ship
                 .animations
                 .iter()
                 .filter(|animation| animation.animation_type.is_death())
                 .map(|animation| animation.duration_seconds)
                 .fold(0.0, |a, b| a.max(b));
-            self.invulnerability_timer
-                .schedule_event(Duration::from_secs_f32(respawn_secs), now);
+            self.invulnerability = AttackCruiserActorInvulnerability::Dead(
+                MinigameCountdown::new_with_event(Duration::from_secs_f32(death_secs), now),
+            );
         }
     }
 
     pub fn completed_death(&self, now: Instant) -> bool {
         self.dead()
-            && self
-                .invulnerability_timer
-                .time_until_next_event(now)
-                .is_zero()
+            && match &self.invulnerability {
+                AttackCruiserActorInvulnerability::Dead(timer) => {
+                    timer.time_until_next_event(now).is_zero()
+                }
+                _ => false,
+            }
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.health = self.ship.max_health;
-        self.invulnerability_timer
-            .schedule_event(invulnerability_duration, now);
+        self.invulnerability = AttackCruiserActorInvulnerability::Respawning(
+            MinigameCountdown::new_with_event(invulnerability_duration, now),
+        );
+    }
+
+    pub fn is_respawning(&self) -> bool {
+        matches!(
+            self.invulnerability,
+            AttackCruiserActorInvulnerability::Respawning(_)
+        )
+    }
+
+    pub fn used_invulnerable_powerup(&self) -> bool {
+        matches!(
+            self.invulnerability,
+            AttackCruiserActorInvulnerability::UsedPowerup(_)
+        )
     }
 
     pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
@@ -520,13 +574,12 @@ impl AttackCruiserPlayer {
             )
     }
 
-    pub fn vulnerable(&self, now: Instant) -> bool {
+    pub fn vulnerable(&self) -> bool {
         self.trackable()
-            && self
-                .actor
-                .invulnerability_timer
-                .time_until_next_event(now)
-                .is_zero()
+            && matches!(
+                self.actor.invulnerability,
+                AttackCruiserActorInvulnerability::Vulnerable { .. }
+            )
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
@@ -2158,7 +2211,9 @@ impl AttackCruiserGame {
                         state: AttackCruiserActorState {
                             unknown1: false,
                             unknown2: false,
-                            invulnerable: false,
+                            show_invulnerablity_effect: player_state
+                                .actor
+                                .used_invulnerable_powerup(),
                             unknown4: false,
                             unknown5: false,
                             unknown6: false,
@@ -2172,7 +2227,7 @@ impl AttackCruiserGame {
                             unknown14: false,
                             unknown15: false,
                             hide_ring: warp_out,
-                            dead: player_state.dead(),
+                            show_boss_ring_or_player_death: player_state.dead(),
                         },
                     }],
                 },
@@ -2205,7 +2260,7 @@ impl AttackCruiserGame {
                     state: AttackCruiserActorState {
                         unknown1: false,
                         unknown2: false,
-                        invulnerable: false,
+                        show_invulnerablity_effect: actor.used_invulnerable_powerup(),
                         unknown4: false,
                         unknown5: false,
                         unknown6: false,
@@ -2219,7 +2274,7 @@ impl AttackCruiserGame {
                         unknown14: false,
                         unknown15: false,
                         hide_ring: warp_out,
-                        dead: actor.dead(),
+                        show_boss_ring_or_player_death: false,
                     },
                 }],
             },
@@ -2460,9 +2515,12 @@ impl AttackCruiserGame {
                 (AttackCruiserPlayerBoundsState::Inside, false) => {
                     self.player_states[player_index].bounds_state =
                         AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                            timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                self.config.player.out_of_bounds_warp_delay_millis.into(),
-                            )),
+                            timer: MinigameCountdown::new_with_event(
+                                Duration::from_millis(
+                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
+                                ),
+                                now,
+                            ),
                         };
                     true
                 }
@@ -2470,9 +2528,12 @@ impl AttackCruiserGame {
                     if timer.time_until_next_event(now).is_zero() {
                         self.player_states[player_index].bounds_state =
                             AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
-                                )),
+                                timer: MinigameCountdown::new_with_event(
+                                    Duration::from_millis(
+                                        self.config.player.out_of_bounds_warp_delay_millis.into(),
+                                    ),
+                                    now,
+                                ),
                             };
                     }
                     true
@@ -2486,9 +2547,12 @@ impl AttackCruiserGame {
                     if timer.time_until_next_event(now).is_zero() {
                         self.player_states[player_index].bounds_state =
                             AttackCruiserPlayerBoundsState::Outside {
-                                timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                                    self.config.player.out_of_bounds_warp_millis.into(),
-                                )),
+                                timer: MinigameCountdown::new_with_event(
+                                    Duration::from_millis(
+                                        self.config.player.out_of_bounds_warp_millis.into(),
+                                    ),
+                                    now,
+                                ),
                             };
                     }
                     true
@@ -2540,7 +2604,7 @@ impl AttackCruiserGame {
                 let total_damage = Self::total_damage(&actor_hits);
 
                 // If the player still has invulnerability time, process the hits but deal no damage
-                if player_state.vulnerable(now) {
+                if player_state.vulnerable() {
                     player_state.damage(total_damage, now);
 
                     if player_state.dead() {
