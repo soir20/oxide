@@ -126,6 +126,14 @@ fn normalize_angle(angle_radians: f32) -> f32 {
 }
 
 #[derive(Clone, Debug)]
+enum AttackCruiserActorInvulnerabilityReason {
+    Dead,
+    Respawning,
+    UsedPowerup,
+    Vulnerable,
+}
+
+#[derive(Clone, Debug)]
 enum AttackCruiserActorInvulnerability {
     Dead(MinigameCountdown),
     Respawning(MinigameCountdown),
@@ -140,6 +148,45 @@ impl Default for AttackCruiserActorInvulnerability {
 }
 
 impl AttackCruiserActorInvulnerability {
+    pub fn replace(
+        &mut self,
+        reason: AttackCruiserActorInvulnerabilityReason,
+        duration: Duration,
+        now: Instant,
+    ) {
+        let mut state = match reason {
+            AttackCruiserActorInvulnerabilityReason::Dead => {
+                AttackCruiserActorInvulnerability::Dead(MinigameCountdown::new_with_event(
+                    duration, now,
+                ))
+            }
+            AttackCruiserActorInvulnerabilityReason::Respawning => {
+                AttackCruiserActorInvulnerability::Respawning(MinigameCountdown::new_with_event(
+                    duration, now,
+                ))
+            }
+            AttackCruiserActorInvulnerabilityReason::UsedPowerup => {
+                AttackCruiserActorInvulnerability::UsedPowerup(MinigameCountdown::new_with_event(
+                    duration, now,
+                ))
+            }
+            AttackCruiserActorInvulnerabilityReason::Vulnerable => {
+                AttackCruiserActorInvulnerability::Vulnerable { paused: false }
+            }
+        };
+        state.pause_or_resume(self.paused());
+
+        *self = state;
+    }
+
+    pub fn mark_vulnerable(&mut self) {
+        self.replace(
+            AttackCruiserActorInvulnerabilityReason::Vulnerable,
+            Duration::ZERO,
+            Instant::now(),
+        );
+    }
+
     pub fn paused(&self) -> bool {
         match self {
             AttackCruiserActorInvulnerability::Dead(timer) => timer.paused(),
@@ -236,8 +283,10 @@ impl AttackCruiserActor {
                 .filter(|animation| animation.animation_type.is_death())
                 .map(|animation| animation.duration_seconds)
                 .fold(0.0, |a, b| a.max(b));
-            self.invulnerability = AttackCruiserActorInvulnerability::Dead(
-                MinigameCountdown::new_with_event(Duration::from_secs_f32(death_secs), now),
+            self.invulnerability.replace(
+                AttackCruiserActorInvulnerabilityReason::Dead,
+                Duration::from_secs_f32(death_secs),
+                now,
             );
         }
     }
@@ -254,16 +303,25 @@ impl AttackCruiserActor {
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.health = self.ship.max_health;
-        self.invulnerability = AttackCruiserActorInvulnerability::Respawning(
-            MinigameCountdown::new_with_event(invulnerability_duration, now),
+        self.invulnerability.replace(
+            AttackCruiserActorInvulnerabilityReason::Respawning,
+            invulnerability_duration,
+            now,
         );
     }
 
-    pub fn is_respawning(&self) -> bool {
-        matches!(
-            self.invulnerability,
-            AttackCruiserActorInvulnerability::Respawning(_)
-        )
+    pub fn completed_respawn(&self, now: Instant) -> bool {
+        !self.dead()
+            && match &self.invulnerability {
+                AttackCruiserActorInvulnerability::Respawning(timer) => {
+                    timer.time_until_next_event(now).is_zero()
+                }
+                _ => false,
+            }
+    }
+
+    pub fn complete_respawn(&mut self) {
+        self.invulnerability.mark_vulnerable();
     }
 
     pub fn used_invulnerable_powerup(&self) -> bool {
@@ -560,6 +618,14 @@ impl AttackCruiserPlayer {
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.actor.respawn(invulnerability_duration, now);
+    }
+
+    pub fn completed_respawn(&self, now: Instant) -> bool {
+        self.actor.completed_respawn(now)
+    }
+
+    pub fn complete_respawn(&mut self) {
+        self.actor.complete_respawn()
     }
 
     pub fn dead(&self) -> bool {
@@ -2595,6 +2661,8 @@ impl AttackCruiserGame {
                         },
                     })],
                 ));
+            } else if player_state.completed_respawn(now) {
+                player_state.complete_respawn();
             }
 
             let player_state = &mut self.player_states[player_index];
