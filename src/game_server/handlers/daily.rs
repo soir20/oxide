@@ -664,10 +664,14 @@ impl DailyTriviaGame {
         let question = &self.questions[next_question_index as usize];
         self.state = DailyTriviaGameState::AnsweringQuestion {
             question_index: next_question_index,
-            bonus_timer: MinigameCountdown::new_with_event(Duration::from_secs(
-                self.bonus_seconds_per_question
-                    .saturating_add(self.bonus_timer_start_delay_seconds) as u64,
-            )),
+            bonus_timer: MinigameCountdown::new_with_event(
+                Duration::from_secs(
+                    self.bonus_seconds_per_question
+                        .saturating_add(self.bonus_timer_start_delay_seconds)
+                        as u64,
+                ),
+                Instant::now(),
+            ),
         };
 
         Ok(vec![Broadcast::Single(

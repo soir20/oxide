@@ -617,11 +617,11 @@ impl MinigameCountdown {
         }
     }
 
-    pub fn new_with_event(duration: Duration) -> Self {
+    pub fn new_with_event(duration: Duration, now: Instant) -> Self {
         MinigameCountdown {
             paused: false,
             time_until_next_event: duration,
-            last_timer_update: Instant::now(),
+            last_timer_update: now,
         }
     }
 

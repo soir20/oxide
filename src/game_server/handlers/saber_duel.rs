@@ -889,7 +889,7 @@ impl SaberDuelGame {
                 ai_next_force_power,
             } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    self.start_bout()
+                    self.start_bout(now)
                 } else {
                     let mut broadcasts = Vec::new();
 
@@ -922,7 +922,7 @@ impl SaberDuelGame {
             SaberDuelGameState::WaitingForRoundEnd { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
                     self.state = SaberDuelGameState::WaitingForRoundStart {
-                        timer: MinigameCountdown::new_with_event(ROUND_START_DELAY),
+                        timer: MinigameCountdown::new_with_event(ROUND_START_DELAY, now),
                     };
                     self.player_states
                         .iter_mut()
@@ -946,7 +946,7 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::WaitingForRoundStart { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    self.prepare_bout()
+                    self.prepare_bout(now)
                 } else {
                     Vec::new()
                 }
@@ -1274,17 +1274,18 @@ impl SaberDuelGame {
             };
         let leader_state = &mut self.player_states[leader_index as usize];
 
+        let now = Instant::now();
         if leader_state.round_points >= self.config.points_to_win_round {
             leader_state.win_round();
             self.bout = 0;
 
             if Self::has_player_beat_opponent(&self.config, leader_state) {
-                broadcasts.append(&mut self.prepare_game_end(leader_index));
+                broadcasts.append(&mut self.prepare_game_end(leader_index, now));
             } else {
-                broadcasts.append(&mut self.prepare_round_end(leader_index));
+                broadcasts.append(&mut self.prepare_round_end(leader_index, now));
             }
         } else {
-            broadcasts.append(&mut self.prepare_bout());
+            broadcasts.append(&mut self.prepare_bout(now));
         }
 
         Ok(broadcasts)
@@ -1307,7 +1308,7 @@ impl SaberDuelGame {
         }
     }
 
-    fn prepare_bout(&mut self) -> Vec<Broadcast> {
+    fn prepare_bout(&mut self, now: Instant) -> Vec<Broadcast> {
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1345,9 +1346,9 @@ impl SaberDuelGame {
         show_force_power_dialog |= player2_flags.can_use_any();
 
         if show_force_power_dialog {
-            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags));
+            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags, now));
         } else {
-            broadcasts.append(&mut self.start_bout());
+            broadcasts.append(&mut self.start_bout(now));
         }
 
         broadcasts
@@ -1357,6 +1358,7 @@ impl SaberDuelGame {
         &mut self,
         player1_flags: SaberDuelForcePowerFlags,
         player2_flags: SaberDuelForcePowerFlags,
+        now: Instant,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
 
@@ -1393,18 +1395,20 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::WaitingForForcePowers {
-            timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.force_power_selection_millis.into(),
-            )),
-            ai_next_force_power: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.ai.force_power_delay_millis.into(),
-            )),
+            timer: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.force_power_selection_millis.into()),
+                now,
+            ),
+            ai_next_force_power: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.ai.force_power_delay_millis.into()),
+                now,
+            ),
         };
 
         broadcasts
     }
 
-    fn start_bout(&mut self) -> Vec<Broadcast> {
+    fn start_bout(&mut self, now: Instant) -> Vec<Broadcast> {
         self.bout = self.bout.saturating_add(1);
         let is_special_bout = self.bout >= self.config.first_special_bout
             && (self.bout - self.config.first_special_bout)
@@ -1431,12 +1435,13 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
-            bout_time_remaining: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.bout_max_millis.into(),
-            )),
+            bout_time_remaining: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.bout_max_millis.into()),
+                now,
+            ),
             is_special_bout,
             keys: keys.clone(),
-            ai_next_key: MinigameCountdown::new_with_event(time_until_first_ai_key),
+            ai_next_key: MinigameCountdown::new_with_event(time_until_first_ai_key, now),
             player1_completed_time: None,
             player2_completed_time: None,
         };
@@ -1641,9 +1646,9 @@ impl SaberDuelGame {
         self.player_states[1].ready = self.is_ai_match();
     }
 
-    fn prepare_round_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+    fn prepare_round_end(&mut self, leader_index: u8, now: Instant) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::WaitingForRoundEnd {
-            timer: MinigameCountdown::new_with_event(ROUND_END_DELAY),
+            timer: MinigameCountdown::new_with_event(ROUND_END_DELAY, now),
         };
         vec![Broadcast::Multi(
             self.recipients.clone(),
@@ -1692,9 +1697,9 @@ impl SaberDuelGame {
             && !Self::has_player_failed_challenge(config, player_state)
     }
 
-    fn prepare_game_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+    fn prepare_game_end(&mut self, leader_index: u8, now: Instant) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::WaitingForGameOver {
-            timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
+            timer: MinigameCountdown::new_with_event(GAME_END_DELAY, now),
         };
         self.stopwatch.pause_or_resume(true);
 
