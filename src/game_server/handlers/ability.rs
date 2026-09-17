@@ -33,7 +33,7 @@ use super::{
     WriteLockingBroadcastSupplier,
 };
 
-const DEFAULT_DAMAGE_EXPRESSION: &str = "x * random(0.84, 1.15)";
+const DEFAULT_DAMAGE_EXPRESSION: &str = "x * (0.84 + random() * (1.15 - 0.84))";
 
 const fn default_base_damage() -> i16 {
     100
