@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+arrayvec = "0.7.8"
 asset_serialize = { path = "crates/asset_serialize" }
 axum = "0.7.5"
 byteorder = "1.5.0"

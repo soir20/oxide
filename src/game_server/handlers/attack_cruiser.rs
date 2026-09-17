@@ -8,6 +8,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use arrayvec::ArrayVec;
 use glam::{EulerRot, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
@@ -559,6 +560,7 @@ impl AttackCruiserPlayerBoundsState {
 
 #[derive(Clone, Debug)]
 struct AttackCruiserPlayer {
+    pub guid: u32,
     pub ready: bool,
     pub actor: AttackCruiserActor,
     pub score: i32,
@@ -572,16 +574,17 @@ struct AttackCruiserPlayer {
 
 impl AttackCruiserPlayer {
     pub fn new(
+        guid: u32,
         player_index: u8,
         ship: Arc<AttackCruiserShipConfig>,
         lives: u8,
         pos: Pos3,
         yaw: f32,
-        ready: bool,
         bvh: Option<Arc<Bvh>>,
     ) -> Self {
         AttackCruiserPlayer {
-            ready,
+            guid,
+            ready: false,
             actor: AttackCruiserActor::new(
                 player_actor_id(player_index, lives),
                 pos,
@@ -1241,40 +1244,38 @@ impl AttackCruiserProjectilePool {
         Ok(launched_projectiles)
     }
 
-    pub fn hits(
+    pub fn hits<'a>(
         &mut self,
-        actor: &AttackCruiserActor,
+        actors: impl IntoIterator<Item = &'a AttackCruiserActor>,
         now: Instant,
         delta: Duration,
-    ) -> Vec<(i32, Arc<AttackCruiserProjectileConfig>)> {
-        let Some(ship_bvh) = &actor.bvh else {
-            return Vec::new();
-        };
+    ) -> BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>> {
+        let mut projectile_closest: BTreeMap<i32, (i32, f32)> = BTreeMap::new();
 
-        let delta_secs = delta.as_secs_f32();
-        let ship_pos = Vec3::from(actor.pos);
-        let ship_roll = actor.ship.max_roll.to_radians() * actor.turn_multiplier;
-        let ship_velocity = actor.speed * actor.forward_multiplier;
-        let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
+        for actor in actors {
+            let Some(ship_bvh) = &actor.bvh else {
+                continue;
+            };
 
-        let aabb = ship_bvh.aabb();
-        let min_array: [f32; 3] = aabb.min.coords.into();
-        let max_array: [f32; 3] = aabb.max.coords.into();
+            let delta_secs = delta.as_secs_f32();
+            let ship_pos = Vec3::from(actor.pos);
+            let ship_roll = actor.ship.max_roll.to_radians() * actor.turn_multiplier;
+            let ship_velocity = actor.speed * actor.forward_multiplier;
+            let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
 
-        let min_corner = Vec3::from(min_array);
-        let max_corner = Vec3::from(max_array);
-        let ship_radius = min_corner.distance(max_corner) * 0.5;
+            let aabb = ship_bvh.aabb();
+            let min_array: [f32; 3] = aabb.min.coords.into();
+            let max_array: [f32; 3] = aabb.max.coords.into();
 
-        let mut step_cache = BTreeMap::new();
+            let min_corner = Vec3::from(min_array);
+            let max_corner = Vec3::from(max_array);
+            let ship_radius = min_corner.distance(max_corner) * 0.5;
 
-        // There will almost always be fewer than 32 hits. 32 * 4 bytes = 128 bytes,
-        // which fills two 64-byte L1 cache lines on most CPUs
-        let projectile_ids: SmallVec<[i32; 32]> = self
-            .live_projectiles
-            .iter()
-            .filter(|(_, projectile)| {
+            let mut step_cache = BTreeMap::new();
+
+            for (projectile_id, projectile) in &self.live_projectiles {
                 if projectile.launched_by_actor_id == actor.id {
-                    return false;
+                    continue;
                 }
 
                 let projectile_speed = projectile.projectile.speed;
@@ -1293,7 +1294,7 @@ impl AttackCruiserProjectilePool {
 
                 let dist_to_ship_sq = global_start.distance_squared(ship_pos);
                 if dist_to_ship_sq > max_reach * max_reach {
-                    return false;
+                    continue;
                 }
 
                 let max_steps = ((projectile_speed * delta_secs / projectile_len)
@@ -1329,7 +1330,7 @@ impl AttackCruiserProjectilePool {
 
                 let global_speed = Vec3::from(projectile.speed);
 
-                (0..(max_steps as usize)).any(|step_index| {
+                let hit = (0..(max_steps as usize)).any(|step_index| {
                     let step_start_secs = if step_index == 0 {
                         0.0
                     } else {
@@ -1353,20 +1354,30 @@ impl AttackCruiserProjectilePool {
                     let check_end = local_end + half_length_offset;
 
                     !ship_bvh.has_line_of_sight(check_start.to_array(), check_end.to_array())
-                })
-            })
-            .map(|(projectile_id, _)| *projectile_id)
-            .collect();
+                });
 
-        projectile_ids
-            .into_iter()
-            .map(|projectile_id| {
-                (
-                    projectile_id,
-                    self.remove_unchecked(projectile_id).projectile,
-                )
-            })
-            .collect()
+                if hit {
+                    let entry = projectile_closest
+                        .entry(*projectile_id)
+                        .or_insert((actor.id, dist_to_ship_sq));
+                    if dist_to_ship_sq < entry.1 {
+                        *entry = (actor.id, dist_to_ship_sq);
+                    }
+                }
+            }
+        }
+
+        let mut results: BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>> =
+            BTreeMap::new();
+        for (projectile_id, (actor_id, _)) in projectile_closest {
+            let config = self.remove_unchecked(projectile_id).projectile;
+            results
+                .entry(actor_id)
+                .or_default()
+                .push((projectile_id, config));
+        }
+
+        results
     }
 
     pub fn expire(&mut self, now: Instant) {
@@ -1412,10 +1423,10 @@ pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
     player1: u32,
     player2: Option<u32>,
-    player_states: [AttackCruiserPlayer; 2],
+    player_states: ArrayVec<AttackCruiserPlayer, 2>,
     state: AttackCruiserGameState,
-    active_players: Vec<u32>,
-    players: Vec<u32>,
+    active_players: ArrayVec<u32, 2>,
+    active_player_indices: ArrayVec<u8, 2>,
     group: MinigameMatchmakingGroup,
     projectiles: AttackCruiserProjectilePool,
     npcs: Vec<AttackCruiserActor>,
@@ -1429,11 +1440,6 @@ impl AttackCruiserGame {
         group: MinigameMatchmakingGroup,
         bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
-        let mut players = vec![player1];
-        if let Some(player2) = player2 {
-            players.push(player2);
-        }
-
         let player_ship = config.ship(&config.player.ship);
 
         let player_bvh = bvhs.get(&player_ship.asset_name).cloned();
@@ -1442,6 +1448,32 @@ impl AttackCruiserGame {
                 "Missing BVH for Attack Cruiser player ship {}. Defaulting to empty BVH.",
                 player_ship.asset_name
             );
+        }
+
+        let mut players = ArrayVec::new();
+        players.push(player1);
+        let mut player_states = ArrayVec::new();
+        player_states.push(AttackCruiserPlayer::new(
+            player1,
+            0,
+            player_ship.clone(),
+            config.player.lives,
+            config.player.spawn1.pos,
+            config.player.spawn1.yaw.to_radians(),
+            player_bvh.clone(),
+        ));
+
+        if let Some(player2) = player2 {
+            players.push(player2);
+            player_states.push(AttackCruiserPlayer::new(
+                player2,
+                1,
+                player_ship,
+                config.player.lives,
+                config.player.spawn2.pos,
+                config.player.spawn2.yaw.to_radians(),
+                player_bvh.clone(),
+            ));
         }
 
         // TODO: remove test NPC
@@ -1482,35 +1514,16 @@ impl AttackCruiserGame {
                     config.player.spawn2.yaw.to_radians(),
                     test_npc_ship.max_speed,
                     0.0,
-                    player_bvh.clone(),
+                    player_bvh,
                     test_npc_ship.clone(),
                 ),
             ],
             player1,
             player2,
-            player_states: [
-                AttackCruiserPlayer::new(
-                    0,
-                    player_ship.clone(),
-                    config.player.lives,
-                    config.player.spawn1.pos,
-                    config.player.spawn1.yaw.to_radians(),
-                    false,
-                    player_bvh.clone(),
-                ),
-                AttackCruiserPlayer::new(
-                    1,
-                    player_ship,
-                    config.player.lives,
-                    config.player.spawn2.pos,
-                    config.player.spawn2.yaw.to_radians(),
-                    player2.is_none(),
-                    player_bvh,
-                ),
-            ],
+            player_states,
             state: AttackCruiserGameState::WaitingForPlayersReady,
-            active_players: players.clone(),
-            players,
+            active_player_indices: (0..players.len() as u8).collect(),
+            active_players: players,
             group,
             config,
             projectiles: AttackCruiserProjectilePool::new(),
@@ -1860,13 +1873,23 @@ impl AttackCruiserGame {
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
-        let mut hits = Vec::new();
-        self.tick_players(now, tick_duration, &mut broadcasts, &mut hits);
-        self.tick_npcs(now, tick_duration, &mut broadcasts, &mut hits);
+        let hits = self.projectiles.hits(
+            self.active_player_indices
+                .iter()
+                .copied()
+                .filter(|player_index| self.player_states[usize::from(*player_index)].trackable())
+                .map(|player_index| &self.player_states[usize::from(player_index)].actor)
+                .chain(self.npcs.iter().filter(|npc| !npc.dead())),
+            now,
+            tick_duration,
+        );
+        self.tick_players(now, &mut broadcasts, &hits);
+        self.tick_npcs(now, tick_duration, &mut broadcasts, &hits);
 
         broadcasts.push(Broadcast::Multi(
-            self.active_players.clone(),
-            hits.into_iter()
+            self.active_players.to_vec(),
+            hits.into_values()
+                .flat_map(|hits| hits.into_iter())
                 .map(|(projectile_id, projectile)| {
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
@@ -1934,7 +1957,7 @@ impl AttackCruiserGame {
                 guid: player_guid(player),
             },
         }));
-        let broadcasts = vec![Broadcast::Multi(self.active_players.clone(), packets)];
+        let broadcasts = vec![Broadcast::Multi(self.active_players.to_vec(), packets)];
 
         self.active_players
             .retain(|active_player| *active_player != player);
@@ -2216,7 +2239,7 @@ impl AttackCruiserGame {
                     sub_op_code: AttackCruiserOpCode::AddPlayer as i32,
                     stage_group_guid: self.group.stage_group_guid,
                 },
-                guid: player_guid(self.players[player_index as usize]),
+                guid: player_guid(self.player_states[player_index as usize].guid),
                 state: self.player_state_update(player_index, update_type),
             },
         }));
@@ -2236,8 +2259,10 @@ impl AttackCruiserGame {
                     sub_op_code: AttackCruiserOpCode::UpdatePlayers as i32,
                     stage_group_guid: self.group.stage_group_guid,
                 },
-                states: (0..self.players.len() as u8)
-                    .map(|player_index| AttackCruiserPlayerUpdate {
+                states: self
+                    .active_player_indices
+                    .iter()
+                    .map(|&player_index| AttackCruiserPlayerUpdate {
                         player_index: player_index.into(),
                         state: self.player_state_update(player_index, update_type),
                     })
@@ -2255,7 +2280,7 @@ impl AttackCruiserGame {
             );
 
         Broadcast::Multi(
-            self.active_players.clone(),
+            self.active_players.to_vec(),
             vec![GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
                 inner: AttackCruiserUpdateServerActors {
@@ -2348,7 +2373,7 @@ impl AttackCruiserGame {
 
     fn set_player_frozen(&self, player_index: usize, frozen: bool) -> Vec<Vec<u8>> {
         let state = &self.player_states[player_index];
-        let guid = self.players[player_index];
+        let guid = self.player_states[player_index].guid;
         vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -2397,8 +2422,8 @@ impl AttackCruiserGame {
             },
         })];
 
-        for player_index in 0..self.players.len() {
-            packets.append(&mut self.set_player_frozen(player_index, false));
+        for player_index in self.active_player_indices.iter().copied() {
+            packets.append(&mut self.set_player_frozen(player_index.into(), false));
         }
 
         // TODO: remove and spawn in waves
@@ -2410,7 +2435,10 @@ impl AttackCruiserGame {
             ));
         });
 
-        Ok(vec![Broadcast::Multi(self.active_players.clone(), packets)])
+        Ok(vec![Broadcast::Multi(
+            self.active_players.to_vec(),
+            packets,
+        )])
     }
 
     fn actor_attack_primary(
@@ -2562,11 +2590,11 @@ impl AttackCruiserGame {
     fn tick_players(
         &mut self,
         now: Instant,
-        tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
+        hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
     ) {
-        for player_index in 0..self.players.len() {
+        for player_index in self.active_player_indices.clone().into_iter() {
+            let player_index = usize::from(player_index);
             let player_state = &mut self.player_states[player_index];
             let in_bounds = is_inside_oval(
                 player_state.actor.pos,
@@ -2625,7 +2653,6 @@ impl AttackCruiserGame {
             };
 
             let player_state = &mut self.player_states[player_index];
-            let actor_id = player_state.actor.id;
             if player_state.respawnable(now) {
                 player_state.respawn(
                     Duration::from_millis(
@@ -2648,10 +2675,13 @@ impl AttackCruiserGame {
                     },
                 ));
                 actor_packets.append(&mut self.set_player_frozen(player_index, false));
-                broadcasts.push(Broadcast::Multi(self.active_players.clone(), actor_packets));
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    actor_packets,
+                ));
             } else if player_state.lost(now) {
                 broadcasts.push(Broadcast::Single(
-                    self.players[player_index],
+                    self.player_states[player_index].guid,
                     vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: ExecuteScriptWithStringParams {
@@ -2665,10 +2695,9 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            if player_state.trackable() {
-                let actor = &mut player_state.actor;
-                let mut actor_hits = self.projectiles.hits(actor, now, tick_duration);
-                let total_damage = Self::total_damage(&actor_hits);
+            let actor = &mut player_state.actor;
+            if let Some(actor_hits) = hits.get(&actor.id) {
+                let total_damage = Self::total_damage(actor_hits);
 
                 // If the player still has invulnerability time, process the hits but deal no damage
                 if player_state.vulnerable() {
@@ -2690,14 +2719,14 @@ impl AttackCruiserGame {
                                 actor_id: false,
                             },
                         ));
-                        broadcasts
-                            .push(Broadcast::Multi(self.active_players.clone(), death_packets));
+                        broadcasts.push(Broadcast::Multi(
+                            self.active_players.to_vec(),
+                            death_packets,
+                        ));
 
                         update_clients = true;
                     }
                 }
-
-                hits.append(&mut actor_hits);
             }
 
             let player_state = &mut self.player_states[player_index];
@@ -2711,7 +2740,7 @@ impl AttackCruiserGame {
                 .is_zero();
             if is_low_health && !player_state.dead() && is_damage_alarm_timer_expired {
                 broadcasts.push(Broadcast::Single(
-                    self.players[player_index],
+                    player_state.guid,
                     vec![GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: PlaySoundIdOnTarget {
@@ -2737,7 +2766,7 @@ impl AttackCruiserGame {
         now: Instant,
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &mut Vec<(i32, Arc<AttackCruiserProjectileConfig>)>,
+        hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
     ) {
         self.npcs.retain_mut(|npc| {
             if npc.paused() {
@@ -2750,14 +2779,13 @@ impl AttackCruiserGame {
                 tick_duration.as_secs_f32(),
             );
 
-            if !npc.dead() {
-                let mut actor_hits = self.projectiles.hits(npc, now, tick_duration);
-                let total_damage = Self::total_damage(&actor_hits);
+            if let Some(actor_hits) = hits.get(&npc.id) {
+                let total_damage = Self::total_damage(actor_hits);
                 npc.damage(total_damage, now);
 
                 if npc.dead() {
                     broadcasts.push(Broadcast::Multi(
-                        self.active_players.clone(),
+                        self.active_players.to_vec(),
                         Self::spawn_client_effect(
                             npc.ship.death_start_effect_id,
                             npc.pos,
@@ -2765,18 +2793,16 @@ impl AttackCruiserGame {
                         ),
                     ));
                 }
-
-                hits.append(&mut actor_hits);
             }
 
             broadcasts.push(Broadcast::Multi(
-                self.active_players.clone(),
+                self.active_players.to_vec(),
                 vec![Self::update_server_npc_actor(npc, false, self.group)],
             ));
 
             if npc.completed_death(now) {
                 broadcasts.push(Broadcast::Multi(
-                    self.active_players.clone(),
+                    self.active_players.to_vec(),
                     Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
                 ));
                 return false;
