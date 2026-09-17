@@ -70,7 +70,7 @@ fn evaluate_damage_expression(
     let result = eval_with_context(damage_expression, &context).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
-            format!("Unable to evaluate cost expression for ability {ability_key}: {err}"),
+            format!("Unable to evaluate damage expression for ability {ability_key}: {err}"),
         )
     })?;
 
