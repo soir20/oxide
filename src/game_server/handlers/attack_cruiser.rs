@@ -2486,7 +2486,7 @@ impl AttackCruiserGame {
                                 unknown2: 0,
                                 effect_id: projectile.composite_effect_id,
                                 despawn_effect_id: 0,
-                                lifetime_seconds: f32::from(projectile.lifetime_millis) * 1000.0,
+                                lifetime_seconds: f32::from(projectile.lifetime_millis) / 1000.0,
                                 origin: launched_projectile.origin,
                                 speed: launched_projectile.speed,
                                 unknown8: Pos3::default(),
