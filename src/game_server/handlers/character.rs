@@ -2901,6 +2901,10 @@ impl Character {
         self.stats.holstered = !self.stats.holstered;
     }
 
+    pub fn is_brandished(&self) -> bool {
+        !self.stats.holstered
+    }
+
     pub fn interact(
         &mut self,
         requester: u32,

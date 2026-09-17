@@ -14,7 +14,7 @@ use crate::{
     game_server::{
         packets::{
             ability::{AbilityOpCode, AbilityTargetType, CastAndLand, RequestStartCast},
-            player_update::HitPointModification,
+            player_update::{HitPointModification, UpdateWieldType},
             AbilitySubType, ActionBarType, CharacterBoneNameTarget, Pos, Target,
         },
         Broadcast, GamePacket, ProcessPacketError, ProcessPacketErrorType, TunneledPacket,
@@ -344,10 +344,10 @@ pub fn handle_targeted_cast(
     )];
 
     for &target in &selected_targets {
-        if let Some(target_read_handle) = nearby_characters.get_mut(&target) {
+        if let Some(target_write_handle) = nearby_characters.get_mut(&target) {
             broadcasts.extend(deal_ability_damage(
                 caster_guid,
-                &mut target_read_handle.stats,
+                &mut target_write_handle.stats,
                 nearby_player_guids,
                 ability_name,
                 ability_config,
@@ -367,14 +367,14 @@ pub fn handle_targeted_cast(
             };
 
             for &aoe_target in &all_targets_nearby {
-                let Some(target_read_handle) = nearby_characters.get_mut(&aoe_target) else {
+                let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) else {
                     continue;
                 };
 
-                if distance3_pos(impacted_pos, target_read_handle.stats.pos) <= aoe_radius {
+                if distance3_pos(impacted_pos, target_write_handle.stats.pos) <= aoe_radius {
                     broadcasts.extend(deal_ability_damage(
                         caster_guid,
-                        &mut target_read_handle.stats,
+                        &mut target_write_handle.stats,
                         nearby_player_guids,
                         ability_name,
                         ability_config,
@@ -409,12 +409,12 @@ fn process_start_cast(
                 read_guids: Vec::new(),
                 write_guids,
                 character_consumer: move |characters_table_read_handle, _, mut characters_write, minigame_data_lock_enforcer| {
-                    let Some(mut caster_read_handle) = characters_write.remove(&caster) else {
+                    let Some(mut caster_write_handle) = characters_write.remove(&caster) else {
                         return coerce_to_broadcast_supplier(|_| Ok(Vec::new()));
                     };
 
-                    let caster_instance = caster_read_handle.stats.instance_guid;
-                    let caster_chunk = caster_read_handle.index1().2;
+                    let caster_instance = caster_write_handle.stats.instance_guid;
+                    let caster_chunk = caster_write_handle.index1().2;
 
                     let nearby_player_guids = ZoneInstance::all_players_nearby(
                         caster_chunk,
@@ -441,7 +441,7 @@ fn process_start_cast(
 
                             let result = (|| {
                                 let player_stats =
-                                    match &mut caster_read_handle.stats.character_type {
+                                    match &mut caster_write_handle.stats.character_type {
                                         CharacterType::Player(player) => player.as_mut(),
                                         _ => {
                                             return Err(ProcessPacketError::new(
@@ -480,10 +480,28 @@ fn process_start_cast(
                                     ));
                                 };
 
+                                let mut broadcasts = Vec::new();
+
+                                if !caster_write_handle.is_brandished() {
+                                    caster_write_handle.brandish_or_holster();
+                                    broadcasts.push(Broadcast::Multi(
+                                        nearby_player_guids.clone(),
+                                        vec![
+                                            GamePacket::serialize(&TunneledPacket {
+                                                unknown1: true,
+                                                inner: UpdateWieldType {
+                                                    guid: caster,
+                                                    wield_type: caster_write_handle.stats.wield_type(),
+                                                },
+                                            }),
+                                        ],
+                                    ));
+                                }
+
                                 match &cast_req.target {
                                     AbilityTargetType::Guid(guid_target) => {
-                                        handle_targeted_cast(
-                                            &mut caster_read_handle.stats,
+                                        broadcasts.extend(handle_targeted_cast(
+                                            &mut caster_write_handle.stats,
                                             guid_target.target_guid2,
                                             &mut characters_write,
                                             &nearby_player_guids,
@@ -492,15 +510,15 @@ fn process_start_cast(
                                             cast_req.action_bar_type,
                                             slot_index as i32,
                                             &game_server,
-                                        )
-                                    },
-                                    AbilityTargetType::WithSelf(_) | AbilityTargetType::Aoe(_) => {
-                                        Ok(Vec::new())
-                                    },
+                                        )?);
+                                    }
+                                    AbilityTargetType::WithSelf(_) | AbilityTargetType::Aoe(_) => {}
                                 }
+
+                                Ok(broadcasts)
                             })();
 
-                            characters_write.insert(caster, caster_read_handle);
+                            characters_write.insert(caster, caster_write_handle);
                             coerce_to_broadcast_supplier(move |_| result)
                         },
                     })
