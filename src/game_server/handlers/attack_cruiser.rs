@@ -1961,6 +1961,8 @@ impl AttackCruiserGame {
 
         self.active_players
             .retain(|active_player| *active_player != player);
+        self.active_player_indices
+            .retain(|player_index| self.player_states[usize::from(*player_index)].guid != player);
         self.player_states[player_index].lives = 0;
 
         minigame_status.total_score = self.player_states[player_index].score;
