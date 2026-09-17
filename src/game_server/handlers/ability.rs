@@ -63,12 +63,9 @@ fn evaluate_damage_expression(
     let context = context_map! {
         "x" => evalexpr::Value::Float(damage as f64),
     }
-    .map_err(|err| {
-        Error::new(
-            ErrorKind::InvalidData,
-            format!("Couldn't build expression evaluation context for ability {ability_key}"),
-        )
-    })?;
+    .unwrap_or_else(|_| {
+        panic!("Couldn't build expression evaluation context for ability {ability_key}")
+    });
 
     let result = eval_with_context(damage_expression, &context).map_err(|err| {
         Error::new(
