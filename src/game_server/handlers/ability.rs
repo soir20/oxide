@@ -44,7 +44,7 @@ const fn default_critical_chance() -> u32 {
 }
 
 const fn default_max_distance_from_player() -> f32 {
-    15.0
+    3.0
 }
 
 const fn default_ability_sub_type() -> AbilitySubType {
