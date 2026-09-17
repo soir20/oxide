@@ -1799,6 +1799,8 @@ jedi_temple:
       stand_animation_id: 2522
     training_room_dueling_platform_lift:
       model_id: 1438
+      health: 400
+      show_health: true
       physics: Disabled
       pos:
         x: 130.9
@@ -1810,15 +1812,20 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
+      removal_mode: !Graceful {}
+      enemy_types:
+        - separatist
       tickable_procedures:
         lift:
           steps:
             - speed: 2
-              new_pos_offset_y: 12
-              min_duration_millis: 12000
-            - speed: 2
-              new_pos_offset_y: -12
-              min_duration_millis: 12000
+              #new_pos_offset_y: 12
+              spawned_state: Always
+              min_duration_millis: 6000
+            # - speed: 2
+            #   new_pos_offset_y: -12
+            #   spawned_state: Despawn
+            #   min_duration_millis: 1
     training_room_jedi_and_crates_crates:
       model_id: 187
       pos:
