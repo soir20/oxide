@@ -223,7 +223,7 @@ fn make_cast_and_land_packet(
                     })
                 })
                 .collect(),
-            unknown1: -1,
+            unknown1: 0,
             unknown2: 0,
             cast_animation_id: ability_config.cast_animation_id.unwrap_or(0),
             cast_composite_effect_id: ability_config.cast_composite_effect_id.unwrap_or(0),
