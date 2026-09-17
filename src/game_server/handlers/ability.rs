@@ -47,6 +47,18 @@ const fn default_max_distance_from_player() -> f32 {
     3.0
 }
 
+const fn default_projectile_speed() -> f32 {
+    20.0
+}
+
+const fn default_projectile_size() -> f32 {
+    1.0
+}
+
+const fn default_missfire_travel_units() -> f32 {
+    20.0
+}
+
 const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
 }
@@ -129,8 +141,21 @@ pub struct AbilityConfig {
     pub cast_composite_effect_seconds: Option<f32>,
     pub impact_animation_id: Option<u32>,
     pub impact_composite_effect_id: Option<u32>,
+    pub projectile_adr_name: Option<String>,
+    #[serde(default = "default_projectile_speed")]
+    pub projectile_start_speed: f32,
+    #[serde(default = "default_projectile_speed")]
+    pub projectile_end_speed: f32,
+    #[serde(default = "default_projectile_size")]
+    pub projectile_start_size: f32,
+    #[serde(default = "default_projectile_size")]
+    pub projectile_end_size: f32,
     #[serde(default)]
-    pub target_bone_name: String,
+    pub projectile_angular_speed: f32,
+    #[serde(default = "default_missfire_travel_units")]
+    pub missfire_travel_units: f32,
+    pub target_bone_name: Option<String>,
+    pub origin_bone_name: Option<String>,
     #[serde(default = "default_ability_sub_type")]
     pub ability_sub_type: AbilitySubType,
 }
@@ -219,7 +244,7 @@ fn make_cast_and_land_packet(
                     Target::CharacterBone(CharacterBoneNameTarget {
                         fallback_pos: Pos::default(),
                         character_guid: target,
-                        bone_name: ability_config.target_bone_name.clone(),
+                        bone_name: ability_config.target_bone_name.clone().unwrap_or_default(),
                     })
                 })
                 .collect(),
@@ -246,24 +271,24 @@ fn make_cast_and_land_packet(
             unknown19: false,
             unknown20: 0,
             unknown21: 0,
-            projectile_start_speed: 60.0,
-            projectile_end_speed: 60.0,
+            projectile_start_speed: ability_config.projectile_start_speed,
+            projectile_end_speed: ability_config.projectile_end_speed,
             unknown24: 0,
             unknown25: 0,
             unknown26: Pos::default(),
             unknown27: Pos::default(),
-            projectile_adr_name: "".to_string(),
+            projectile_adr_name: ability_config.projectile_adr_name.clone().unwrap_or_default(),
             projectile_origin: Target::CharacterBone(CharacterBoneNameTarget {
                 fallback_pos: Pos::default(),
                 character_guid: caster,
-                bone_name: "".to_string(),
+                bone_name: ability_config.origin_bone_name.clone().unwrap_or_default(),
             }),
             unknown_target: Target::default(),
             unknown29: Pos::default(),
-            projectile_angular_speed: 0.0,
+            projectile_angular_speed: ability_config.projectile_angular_speed,
             unknown31: false,
-            projectile_start_size: 1.0,
-            projectile_end_size: 1.0,
+            projectile_start_size: ability_config.projectile_start_size,
+            projectile_end_size: ability_config.projectile_end_size,
             projectile_trail_composite_effect_id: 0,
             impact_composite_effect_id2: ability_config.impact_composite_effect_id.unwrap_or(0),
             unknown36: 0,
@@ -275,7 +300,7 @@ fn make_cast_and_land_packet(
             unknown42: 0.0,
             unknown43: 0.0,
             unknown44: 0.0,
-            missfire_travel_units: 20.0,
+            missfire_travel_units: ability_config.missfire_travel_units,
             unknown46: "".to_string(),
             unknown47: 0,
         },
