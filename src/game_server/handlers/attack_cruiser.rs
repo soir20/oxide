@@ -1243,7 +1243,6 @@ impl AttackCruiserProjectilePool {
 
     pub fn hits(
         &mut self,
-        actor_id: i32,
         actor: &AttackCruiserActor,
         now: Instant,
         delta: Duration,
@@ -1274,7 +1273,7 @@ impl AttackCruiserProjectilePool {
             .live_projectiles
             .iter()
             .filter(|(_, projectile)| {
-                if projectile.launched_by_actor_id == actor_id {
+                if projectile.launched_by_actor_id == actor.id {
                     return false;
                 }
 
@@ -2668,7 +2667,7 @@ impl AttackCruiserGame {
             let player_state = &mut self.player_states[player_index];
             if player_state.trackable() {
                 let actor = &mut player_state.actor;
-                let mut actor_hits = self.projectiles.hits(actor_id, actor, now, tick_duration);
+                let mut actor_hits = self.projectiles.hits(actor, now, tick_duration);
                 let total_damage = Self::total_damage(&actor_hits);
 
                 // If the player still has invulnerability time, process the hits but deal no damage
@@ -2752,7 +2751,7 @@ impl AttackCruiserGame {
             );
 
             if !npc.dead() {
-                let mut actor_hits = self.projectiles.hits(npc.id, npc, now, tick_duration);
+                let mut actor_hits = self.projectiles.hits(npc, now, tick_duration);
                 let total_damage = Self::total_damage(&actor_hits);
                 npc.damage(total_damage, now);
 
