@@ -126,57 +126,59 @@ fn normalize_angle(angle_radians: f32) -> f32 {
     (angle_radians + PI).rem_euclid(2.0 * PI) - PI
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum AttackCruiserActorInvulnerabilityReason {
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+enum AttackCruiserActorInvulnerabilityPhase {
     Dead,
     Respawning,
     UsedPowerup,
+    #[default]
     Vulnerable,
 }
 
 #[derive(Clone, Debug)]
 struct AttackCruiserActorInvulnerability {
-    reason: AttackCruiserActorInvulnerabilityReason,
+    phase: AttackCruiserActorInvulnerabilityPhase,
     timer: MinigameCountdown,
 }
 
 impl Default for AttackCruiserActorInvulnerability {
     fn default() -> Self {
         AttackCruiserActorInvulnerability {
-            reason: AttackCruiserActorInvulnerabilityReason::Vulnerable,
+            phase: AttackCruiserActorInvulnerabilityPhase::default(),
             timer: MinigameCountdown::new(),
         }
     }
 }
 
 impl AttackCruiserActorInvulnerability {
-    pub fn has_reason(
-        &self,
-        reason: AttackCruiserActorInvulnerabilityReason,
-        now: Instant,
-    ) -> bool {
-        self.reason == reason && self.timer.time_until_next_event(now).is_zero()
+    pub fn has_phase(&self, phase: AttackCruiserActorInvulnerabilityPhase) -> bool {
+        self.phase == phase
     }
 
-    pub fn set(
+    pub fn has_completed_phase(
+        &self,
+        phase: AttackCruiserActorInvulnerabilityPhase,
+        now: Instant,
+    ) -> bool {
+        self.has_phase(phase) && self.timer.time_until_next_event(now).is_zero()
+    }
+
+    pub fn set_phase(
         &mut self,
-        reason: AttackCruiserActorInvulnerabilityReason,
+        phase: AttackCruiserActorInvulnerabilityPhase,
         duration: Duration,
         now: Instant,
     ) {
-        self.reason = reason;
+        self.phase = phase;
         self.timer.schedule_event(duration, now);
     }
 
     pub fn is_vulnerable(&self) -> bool {
-        self.has_reason(
-            AttackCruiserActorInvulnerabilityReason::Vulnerable,
-            Instant::now(),
-        )
+        self.has_phase(AttackCruiserActorInvulnerabilityPhase::Vulnerable)
     }
 
     pub fn set_vulnerable(&mut self) {
-        self.reason = AttackCruiserActorInvulnerabilityReason::Vulnerable;
+        self.phase = AttackCruiserActorInvulnerabilityPhase::Vulnerable;
         self.timer.schedule_event(Duration::ZERO, Instant::now());
     }
 
@@ -264,8 +266,8 @@ impl AttackCruiserActor {
                 .filter(|animation| animation.animation_type.is_death())
                 .map(|animation| animation.duration_seconds)
                 .fold(0.0, |a, b| a.max(b));
-            self.invulnerability.set(
-                AttackCruiserActorInvulnerabilityReason::Dead,
+            self.invulnerability.set_phase(
+                AttackCruiserActorInvulnerabilityPhase::Dead,
                 Duration::from_secs_f32(death_secs),
                 now,
             );
@@ -276,13 +278,13 @@ impl AttackCruiserActor {
         self.dead()
             && self
                 .invulnerability
-                .has_reason(AttackCruiserActorInvulnerabilityReason::Dead, now)
+                .has_completed_phase(AttackCruiserActorInvulnerabilityPhase::Dead, now)
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.health = self.ship.max_health;
-        self.invulnerability.set(
-            AttackCruiserActorInvulnerabilityReason::Respawning,
+        self.invulnerability.set_phase(
+            AttackCruiserActorInvulnerabilityPhase::Respawning,
             invulnerability_duration,
             now,
         );
@@ -292,16 +294,16 @@ impl AttackCruiserActor {
         !self.dead()
             && self
                 .invulnerability
-                .has_reason(AttackCruiserActorInvulnerabilityReason::Respawning, now)
+                .has_completed_phase(AttackCruiserActorInvulnerabilityPhase::Respawning, now)
     }
 
     pub fn complete_respawn(&mut self) {
         self.invulnerability.set_vulnerable();
     }
 
-    pub fn used_invulnerable_powerup(&self, now: Instant) -> bool {
+    pub fn used_invulnerable_powerup(&self) -> bool {
         self.invulnerability
-            .has_reason(AttackCruiserActorInvulnerabilityReason::UsedPowerup, now)
+            .has_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup)
     }
 
     pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
@@ -506,27 +508,59 @@ impl AttackCruiserActor {
     }
 }
 
-#[derive(Clone, Debug, Default)]
-enum AttackCruiserPlayerBoundsState {
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+enum AttackCruiserPlayerBoundsPhase {
     #[default]
     Inside,
-    Outside {
-        timer: MinigameCountdown,
-    },
-    OutsideWaitingToWarp {
-        timer: MinigameCountdown,
-    },
+    Outside,
+    OutsideWaitingToWarp,
 }
 
-impl AttackCruiserPlayerBoundsState {
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        match self {
-            AttackCruiserPlayerBoundsState::Outside { timer } => timer.pause_or_resume(pause),
-            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer } => {
-                timer.pause_or_resume(pause)
-            }
-            _ => {}
+#[derive(Clone, Debug)]
+struct AttackCruiserPlayerBounds {
+    phase: AttackCruiserPlayerBoundsPhase,
+    timer: MinigameCountdown,
+}
+
+impl Default for AttackCruiserPlayerBounds {
+    fn default() -> Self {
+        AttackCruiserPlayerBounds {
+            phase: AttackCruiserPlayerBoundsPhase::default(),
+            timer: MinigameCountdown::new(),
         }
+    }
+}
+
+impl AttackCruiserPlayerBounds {
+    pub fn phase(&self) -> AttackCruiserPlayerBoundsPhase {
+        self.phase
+    }
+
+    pub fn has_phase(&self, phase: AttackCruiserPlayerBoundsPhase) -> bool {
+        self.phase == phase
+    }
+
+    pub fn has_completed_phase(&self, now: Instant) -> bool {
+        self.timer.time_until_next_event(now).is_zero()
+    }
+
+    pub fn set_phase(
+        &mut self,
+        phase: AttackCruiserPlayerBoundsPhase,
+        duration: Duration,
+        now: Instant,
+    ) {
+        self.phase = phase;
+        self.timer.schedule_event(duration, now);
+    }
+
+    pub fn set_in_bounds(&mut self) {
+        self.phase = AttackCruiserPlayerBoundsPhase::Inside;
+        self.timer.schedule_event(Duration::ZERO, Instant::now());
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.timer.pause_or_resume(pause);
     }
 }
 
@@ -539,7 +573,7 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
     pub lives: u8,
-    pub bounds_state: AttackCruiserPlayerBoundsState,
+    pub bounds: AttackCruiserPlayerBounds,
     pub bounds_warning_hud_timer: MinigameCountdown,
     pub damage_alarm_sound_timer: MinigameCountdown,
 }
@@ -570,7 +604,7 @@ impl AttackCruiserPlayer {
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
             lives,
-            bounds_state: AttackCruiserPlayerBoundsState::default(),
+            bounds: AttackCruiserPlayerBounds::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
             damage_alarm_sound_timer: MinigameCountdown::new(),
         }
@@ -580,7 +614,7 @@ impl AttackCruiserPlayer {
         self.actor.pause_or_resume(pause);
         self.bounds_warning_hud_timer.pause_or_resume(pause);
         self.damage_alarm_sound_timer.pause_or_resume(pause);
-        self.bounds_state.pause_or_resume(pause);
+        self.bounds.pause_or_resume(pause);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
@@ -609,10 +643,9 @@ impl AttackCruiserPlayer {
 
     pub fn trackable(&self) -> bool {
         !self.actor.dead()
-            && !matches!(
-                self.bounds_state,
-                AttackCruiserPlayerBoundsState::Outside { .. }
-            )
+            && !self
+                .bounds
+                .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
     pub fn vulnerable(&self) -> bool {
@@ -637,10 +670,9 @@ impl AttackCruiserPlayer {
 
     pub fn disarmed(&self) -> bool {
         self.disabled()
-            || matches!(
-                self.bounds_state,
-                AttackCruiserPlayerBoundsState::Outside { .. }
-            )
+            || self
+                .bounds
+                .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
     fn completed_death(&self, now: Instant) -> bool {
@@ -2052,7 +2084,7 @@ impl AttackCruiserGame {
             }
         }
 
-        broadcasts.push(self.update_server_player_actor(player_index, now));
+        broadcasts.push(self.update_server_player_actor(player_index));
 
         Ok(broadcasts)
     }
@@ -2065,11 +2097,11 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &mut self.player_states[player_index as usize];
 
+        let now = Instant::now();
         if player_state.disarmed() {
             return Ok(Vec::new());
         }
 
-        let now = Instant::now();
         let target_pos = Pos3 {
             x: click.clicked_pos.x,
             y: player_state.actor.pos.y,
@@ -2241,13 +2273,12 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_player_actor(&self, player_index: u8, now: Instant) -> Broadcast {
+    fn update_server_player_actor(&self, player_index: u8) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
         let warp_out = !player_state.dead()
-            && matches!(
-                &player_state.bounds_state,
-                AttackCruiserPlayerBoundsState::Outside { .. }
-            );
+            && player_state
+                .bounds
+                .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
 
         Broadcast::Multi(
             self.active_players.to_vec(),
@@ -2273,7 +2304,7 @@ impl AttackCruiserGame {
                             unknown2: false,
                             show_invulnerablity_effect: player_state
                                 .actor
-                                .used_invulnerable_powerup(now),
+                                .used_invulnerable_powerup(),
                             unknown4: false,
                             unknown5: false,
                             unknown6: false,
@@ -2299,7 +2330,6 @@ impl AttackCruiserGame {
         actor: &AttackCruiserActor,
         warp_out: bool,
         group: MinigameMatchmakingGroup,
-        now: Instant,
     ) -> Vec<u8> {
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -2321,7 +2351,7 @@ impl AttackCruiserGame {
                     state: AttackCruiserActorState {
                         unknown1: false,
                         unknown2: false,
-                        show_invulnerablity_effect: actor.used_invulnerable_powerup(now),
+                        show_invulnerablity_effect: actor.used_invulnerable_powerup(),
                         unknown4: false,
                         unknown5: false,
                         unknown6: false,
@@ -2574,50 +2604,49 @@ impl AttackCruiserGame {
                 self.config.playfield.radius_z,
             );
 
-            let mut update_clients = match (&mut player_state.bounds_state, in_bounds) {
-                (AttackCruiserPlayerBoundsState::Inside, true) => false,
-                (AttackCruiserPlayerBoundsState::Inside, false) => {
-                    self.player_states[player_index].bounds_state =
-                        AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                            timer: MinigameCountdown::new_with_event(
-                                Duration::from_millis(
-                                    self.config.player.out_of_bounds_warp_delay_millis.into(),
-                                ),
-                                now,
-                            ),
-                        };
+            let mut update_clients = match (&mut player_state.bounds.phase(), in_bounds) {
+                (AttackCruiserPlayerBoundsPhase::Inside, true) => false,
+                (AttackCruiserPlayerBoundsPhase::Inside, false) => {
+                    self.player_states[player_index].bounds.set_phase(
+                        AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp,
+                        Duration::from_millis(
+                            self.config.player.out_of_bounds_warp_delay_millis.into(),
+                        ),
+                        now,
+                    );
                     true
                 }
-                (AttackCruiserPlayerBoundsState::Outside { timer }, _) => {
-                    if timer.time_until_next_event(now).is_zero() {
-                        self.player_states[player_index].bounds_state =
-                            AttackCruiserPlayerBoundsState::OutsideWaitingToWarp {
-                                timer: MinigameCountdown::new_with_event(
-                                    Duration::from_millis(
-                                        self.config.player.out_of_bounds_warp_delay_millis.into(),
-                                    ),
-                                    now,
-                                ),
-                            };
+                (AttackCruiserPlayerBoundsPhase::Outside, _) => {
+                    if self.player_states[player_index]
+                        .bounds
+                        .has_completed_phase(now)
+                    {
+                        self.player_states[player_index].bounds.set_phase(
+                            AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp,
+                            Duration::from_millis(
+                                self.config.player.out_of_bounds_warp_delay_millis.into(),
+                            ),
+                            now,
+                        );
                     }
                     true
                 }
-                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { .. }, true) => {
-                    self.player_states[player_index].bounds_state =
-                        AttackCruiserPlayerBoundsState::Inside;
+                (AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp, true) => {
+                    self.player_states[player_index].bounds.set_in_bounds();
                     true
                 }
-                (AttackCruiserPlayerBoundsState::OutsideWaitingToWarp { timer }, false) => {
-                    if timer.time_until_next_event(now).is_zero() {
-                        self.player_states[player_index].bounds_state =
-                            AttackCruiserPlayerBoundsState::Outside {
-                                timer: MinigameCountdown::new_with_event(
-                                    Duration::from_millis(
-                                        self.config.player.out_of_bounds_warp_millis.into(),
-                                    ),
-                                    now,
-                                ),
-                            };
+                (AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp, false) => {
+                    if self.player_states[player_index]
+                        .bounds
+                        .has_completed_phase(now)
+                    {
+                        self.player_states[player_index].bounds.set_phase(
+                            AttackCruiserPlayerBoundsPhase::Outside,
+                            Duration::from_millis(
+                                self.config.player.out_of_bounds_warp_millis.into(),
+                            ),
+                            now,
+                        );
                     }
                     true
                 }
@@ -2727,7 +2756,7 @@ impl AttackCruiserGame {
             }
 
             if update_clients {
-                broadcasts.push(self.update_server_player_actor(player_index as u8, now));
+                broadcasts.push(self.update_server_player_actor(player_index as u8));
             }
         }
     }
@@ -2768,7 +2797,7 @@ impl AttackCruiserGame {
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(npc, false, self.group, now)],
+                vec![Self::update_server_npc_actor(npc, false, self.group)],
             ));
 
             if npc.completed_death(now) {
