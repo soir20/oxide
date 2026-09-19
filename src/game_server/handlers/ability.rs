@@ -277,7 +277,10 @@ fn make_cast_and_land_packet(
             unknown25: 0,
             unknown26: Pos::default(),
             unknown27: Pos::default(),
-            projectile_adr_name: ability_config.projectile_adr_name.clone().unwrap_or_default(),
+            projectile_adr_name: ability_config
+                .projectile_adr_name
+                .clone()
+                .unwrap_or_default(),
             projectile_origin: Target::CharacterBone(CharacterBoneNameTarget {
                 fallback_pos: Pos::default(),
                 character_guid: caster,
@@ -335,26 +338,21 @@ pub fn handle_targeted_cast(
     let valid_targets: Vec<_> = all_targets_nearby
         .iter()
         .filter_map(|&id| {
-            let distance = distance3_pos(caster_stats.pos, nearby_characters[&id].stats.pos);
+            let target_pos = nearby_characters[&id].stats.pos;
+            let distance = distance3_pos(caster_stats.pos, target_pos);
 
             (distance <= ability_config.max_distance_from_player).then_some((id, distance))
         })
         .collect();
 
     let selected_targets = match ability_config.target_limit {
-        TargetLimit::Infinite => valid_targets.into_iter().map(|(id, _)| id).collect(),
-        TargetLimit::Single => {
-            if valid_targets.iter().any(|&(id, _)| id == target_guid) {
-                vec![target_guid]
-            } else {
-                valid_targets
-                    .into_iter()
-                    .min_by(|(_, distance_a), (_, distance_b)| distance_a.total_cmp(distance_b))
-                    .map(|(id, _)| id)
-                    .into_iter()
-                    .collect()
-            }
-        }
+        TargetLimit::Infinite => valid_targets.iter().map(|&(id, _)| id).collect(),
+        TargetLimit::Single => valid_targets
+            .iter()
+            .find(|&&(id, _)| id == target_guid)
+            .or_else(|| valid_targets.iter().min_by(|(_, pos_a), (_, pos_b)| pos_a.total_cmp(pos_b)))
+            .map(|&(id, _)| vec![id])
+            .unwrap_or_default(),
     };
 
     let mut broadcasts = vec![Broadcast::Multi(
