@@ -1819,13 +1819,11 @@ jedi_temple:
         lift:
           steps:
             - speed: 2
-              #new_pos_offset_y: 12
-              spawned_state: Always
-              min_duration_millis: 6000
-            # - speed: 2
-            #   new_pos_offset_y: -12
-            #   spawned_state: Despawn
-            #   min_duration_millis: 1
+              new_pos_offset_y: 12
+              min_duration_millis: 12000
+            - speed: 2
+              new_pos_offset_y: -12
+              min_duration_millis: 12000
     training_room_jedi_and_crates_crates:
       model_id: 187
       pos:
