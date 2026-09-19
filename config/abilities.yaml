@@ -3,242 +3,422 @@
 plo_koon_lightsaber:
   icon_set_id: 232
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 dahgee_jedi_lightsaber:
   icon_set_id: 1148
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ahsoka_tano_reverse_lightsaber:
   icon_set_id: 220
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 anakin_skywalker_lightsaber:
   icon_set_id: 223
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 zabrak_sith_lightsaber:
   icon_set_id: 219
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 adi_gallia_lightsaber:
   icon_set_id: 222
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 pre_vizsla_darksaber:
   icon_set_id: 224
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 count_dooku_lightsaber:
   icon_set_id: 225
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 kit_fisto_lightsaber:
   icon_set_id: 229
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 luminara_unduli_lightsaber:
   icon_set_id: 231
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 mace_windu_lightsaber:
   icon_set_id: 233
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 obi_wan_kenobi_lightsaber:
   icon_set_id: 234
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 darth_sidious_lightsaber:
   icon_set_id: 235
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 training_lightsaber:
   icon_set_id: 236
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 asajj_ventress_right_lightsaber:
   icon_set_id: 237
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 miko_jedi_lightsaber:
   icon_set_id: 509
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 mestare_lightsaber:
   icon_set_id: 510
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 shaak_ti_lightsaber:
   icon_set_id: 513
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 savek_lightsaber:
   icon_set_id: 517
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 kyle_katarn_lightsaber:
   icon_set_id: 511
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 shotem_jedi_lightsaber:
   icon_set_id: 512
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 bravis_sith_lightsaber:
   icon_set_id: 514
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ermi_jedi_lightsaber:
   icon_set_id: 515
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ancient_cobal_lightsaber:
   icon_set_id: 516
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ultimate_fx_gungan_lightsaber:
   icon_set_id: 2136
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 quinlan_vos_lightsaber:
   icon_set_id: 1436
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ahsoka_tano_lightsaber:
   icon_set_id: 1459
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 savage_opress_lightsaber:
   icon_set_id: 1656
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 saesee_tiin_lightsaber:
   icon_set_id: 1792
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 kashyyyk_lightsaber:
   icon_set_id: 1993
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 sith_marauder_lightsaber:
   icon_set_id: 3044
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 nelona_lightsaber:
   icon_set_id: 2838
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 sith_warrior_lightsaber:
   icon_set_id: 3118
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 sith_inquisitor_lightsaber:
   icon_set_id: 2938
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 forgotten_jedi_reverse_lightsaber:
   icon_set_id: 3735
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 jedi_champion_reverse_lightsaber:
   icon_set_id: 3133
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 kofun_lightsaber:
   icon_set_id: 2862
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 aayla_secura_lightsaber:
   icon_set_id: 221
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 barriss_offee_lightsaber:
   icon_set_id: 508
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 byph_lightsaber:
   icon_set_id: 3207
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 sith_infiltrator_lightsaber:
   icon_set_id: 3045
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 dolovite_darksaber:
   icon_set_id: 3829
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 phrik_darksaber:
   icon_set_id: 3791
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 darth_maul_lightsaber:
   icon_set_id: 2764
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 eeth_koth_lightsaber:
   icon_set_id: 226
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 jedi_exile_lightsaber:
   icon_set_id: 3835
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 forked_lightsaber:
   icon_set_id: 3828
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ganodi_lightsaber:
   icon_set_id: 3212
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 gungi_lightsaber:
   icon_set_id: 3208
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 jocasta_nu_lightsaber:
   icon_set_id: 227
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 katooni_lightsaber:
   icon_set_id: 3213
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 ki_adi_mundi_lightsaber:
   icon_set_id: 228
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 sulon_jedi_lightsaber:
   icon_set_id: 511
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 luke_skywalker_lightsaber:
   icon_set_id: 230
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 petro_lightsaber:
   icon_set_id: 3209
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 shotem_master_lightsaber:
   icon_set_id: 3788
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 crimson_prowler_lightsaber:
   icon_set_id: 3721
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 talz_lightsaber:
   icon_set_id: 2863
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 yoda_lightsaber:
   icon_set_id: 3169
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 zatt_lightsaber:
   icon_set_id: 3211
   name_id: 60026
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 pink_gaffi_stick:
   icon_set_id: 518
