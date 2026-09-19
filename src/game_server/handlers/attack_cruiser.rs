@@ -126,7 +126,7 @@ fn normalize_angle(angle_radians: f32) -> f32 {
     (angle_radians + PI).rem_euclid(2.0 * PI) - PI
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 enum AttackCruiserActorInvulnerabilityReason {
     Dead,
     Respawning,
@@ -135,77 +135,57 @@ enum AttackCruiserActorInvulnerabilityReason {
 }
 
 #[derive(Clone, Debug)]
-enum AttackCruiserActorInvulnerability {
-    Dead(MinigameCountdown),
-    Respawning(MinigameCountdown),
-    UsedPowerup(MinigameCountdown),
-    Vulnerable { paused: bool },
+struct AttackCruiserActorInvulnerability {
+    reason: AttackCruiserActorInvulnerabilityReason,
+    timer: MinigameCountdown,
 }
 
 impl Default for AttackCruiserActorInvulnerability {
     fn default() -> Self {
-        AttackCruiserActorInvulnerability::Vulnerable { paused: false }
+        AttackCruiserActorInvulnerability {
+            reason: AttackCruiserActorInvulnerabilityReason::Vulnerable,
+            timer: MinigameCountdown::new(),
+        }
     }
 }
 
 impl AttackCruiserActorInvulnerability {
-    pub fn replace(
+    pub fn has_reason(
+        &self,
+        reason: AttackCruiserActorInvulnerabilityReason,
+        now: Instant,
+    ) -> bool {
+        self.reason == reason && self.timer.time_until_next_event(now).is_zero()
+    }
+
+    pub fn set(
         &mut self,
         reason: AttackCruiserActorInvulnerabilityReason,
         duration: Duration,
         now: Instant,
     ) {
-        let mut state = match reason {
-            AttackCruiserActorInvulnerabilityReason::Dead => {
-                AttackCruiserActorInvulnerability::Dead(MinigameCountdown::new_with_event(
-                    duration, now,
-                ))
-            }
-            AttackCruiserActorInvulnerabilityReason::Respawning => {
-                AttackCruiserActorInvulnerability::Respawning(MinigameCountdown::new_with_event(
-                    duration, now,
-                ))
-            }
-            AttackCruiserActorInvulnerabilityReason::UsedPowerup => {
-                AttackCruiserActorInvulnerability::UsedPowerup(MinigameCountdown::new_with_event(
-                    duration, now,
-                ))
-            }
-            AttackCruiserActorInvulnerabilityReason::Vulnerable => {
-                AttackCruiserActorInvulnerability::Vulnerable { paused: false }
-            }
-        };
-        state.pause_or_resume(self.paused());
-
-        *self = state;
+        self.reason = reason;
+        self.timer.schedule_event(duration, now);
     }
 
-    pub fn mark_vulnerable(&mut self) {
-        self.replace(
+    pub fn is_vulnerable(&self) -> bool {
+        self.has_reason(
             AttackCruiserActorInvulnerabilityReason::Vulnerable,
-            Duration::ZERO,
             Instant::now(),
-        );
+        )
+    }
+
+    pub fn set_vulnerable(&mut self) {
+        self.reason = AttackCruiserActorInvulnerabilityReason::Vulnerable;
+        self.timer.schedule_event(Duration::ZERO, Instant::now());
     }
 
     pub fn paused(&self) -> bool {
-        match self {
-            AttackCruiserActorInvulnerability::Dead(timer) => timer.paused(),
-            AttackCruiserActorInvulnerability::Respawning(timer) => timer.paused(),
-            AttackCruiserActorInvulnerability::UsedPowerup(timer) => timer.paused(),
-            AttackCruiserActorInvulnerability::Vulnerable { paused } => *paused,
-        }
+        self.timer.paused()
     }
 
     pub fn pause_or_resume(&mut self, paused: bool) {
-        match self {
-            AttackCruiserActorInvulnerability::Dead(timer) => timer.pause_or_resume(paused),
-            AttackCruiserActorInvulnerability::Respawning(timer) => timer.pause_or_resume(paused),
-            AttackCruiserActorInvulnerability::UsedPowerup(timer) => timer.pause_or_resume(paused),
-            AttackCruiserActorInvulnerability::Vulnerable {
-                paused: already_paused,
-            } => *already_paused = paused,
-        }
+        self.timer.pause_or_resume(paused);
     }
 }
 
@@ -284,7 +264,7 @@ impl AttackCruiserActor {
                 .filter(|animation| animation.animation_type.is_death())
                 .map(|animation| animation.duration_seconds)
                 .fold(0.0, |a, b| a.max(b));
-            self.invulnerability.replace(
+            self.invulnerability.set(
                 AttackCruiserActorInvulnerabilityReason::Dead,
                 Duration::from_secs_f32(death_secs),
                 now,
@@ -294,17 +274,14 @@ impl AttackCruiserActor {
 
     pub fn completed_death(&self, now: Instant) -> bool {
         self.dead()
-            && match &self.invulnerability {
-                AttackCruiserActorInvulnerability::Dead(timer) => {
-                    timer.time_until_next_event(now).is_zero()
-                }
-                _ => false,
-            }
+            && self
+                .invulnerability
+                .has_reason(AttackCruiserActorInvulnerabilityReason::Dead, now)
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.health = self.ship.max_health;
-        self.invulnerability.replace(
+        self.invulnerability.set(
             AttackCruiserActorInvulnerabilityReason::Respawning,
             invulnerability_duration,
             now,
@@ -313,23 +290,18 @@ impl AttackCruiserActor {
 
     pub fn completed_respawn(&self, now: Instant) -> bool {
         !self.dead()
-            && match &self.invulnerability {
-                AttackCruiserActorInvulnerability::Respawning(timer) => {
-                    timer.time_until_next_event(now).is_zero()
-                }
-                _ => false,
-            }
+            && self
+                .invulnerability
+                .has_reason(AttackCruiserActorInvulnerabilityReason::Respawning, now)
     }
 
     pub fn complete_respawn(&mut self) {
-        self.invulnerability.mark_vulnerable();
+        self.invulnerability.set_vulnerable();
     }
 
-    pub fn used_invulnerable_powerup(&self) -> bool {
-        matches!(
-            self.invulnerability,
-            AttackCruiserActorInvulnerability::UsedPowerup(_)
-        )
+    pub fn used_invulnerable_powerup(&self, now: Instant) -> bool {
+        self.invulnerability
+            .has_reason(AttackCruiserActorInvulnerabilityReason::UsedPowerup, now)
     }
 
     pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
@@ -644,11 +616,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn vulnerable(&self) -> bool {
-        self.trackable()
-            && matches!(
-                self.actor.invulnerability,
-                AttackCruiserActorInvulnerability::Vulnerable { .. }
-            )
+        self.trackable() && self.actor.invulnerability.is_vulnerable()
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
@@ -2084,7 +2052,7 @@ impl AttackCruiserGame {
             }
         }
 
-        broadcasts.push(self.update_server_player_actor(player_index));
+        broadcasts.push(self.update_server_player_actor(player_index, now));
 
         Ok(broadcasts)
     }
@@ -2273,7 +2241,7 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_player_actor(&self, player_index: u8) -> Broadcast {
+    fn update_server_player_actor(&self, player_index: u8, now: Instant) -> Broadcast {
         let player_state = &self.player_states[player_index as usize];
         let warp_out = !player_state.dead()
             && matches!(
@@ -2305,7 +2273,7 @@ impl AttackCruiserGame {
                             unknown2: false,
                             show_invulnerablity_effect: player_state
                                 .actor
-                                .used_invulnerable_powerup(),
+                                .used_invulnerable_powerup(now),
                             unknown4: false,
                             unknown5: false,
                             unknown6: false,
@@ -2331,6 +2299,7 @@ impl AttackCruiserGame {
         actor: &AttackCruiserActor,
         warp_out: bool,
         group: MinigameMatchmakingGroup,
+        now: Instant,
     ) -> Vec<u8> {
         GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -2352,7 +2321,7 @@ impl AttackCruiserGame {
                     state: AttackCruiserActorState {
                         unknown1: false,
                         unknown2: false,
-                        show_invulnerablity_effect: actor.used_invulnerable_powerup(),
+                        show_invulnerablity_effect: actor.used_invulnerable_powerup(now),
                         unknown4: false,
                         unknown5: false,
                         unknown6: false,
@@ -2758,7 +2727,7 @@ impl AttackCruiserGame {
             }
 
             if update_clients {
-                broadcasts.push(self.update_server_player_actor(player_index as u8));
+                broadcasts.push(self.update_server_player_actor(player_index as u8, now));
             }
         }
     }
@@ -2799,7 +2768,7 @@ impl AttackCruiserGame {
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(npc, false, self.group)],
+                vec![Self::update_server_npc_actor(npc, false, self.group, now)],
             ));
 
             if npc.completed_death(now) {
