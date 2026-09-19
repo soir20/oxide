@@ -343,15 +343,19 @@ pub fn handle_targeted_cast(
     let targets_in_range = all_targets_nearby
         .iter()
         .copied()
-        .filter(|&(_, _, dist)| dist <= max_attack_range);
+        .filter(|&(_, _, distance)| distance <= max_attack_range);
 
     let selected_targets: Vec<u64> = match ability_config.target_limit {
-        TargetLimit::Infinite => in_range.map(|(id, _, _)| id).collect(),
-        TargetLimit::Single => in_range
+        TargetLimit::Infinite => targets_in_range.map(|(guid, _, _)| guid).collect(),
+        TargetLimit::Single => targets_in_range
             .clone()
-            .find(|&(id, _, _)| id == target_guid)
-            .or_else(|| in_range.min_by(|&(_, _, a), &(_, _, b)| a.total_cmp(&b)))
-            .map(|(id, _, _)| vec![id])
+            .find(|&(guid, _, _)| guid == target_guid)
+            .or_else(|| {
+                targets_in_range.min_by(|&(_, _, distance_a), &(_, _, distance_b)| {
+                    distance_a.total_cmp(&distance_b)
+                })
+            })
+            .map(|(guid, _, _)| vec![guid])
             .unwrap_or_default(),
     };
 
@@ -384,7 +388,7 @@ pub fn handle_targeted_cast(
         for &selected_target in &selected_targets {
             let Some(&(_, impacted_pos, _)) = all_targets_nearby
                 .iter()
-                .find(|&&(id, _, _)| id == selected_target)
+                .find(|&&(guid, _, _)| guid == selected_target)
             else {
                 continue;
             };
