@@ -322,8 +322,9 @@ pub fn handle_targeted_cast(
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let caster_guid = Guid::guid(caster_stats);
+    let max_attack_range = ability_config.max_distance_from_player;
 
-    let all_targets_nearby: Vec<_> = nearby_characters
+    let all_targets_nearby: Vec<(u64, Pos, f32)> = nearby_characters
         .iter()
         .filter(|(_, target)| {
             player_can_attack(
@@ -332,30 +333,25 @@ pub fn handle_targeted_cast(
                 &game_server.enemy_types.allowed_player_attacks,
             )
         })
-        .map(|(&id, _)| id)
-        .collect();
-
-    let valid_targets: Vec<_> = all_targets_nearby
-        .iter()
-        .filter_map(|&id| {
-            let target_pos = nearby_characters[&id].stats.pos;
-            let distance = distance3_pos(caster_stats.pos, target_pos);
-
-            (distance <= ability_config.max_distance_from_player).then_some((id, distance))
+        .map(|(&guid, target)| {
+            let target_pos = target.stats.pos;
+            let distance_from_target = distance3_pos(caster_stats.pos, target_pos);
+            (guid, target_pos, distance_from_target)
         })
         .collect();
 
-    let selected_targets = match ability_config.target_limit {
-        TargetLimit::Infinite => valid_targets.iter().map(|&(id, _)| id).collect(),
-        TargetLimit::Single => valid_targets
-            .iter()
-            .find(|&&(id, _)| id == target_guid)
-            .or_else(|| {
-                valid_targets
-                    .iter()
-                    .min_by(|(_, pos_a), (_, pos_b)| pos_a.total_cmp(pos_b))
-            })
-            .map(|&(id, _)| vec![id])
+    let targets_in_range = all_targets_nearby
+        .iter()
+        .copied()
+        .filter(|&(_, _, dist)| dist <= max_attack_range);
+
+    let selected_targets: Vec<u64> = match ability_config.target_limit {
+        TargetLimit::Infinite => in_range.map(|(id, _, _)| id).collect(),
+        TargetLimit::Single => in_range
+            .clone()
+            .find(|&(id, _, _)| id == target_guid)
+            .or_else(|| in_range.min_by(|&(_, _, a), &(_, _, b)| a.total_cmp(&b)))
+            .map(|(id, _, _)| vec![id])
             .unwrap_or_default(),
     };
 
@@ -386,30 +382,28 @@ pub fn handle_targeted_cast(
 
     if aoe_radius > 0.0 {
         for &selected_target in &selected_targets {
-            let Some(impacted_pos) = nearby_characters
-                .get(&selected_target)
-                .map(|target| target.stats.pos)
+            let Some(&(_, impacted_pos, _)) = all_targets_nearby
+                .iter()
+                .find(|&&(id, _, _)| id == selected_target)
             else {
                 continue;
             };
 
-            for &aoe_target in &all_targets_nearby {
+            for &(aoe_target, aoe_pos, _) in &all_targets_nearby {
                 if aoe_target == selected_target {
                     continue;
                 }
 
-                let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) else {
-                    continue;
-                };
-
-                if distance3_pos(impacted_pos, target_write_handle.stats.pos) <= aoe_radius {
-                    broadcasts.extend(deal_ability_damage(
-                        caster_guid,
-                        &mut target_write_handle.stats,
-                        nearby_player_guids,
-                        ability_name,
-                        ability_config,
-                    )?);
+                if distance3_pos(impacted_pos, aoe_pos) <= aoe_radius {
+                    if let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) {
+                        broadcasts.extend(deal_ability_damage(
+                            caster_guid,
+                            &mut target_write_handle.stats,
+                            nearby_player_guids,
+                            ability_name,
+                            ability_config,
+                        )?);
+                    }
                 }
             }
         }
