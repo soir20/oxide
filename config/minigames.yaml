@@ -3180,6 +3180,7 @@ categories:
                       camera_heading: !Degrees 270.0
                       camera_fov: !Degrees 50.0
                       flip_camera_z: true
+                max_weapon_cooldown_error_millis: 10
                 planet:
                   model_id: 583
                   center:

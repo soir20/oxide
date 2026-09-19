@@ -322,6 +322,7 @@ impl AttackCruiserActor {
     pub fn attack_primary(
         &mut self,
         now: Instant,
+        max_cooldown_error: Duration,
     ) -> impl Iterator<Item = &Arc<AttackCruiserProjectileConfig>> + use<'_> {
         let last_used_slice = &mut self.primary_weapon_last_used;
 
@@ -341,6 +342,7 @@ impl AttackCruiserActor {
                     if let Some(last_used) = last_used_opt {
                         if now.saturating_duration_since(*last_used)
                             < Duration::from_millis(projectile.cooldown_millis.into())
+                                .saturating_sub(max_cooldown_error)
                         {
                             return None;
                         }
@@ -1039,6 +1041,7 @@ pub struct AttackCruiserConfig {
     challenge: AttackCruiserChallengeConfig,
     health_bar: AttackCruiserHealthBarConfig,
     intro: AttackCruiserIntroConfig,
+    max_weapon_cooldown_error_millis: u16,
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
     playfield: AttackCruiserPlayfieldConfig,
@@ -2112,8 +2115,9 @@ impl AttackCruiserGame {
             target_pos,
             now,
             &mut self.projectiles,
-            self.group,
             &self.active_players,
+            self.group,
+            Duration::from_millis(self.config.max_weapon_cooldown_error_millis.into()),
         )
     }
 
@@ -2447,8 +2451,9 @@ impl AttackCruiserGame {
         target_pos: Pos3,
         now: Instant,
         projectile_pool: &mut AttackCruiserProjectilePool,
-        group: MinigameMatchmakingGroup,
         active_players: &[u32],
+        group: MinigameMatchmakingGroup,
+        max_cooldown_error: Duration,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets = Vec::new();
 
@@ -2469,7 +2474,7 @@ impl AttackCruiserGame {
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
-        for projectile in actor.attack_primary(now) {
+        for projectile in actor.attack_primary(now, max_cooldown_error) {
             packets.extend(
                 projectile_pool
                     .launch(actor_id, actor_pos, direction, projectile, now)?
