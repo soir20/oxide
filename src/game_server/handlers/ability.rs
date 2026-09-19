@@ -350,7 +350,11 @@ pub fn handle_targeted_cast(
         TargetLimit::Single => valid_targets
             .iter()
             .find(|&&(id, _)| id == target_guid)
-            .or_else(|| valid_targets.iter().min_by(|(_, pos_a), (_, pos_b)| pos_a.total_cmp(pos_b)))
+            .or_else(|| {
+                valid_targets
+                    .iter()
+                    .min_by(|(_, pos_a), (_, pos_b)| pos_a.total_cmp(pos_b))
+            })
             .map(|&(id, _)| vec![id])
             .unwrap_or_default(),
     };
@@ -390,6 +394,10 @@ pub fn handle_targeted_cast(
             };
 
             for &aoe_target in &all_targets_nearby {
+                if aoe_target == selected_target {
+                    continue;
+                }
+
                 let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) else {
                     continue;
                 };
