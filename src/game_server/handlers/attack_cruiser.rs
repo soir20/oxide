@@ -377,9 +377,11 @@ impl AttackCruiserActor {
             self.pos.x += self.speed.x * delta_secs;
             self.pos.z += self.speed.z * delta_secs;
 
-            self.angular_speed = (self.angular_speed
-                - self.ship.angular_deceleration.to_radians() * delta_secs)
-                .max(0.0);
+            let delta_angular_speed = self.ship.angular_deceleration.to_radians() * delta_secs;
+            let new_angular_speed_magnitude =
+                (self.angular_speed.abs() - delta_angular_speed).max(0.0);
+            self.angular_speed = new_angular_speed_magnitude.copysign(self.angular_speed);
+
             self.yaw = normalize_angle(self.yaw + self.angular_speed * delta_secs);
 
             return;
