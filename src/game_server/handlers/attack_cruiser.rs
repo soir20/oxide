@@ -363,8 +363,8 @@ impl AttackCruiserActor {
         let speed = (self.speed.x.powi(2) + self.speed.z.powi(2)).sqrt();
 
         if self.dead() {
-            let new_speed = (speed - self.ship.deceleration * delta_secs).max(0.0);
-            let scaling_factor = new_speed / speed;
+            let new_speed = speed - self.ship.deceleration * delta_secs;
+            let scaling_factor = (new_speed / speed).max(0.0);
             self.speed.x *= scaling_factor;
             self.speed.z *= scaling_factor;
             self.pos.x += self.speed.x * delta_secs;
@@ -2735,9 +2735,10 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            let health_percent = player_state.actor.health as f32
+            let health_percent = (player_state.actor.health as f32
                 / player_state.actor.ship.max_health as f32
-                * 100.0;
+                * 100.0)
+                .max(0.0);
             let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
             let is_damage_alarm_timer_expired = player_state
                 .damage_alarm_sound_timer
