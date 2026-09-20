@@ -34,25 +34,31 @@ impl From<pot::Error> for ConfigError {
     }
 }
 
-fn list_config_yamls(root: &Path) -> Result<Vec<PathBuf>, ConfigError> {
-    let mut files_with_yaml = Vec::new();
+pub fn list_files_with_extension(
+    root: &Path,
+    required_extension: &str,
+) -> Result<Vec<PathBuf>, ConfigError> {
+    let mut files_with_extension = Vec::new();
 
     for entry in fs::read_dir(root)? {
         let entry_path = entry?.path();
         match entry_path.is_dir() {
-            true => files_with_yaml.append(&mut list_config_yamls(&entry_path)?),
+            true => files_with_extension.append(&mut list_files_with_extension(
+                &entry_path,
+                required_extension,
+            )?),
             false => {
                 if entry_path
                     .extension()
-                    .is_some_and(|extension| extension == "yaml")
+                    .is_some_and(|extension| extension == required_extension)
                 {
-                    files_with_yaml.push(entry_path);
+                    files_with_extension.push(entry_path);
                 }
             }
         }
     }
 
-    Ok(files_with_yaml)
+    Ok(files_with_extension)
 }
 
 fn merge_yaml_values(
@@ -85,7 +91,7 @@ fn merge_yaml_values(
 
 pub fn merge_config_dir<T: DeserializeOwned>(root: &Path) -> Result<T, ConfigError> {
     let mut accumulated_map = Mapping::new();
-    for path in list_config_yamls(root)? {
+    for path in list_files_with_extension(root, "yaml")? {
         let file = File::open(&path)?;
         accumulated_map = merge_yaml_values("", accumulated_map, serde_yaml::from_reader(file)?)?;
     }

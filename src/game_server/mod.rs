@@ -5,6 +5,7 @@ use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
 use std::str::ParseBoolError;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 use std::vec;
 
@@ -49,6 +50,7 @@ use handlers::zone::{
     load_zones, teleport_anywhere, teleport_within_zone, DestinationZoneInstance,
     PointOfInterestConfig, ZoneInstance, ZoneTemplate,
 };
+use oxide_bvh::Bvh;
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
 use packets::player_update::{Customization, InitCustomizations, QueueAnimation, UpdateWieldType};
@@ -64,7 +66,7 @@ use crate::config::ConfigError;
 use crate::game_server::handlers::combat::{load_enemy_types, EnemyTypeConfig};
 use crate::game_server::handlers::store::{redirect_packets, ItemCostMap};
 use crate::game_server::handlers::tick::reset_daily_minigames;
-use crate::game_server::navmesh::config::load_navmeshes;
+use crate::game_server::navmesh::config::{load_bvhs, load_navmeshes};
 use crate::game_server::navmesh::{Collision, Navmesh};
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
@@ -185,6 +187,7 @@ pub enum TickableNpcSynchronization {
 
 pub struct GameServer {
     abilities: HashMap<String, AbilityConfig>,
+    bvhs: HashMap<String, Arc<Bvh>>,
     categories: CategoryDefinitions,
     costs: ItemCostMap,
     customizations: BTreeMap<i32, Customization>,
@@ -207,6 +210,7 @@ pub struct GameServer {
 impl GameServer {
     pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
         let abilities = load_abilities(config_dir)?;
+        let bvhs = load_bvhs(config_dir)?;
         let characters = GuidTable::new();
         let (templates, zones, points_of_interest) = load_zones(config_dir)?;
         let (items, mut costs) = load_items(config_dir, &abilities)?;
@@ -227,10 +231,11 @@ impl GameServer {
             },
             minigames: load_all_minigames(config_dir)?,
             mounts: load_mounts(config_dir)?,
-            navmeshes: load_navmeshes(config_dir)?,
+            navmeshes: load_navmeshes(config_dir, &bvhs)?,
             points_of_interest,
             start_time: Instant::now(),
             zone_templates: templates,
+            bvhs,
             commands: load_commands(config_dir)?,
         })
     }
@@ -826,6 +831,10 @@ impl GameServer {
 
     pub fn abilities(&self) -> &HashMap<String, AbilityConfig> {
         &self.abilities
+    }
+
+    pub fn bvhs(&self) -> &HashMap<String, Arc<Bvh>> {
+        &self.bvhs
     }
 
     pub fn costs(&self) -> &ItemCostMap {

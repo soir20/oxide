@@ -1,8 +1,6 @@
 use std::{
-    collections::HashMap,
     fs::File,
-    io::{BufReader, Read},
-    sync::atomic::{AtomicUsize, Ordering},
+    io::{BufReader, Read, Write},
 };
 
 use bvh::{
@@ -12,8 +10,10 @@ use bvh::{
     ray::Ray,
 };
 use flate2::{bufread::GzDecoder, write::GzEncoder, Compression};
-use glam::{EulerRot, Quat, Vec3};
-use serde::{Deserialize, Serialize};
+use glam::{Affine3A, EulerRot, Quat, Vec3};
+use serde::{de::Error, Deserialize, Serialize};
+
+const EPSILON: f32 = 1e-3;
 
 fn vertex_from_index(vertices: &[[f32; 3]], index: u16) -> [f32; 3] {
     let index = usize::from(index);
@@ -37,70 +37,94 @@ fn triangle_to_aabb(v1: [f32; 3], v2: [f32; 3], v3: [f32; 3]) -> Aabb<f32, 3> {
     )
 }
 
-fn with_vertices<'a>(
-    vertices: &'a [[f32; 3]],
-    triangles: &'a [Triangle],
-) -> Vec<TriangleWithVertices<'a>> {
-    triangles
-        .iter()
-        .map(|triangle| TriangleWithVertices {
-            triangle,
-            vertices: &vertices,
-        })
-        .collect()
-}
-
-fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
-    let mut triangles_with_vertices = with_vertices(vertices, triangles);
-    SubBvh::build(&mut triangles_with_vertices)
-}
-
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Triangle {
     indices: [u16; 3],
-    node_index: AtomicUsize,
+    node_index: usize,
 }
 
 impl From<[u16; 3]> for Triangle {
     fn from(indices: [u16; 3]) -> Self {
         Triangle {
             indices,
-            node_index: AtomicUsize::new(0),
+            node_index: 0,
         }
     }
 }
 
-struct TriangleWithVertices<'a> {
-    triangle: &'a Triangle,
-    vertices: &'a [[f32; 3]],
+struct TriangleAabb {
+    aabb: Aabb<f32, 3>,
+    node_index: usize,
+    triangle_index: usize,
 }
 
-impl<'a> Bounded<f32, 3> for TriangleWithVertices<'a> {
+impl Bounded<f32, 3> for TriangleAabb {
     fn aabb(&self) -> Aabb<f32, 3> {
-        let v1 = vertex_from_index(self.vertices, self.triangle.indices[0]);
-        let v2 = vertex_from_index(self.vertices, self.triangle.indices[1]);
-        let v3 = vertex_from_index(self.vertices, self.triangle.indices[2]);
-        triangle_to_aabb(v1, v2, v3)
+        self.aabb
     }
 }
 
-impl<'a> BHShape<f32, 3> for TriangleWithVertices<'a> {
+impl BHShape<f32, 3> for TriangleAabb {
     fn set_bh_node_index(&mut self, node_index: usize) {
-        self.triangle
-            .node_index
-            .store(node_index, Ordering::Relaxed);
+        self.node_index = node_index;
     }
 
     fn bh_node_index(&self) -> usize {
-        self.triangle.node_index.load(Ordering::Relaxed)
+        self.node_index
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+fn generate_bvh(vertices: &[[f32; 3]], triangles: &mut [Triangle]) -> SubBvh<f32, 3> {
+    let mut aabbs: Vec<TriangleAabb> = triangles
+        .iter()
+        .enumerate()
+        .map(|(index, triangle)| TriangleAabb {
+            aabb: triangle_to_aabb(
+                vertices[triangle.indices[0] as usize],
+                vertices[triangle.indices[1] as usize],
+                vertices[triangle.indices[2] as usize],
+            ),
+            node_index: triangle.node_index,
+            triangle_index: index,
+        })
+        .collect();
+    let bvh = SubBvh::build(&mut aabbs);
+
+    aabbs.iter().for_each(|aabb| {
+        triangles[aabb.triangle_index].node_index = aabb.node_index;
+    });
+
+    bvh
+}
+
+#[derive(Clone, Debug)]
+struct BakedTriangle {
+    indices: [u16; 3],
+    aabb: Aabb<f32, 3>,
+}
+
+impl Bounded<f32, 3> for BakedTriangle {
+    fn aabb(&self) -> Aabb<f32, 3> {
+        self.aabb
+    }
+}
+
+#[derive(Deserialize)]
+struct BvhTemplateData {
+    vertices: Vec<[f32; 3]>,
+    triangles: Vec<Triangle>,
+    bvh: SubBvh<f32, 3>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(from = "BvhTemplateData")]
 pub struct BvhTemplate {
     bvh: SubBvh<f32, 3>,
     vertices: Vec<[f32; 3]>,
     triangles: Vec<Triangle>,
+
+    #[serde(skip)]
+    baked_triangles: Vec<BakedTriangle>,
 }
 
 impl BvhTemplate {
@@ -110,17 +134,55 @@ impl BvhTemplate {
             .map(|triangle| Triangle::from(*triangle))
             .collect();
 
+        let bvh = generate_bvh(&vertices, &mut triangles);
+        let baked_triangles: Vec<BakedTriangle> = triangles
+            .iter()
+            .map(|triangle| BakedTriangle {
+                indices: triangle.indices,
+                aabb: triangle_to_aabb(
+                    vertex_from_index(&vertices, triangle.indices[0]),
+                    vertex_from_index(&vertices, triangle.indices[1]),
+                    vertex_from_index(&vertices, triangle.indices[2]),
+                ),
+            })
+            .collect();
+
         BvhTemplate {
-            bvh: generate_bvh(&vertices, &mut triangles),
+            bvh,
             vertices,
             triangles,
+            baked_triangles,
         }
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct BvhInstance {
-    id: u32,
+impl From<BvhTemplateData> for BvhTemplate {
+    fn from(data: BvhTemplateData) -> Self {
+        let baked_triangles = data
+            .triangles
+            .iter()
+            .map(|triangle| BakedTriangle {
+                indices: triangle.indices,
+                aabb: triangle_to_aabb(
+                    vertex_from_index(&data.vertices, triangle.indices[0]),
+                    vertex_from_index(&data.vertices, triangle.indices[1]),
+                    vertex_from_index(&data.vertices, triangle.indices[2]),
+                ),
+            })
+            .collect();
+
+        BvhTemplate {
+            bvh: data.bvh,
+            vertices: data.vertices,
+            triangles: data.triangles,
+            baked_triangles,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct BvhInstanceData {
+    bvh_index: usize,
     pos: [f32; 3],
     rot: [f32; 3],
     scale: f32,
@@ -128,23 +190,60 @@ pub struct BvhInstance {
     node_index: usize,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(from = "BvhInstanceData")]
+pub struct BvhInstance {
+    bvh_index: usize,
+    pos: [f32; 3],
+    rot: [f32; 3],
+    scale: f32,
+    aabb: Aabb<f32, 3>,
+    node_index: usize,
+
+    #[serde(skip)]
+    global_to_local: Affine3A,
+}
+
 impl BvhInstance {
     pub fn new(
-        id: u32,
+        bvh_index: usize,
         pos: [f32; 3],
         rot: [f32; 3],
         scale: f32,
-        triangles: impl Iterator<Item = [[f32; 3]; 3]>,
+        global_triangles: impl Iterator<Item = [[f32; 3]; 3]>,
     ) -> Self {
-        BvhInstance {
-            id,
+        BvhInstanceData {
+            bvh_index,
             pos,
             rot,
             scale,
-            aabb: triangles
+            aabb: global_triangles
                 .map(|triangle| triangle_to_aabb(triangle[0], triangle[1], triangle[2]))
                 .fold(Aabb::empty(), |acc, next| acc.join(&next)),
             node_index: 0,
+        }
+        .into()
+    }
+}
+
+impl From<BvhInstanceData> for BvhInstance {
+    fn from(value: BvhInstanceData) -> BvhInstance {
+        let rotation = Quat::from_euler(EulerRot::YXZ, value.rot[0], value.rot[1], value.rot[2]);
+        let translation = Vec3::from(value.pos);
+        let scale = Vec3::splat(value.scale);
+
+        let local_to_global =
+            Affine3A::from_scale_rotation_translation(scale, rotation, translation);
+        let global_to_local = local_to_global.inverse();
+
+        BvhInstance {
+            bvh_index: value.bvh_index,
+            pos: value.pos,
+            rot: value.rot,
+            scale: value.scale,
+            aabb: value.aabb,
+            node_index: value.node_index,
+            global_to_local,
         }
     }
 }
@@ -168,13 +267,19 @@ impl BHShape<f32, 3> for BvhInstance {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Bvh {
     root: SubBvh<f32, 3>,
-    templates: HashMap<u32, BvhTemplate>,
+    templates: Vec<BvhTemplate>,
     instances: Vec<BvhInstance>,
+
+    #[serde(skip)]
+    aabb: Aabb<f32, 3>,
 }
 
 impl Bvh {
-    pub fn new(templates: HashMap<u32, BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
+    pub fn new(templates: Vec<BvhTemplate>, mut instances: Vec<BvhInstance>) -> Self {
         Bvh {
+            aabb: instances
+                .iter()
+                .fold(Aabb::empty(), |acc, instance| acc.join(&instance.aabb())),
             root: SubBvh::build(&mut instances),
             templates,
             instances,
@@ -182,42 +287,47 @@ impl Bvh {
     }
 
     pub fn has_line_of_sight(&self, start: [f32; 3], end: [f32; 3]) -> bool {
-        let start = Vec3::from(start);
-        let end = Vec3::from(end);
-        let direction: [f32; 3] = (end - start).normalize().into();
-        let ray = Ray::new(<[f32; 3]>::from(start).into(), direction.into());
+        let start_vec = Vec3::from(start);
+        let end_vec = Vec3::from(end);
+        let delta = end_vec - start_vec;
+
+        // Only perform expensive sqrt() when necessary
+        let global_max_distance_sq = delta.length_squared();
+        if global_max_distance_sq < EPSILON * EPSILON {
+            return true;
+        }
+
+        let ray = Ray::new(start.into(), delta.normalize().to_array().into());
+
         for bvh_instance in self.root.traverse(&ray, &self.instances) {
-            let Some(bvh_template) = self.templates.get(&bvh_instance.id) else {
+            let Some(bvh_template) = self.templates.get(bvh_instance.bvh_index) else {
                 continue;
             };
 
-            let inverse_rotation = Quat::from_euler(
-                EulerRot::YXZ,
-                bvh_instance.rot[0],
-                bvh_instance.rot[1],
-                bvh_instance.rot[2],
-            )
-            .inverse();
-            let relative_start =
-                (inverse_rotation * (start - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
-            let relative_end =
-                (inverse_rotation * (end - Vec3::from(bvh_instance.pos))) / bvh_instance.scale;
-            let relative_direction: [f32; 3] = (relative_end - relative_start).normalize().into();
-            let relative_max_distance = (relative_end - relative_start).length();
-            let relative_ray = Ray::new(
-                <[f32; 3]>::from(relative_start).into(),
-                relative_direction.into(),
-            );
+            let relative_start = bvh_instance.global_to_local.transform_point3(start_vec);
+            let relative_end = bvh_instance.global_to_local.transform_point3(end_vec);
 
-            let triangles_with_vertices =
-                with_vertices(&bvh_template.vertices, &bvh_template.triangles);
+            let local_delta = relative_end - relative_start;
+            let relative_max_distance_sq = local_delta.length_squared();
+
+            if relative_max_distance_sq < EPSILON * EPSILON {
+                continue;
+            }
+
+            let relative_ray = Ray::new(
+                relative_start.to_array().into(),
+                local_delta.normalize().to_array().into(),
+            );
+            let relative_max_distance = relative_max_distance_sq.sqrt();
+
             for triangle in bvh_template
                 .bvh
-                .traverse(&relative_ray, &triangles_with_vertices)
+                .traverse(&relative_ray, &bvh_template.baked_triangles)
             {
-                let v1 = vertex_from_index(triangle.vertices, triangle.triangle.indices[0]).into();
-                let v2 = vertex_from_index(triangle.vertices, triangle.triangle.indices[1]).into();
-                let v3 = vertex_from_index(triangle.vertices, triangle.triangle.indices[2]).into();
+                let v1 = vertex_from_index(&bvh_template.vertices, triangle.indices[0]).into();
+                let v2 = vertex_from_index(&bvh_template.vertices, triangle.indices[1]).into();
+                let v3 = vertex_from_index(&bvh_template.vertices, triangle.indices[2]).into();
+
                 let intersection = relative_ray.intersects_triangle(&v1, &v2, &v3);
                 if intersection.distance >= 0.0 && intersection.distance <= relative_max_distance {
                     return false;
@@ -227,18 +337,50 @@ impl Bvh {
 
         true
     }
+
+    pub fn aabb(&self) -> Aabb<f32, 3> {
+        self.aabb
+    }
 }
 
-pub fn write_bvh(file: &File, bvh: &Bvh) -> Result<(), pot::Error> {
+const BVH_MAGIC: &[u8; 9] = b"OXIDE_BVH";
+
+pub fn write_bvh(file: &mut File, bvh: &Bvh) -> Result<(), pot::Error> {
+    file.write_all(BVH_MAGIC)?;
+
+    file.write_all(&1u32.to_le_bytes())?;
+
     let serialized_bvh: Vec<u8> = pot::to_vec(bvh)?;
     let mut encoder = GzEncoder::new(file, Compression::best());
-    std::io::Write::write_all(&mut encoder, &serialized_bvh)?;
+    Write::write_all(&mut encoder, &serialized_bvh)?;
     encoder.finish()?;
     Ok(())
 }
 
 pub fn read_bvh(file: &File) -> Result<Bvh, pot::Error> {
-    let mut decoder = GzDecoder::new(BufReader::new(file));
+    let mut reader = BufReader::new(file);
+
+    let mut magic_buf = [0u8; BVH_MAGIC.len()];
+    reader.read_exact(&mut magic_buf)?;
+    if &magic_buf != BVH_MAGIC {
+        return Err(pot::Error::custom(format!(
+            "Invalid magic header: expected '{}', got '{:?}'",
+            String::from_utf8_lossy(BVH_MAGIC),
+            String::from_utf8_lossy(&magic_buf)
+        )));
+    }
+
+    let mut version_buf = [0u8; 4];
+    reader.read_exact(&mut version_buf)?;
+    let version = u32::from_le_bytes(version_buf);
+    if version != 1 {
+        return Err(pot::Error::custom(format!(
+            "Unknown file version: {}",
+            version
+        )));
+    }
+
+    let mut decoder = GzDecoder::new(reader);
     let mut buffer = Vec::new();
     decoder.read_to_end(&mut buffer)?;
     pot::from_slice(&buffer)
