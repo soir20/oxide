@@ -377,11 +377,10 @@ impl AttackCruiserActor {
             self.pos.x += self.speed.x * delta_secs;
             self.pos.z += self.speed.z * delta_secs;
 
-            let delta_angular_speed = self.ship.angular_deceleration.to_radians() * delta_secs;
-            let new_angular_speed_magnitude =
-                (self.angular_speed.abs() - delta_angular_speed).max(0.0);
-            self.angular_speed = new_angular_speed_magnitude.copysign(self.angular_speed);
-
+            // Even though it doesn't physically make sense, the client's interpolation
+            // sets angular speed to 0 on death. If we don't match that on server, dead
+            // actors appear to shake and teleport
+            self.angular_speed = 0.0;
             self.yaw = normalize_angle(self.yaw + self.angular_speed * delta_secs);
 
             return;
