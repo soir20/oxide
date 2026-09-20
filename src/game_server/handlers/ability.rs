@@ -23,7 +23,7 @@ use crate::{
 };
 
 use super::{
-    character::{coerce_to_broadcast_supplier, CharacterStats, CharacterType},
+    character::{coerce_to_broadcast_supplier, CharacterStats, CharacterType, PlayerAbilityGroup},
     combat::player_can_attack,
     distance3_pos,
     guid::{Guid, GuidTableIndexer, IndexedGuid},
@@ -480,9 +480,13 @@ fn process_start_cast(
                                         }
                                     };
 
-                                let ability_groups = match cast_req.action_bar_type {
-                                    ActionBarType::Weapon => &player_stats.action_bar.weapon_abilities,
-                                    ActionBarType::Consumable => &player_stats.action_bar.consumables,
+                                let ability_groups: &[PlayerAbilityGroup] = match cast_req.action_bar_type {
+                                    ActionBarType::Weapon => {
+                                        &player_stats.action_bar.weapon_abilities
+                                    }
+                                    ActionBarType::Consumable => {
+                                        &player_stats.action_bar.consumables
+                                    }
                                     ActionBarType::Minigame => &[],
                                 };
 
