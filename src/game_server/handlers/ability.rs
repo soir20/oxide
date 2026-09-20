@@ -545,7 +545,7 @@ fn process_start_cast(
                                             ability_config,
                                             cast_req.action_bar_type,
                                             slot_index as i32,
-                                            &game_server,
+                                            game_server,
                                         )?);
                                     }
                                     AbilityTargetType::WithSelf(_) | AbilityTargetType::Aoe(_) => {}
