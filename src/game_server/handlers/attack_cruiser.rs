@@ -366,8 +366,8 @@ impl AttackCruiserActor {
                         }
                     }
 
-                    let min_angle = yaw - projectile.min_launch_angle.to_radians();
-                    let max_angle = yaw - projectile.max_launch_angle.to_radians();
+                    let min_angle = yaw + projectile.min_launch_angle.to_radians();
+                    let max_angle = yaw + projectile.max_launch_angle.to_radians();
                     let allows_complete_circle = (max_angle - min_angle).abs() >= 2.0 * PI;
                     if !allows_complete_circle {
                         let allowed_sector_width = normalize_angle_positive(max_angle - min_angle);
