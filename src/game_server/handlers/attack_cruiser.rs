@@ -9,7 +9,7 @@ use std::{
 };
 
 use arrayvec::ArrayVec;
-use glam::{EulerRot, Quat, Vec3};
+use glam::{EulerRot, Quat, Vec2, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
@@ -131,6 +131,10 @@ fn show_hud_message(
 
 fn normalize_angle(angle_radians: f32) -> f32 {
     (angle_radians + PI).rem_euclid(2.0 * PI) - PI
+}
+
+fn normalize_angle_positive(angle_radians: f32) -> f32 {
+    angle_radians.rem_euclid(2.0 * PI)
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -330,8 +334,12 @@ impl AttackCruiserActor {
         &mut self,
         now: Instant,
         max_cooldown_error: Duration,
+        direction: Pos3,
     ) -> impl Iterator<Item = &Arc<AttackCruiserProjectileConfig>> + use<'_> {
         let last_used_slice = &mut self.primary_weapon_last_used;
+
+        let attack_angle = direction.x.atan2(direction.z);
+        let yaw = self.yaw;
 
         let projectiles_opt = self
             .ship
@@ -347,10 +355,26 @@ impl AttackCruiserActor {
             .filter_map(move |(index, projectile)| {
                 if let Some(last_used_opt) = last_used_slice.get_mut(index) {
                     if let Some(last_used) = last_used_opt {
-                        if now.saturating_duration_since(*last_used)
-                            < Duration::from_millis(projectile.cooldown_millis.into())
-                                .saturating_sub(max_cooldown_error)
-                        {
+                        let adjusted_cooldown =
+                            Duration::from_millis(projectile.cooldown_millis.into())
+                                .saturating_sub(max_cooldown_error);
+                        let is_on_cooldown =
+                            now.saturating_duration_since(*last_used) < adjusted_cooldown;
+
+                        if is_on_cooldown {
+                            return None;
+                        }
+                    }
+
+                    let min_angle = yaw - projectile.min_launch_angle.to_radians();
+                    let max_angle = yaw - projectile.max_launch_angle.to_radians();
+                    let allows_complete_circle = (max_angle - min_angle).abs() >= 2.0 * PI;
+                    if !allows_complete_circle {
+                        let allowed_sector_width = normalize_angle_positive(max_angle - min_angle);
+                        let relative_attack_angle =
+                            normalize_angle_positive(attack_angle - min_angle);
+
+                        if relative_attack_angle > allowed_sector_width {
                             return None;
                         }
                     }
@@ -725,6 +749,14 @@ const fn default_launch_height() -> f32 {
     4.0
 }
 
+const fn default_min_launch_angle() -> Angle {
+    Angle::Degrees(0.0)
+}
+
+const fn default_max_launch_angle() -> Angle {
+    Angle::Degrees(360.0)
+}
+
 const fn default_screen_relative_turning() -> bool {
     true
 }
@@ -874,6 +906,10 @@ struct AttackCruiserProjectileConfig {
     launch_offset: f32,
     #[serde(default = "default_launch_height")]
     launch_height: f32,
+    #[serde(default = "default_min_launch_angle")]
+    min_launch_angle: Angle,
+    #[serde(default = "default_max_launch_angle")]
+    max_launch_angle: Angle,
     length: f32,
     damage: i16,
 }
@@ -2482,7 +2518,7 @@ impl AttackCruiserGame {
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
-        for projectile in actor.attack_primary(now, max_cooldown_error) {
+        for projectile in actor.attack_primary(now, max_cooldown_error, direction) {
             packets.extend(
                 projectile_pool
                     .launch(actor_id, actor_pos, direction, projectile, now)?
