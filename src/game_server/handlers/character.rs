@@ -1901,6 +1901,7 @@ pub struct PlayerAbilityGroup {
 #[derive(Clone)]
 pub struct PlayerActionBar {
     pub weapon_abilities: Vec<PlayerAbilityGroup>,
+    pub consumables: Vec<PlayerAbilityGroup>,
 }
 
 #[derive(Clone)]

@@ -480,11 +480,15 @@ fn process_start_cast(
                                         }
                                     };
 
+                                let ability_groups = match cast_req.action_bar_type {
+                                    ActionBarType::Weapon => &player_stats.action_bar.weapon_abilities,
+                                    ActionBarType::Consumable => &player_stats.action_bar.consumables,
+                                    ActionBarType::Minigame => &[],
+                                };
+
                                 let slot_index = cast_req.slot_index as usize;
 
-                                let Some(ability_key) = player_stats
-                                    .action_bar
-                                    .weapon_abilities
+                                let Some(ability_key) = ability_groups
                                     .iter()
                                     .flat_map(|group| group.ability_keys.iter())
                                     .nth(slot_index)
@@ -493,7 +497,8 @@ fn process_start_cast(
                                     return Err(ProcessPacketError::new(
                                         ProcessPacketErrorType::ConstraintViolated,
                                         format!(
-                                            "Caster {caster} attempted to cast slot index {slot_index} but no abilities were found"
+                                            "Caster {caster} attempted to cast slot index {slot_index} for action bar type {:?} but no abilities were found",
+                                            cast_req.action_bar_type
                                         ),
                                     ));
                                 };
