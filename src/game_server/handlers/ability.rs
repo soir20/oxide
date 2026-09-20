@@ -200,7 +200,7 @@ fn deal_ability_damage(
     let max_health = target_stats.max_health as i32;
 
     let new_health = (current_health - damage_dealt as i32).clamp(0, max_health) as u16;
-    let hp_delta = (new_health as i32) - current_health;
+    let hp_delta = -(damage_dealt as i32);
 
     target_stats.health = new_health;
 
