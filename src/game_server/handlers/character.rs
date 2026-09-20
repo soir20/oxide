@@ -400,7 +400,7 @@ impl BaseNpc {
                     terrain_object_id: self.terrain_object_id,
                     enable_attachments: !self.attachments.is_empty(),
                     speed: character.speed.total(),
-                    unknown21: false,
+                    hide_target_circle: false,
                     interactable_size_pct: 100,
                     walk_animation_id: -1,
                     sprint_animation_id: -1,

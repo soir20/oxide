@@ -841,7 +841,7 @@ pub struct AddNpc {
     pub terrain_object_id: u32,
     pub enable_attachments: bool,
     pub speed: f32,
-    pub unknown21: bool,
+    pub hide_target_circle: bool,
     pub interactable_size_pct: u32,
     pub walk_animation_id: i32,
     pub sprint_animation_id: i32,
