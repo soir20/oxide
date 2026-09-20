@@ -195,13 +195,11 @@ fn deal_ability_damage(
     ability_config: &AbilityConfig,
 ) -> Result<Vec<Broadcast>, Error> {
     let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_key)?;
-    let damaged = damage_dealt > 0;
+
     let current_health = target_stats.health as i32;
     let max_health = target_stats.max_health as i32;
 
     let new_health = (current_health - damage_dealt as i32).clamp(0, max_health) as u16;
-    let hp_delta = -(damage_dealt as i32);
-
     target_stats.health = new_health;
 
     let mut broadcasts = vec![Broadcast::Multi(
@@ -212,15 +210,15 @@ fn deal_ability_damage(
                 attacker_guid: caster,
                 receiver_guid: Guid::guid(target_stats),
                 show_hp_delta: true,
-                max_hp: target_stats.max_health as i32,
+                max_hp: max_health,
                 new_hp: new_health as i32,
-                hp_delta,
+                hp_delta: -(damage_dealt as i32),
                 critical,
             },
         })],
     )];
 
-    if damaged && new_health == 0 {
+    if current_health > 0 && new_health == 0 {
         broadcasts.extend(target_stats.knock_out(nearby_player_guids));
     }
 
