@@ -72,6 +72,13 @@ use crate::{
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 
+fn zero_nan(value: f32) -> f32 {
+    match value.is_nan() {
+        true => 0.0,
+        false => value,
+    }
+}
+
 fn is_inside_oval(pos: Pos3, oval_center: Pos3, oval_radius_x: f32, oval_radius_z: f32) -> bool {
     let delta_x = pos.x - oval_center.x;
     let delta_z = pos.z - oval_center.z;
@@ -228,8 +235,8 @@ impl AttackCruiserActor {
                 z: yaw.cos() * speed,
             },
             angular_speed,
-            forward_multiplier: speed / ship.max_speed,
-            turn_multiplier: angular_speed / ship.max_angular_speed.to_radians(),
+            forward_multiplier: zero_nan(speed / ship.max_speed),
+            turn_multiplier: zero_nan(angular_speed / ship.max_angular_speed.to_radians()),
             health: ship.max_health,
             bvh,
             invulnerability: AttackCruiserActorInvulnerability::default(),
@@ -448,7 +455,7 @@ impl AttackCruiserActor {
         self.speed.z = new_yaw.cos() * speed;
         self.yaw = new_yaw;
         self.angular_speed = new_angular_speed;
-        self.turn_multiplier = new_angular_speed / max_angular_speed;
+        self.turn_multiplier = zero_nan(new_angular_speed / max_angular_speed);
 
         self.pos.x += self.speed.x * delta_secs;
         self.pos.z += self.speed.z * delta_secs;
@@ -2735,10 +2742,10 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            let health_percent = (player_state.actor.health as f32
-                / player_state.actor.ship.max_health as f32
-                * 100.0)
-                .max(0.0);
+            let health_percent = zero_nan(
+                player_state.actor.health as f32 / player_state.actor.ship.max_health as f32
+                    * 100.0,
+            );
             let is_low_health = health_percent <= self.config.player.damage_alarm_health_percent;
             let is_damage_alarm_timer_expired = player_state
                 .damage_alarm_sound_timer
