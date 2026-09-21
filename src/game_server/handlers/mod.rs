@@ -43,10 +43,14 @@ pub fn distance3_pos(pos1: Pos, pos2: Pos) -> f32 {
 }
 
 pub fn distance3(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
+    distance3_sq(x1, y1, z1, x2, y2, z2).sqrt()
+}
+
+pub fn distance3_sq(x1: f32, y1: f32, z1: f32, x2: f32, y2: f32, z2: f32) -> f32 {
     let diff_x = x2 - x1;
     let diff_y = y2 - y1;
     let diff_z = z2 - z1;
-    (diff_x * diff_x + diff_y * diff_y + diff_z * diff_z).sqrt()
+    diff_x * diff_x + diff_y * diff_y + diff_z * diff_z
 }
 
 pub fn direction(old_pos: Pos, new_pos: Pos) -> Pos {

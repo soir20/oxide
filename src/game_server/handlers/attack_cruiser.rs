@@ -1,5 +1,5 @@
 use std::{
-    cmp::Reverse,
+    cmp::{Ordering, Reverse},
     collections::{BTreeMap, HashMap},
     f32::consts::PI,
     io::{Cursor, Read},
@@ -22,7 +22,7 @@ use crate::{
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
-            direction,
+            direction, distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
                 SharedMinigameTypeData,
@@ -1461,8 +1461,41 @@ impl AttackCruiserProjectilePool {
     }
 }
 
+// Player actor IDs use the first 2 bits (1 bit index and 1 bit for even/odd life).
+// Ignore the 32nd bit to avoid negative actor IDs.
+// If an actor can attack friendlies, it has the 30th bit set.
+// If an actor can attack hostiles, it has the 31st bit set.
+// If an actor can attack both friendlies and hostiles, it has both the 30th and 31st bits set.
+// If an actor can attack another, then the other actor can retaliate.
+const ATTACK_FRIENDLY_MASK: i32 = 0b0010_0000_0000_0000_0000_0000_0000_0000;
+const ATTACK_HOSTILE_MASK: i32 = 0b0100_0000_0000_0000_0000_0000_0000_0000;
+
 fn player_actor_id(player_index: u8, lives: u8) -> i32 {
-    (player_index * 2 + 1 + lives.is_multiple_of(2) as u8).into()
+    i32::from(player_index * 2 + 1 + lives.is_multiple_of(2) as u8) | ATTACK_HOSTILE_MASK
+}
+
+fn enemy_actor_id(test_base: i32) -> i32 {
+    // TODO: indexing per ship
+    test_base | ATTACK_FRIENDLY_MASK
+}
+
+fn hostility(actor_id: i32) -> AttackCruiserHostility {
+    match (
+        can_attack_friendlies(actor_id),
+        can_attack_hostiles(actor_id),
+    ) {
+        (true, false) => AttackCruiserHostility::Hostile,
+        (false, true) => AttackCruiserHostility::Friendly,
+        _ => AttackCruiserHostility::Neutral,
+    }
+}
+
+fn can_attack_friendlies(actor_id: i32) -> bool {
+    actor_id & ATTACK_FRIENDLY_MASK != 0
+}
+
+fn can_attack_hostiles(actor_id: i32) -> bool {
+    actor_id & ATTACK_HOSTILE_MASK != 0
 }
 
 #[derive(Clone, Debug)]
@@ -1528,7 +1561,7 @@ impl AttackCruiserGame {
         AttackCruiserGame {
             npcs: vec![
                 AttackCruiserActor::new(
-                    1000,
+                    enemy_actor_id(1000),
                     config.player.spawn2.pos,
                     config.player.spawn2.yaw.to_radians(),
                     test_npc_ship.max_speed,
@@ -1537,7 +1570,7 @@ impl AttackCruiserGame {
                     test_npc_ship.clone(),
                 ),
                 AttackCruiserActor::new(
-                    1001,
+                    enemy_actor_id(1001),
                     config.player.spawn2.pos
                         + Pos3 {
                             x: 100.0,
@@ -1551,7 +1584,7 @@ impl AttackCruiserGame {
                     test_npc_ship.clone(),
                 ),
                 AttackCruiserActor::new(
-                    1002,
+                    enemy_actor_id(1002),
                     config.player.spawn2.pos
                         - Pos3 {
                             x: 100.0,
@@ -2197,7 +2230,7 @@ impl AttackCruiserGame {
         self.spawn_client_actor(
             &player_state.actor,
             &self.config.player.ship,
-            AttackCruiserHostility::Friendly,
+            hostility(player_state.actor.id),
         )
     }
 
@@ -2480,7 +2513,7 @@ impl AttackCruiserGame {
             packets.append(&mut self.spawn_client_actor(
                 npc,
                 &String::from("test"),
-                AttackCruiserHostility::Hostile,
+                hostility(npc.id),
             ));
         });
 
@@ -2818,16 +2851,66 @@ impl AttackCruiserGame {
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
     ) {
+        let mut friendlies: Vec<(i32, Pos3, Pos3)> = self
+            .active_player_indices
+            .iter()
+            .copied()
+            .map(|player_index| {
+                let actor = &self.player_states[player_index as usize].actor;
+                (actor.id, actor.pos, actor.speed)
+            })
+            .collect();
+        let mut hostiles = Vec::new();
+        for npc in self.npcs.iter() {
+            if can_attack_friendlies(npc.id) {
+                hostiles.push((npc.id, npc.pos, npc.speed));
+            }
+
+            if can_attack_hostiles(npc.id) {
+                friendlies.push((npc.id, npc.pos, npc.speed));
+            }
+        }
+
         self.npcs.retain_mut(|npc| {
             if npc.paused() {
                 return true;
             }
 
-            npc.seek_target(
-                self.player_states[0].actor.pos,
-                self.player_states[0].actor.speed,
-                tick_duration.as_secs_f32(),
-            );
+            let mut closest_targets: ArrayVec<&(i32, Pos3, Pos3), 2> = ArrayVec::new();
+            let comparator = |(id1, pos1, _): &&(i32, Pos3, Pos3),
+                              (id2, pos2, _): &&(i32, Pos3, Pos3)| {
+                if *id1 == npc.id {
+                    return Ordering::Greater;
+                }
+
+                if *id2 == npc.id {
+                    return Ordering::Less;
+                }
+
+                let distance1 =
+                    distance3_sq(pos1.x, pos1.y, pos1.z, npc.pos.x, npc.pos.y, npc.pos.z);
+                let distance2 =
+                    distance3_sq(pos2.x, pos2.y, pos2.z, npc.pos.x, npc.pos.y, npc.pos.z);
+
+                distance1.total_cmp(&distance2)
+            };
+            if can_attack_friendlies(npc.id) {
+                if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
+                    closest_targets.push(closest_friendly);
+                }
+            }
+            if can_attack_hostiles(npc.id) {
+                if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
+                    closest_targets.push(closest_hostile);
+                }
+            }
+
+            let (target_pos, target_speed) = closest_targets
+                .into_iter()
+                .min_by(comparator)
+                .map(|(_, pos, speed)| (*pos, *speed))
+                .unwrap_or_default();
+            npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if let Some(actor_hits) = hits.get(&npc.id) {
                 let total_damage = Self::total_damage(actor_hits);
