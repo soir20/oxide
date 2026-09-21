@@ -9,7 +9,7 @@ use std::{
 };
 
 use arrayvec::ArrayVec;
-use glam::{EulerRot, Quat, Vec2, Vec3};
+use glam::{EulerRot, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
@@ -19,6 +19,7 @@ use smallvec::SmallVec;
 
 use crate::{
     config::Angle,
+    debug,
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
@@ -2199,7 +2200,7 @@ impl AttackCruiserGame {
             &mut self.projectiles,
             &self.active_players,
             self.group,
-            Duration::from_millis(self.config.max_weapon_cooldown_error_millis.into()),
+            self.config.max_weapon_cooldown_error_millis,
         )
     }
 
@@ -2535,7 +2536,7 @@ impl AttackCruiserGame {
         projectile_pool: &mut AttackCruiserProjectilePool,
         active_players: &[u32],
         group: MinigameMatchmakingGroup,
-        max_cooldown_error: Duration,
+        max_cooldown_error_millis: u16,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets = Vec::new();
 
@@ -2556,7 +2557,11 @@ impl AttackCruiserGame {
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
-        for projectile in actor.attack_primary(now, max_cooldown_error, direction) {
+        for projectile in actor.attack_primary(
+            now,
+            Duration::from_millis(max_cooldown_error_millis.into()),
+            direction,
+        ) {
             packets.extend(
                 projectile_pool
                     .launch(actor_id, actor_pos, direction, projectile, now)?
@@ -2916,6 +2921,20 @@ impl AttackCruiserGame {
                 .map(|(_, pos, speed)| (*pos, *speed))
                 .unwrap_or_default();
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
+            let attack_result = Self::actor_attack_primary(
+                npc,
+                target_pos + target_speed * tick_duration.as_secs_f32(),
+                now,
+                &mut self.projectiles,
+                &self.active_players,
+                self.group,
+                self.config.max_weapon_cooldown_error_millis,
+            );
+
+            match attack_result {
+                Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
+                Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
+            }
 
             if let Some(actor_hits) = hits.get(&npc.id) {
                 let total_damage = Self::total_damage(actor_hits);
