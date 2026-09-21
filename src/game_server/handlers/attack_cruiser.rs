@@ -2923,7 +2923,7 @@ impl AttackCruiserGame {
                 .into_iter()
                 .min_by(comparator)
                 .map(|(_, pos, speed)| (*pos, *speed))
-                .unwrap_or_default();
+                .unwrap_or((self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
             let attack_result = Self::actor_attack_primary(
                 npc,
