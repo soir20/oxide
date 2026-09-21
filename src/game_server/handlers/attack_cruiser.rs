@@ -2865,13 +2865,17 @@ impl AttackCruiserGame {
             .active_player_indices
             .iter()
             .copied()
-            .map(|player_index| {
-                let actor = &self.player_states[player_index as usize].actor;
-                (actor.id, actor.pos, actor.speed)
+            .filter_map(|player_index| {
+                let player_state = &self.player_states[player_index as usize];
+                let actor = &player_state.actor;
+                match player_state.trackable() {
+                    true => Some((actor.id, actor.pos, actor.speed)),
+                    false => None,
+                }
             })
             .collect();
         let mut hostiles = Vec::new();
-        for npc in self.npcs.iter() {
+        for npc in self.npcs.iter().filter(|npc| !npc.dead()) {
             if can_attack_friendlies(npc.id) {
                 hostiles.push((npc.id, npc.pos, npc.speed));
             }
