@@ -1321,7 +1321,12 @@ impl AttackCruiserProjectilePool {
             let mut step_cache = BTreeMap::new();
 
             for (projectile_id, projectile) in &self.live_projectiles {
-                if projectile.launched_by_actor_id == actor.id {
+                let launched_by_self = projectile.launched_by_actor_id == actor.id;
+                let are_both_friendly = can_attack_hostiles(projectile.launched_by_actor_id)
+                    && !can_attack_friendlies(actor.id);
+                let are_both_hostile = can_attack_friendlies(projectile.launched_by_actor_id)
+                    && !can_attack_hostiles(actor.id);
+                if launched_by_self || are_both_friendly || are_both_hostile {
                     continue;
                 }
 
