@@ -2942,25 +2942,27 @@ impl AttackCruiserGame {
                 }
             }
 
-            let (target_pos, target_speed) = closest_targets
+            let (is_real_target, target_pos, target_speed) = closest_targets
                 .into_iter()
                 .min_by(comparator)
-                .map(|(_, pos, speed)| (*pos, *speed))
-                .unwrap_or((self.config.playfield.center, Pos3::default()));
+                .map(|(_, pos, speed)| (true, *pos, *speed))
+                .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
-            let attack_result = Self::actor_attack_primary(
-                npc,
-                target_pos,
-                now,
-                &mut self.projectiles,
-                &self.active_players,
-                self.group,
-                self.config.max_weapon_cooldown_error_millis,
-            );
 
-            match attack_result {
-                Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
-                Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
+            if is_real_target {
+                let attack_result = Self::actor_attack_primary(
+                    npc,
+                    target_pos,
+                    now,
+                    &mut self.projectiles,
+                    &self.active_players,
+                    self.group,
+                    self.config.max_weapon_cooldown_error_millis,
+                );
+                match attack_result {
+                    Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
+                    Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
+                }
             }
 
             if let Some(actor_hits) = hits.get(&npc.id) {
