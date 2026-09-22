@@ -23,7 +23,7 @@ use crate::{
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
-            direction, distance3_sq,
+            distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
                 SharedMinigameTypeData,
@@ -64,7 +64,7 @@ use crate::{
             player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, Pos3, Target,
+            GamePacket, Pos3, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -335,11 +335,11 @@ impl AttackCruiserActor {
         &mut self,
         now: Instant,
         max_cooldown_error: Duration,
-        direction: Pos3,
-    ) -> impl Iterator<Item = &Arc<AttackCruiserProjectileConfig>> + use<'_> {
+        target_pos: Pos3,
+        target_speed: Pos3,
+    ) -> impl Iterator<Item = (&Arc<AttackCruiserProjectileConfig>, Pos3)> + use<'_> {
         let last_used_slice = &mut self.primary_weapon_last_used;
-
-        let attack_angle = direction.x.atan2(direction.z);
+        let self_pos = self.pos;
         let yaw = self.yaw;
 
         let projectiles_opt = self
@@ -367,6 +367,26 @@ impl AttackCruiserActor {
                         }
                     }
 
+                    let secs_to_intercept = match Self::calculate_time_to_intercept(
+                        self_pos.x,
+                        self_pos.z,
+                        projectile.speed,
+                        target_pos.x,
+                        target_pos.z,
+                        target_speed.x,
+                        target_speed.z,
+                    ) {
+                        Some(time) => time,
+                        None => return None,
+                    };
+
+                    let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept;
+                    let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept;
+
+                    let direction_x = predicted_target_x - self_pos.x;
+                    let direction_z = predicted_target_z - self_pos.z;
+                    let attack_angle = direction_x.atan2(direction_z);
+
                     let min_angle = yaw + projectile.min_launch_angle.to_radians();
                     let max_angle = yaw + projectile.max_launch_angle.to_radians();
                     let allows_complete_circle = (max_angle - min_angle).abs() >= 2.0 * PI;
@@ -381,7 +401,14 @@ impl AttackCruiserActor {
                     }
 
                     *last_used_opt = Some(now);
-                    return Some(projectile);
+                    return Some((
+                        projectile,
+                        Pos3 {
+                            x: direction_x,
+                            y: 0.0,
+                            z: direction_z,
+                        },
+                    ));
                 }
                 None
             })
@@ -420,8 +447,8 @@ impl AttackCruiserActor {
             target_speed.x,
             target_speed.z,
         );
-        let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept;
-        let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept;
+        let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept.unwrap_or(0.0);
+        let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept.unwrap_or(0.0);
 
         let delta_x = predicted_target_x - self.pos.x;
         let delta_z = predicted_target_z - self.pos.z;
@@ -495,7 +522,7 @@ impl AttackCruiserActor {
         target_z: f32,
         target_speed_x: f32,
         target_speed_z: f32,
-    ) -> f32 {
+    ) -> Option<f32> {
         let to_target_x = target_x - pos_x;
         let to_target_z = target_z - pos_z;
 
@@ -521,13 +548,18 @@ impl AttackCruiserActor {
             let b_epsilon = max_b * base_epsilon;
 
             // If b is effectively zero relative to map scale, the paths are completely parallel/perpendicular
-            return if b.abs() < b_epsilon { 0.0 } else { -c / b }.max(0.0);
+            if b.abs() < b_epsilon {
+                return None;
+            }
+
+            let t = -c / b;
+            return if t > base_epsilon { Some(t) } else { None };
         }
 
         let discriminant = b * b - 4.0 * a * c;
         if discriminant < 0.0 {
             // Target is moving too fast to intercept
-            return 0.0;
+            return None;
         }
 
         let sqrt_discriminant = discriminant.sqrt();
@@ -535,10 +567,10 @@ impl AttackCruiserActor {
         let time2 = (-b + sqrt_discriminant) / (2.0 * a);
 
         match (time1 > base_epsilon, time2 > base_epsilon) {
-            (true, true) => time1.min(time2),
-            (true, false) => time1,
-            (false, true) => time2,
-            (false, false) => 0.0,
+            (true, true) => Some(time1.min(time2)),
+            (true, false) => Some(time1),
+            (false, true) => Some(time2),
+            (false, false) => None,
         }
     }
 }
@@ -2203,6 +2235,7 @@ impl AttackCruiserGame {
         Self::actor_attack_primary(
             &mut player_state.actor,
             target_pos,
+            Pos3::default(),
             now,
             &mut self.projectiles,
             &self.active_players,
@@ -2547,6 +2580,7 @@ impl AttackCruiserGame {
     fn actor_attack_primary(
         actor: &mut AttackCruiserActor,
         target_pos: Pos3,
+        target_speed: Pos3,
         now: Instant,
         projectile_pool: &mut AttackCruiserProjectilePool,
         active_players: &[u32],
@@ -2555,27 +2589,13 @@ impl AttackCruiserGame {
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let mut packets = Vec::new();
 
-        let direction = Pos3::from(direction(
-            Pos {
-                x: actor.pos.x,
-                y: actor.pos.y,
-                z: actor.pos.z,
-                w: 1.0,
-            },
-            Pos {
-                x: target_pos.x,
-                y: target_pos.y,
-                z: target_pos.z,
-                w: 1.0,
-            },
-        ));
-
         let actor_id = actor.id;
         let actor_pos = actor.pos;
-        for projectile in actor.attack_primary(
+        for (projectile, direction) in actor.attack_primary(
             now,
             Duration::from_millis(max_cooldown_error_millis.into()),
-            direction,
+            target_pos,
+            target_speed,
         ) {
             packets.extend(
                 projectile_pool
@@ -2957,6 +2977,7 @@ impl AttackCruiserGame {
                 let attack_result = Self::actor_attack_primary(
                     npc,
                     target_pos,
+                    target_speed,
                     now,
                     &mut self.projectiles,
                     &self.active_players,
