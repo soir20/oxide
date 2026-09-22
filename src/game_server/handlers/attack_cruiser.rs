@@ -1006,6 +1006,8 @@ struct AttackCruiserShipConfig {
     max_alive: u16,
     model_id: u32,
     asset_name: String,
+    #[serde(default)]
+    enable_collision: bool,
     max_roll: Angle,
     max_speed: f32,
     acceleration: f32,
@@ -1880,10 +1882,11 @@ impl AttackCruiserGame {
                                             death_effect_id: 0,
                                             despawn_effect_id: 0,
                                             explode_offset: 0.0,
-                                            collision_asset_name: format!(
-                                                "{}.cdt",
-                                                ship.asset_name
-                                            ),
+                                            collision_asset_name: if ship.enable_collision {
+                                                format!("{}.cdt", ship.asset_name)
+                                            } else {
+                                                "".to_string()
+                                            },
                                             physics_config: AttackCruiserStartupConfigReference {
                                                 class:
                                                     AttackCruiserStartupConfigClass::ComplexPhysics,
@@ -2204,12 +2207,7 @@ impl AttackCruiserGame {
         )
     }
 
-    fn spawn_client_actor(
-        &self,
-        actor: &AttackCruiserActor,
-        ship_config: &String,
-        hostility: AttackCruiserHostility,
-    ) -> Vec<Vec<u8>> {
+    fn spawn_client_actor(&self, actor: &AttackCruiserActor, ship_config: &String) -> Vec<Vec<u8>> {
         vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserAddActor {
@@ -2219,7 +2217,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility,
+                hostility: hostility(actor.id),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
@@ -2233,11 +2231,19 @@ impl AttackCruiserGame {
     }
 
     fn spawn_client_player_actor(&self, player_state: &AttackCruiserPlayer) -> Vec<Vec<u8>> {
-        self.spawn_client_actor(
-            &player_state.actor,
-            &self.config.player.ship,
-            hostility(player_state.actor.id),
-        )
+        self.spawn_client_actor(&player_state.actor, &self.config.player.ship)
+    }
+
+    fn spawn_client_npc_actor(
+        &self,
+        actor: &AttackCruiserActor,
+        ship_config: &String,
+    ) -> Vec<Vec<u8>> {
+        let mut packets = self.spawn_client_actor(actor, ship_config);
+
+        packets.append(&mut self.set_actor_frozen(actor, None, false));
+
+        packets
     }
 
     fn spawn_client_effect(
@@ -2459,9 +2465,9 @@ impl AttackCruiserGame {
         })
     }
 
-    fn set_player_frozen(
+    fn set_actor_frozen(
         &self,
-        actor_id: i32,
+        actor: &AttackCruiserActor,
         guid_if_player: Option<u32>,
         frozen: bool,
     ) -> Vec<Vec<u8>> {
@@ -2475,7 +2481,7 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id,
+                    actor_id: actor.id,
                     command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
                         guid,
                         value: !frozen,
@@ -2490,10 +2496,10 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id,
+                    actor_id: actor.id,
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
                         guid,
-                        value: !frozen,
+                        value: !frozen && actor.ship.enable_collision,
                     }),
                 },
             }),
@@ -2516,8 +2522,8 @@ impl AttackCruiserGame {
 
         for player_index in self.active_player_indices.iter().copied() {
             let player_state = &self.player_states[player_index as usize];
-            packets.append(&mut self.set_player_frozen(
-                player_state.actor.id,
+            packets.append(&mut self.set_actor_frozen(
+                &player_state.actor,
                 Some(player_state.guid),
                 false,
             ));
@@ -2525,11 +2531,7 @@ impl AttackCruiserGame {
 
         // TODO: remove and spawn in waves
         self.npcs.iter().for_each(|npc| {
-            packets.append(&mut self.spawn_client_actor(
-                npc,
-                &String::from("test"),
-                hostility(npc.id),
-            ));
+            packets.append(&mut self.spawn_client_npc_actor(npc, &String::from("test")));
         });
 
         Ok(vec![Broadcast::Multi(
@@ -2765,8 +2767,6 @@ impl AttackCruiserGame {
                     now,
                 );
 
-                let player_guid = player_state.guid;
-                let actor_id = player_state.actor.id;
                 let mut actor_packets = self.replace_client_player_actor(player_index as u8);
                 actor_packets.append(&mut self.update_client_players_once_ready(
                     AttackCruiserPlayerStateType {
@@ -2778,9 +2778,10 @@ impl AttackCruiserGame {
                     },
                 ));
 
-                actor_packets.append(&mut self.set_player_frozen(
-                    actor_id,
-                    Some(player_guid),
+                let player_state = &self.player_states[player_index];
+                actor_packets.append(&mut self.set_actor_frozen(
+                    &player_state.actor,
+                    Some(player_state.guid),
                     false,
                 ));
                 broadcasts.push(Broadcast::Multi(
@@ -2818,11 +2819,10 @@ impl AttackCruiserGame {
                             self.group,
                         );
 
-                        let player_guid = player_state.guid;
-                        let actor_id = player_state.actor.id;
-                        death_packets.append(&mut self.set_player_frozen(
-                            actor_id,
-                            Some(player_guid),
+                        let player_state = &self.player_states[player_index];
+                        death_packets.append(&mut self.set_actor_frozen(
+                            &player_state.actor,
+                            Some(player_state.guid),
                             true,
                         ));
                         death_packets.append(&mut self.update_client_players_once_ready(

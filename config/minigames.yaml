@@ -3245,10 +3245,22 @@ categories:
                       - animation_type: Death2
                         animation_id: 3002
                         duration_seconds: 6.0
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - composite_effect_id: 1558
+                              hit_composite_effect_id: 1315
+                              count: 2
+                              damage: 1
+                              length: 25
+                              cooldown_millis: 500
+                              min_launch_angle: !Degrees -30
+                              max_launch_angle: !Degrees 30
                   venator:
                     max_alive: 4
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
+                    enable_collision: true
                     max_roll: !Degrees 15
                     max_speed: 100.0
                     acceleration: 25.0
