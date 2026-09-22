@@ -23,7 +23,7 @@ use crate::{
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
-            distance3_sq,
+            direction, distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
                 SharedMinigameTypeData,
@@ -64,7 +64,7 @@ use crate::{
             player_update::HudMessage,
             tunnel::TunneledPacket,
             ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos3, Target,
+            GamePacket, Pos, Pos3, Target,
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
@@ -72,6 +72,7 @@ use crate::{
 };
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
+const TIME_EPSILON: f32 = 1e-5;
 
 fn zero_nan(value: f32) -> f32 {
     match value.is_nan() {
@@ -377,15 +378,46 @@ impl AttackCruiserActor {
                         target_speed.z,
                     ) {
                         Some(time) => time,
-                        None => return None,
+                        None => {
+                            let to_target_x = target_pos.x - self_pos.x;
+                            let to_target_z = target_pos.z - self_pos.z;
+                            let target_speed_sq =
+                                target_speed.x * target_speed.x + target_speed.z * target_speed.z;
+
+                            if target_speed_sq > TIME_EPSILON {
+                                let dot_product =
+                                    to_target_x * target_speed.x + to_target_z * target_speed.z;
+                                (-dot_product / target_speed_sq).max(0.0)
+                            } else {
+                                0.0
+                            }
+                        }
                     };
 
                     let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept;
                     let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept;
 
-                    let direction_x = predicted_target_x - self_pos.x;
-                    let direction_z = predicted_target_z - self_pos.z;
-                    let attack_angle = direction_x.atan2(direction_z);
+                    let predicted_target_pos = Pos3 {
+                        x: predicted_target_x,
+                        y: target_pos.y,
+                        z: predicted_target_z,
+                    };
+
+                    let direction = direction(
+                        Pos {
+                            x: self_pos.x,
+                            y: self_pos.y,
+                            z: self_pos.z,
+                            w: 0.0,
+                        },
+                        Pos {
+                            x: predicted_target_pos.x,
+                            y: predicted_target_pos.y,
+                            z: predicted_target_pos.z,
+                            w: 0.0,
+                        },
+                    );
+                    let attack_angle = direction.x.atan2(direction.z);
 
                     let min_angle = yaw + projectile.min_launch_angle.to_radians();
                     let max_angle = yaw + projectile.max_launch_angle.to_radians();
@@ -401,14 +433,7 @@ impl AttackCruiserActor {
                     }
 
                     *last_used_opt = Some(now);
-                    return Some((
-                        projectile,
-                        Pos3 {
-                            x: direction_x,
-                            y: 0.0,
-                            z: direction_z,
-                        },
-                    ));
+                    return Some((projectile, direction.into()));
                 }
                 None
             })
@@ -526,8 +551,6 @@ impl AttackCruiserActor {
         let to_target_x = target_x - pos_x;
         let to_target_z = target_z - pos_z;
 
-        let base_epsilon = 1e-5;
-
         // Quadratic terms derived from the vector intersection equation:
         // (to_target_x + target_speed_x * t)^2 + (to_target_z + target_speed_z * t)^2 = (speed * t)^2
         let a_target_term = target_speed_x * target_speed_x + target_speed_z * target_speed_z;
@@ -536,7 +559,7 @@ impl AttackCruiserActor {
         let c = to_target_x * to_target_x + to_target_z * to_target_z;
 
         let max_speed_sq = a_target_term.max(speed * speed);
-        let a_epsilon = max_speed_sq * base_epsilon;
+        let a_epsilon = max_speed_sq * TIME_EPSILON;
 
         if a.abs() < a_epsilon {
             // Find the maximum 'b' could reach in this frame
@@ -545,7 +568,7 @@ impl AttackCruiserActor {
             let distance_magnitude = c.sqrt();
             let max_b = 2.0 * distance_magnitude * target_speed_magnitude;
 
-            let b_epsilon = max_b * base_epsilon;
+            let b_epsilon = max_b * TIME_EPSILON;
 
             // If b is effectively zero relative to map scale, the paths are completely parallel/perpendicular
             if b.abs() < b_epsilon {
@@ -553,7 +576,7 @@ impl AttackCruiserActor {
             }
 
             let t = -c / b;
-            return if t > base_epsilon { Some(t) } else { None };
+            return if t > TIME_EPSILON { Some(t) } else { None };
         }
 
         let discriminant = b * b - 4.0 * a * c;
@@ -566,7 +589,7 @@ impl AttackCruiserActor {
         let time1 = (-b - sqrt_discriminant) / (2.0 * a);
         let time2 = (-b + sqrt_discriminant) / (2.0 * a);
 
-        match (time1 > base_epsilon, time2 > base_epsilon) {
+        match (time1 > TIME_EPSILON, time2 > TIME_EPSILON) {
             (true, true) => Some(time1.min(time2)),
             (true, false) => Some(time1),
             (false, true) => Some(time2),
