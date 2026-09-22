@@ -2950,7 +2950,7 @@ impl AttackCruiserGame {
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
             let attack_result = Self::actor_attack_primary(
                 npc,
-                target_pos + target_speed * tick_duration.as_secs_f32(),
+                target_pos,
                 now,
                 &mut self.projectiles,
                 &self.active_players,
