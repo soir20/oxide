@@ -1961,6 +1961,10 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        if !matches!(self.state, AttackCruiserGameState::WaveActive) {
+            return Vec::new();
+        }
+
         let mut broadcasts = Vec::new();
         let hits = self.projectiles.hits(
             self.active_player_indices
