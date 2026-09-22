@@ -2459,9 +2459,13 @@ impl AttackCruiserGame {
         })
     }
 
-    fn set_player_frozen(&self, player_index: usize, frozen: bool) -> Vec<Vec<u8>> {
-        let state = &self.player_states[player_index];
-        let guid = self.player_states[player_index].guid;
+    fn set_player_frozen(
+        &self,
+        actor_id: i32,
+        guid_if_player: Option<u32>,
+        frozen: bool,
+    ) -> Vec<Vec<u8>> {
+        let guid = player_guid(guid_if_player.unwrap_or_default());
         vec![
             GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
@@ -2471,9 +2475,9 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: state.actor.id,
+                    actor_id,
                     command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
-                        guid: player_guid(guid),
+                        guid,
                         value: !frozen,
                     }),
                 },
@@ -2486,9 +2490,9 @@ impl AttackCruiserGame {
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
                         stage_group_guid: self.group.stage_group_guid,
                     },
-                    actor_id: state.actor.id,
+                    actor_id,
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
-                        guid: player_guid(guid),
+                        guid,
                         value: !frozen,
                     }),
                 },
@@ -2511,7 +2515,12 @@ impl AttackCruiserGame {
         })];
 
         for player_index in self.active_player_indices.iter().copied() {
-            packets.append(&mut self.set_player_frozen(player_index.into(), false));
+            let player_state = &self.player_states[player_index as usize];
+            packets.append(&mut self.set_player_frozen(
+                player_state.actor.id,
+                Some(player_state.guid),
+                false,
+            ));
         }
 
         // TODO: remove and spawn in waves
@@ -2756,6 +2765,8 @@ impl AttackCruiserGame {
                     now,
                 );
 
+                let player_guid = player_state.guid;
+                let actor_id = player_state.actor.id;
                 let mut actor_packets = self.replace_client_player_actor(player_index as u8);
                 actor_packets.append(&mut self.update_client_players_once_ready(
                     AttackCruiserPlayerStateType {
@@ -2766,7 +2777,12 @@ impl AttackCruiserGame {
                         actor_id: true,
                     },
                 ));
-                actor_packets.append(&mut self.set_player_frozen(player_index, false));
+
+                actor_packets.append(&mut self.set_player_frozen(
+                    actor_id,
+                    Some(player_guid),
+                    false,
+                ));
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
                     actor_packets,
@@ -2801,7 +2817,14 @@ impl AttackCruiserGame {
                             player_state.actor.pos,
                             self.group,
                         );
-                        death_packets.append(&mut self.set_player_frozen(player_index, true));
+
+                        let player_guid = player_state.guid;
+                        let actor_id = player_state.actor.id;
+                        death_packets.append(&mut self.set_player_frozen(
+                            actor_id,
+                            Some(player_guid),
+                            true,
+                        ));
                         death_packets.append(&mut self.update_client_players_once_ready(
                             AttackCruiserPlayerStateType {
                                 index: false,
