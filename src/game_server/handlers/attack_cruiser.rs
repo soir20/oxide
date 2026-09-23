@@ -23,7 +23,7 @@ use crate::{
     game_server::{
         handlers::{
             character::{MinigameMatchmakingGroup, MinigameStatus},
-            direction, distance3_sq,
+            direction, distance3_pos, distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
                 SharedMinigameTypeData,
@@ -2252,23 +2252,53 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
+        let attacker_pos = Pos {
+            x: player_state.actor.pos.x,
+            y: player_state.actor.pos.y,
+            z: player_state.actor.pos.z,
+            w: 0.0,
+        };
+        let approx_target_pos = Pos {
+            x: click.clicked_pos.x,
+            y: player_state.actor.pos.y,
+            z: click.clicked_pos.y,
+            w: 0.0,
+        };
+        let approx_horizontal_distance_to_target = distance3_pos(attacker_pos, approx_target_pos);
+
         let (friendlies, hostiles) = self.list_actors_by_hostility();
-        let target_y = Self::closest_target(
+        let (target_y, horizontal_distance_to_target) = Self::closest_target(
             player_state.actor.id,
-            Pos3 {
-                x: click.clicked_pos.x,
-                y: player_state.actor.pos.y,
-                z: click.clicked_pos.y,
-            },
+            approx_target_pos.into(),
             &friendlies,
             &hostiles,
         )
-        .map(|target| target.pos.y)
-        .unwrap_or(player_state.actor.pos.y);
+        .map(|target| {
+            (
+                target.pos.y,
+                distance3_pos(
+                    attacker_pos,
+                    Pos {
+                        x: target.pos.x,
+                        y: player_state.actor.pos.y,
+                        z: target.pos.z,
+                        w: 0.0,
+                    },
+                ),
+            )
+        })
+        .unwrap_or((
+            player_state.actor.pos.y,
+            approx_horizontal_distance_to_target,
+        ));
+        let relative_y = target_y - player_state.actor.pos.y;
+
+        let y_scale_factor =
+            zero_nan(approx_horizontal_distance_to_target / horizontal_distance_to_target);
 
         let target_pos = Pos3 {
             x: click.clicked_pos.x,
-            y: target_y,
+            y: player_state.actor.pos.y + relative_y * y_scale_factor,
             z: click.clicked_pos.y,
         };
 
@@ -3077,18 +3107,18 @@ impl AttackCruiserGame {
 
             let distance1 = distance3_sq(
                 target1.pos.x,
-                target1.pos.y,
+                0.0,
                 target1.pos.z,
                 target_pos.x,
-                target_pos.y,
+                0.0,
                 target_pos.z,
             );
             let distance2 = distance3_sq(
                 target2.pos.x,
-                target2.pos.y,
+                0.0,
                 target2.pos.z,
                 target_pos.x,
-                target_pos.y,
+                0.0,
                 target_pos.z,
             );
 
