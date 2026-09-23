@@ -198,7 +198,7 @@ pub fn fixture_packets(
                 unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
-                allow_camera_clipping: false,
+                enable_camera_clipping: false,
                 enable_tilt: true,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
