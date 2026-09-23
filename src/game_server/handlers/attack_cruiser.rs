@@ -2997,7 +2997,7 @@ impl AttackCruiserGame {
                     .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
-            if npc.dead() {
+            if !npc.dead() {
                 if is_real_target {
                     let attack_result = Self::actor_attack_primary(
                         npc,
