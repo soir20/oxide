@@ -1305,8 +1305,11 @@ impl AttackCruiserProjectilePool {
 
             let origin = actor_origin + launch_offset;
             let speed = rotate(direction, relative_yaw, wobble) * projectile.speed;
-            let yaw = direction.x.atan2(direction.z) + relative_yaw;
-            let pitch = wobble;
+
+            let speed_length = (speed.x * speed.x + speed.y * speed.y + speed.z * speed.z).sqrt();
+
+            let yaw = speed.x.atan2(speed.z);
+            let pitch = -zero_nan(speed.y / speed_length).asin();
 
             let expiry_time = now
                 .checked_add(Duration::from_millis(projectile.lifetime_millis.into()))
