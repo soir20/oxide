@@ -306,7 +306,7 @@ pub struct BaseNpcConfig {
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
-    #[serde(default = "default_true")]
+    #[serde(default)]
     pub enable_camera_clipping: bool,
     #[serde(default = "default_spawn_animation_id")]
     pub spawn_animation_id: i32,
@@ -418,7 +418,7 @@ impl BaseNpc {
                     unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                     unknown34: false,
                     show_health: self.show_health,
-                    enable_camera_clipping: !self.enable_camera_clipping, // Disabling camera clipping breaks the graceful removal fade
+                    enable_camera_clipping: self.enable_camera_clipping, // Disabling camera clipping breaks the graceful removal fade
                     enable_tilt: self.enable_tilt,
                     base_attachment_group: BaseAttachmentGroup {
                         unknown1: 0,
