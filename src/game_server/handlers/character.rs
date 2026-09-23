@@ -418,7 +418,7 @@ impl BaseNpc {
                     unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                     unknown34: false,
                     show_health: self.show_health,
-                    enable_camera_clipping: !self.enable_camera_clipping,
+                    enable_camera_clipping: !self.enable_camera_clipping, // Disabling camera clipping breaks the graceful removal fade
                     enable_tilt: self.enable_tilt,
                     base_attachment_group: BaseAttachmentGroup {
                         unknown1: 0,
