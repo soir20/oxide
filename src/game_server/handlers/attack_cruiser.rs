@@ -1628,7 +1628,12 @@ impl AttackCruiserGame {
             npcs: vec![
                 AttackCruiserActor::new(
                     enemy_actor_id(1000),
-                    config.player.spawn2.pos,
+                    config.player.spawn2.pos
+                        + Pos3 {
+                            x: 0.0,
+                            y: 0.0,
+                            z: 0.0,
+                        },
                     config.player.spawn2.yaw.to_radians(),
                     test_npc_ship.max_speed,
                     0.0,
@@ -1640,7 +1645,7 @@ impl AttackCruiserGame {
                     config.player.spawn2.pos
                         + Pos3 {
                             x: 100.0,
-                            y: 0.0,
+                            y: 50.0,
                             z: 100.0,
                         },
                     config.player.spawn2.yaw.to_radians(),
@@ -1654,7 +1659,7 @@ impl AttackCruiserGame {
                     config.player.spawn2.pos
                         - Pos3 {
                             x: 100.0,
-                            y: 0.0,
+                            y: 50.0,
                             z: 100.0,
                         },
                     config.player.spawn2.yaw.to_radians(),
@@ -2992,36 +2997,38 @@ impl AttackCruiserGame {
                     .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
-            if is_real_target {
-                let attack_result = Self::actor_attack_primary(
-                    npc,
-                    target_pos,
-                    target_speed,
-                    now,
-                    &mut self.projectiles,
-                    &self.active_players,
-                    self.group,
-                    self.config.max_weapon_cooldown_error_millis,
-                );
-                match attack_result {
-                    Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
-                    Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
+            if npc.dead() {
+                if is_real_target {
+                    let attack_result = Self::actor_attack_primary(
+                        npc,
+                        target_pos,
+                        target_speed,
+                        now,
+                        &mut self.projectiles,
+                        &self.active_players,
+                        self.group,
+                        self.config.max_weapon_cooldown_error_millis,
+                    );
+                    match attack_result {
+                        Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
+                        Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
+                    }
                 }
-            }
 
-            if let Some(actor_hits) = hits.get(&npc.id) {
-                let total_damage = Self::total_damage(actor_hits);
-                npc.damage(total_damage, now);
+                if let Some(actor_hits) = hits.get(&npc.id) {
+                    let total_damage = Self::total_damage(actor_hits);
+                    npc.damage(total_damage, now);
 
-                if npc.dead() {
-                    broadcasts.push(Broadcast::Multi(
-                        self.active_players.to_vec(),
-                        Self::spawn_client_effect(
-                            npc.ship.death_start_effect_id,
-                            npc.pos,
-                            self.group,
-                        ),
-                    ));
+                    if npc.dead() {
+                        broadcasts.push(Broadcast::Multi(
+                            self.active_players.to_vec(),
+                            Self::spawn_client_effect(
+                                npc.ship.death_start_effect_id,
+                                npc.pos,
+                                self.group,
+                            ),
+                        ));
+                    }
                 }
             }
 
