@@ -306,6 +306,8 @@ pub struct BaseNpcConfig {
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
+    #[serde(default)]
+    pub enable_camera_clipping: bool,
     #[serde(default = "default_spawn_animation_id")]
     pub spawn_animation_id: i32,
     #[serde(default)]
@@ -349,6 +351,7 @@ pub struct BaseNpc {
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub enable_camera_clipping: bool,
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -415,7 +418,7 @@ impl BaseNpc {
                     unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                     unknown34: false,
                     show_health: self.show_health,
-                    hide_despawn_fade: false,
+                    enable_camera_clipping: self.enable_camera_clipping, // Disabling camera clipping breaks the graceful removal fade
                     enable_tilt: self.enable_tilt,
                     base_attachment_group: BaseAttachmentGroup {
                         unknown1: 0,
@@ -2149,6 +2152,7 @@ pub struct BaseNpcTemplate {
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub enable_camera_clipping: bool,
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -2243,6 +2247,7 @@ impl BaseNpcTemplate {
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
+            enable_camera_clipping: config.enable_camera_clipping,
             spawn_animation_id: config.spawn_animation_id,
             hover_description: config.hover_description,
             procedure_on_interact: config.procedure_on_interact.clone(),
@@ -2347,6 +2352,7 @@ impl BaseNpcTemplate {
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
+            enable_camera_clipping: self.enable_camera_clipping,
             spawn_animation_id: self.spawn_animation_id,
             hover_description: self.hover_description,
             procedure_on_interact: self.procedure_on_interact.clone(),

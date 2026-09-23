@@ -678,6 +678,7 @@ impl SaberDuelGame {
                 composite_effect_id: None,
                 sub_title_id: None,
                 clickable: true,
+                enable_camera_clipping: false,
                 spawn_animation_id: default_spawn_animation_id(),
                 hover_description: HoverDescriptionMode::default(),
                 procedure_on_interact: None,
