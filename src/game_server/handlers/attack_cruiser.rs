@@ -2187,10 +2187,6 @@ impl AttackCruiserGame {
         let player_index = self.player_index(sender)?;
         let player_state = &mut self.player_states[player_index as usize];
 
-        if player_state.disabled() {
-            return Ok(Vec::new());
-        }
-
         let mut broadcasts = Vec::new();
         let now = Instant::now();
 
