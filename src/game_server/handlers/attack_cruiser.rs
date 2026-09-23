@@ -1076,8 +1076,8 @@ struct AttackCruiserShipConfig {
     stationary_turn: f32,
     max_health: u16,
     overhead_health_scale: f32,
-    thruster_effect_id: u32,
-    invulnerable_effect_id: u32,
+    thruster_effect_id: Option<u32>,
+    invulnerable_effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
@@ -1973,8 +1973,12 @@ impl AttackCruiserGame {
                                                     .collect(),
                                             ),
                                         },
-                                        thruster_effect_id: ship.thruster_effect_id,
-                                        invulnerable_effect_id: ship.invulnerable_effect_id,
+                                        thruster_effect_id: ship
+                                            .thruster_effect_id
+                                            .unwrap_or_default(),
+                                        invulnerable_effect_id: ship
+                                            .invulnerable_effect_id
+                                            .unwrap_or_default(),
                                         stun_effect_id: 0,
                                         weapons: AttackCruiserVec::new(),
                                         roll_max_angle: ship.max_roll.to_degrees(),
