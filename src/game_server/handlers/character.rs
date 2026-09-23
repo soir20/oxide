@@ -1904,6 +1904,7 @@ pub struct PlayerAbilityGroup {
 #[derive(Clone)]
 pub struct PlayerActionBar {
     pub weapon_abilities: Vec<PlayerAbilityGroup>,
+    pub consumables: Vec<PlayerAbilityGroup>,
 }
 
 #[derive(Clone)]
@@ -2469,6 +2470,17 @@ impl CharacterStats {
         self.health = self.max_health;
     }
 
+    pub fn knock_out(&self, nearby_player_guids: &[u32]) -> Vec<Broadcast> {
+        match &self.character_type {
+            CharacterType::AmbientNpc(_) | CharacterType::Fixture(_, _) => vec![Broadcast::Multi(
+                nearby_player_guids.to_vec(),
+                self.remove_packets(self.removal_mode),
+            )],
+            // TODO
+            CharacterType::Player(_) => Vec::new(),
+        }
+    }
+
     pub fn add_packets(
         &self,
         override_is_spawned: bool,
@@ -2888,6 +2900,10 @@ impl Character {
         let (old_wield_type, new_wield_type) = self.stats.wield_type;
         self.stats.wield_type = (new_wield_type, old_wield_type);
         self.stats.holstered = !self.stats.holstered;
+    }
+
+    pub fn is_brandished(&self) -> bool {
+        !self.stats.holstered
     }
 
     pub fn interact(

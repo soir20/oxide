@@ -652,7 +652,7 @@ impl GameServer {
                         })?;
                 }
                 OpCode::Ability => {
-                    broadcasts.append(&mut process_ability(&mut cursor)?);
+                    broadcasts.append(&mut process_ability(self, sender, &mut cursor)?);
                 }
                 OpCode::ClickedLocation => {
                     broadcasts.append(&mut process_clicked_location(self, sender, &mut cursor)?);

@@ -9,7 +9,7 @@ use super::{ActionBarType, GamePacket, OpCode, Pos, Target};
 #[derive(Copy, Clone, Debug, TryFromPrimitive)]
 #[repr(u16)]
 pub enum AbilityOpCode {
-    LaunchAndLand = 0x4,
+    CastAndLand = 0x4,
     RequestStartCast = 0xa,
     RequestDefinition = 0xc,
     DetonateProjectile = 0xe,
@@ -100,21 +100,21 @@ impl GamePacket for RequestStartCast {
 }
 
 #[derive(SerializePacket)]
-pub struct LaunchAndLand {
-    pub launcher_guid: u64,
+pub struct CastAndLand {
+    pub caster_guid: u64,
     pub targets: Vec<Target>,
     pub unknown1: i32,
     pub unknown2: u32,
-    pub launcher_animation_id: u32,
-    pub launcher_composite_effect_id: u32,
+    pub cast_animation_id: u32,
+    pub cast_composite_effect_id: u32,
     pub slot_cooldown_millis: u32,
     pub disable_slot_cooldown: bool,
     pub unknown7: bool,
-    pub landed_animation_id: u32,
-    pub landed_composite_effect_id1: u32,
+    pub impact_animation_id: u32,
+    pub impact_composite_effect_id1: u32,
     pub unknown10: u32,
     pub unknown11: Pos,
-    pub launcher_composite_effect_duration: f32,
+    pub cast_composite_effect_seconds: f32,
     pub unknown13: f32,
     pub unknown14: u32,
     pub action_bar_type: ActionBarType,
@@ -124,8 +124,8 @@ pub struct LaunchAndLand {
     pub unknown19: bool,
     pub unknown20: u32,
     pub unknown21: u32,
-    pub progressive_start_speed: f32,
-    pub progressive_end_speed: f32,
+    pub projectile_start_speed: f32,
+    pub projectile_end_speed: f32,
     pub unknown24: u32,
     pub unknown25: u32,
     pub unknown26: Pos,
@@ -136,10 +136,10 @@ pub struct LaunchAndLand {
     pub unknown29: Pos,
     pub projectile_angular_speed: f32,
     pub unknown31: bool,
-    pub projectile_size: f32,
-    pub progressive_inflation_size: f32,
-    pub trail_composite_effect_id: u32,
-    pub landed_composite_effect_id2: u32,
+    pub projectile_start_size: f32,
+    pub projectile_end_size: f32,
+    pub projectile_trail_composite_effect_id: u32,
+    pub impact_composite_effect_id2: u32,
     pub unknown36: u32,
     pub unknown37: u32,
     pub unknown38: f32,
@@ -154,9 +154,9 @@ pub struct LaunchAndLand {
     pub unknown47: u32,
 }
 
-impl GamePacket for LaunchAndLand {
+impl GamePacket for CastAndLand {
     type Header = AbilityOpCode;
-    const HEADER: Self::Header = AbilityOpCode::LaunchAndLand;
+    const HEADER: Self::Header = AbilityOpCode::CastAndLand;
 }
 
 #[derive(SerializePacket, DeserializePacket)]
