@@ -394,14 +394,7 @@ impl AttackCruiserActor {
                         }
                     };
 
-                    let predicted_target_x = target_pos.x + target_speed.x * secs_to_intercept;
-                    let predicted_target_z = target_pos.z + target_speed.z * secs_to_intercept;
-
-                    let predicted_target_pos = Pos3 {
-                        x: predicted_target_x,
-                        y: target_pos.y,
-                        z: predicted_target_z,
-                    };
+                    let predicted_target_pos = target_pos + target_speed * secs_to_intercept;
 
                     let direction = direction(
                         Pos {
@@ -1302,15 +1295,7 @@ impl AttackCruiserProjectilePool {
                 };
 
             let origin = actor_origin + launch_offset;
-            let speed = rotate(
-                Pos3 {
-                    x: direction.x,
-                    y: 0.0,
-                    z: direction.z,
-                },
-                relative_yaw,
-                wobble,
-            ) * projectile.speed;
+            let speed = rotate(direction, relative_yaw, wobble) * projectile.speed;
             let yaw = direction.x.atan2(direction.z) + relative_yaw;
             let pitch = wobble;
 
