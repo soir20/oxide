@@ -2245,18 +2245,34 @@ impl AttackCruiserGame {
         click: AttackCruiserClickedLocation,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         let player_index = self.player_index(sender)?;
-        let player_state = &mut self.player_states[player_index as usize];
+        let player_state = &self.player_states[player_index as usize];
 
         let now = Instant::now();
         if player_state.disarmed() {
             return Ok(Vec::new());
         }
 
+        let (friendlies, hostiles) = self.list_actors_by_hostility();
+        let target_y = Self::closest_target(
+            player_state.actor.id,
+            Pos3 {
+                x: click.clicked_pos.x,
+                y: player_state.actor.pos.y,
+                z: click.clicked_pos.y,
+            },
+            &friendlies,
+            &hostiles,
+        )
+        .map(|target| target.pos.y)
+        .unwrap_or(player_state.actor.pos.y);
+
         let target_pos = Pos3 {
             x: click.clicked_pos.x,
-            y: player_state.actor.pos.y,
+            y: target_y,
             z: click.clicked_pos.y,
         };
+
+        let player_state = &mut self.player_states[player_index as usize];
         Self::actor_attack_primary(
             &mut player_state.actor,
             target_pos,
@@ -2941,7 +2957,7 @@ impl AttackCruiserGame {
             }
 
             let (is_real_target, target_pos, target_speed) =
-                Self::closest_target(npc, &friendlies, &hostiles)
+                Self::closest_target(npc.id, npc.pos, &friendlies, &hostiles)
                     .map(|target| (true, target.pos, target.speed))
                     .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
@@ -3039,22 +3055,23 @@ impl AttackCruiserGame {
     }
 
     fn closest_target<'a>(
-        actor: &AttackCruiserActor,
+        actor_id: i32,
+        target_pos: Pos3,
         friendlies: &'a [AttackCruiserActorTarget],
         hostiles: &'a [AttackCruiserActorTarget],
     ) -> Option<&'a AttackCruiserActorTarget> {
         let mut closest_targets: ArrayVec<&AttackCruiserActorTarget, 2> = ArrayVec::new();
         let comparator = |target1: &&AttackCruiserActorTarget,
                           target2: &&AttackCruiserActorTarget| {
-            if target1.id == actor.id && target2.id == actor.id {
+            if target1.id == actor_id && target2.id == actor_id {
                 return Ordering::Equal;
             }
 
-            if target1.id == actor.id {
+            if target1.id == actor_id {
                 return Ordering::Greater;
             }
 
-            if target2.id == actor.id {
+            if target2.id == actor_id {
                 return Ordering::Less;
             }
 
@@ -3062,27 +3079,27 @@ impl AttackCruiserGame {
                 target1.pos.x,
                 target1.pos.y,
                 target1.pos.z,
-                actor.pos.x,
-                actor.pos.y,
-                actor.pos.z,
+                target_pos.x,
+                target_pos.y,
+                target_pos.z,
             );
             let distance2 = distance3_sq(
                 target2.pos.x,
                 target2.pos.y,
                 target2.pos.z,
-                actor.pos.x,
-                actor.pos.y,
-                actor.pos.z,
+                target_pos.x,
+                target_pos.y,
+                target_pos.z,
             );
 
             distance1.total_cmp(&distance2)
         };
-        if can_attack_friendlies(actor.id) {
+        if can_attack_friendlies(actor_id) {
             if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
                 closest_targets.push(closest_friendly);
             }
         }
-        if can_attack_hostiles(actor.id) {
+        if can_attack_hostiles(actor_id) {
             if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
                 closest_targets.push(closest_hostile);
             }
