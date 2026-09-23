@@ -1558,6 +1558,12 @@ fn can_attack_hostiles(actor_id: i32) -> bool {
     actor_id & ATTACK_HOSTILE_MASK != 0
 }
 
+struct AttackCruiserActorTarget {
+    id: i32,
+    pos: Pos3,
+    speed: Pos3,
+}
+
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
@@ -2927,69 +2933,17 @@ impl AttackCruiserGame {
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
     ) {
-        let mut friendlies: Vec<(i32, Pos3, Pos3)> = self
-            .active_player_indices
-            .iter()
-            .copied()
-            .filter_map(|player_index| {
-                let player_state = &self.player_states[player_index as usize];
-                let actor = &player_state.actor;
-                match player_state.trackable() {
-                    true => Some((actor.id, actor.pos, actor.speed)),
-                    false => None,
-                }
-            })
-            .collect();
-        let mut hostiles = Vec::new();
-        for npc in self.npcs.iter().filter(|npc| !npc.dead()) {
-            if can_attack_friendlies(npc.id) {
-                hostiles.push((npc.id, npc.pos, npc.speed));
-            }
-
-            if can_attack_hostiles(npc.id) {
-                friendlies.push((npc.id, npc.pos, npc.speed));
-            }
-        }
+        let (friendlies, hostiles) = self.list_actors_by_hostility();
 
         self.npcs.retain_mut(|npc| {
             if npc.paused() {
                 return true;
             }
 
-            let mut closest_targets: ArrayVec<&(i32, Pos3, Pos3), 2> = ArrayVec::new();
-            let comparator = |(id1, pos1, _): &&(i32, Pos3, Pos3),
-                              (id2, pos2, _): &&(i32, Pos3, Pos3)| {
-                if *id1 == npc.id {
-                    return Ordering::Greater;
-                }
-
-                if *id2 == npc.id {
-                    return Ordering::Less;
-                }
-
-                let distance1 =
-                    distance3_sq(pos1.x, pos1.y, pos1.z, npc.pos.x, npc.pos.y, npc.pos.z);
-                let distance2 =
-                    distance3_sq(pos2.x, pos2.y, pos2.z, npc.pos.x, npc.pos.y, npc.pos.z);
-
-                distance1.total_cmp(&distance2)
-            };
-            if can_attack_friendlies(npc.id) {
-                if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
-                    closest_targets.push(closest_friendly);
-                }
-            }
-            if can_attack_hostiles(npc.id) {
-                if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
-                    closest_targets.push(closest_hostile);
-                }
-            }
-
-            let (is_real_target, target_pos, target_speed) = closest_targets
-                .into_iter()
-                .min_by(comparator)
-                .map(|(_, pos, speed)| (true, *pos, *speed))
-                .unwrap_or((false, self.config.playfield.center, Pos3::default()));
+            let (is_real_target, target_pos, target_speed) =
+                Self::closest_target(npc, &friendlies, &hostiles)
+                    .map(|target| (true, target.pos, target.speed))
+                    .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if is_real_target {
@@ -3040,5 +2994,100 @@ impl AttackCruiserGame {
 
             true
         });
+    }
+
+    fn list_actors_by_hostility(
+        &self,
+    ) -> (Vec<AttackCruiserActorTarget>, Vec<AttackCruiserActorTarget>) {
+        let mut friendlies: Vec<AttackCruiserActorTarget> = self
+            .active_player_indices
+            .iter()
+            .copied()
+            .filter_map(|player_index| {
+                let player_state = &self.player_states[player_index as usize];
+                let actor = &player_state.actor;
+                match player_state.trackable() {
+                    true => Some(AttackCruiserActorTarget {
+                        id: actor.id,
+                        pos: actor.pos,
+                        speed: actor.speed,
+                    }),
+                    false => None,
+                }
+            })
+            .collect();
+        let mut hostiles = Vec::new();
+        for npc in self.npcs.iter().filter(|npc| !npc.dead()) {
+            if can_attack_friendlies(npc.id) {
+                hostiles.push(AttackCruiserActorTarget {
+                    id: npc.id,
+                    pos: npc.pos,
+                    speed: npc.speed,
+                });
+            }
+
+            if can_attack_hostiles(npc.id) {
+                friendlies.push(AttackCruiserActorTarget {
+                    id: npc.id,
+                    pos: npc.pos,
+                    speed: npc.speed,
+                });
+            }
+        }
+
+        (friendlies, hostiles)
+    }
+
+    fn closest_target<'a>(
+        actor: &AttackCruiserActor,
+        friendlies: &'a [AttackCruiserActorTarget],
+        hostiles: &'a [AttackCruiserActorTarget],
+    ) -> Option<&'a AttackCruiserActorTarget> {
+        let mut closest_targets: ArrayVec<&AttackCruiserActorTarget, 2> = ArrayVec::new();
+        let comparator = |target1: &&AttackCruiserActorTarget,
+                          target2: &&AttackCruiserActorTarget| {
+            if target1.id == actor.id && target2.id == actor.id {
+                return Ordering::Equal;
+            }
+
+            if target1.id == actor.id {
+                return Ordering::Greater;
+            }
+
+            if target2.id == actor.id {
+                return Ordering::Less;
+            }
+
+            let distance1 = distance3_sq(
+                target1.pos.x,
+                target1.pos.y,
+                target1.pos.z,
+                actor.pos.x,
+                actor.pos.y,
+                actor.pos.z,
+            );
+            let distance2 = distance3_sq(
+                target2.pos.x,
+                target2.pos.y,
+                target2.pos.z,
+                actor.pos.x,
+                actor.pos.y,
+                actor.pos.z,
+            );
+
+            distance1.total_cmp(&distance2)
+        };
+        if can_attack_friendlies(actor.id) {
+            if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
+                closest_targets.push(closest_friendly);
+            }
+        }
+        if can_attack_hostiles(actor.id) {
+            if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
+                closest_targets.push(closest_hostile);
+            }
+        }
+
+        closest_targets.into_iter().min_by(comparator)
     }
 }
