@@ -1937,11 +1937,10 @@ impl AttackCruiserGame {
                                             death_effect_id: 0,
                                             despawn_effect_id: 0,
                                             explode_offset: 0.0,
-                                            collision_asset_name: if ship.enable_collision {
-                                                format!("{}.cdt", ship.asset_name)
-                                            } else {
-                                                "".to_string()
-                                            },
+                                            collision_asset_name: format!(
+                                                "{}.cdt",
+                                                ship.asset_name
+                                            ),
                                             physics_config: AttackCruiserStartupConfigReference {
                                                 class:
                                                     AttackCruiserStartupConfigClass::ComplexPhysics,
