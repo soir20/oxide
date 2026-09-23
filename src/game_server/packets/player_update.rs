@@ -856,7 +856,7 @@ pub struct AddNpc {
     pub unused_death_animation_id: u32,
     pub unknown34: bool,
     pub show_health: bool,
-    pub hide_despawn_fade: bool,
+    pub allow_camera_clipping: bool,
     pub enable_tilt: bool,
     pub base_attachment_group: BaseAttachmentGroup,
     pub tilt: Pos,

@@ -453,7 +453,7 @@ pub fn spawn_mount_npc(
                 unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
-                hide_despawn_fade: false,
+                allow_camera_clipping: false,
                 enable_tilt: false,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,
