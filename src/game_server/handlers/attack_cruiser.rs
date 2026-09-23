@@ -303,6 +303,11 @@ impl AttackCruiserActor {
         );
     }
 
+    pub fn respawning(&self) -> bool {
+        self.invulnerability
+            .has_phase(AttackCruiserActorInvulnerabilityPhase::Respawning)
+    }
+
     pub fn completed_respawn(&self, now: Instant) -> bool {
         !self.dead()
             && self
@@ -724,6 +729,10 @@ impl AttackCruiserPlayer {
         self.actor.dead() || self.lives == 0
     }
 
+    pub fn respawning(&self) -> bool {
+        self.actor.respawning()
+    }
+
     pub fn trackable(&self) -> bool {
         !self.actor.dead()
             && !self
@@ -748,7 +757,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn disabled(&self) -> bool {
-        self.dead() || self.paused()
+        self.dead() || self.respawning() || self.paused()
     }
 
     pub fn disarmed(&self) -> bool {
@@ -2809,12 +2818,6 @@ impl AttackCruiserGame {
                     },
                 ));
 
-                let player_state = &self.player_states[player_index];
-                actor_packets.append(&mut self.set_actor_frozen(
-                    &player_state.actor,
-                    Some(player_state.guid),
-                    false,
-                ));
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
                     actor_packets,
@@ -2832,6 +2835,12 @@ impl AttackCruiserGame {
                 ));
             } else if player_state.completed_respawn(now) {
                 player_state.complete_respawn();
+
+                let player_state = &self.player_states[player_index];
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    self.set_actor_frozen(&player_state.actor, Some(player_state.guid), false),
+                ));
             }
 
             let player_state = &mut self.player_states[player_index];
