@@ -13,7 +13,7 @@ use glam::{EulerRot, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
-use rand::{thread_rng, Rng};
+use rand::{rngs::ThreadRng, thread_rng, Rng};
 use serde::Deserialize;
 use smallvec::SmallVec;
 
@@ -103,6 +103,55 @@ fn gcd_u16(mut a: u16, mut b: u16) -> u16 {
         a = prev_divisor;
     }
     a
+}
+
+struct AttackCruiserWeaponLaunchVector {
+    origin: Pos3,
+    speed: Pos3,
+    yaw: f32,
+    pitch: f32,
+}
+
+fn launch_vector(
+    rng: &mut ThreadRng,
+    actor_origin: Pos3,
+    direction: Pos3,
+    speed: f32,
+    wobble: Angle,
+    yaw: Angle,
+    launch_offset: f32,
+    launch_height: f32,
+) -> AttackCruiserWeaponLaunchVector {
+    let wobble = rng.gen_range(-wobble.to_radians()..=wobble.to_radians());
+    let relative_yaw = yaw.to_radians() + wobble;
+
+    let launch_offset = direction
+        + direction
+            * Pos3 {
+                x: launch_offset,
+                y: 0.0,
+                z: launch_offset,
+            }
+        + Pos3 {
+            x: 0.0,
+            y: launch_height,
+            z: 0.0,
+        };
+
+    let origin = actor_origin + launch_offset;
+    let speed = rotate(direction, relative_yaw, wobble) * speed;
+
+    let speed_length = (speed.x * speed.x + speed.y * speed.y + speed.z * speed.z).sqrt();
+
+    let yaw = speed.x.atan2(speed.z);
+    let pitch = -zero_nan(speed.y / speed_length).asin();
+
+    AttackCruiserWeaponLaunchVector {
+        origin,
+        speed,
+        yaw,
+        pitch,
+    }
 }
 
 fn show_hud_message(
@@ -1400,30 +1449,16 @@ impl AttackCruiserProjectilePool {
         for _ in 0..projectile.count {
             let projectile_id = self.next_id()?;
 
-            let wobble =
-                rng.gen_range(-projectile.wobble.to_radians()..=projectile.wobble.to_radians());
-            let relative_yaw = projectile.yaw.to_radians() + wobble;
-
-            let launch_offset = direction
-                + direction
-                    * Pos3 {
-                        x: projectile.launch_offset,
-                        y: 0.0,
-                        z: projectile.launch_offset,
-                    }
-                + Pos3 {
-                    x: 0.0,
-                    y: projectile.launch_height,
-                    z: 0.0,
-                };
-
-            let origin = actor_origin + launch_offset;
-            let speed = rotate(direction, relative_yaw, wobble) * projectile.speed;
-
-            let speed_length = (speed.x * speed.x + speed.y * speed.y + speed.z * speed.z).sqrt();
-
-            let yaw = speed.x.atan2(speed.z);
-            let pitch = -zero_nan(speed.y / speed_length).asin();
+            let launch_location = launch_vector(
+                rng,
+                actor_origin,
+                direction,
+                projectile.speed,
+                projectile.wobble,
+                projectile.yaw,
+                projectile.launch_offset,
+                projectile.launch_height,
+            );
 
             let expiry_time = now
                 .checked_add(Duration::from_millis(projectile.lifetime_millis.into()))
@@ -1440,8 +1475,8 @@ impl AttackCruiserProjectilePool {
                 projectile_id,
                 AttackCruiserProjectileInstance {
                     launched_by_actor_id,
-                    speed,
-                    origin,
+                    speed: launch_location.speed,
+                    origin: launch_location.origin,
                     launch_time: now,
                     projectile: projectile.clone(),
                 },
@@ -1450,10 +1485,10 @@ impl AttackCruiserProjectilePool {
 
             launched_projectiles.push(AttackCruiserProjectileSpawn {
                 projectile_id,
-                origin,
-                speed,
-                yaw,
-                pitch,
+                origin: launch_location.origin,
+                speed: launch_location.speed,
+                yaw: launch_location.yaw,
+                pitch: launch_location.pitch,
             });
         }
 
