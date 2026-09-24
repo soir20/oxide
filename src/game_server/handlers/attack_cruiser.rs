@@ -807,7 +807,7 @@ struct AttackCruiserPlayer {
 impl AttackCruiserPlayer {
     pub fn new(
         guid: u32,
-        player_index: u8,
+        actor_id: i32,
         ship: Arc<AttackCruiserShipConfig>,
         lives: u8,
         pos: Pos3,
@@ -817,15 +817,7 @@ impl AttackCruiserPlayer {
         AttackCruiserPlayer {
             guid,
             ready: false,
-            actor: AttackCruiserActor::new(
-                player_actor_id(player_index, lives),
-                pos,
-                yaw,
-                0.0,
-                0.0,
-                bvh,
-                ship,
-            ),
+            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship),
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -1223,6 +1215,10 @@ impl From<&AttackCruiserShipDamageStateConfig> for AttackCruiserActorDamageState
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
+    #[serde(default)]
+    can_attack_friendlies: bool,
+    #[serde(default)]
+    can_attack_hostiles: bool,
     max_alive: u16,
     model_id: u32,
     asset_name: String,
@@ -1526,10 +1522,13 @@ impl AttackCruiserProjectilePool {
 
             for (projectile_id, projectile) in &self.live_projectiles {
                 let launched_by_self = projectile.launched_by_actor_id == actor.id;
-                let are_both_friendly = can_attack_hostiles(projectile.launched_by_actor_id)
-                    && !can_attack_friendlies(actor.id);
-                let are_both_hostile = can_attack_friendlies(projectile.launched_by_actor_id)
-                    && !can_attack_hostiles(actor.id);
+                let are_both_friendly =
+                    AttackCruiserActorIdPool::can_attack_hostiles(projectile.launched_by_actor_id)
+                        && !AttackCruiserActorIdPool::can_attack_friendlies(actor.id);
+                let are_both_hostile =
+                    AttackCruiserActorIdPool::can_attack_friendlies(
+                        projectile.launched_by_actor_id,
+                    ) && !AttackCruiserActorIdPool::can_attack_hostiles(actor.id);
                 if launched_by_self || are_both_friendly || are_both_hostile {
                     continue;
                 }
@@ -1670,47 +1669,85 @@ impl AttackCruiserProjectilePool {
     }
 }
 
-// Player actor IDs use the first 2 bits (1 bit index and 1 bit for even/odd life).
-// Ignore the 32nd bit to avoid negative actor IDs.
-// If an actor can attack friendlies, it has the 30th bit set.
-// If an actor can attack hostiles, it has the 31st bit set.
-// If an actor can attack both friendlies and hostiles, it has both the 30th and 31st bits set.
-// If an actor can attack another, then the other actor can retaliate.
-const ATTACK_FRIENDLY_MASK: i32 = 0b0010_0000_0000_0000_0000_0000_0000_0000;
-const ATTACK_HOSTILE_MASK: i32 = 0b0100_0000_0000_0000_0000_0000_0000_0000;
-
-fn player_actor_id(player_index: u8, lives: u8) -> i32 {
-    i32::from(player_index * 2 + 1 + lives.is_multiple_of(2) as u8) | ATTACK_HOSTILE_MASK
-}
-
-fn enemy_actor_id(test_base: i32) -> i32 {
-    // TODO: indexing per ship
-    test_base | ATTACK_FRIENDLY_MASK
-}
-
-fn hostility(actor_id: i32) -> AttackCruiserHostility {
-    match (
-        can_attack_friendlies(actor_id),
-        can_attack_hostiles(actor_id),
-    ) {
-        (true, false) => AttackCruiserHostility::Hostile,
-        (false, true) => AttackCruiserHostility::Friendly,
-        _ => AttackCruiserHostility::Neutral,
-    }
-}
-
-fn can_attack_friendlies(actor_id: i32) -> bool {
-    actor_id & ATTACK_FRIENDLY_MASK != 0
-}
-
-fn can_attack_hostiles(actor_id: i32) -> bool {
-    actor_id & ATTACK_HOSTILE_MASK != 0
-}
-
 struct AttackCruiserActorTarget {
     id: i32,
     pos: Pos3,
     speed: Pos3,
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserActorIdPool {
+    last_ids: [i32; 4],
+}
+
+impl AttackCruiserActorIdPool {
+    // Player actor IDs use the first 2 bits (1 bit index and 1 bit for even/odd life).
+    // Ignore the 32nd bit to avoid negative actor IDs.
+    // If an actor can attack friendlies, it has the 30th bit set.
+    // If an actor can attack hostiles, it has the 31st bit set.
+    // If an actor can attack both friendlies and hostiles, it has both the 30th and 31st bits set.
+    // If an actor can attack another, then the other actor can retaliate.
+    const ATTACK_FRIENDLY_MASK: i32 = 0b0010_0000_0000_0000_0000_0000_0000_0000;
+    const ATTACK_HOSTILE_MASK: i32 = 0b0100_0000_0000_0000_0000_0000_0000_0000;
+    const MAX_ACTOR_ID: i32 = 0b0001_1111_1111_1111_1111_1111_1111_1111;
+
+    pub fn new() -> AttackCruiserActorIdPool {
+        AttackCruiserActorIdPool { last_ids: [0; 4] }
+    }
+
+    pub fn next(
+        &mut self,
+        can_attack_friendlies: bool,
+        can_attack_hostiles: bool,
+        player_actor_ids: &[i32],
+        npcs: &BTreeMap<i32, AttackCruiserActor>,
+    ) -> Result<i32, ProcessPacketError> {
+        let index = can_attack_friendlies as usize | ((can_attack_hostiles as usize) << 1);
+
+        let last_id = self.last_ids[index];
+        let mut next_id = (last_id + 1) % Self::MAX_ACTOR_ID;
+        while next_id == 0 || player_actor_ids.contains(&next_id) || npcs.contains_key(&next_id) {
+            if next_id == last_id {
+                return Err(ProcessPacketError::new(
+                    ProcessPacketErrorType::ConstraintViolated,
+                    format!("Attack Cruiser reached maximum number of actors of type {index}"),
+                ));
+            }
+
+            next_id = (next_id + 1) % Self::MAX_ACTOR_ID;
+        }
+
+        self.last_ids[index] = next_id;
+
+        if can_attack_friendlies {
+            next_id |= Self::ATTACK_FRIENDLY_MASK;
+        }
+
+        if can_attack_hostiles {
+            next_id |= Self::ATTACK_HOSTILE_MASK;
+        }
+
+        Ok(next_id)
+    }
+
+    pub fn can_attack_friendlies(actor_id: i32) -> bool {
+        actor_id & Self::ATTACK_FRIENDLY_MASK != 0
+    }
+
+    pub fn can_attack_hostiles(actor_id: i32) -> bool {
+        actor_id & Self::ATTACK_HOSTILE_MASK != 0
+    }
+
+    pub fn hostility(actor_id: i32) -> AttackCruiserHostility {
+        match (
+            Self::can_attack_friendlies(actor_id),
+            Self::can_attack_hostiles(actor_id),
+        ) {
+            (true, false) => AttackCruiserHostility::Hostile,
+            (false, true) => AttackCruiserHostility::Friendly,
+            _ => AttackCruiserHostility::Neutral,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -1724,7 +1761,8 @@ pub struct AttackCruiserGame {
     active_player_indices: ArrayVec<u8, 2>,
     group: MinigameMatchmakingGroup,
     projectiles: AttackCruiserProjectilePool,
-    npcs: Vec<AttackCruiserActor>,
+    npcs: BTreeMap<i32, AttackCruiserActor>,
+    actor_id_pool: AttackCruiserActorIdPool,
 }
 
 impl AttackCruiserGame {
@@ -1745,12 +1783,22 @@ impl AttackCruiserGame {
             );
         }
 
+        let mut actor_id_pool = AttackCruiserActorIdPool::new();
+        let mut npcs = BTreeMap::new();
+
         let mut players = ArrayVec::new();
         players.push(player1);
         let mut player_states = ArrayVec::new();
         player_states.push(AttackCruiserPlayer::new(
             player1,
-            0,
+            actor_id_pool
+                .next(
+                    player_ship.can_attack_friendlies,
+                    player_ship.can_attack_hostiles,
+                    &[],
+                    &npcs,
+                )
+                .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
             player_ship.clone(),
             config.player.lives,
             config.player.spawn1.pos,
@@ -1762,7 +1810,14 @@ impl AttackCruiserGame {
             players.push(player2);
             player_states.push(AttackCruiserPlayer::new(
                 player2,
-                1,
+                actor_id_pool
+                    .next(
+                        player_ship.can_attack_friendlies,
+                        player_ship.can_attack_hostiles,
+                        &[player_states[0].actor.id],
+                        &npcs,
+                    )
+                    .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
                 player_ship,
                 config.player.lives,
                 config.player.spawn2.pos,
@@ -1772,52 +1827,88 @@ impl AttackCruiserGame {
         }
 
         // TODO: remove test NPC
+        let player_actor_ids = &player_states
+            .iter()
+            .map(|player_state| player_state.actor.id)
+            .collect::<Vec<i32>>();
         let test_npc_ship = config.ship(&String::from("test"));
+        let npc_id1 = actor_id_pool
+            .next(
+                test_npc_ship.can_attack_friendlies,
+                test_npc_ship.can_attack_hostiles,
+                player_actor_ids,
+                &npcs,
+            )
+            .unwrap();
+        npcs.insert(
+            npc_id1,
+            AttackCruiserActor::new(
+                npc_id1,
+                config.player.spawn2.pos
+                    + Pos3 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                    },
+                config.player.spawn2.yaw.to_radians(),
+                test_npc_ship.max_speed,
+                0.0,
+                player_bvh.clone(),
+                test_npc_ship.clone(),
+            ),
+        );
+        let npc_id2 = actor_id_pool
+            .next(
+                test_npc_ship.can_attack_friendlies,
+                test_npc_ship.can_attack_hostiles,
+                player_actor_ids,
+                &npcs,
+            )
+            .unwrap();
+        npcs.insert(
+            npc_id2,
+            AttackCruiserActor::new(
+                npc_id2,
+                config.player.spawn2.pos
+                    + Pos3 {
+                        x: 100.0,
+                        y: 50.0,
+                        z: 100.0,
+                    },
+                config.player.spawn2.yaw.to_radians(),
+                test_npc_ship.max_speed,
+                0.0,
+                player_bvh.clone(),
+                test_npc_ship.clone(),
+            ),
+        );
+        let npc_id3 = actor_id_pool
+            .next(
+                test_npc_ship.can_attack_friendlies,
+                test_npc_ship.can_attack_hostiles,
+                player_actor_ids,
+                &npcs,
+            )
+            .unwrap();
+        npcs.insert(
+            npc_id3,
+            AttackCruiserActor::new(
+                npc_id3,
+                config.player.spawn2.pos
+                    - Pos3 {
+                        x: 100.0,
+                        y: 50.0,
+                        z: 100.0,
+                    },
+                config.player.spawn2.yaw.to_radians(),
+                test_npc_ship.max_speed,
+                0.0,
+                player_bvh,
+                test_npc_ship.clone(),
+            ),
+        );
+
         AttackCruiserGame {
-            npcs: vec![
-                AttackCruiserActor::new(
-                    enemy_actor_id(1000),
-                    config.player.spawn2.pos
-                        + Pos3 {
-                            x: 0.0,
-                            y: 0.0,
-                            z: 0.0,
-                        },
-                    config.player.spawn2.yaw.to_radians(),
-                    test_npc_ship.max_speed,
-                    0.0,
-                    player_bvh.clone(),
-                    test_npc_ship.clone(),
-                ),
-                AttackCruiserActor::new(
-                    enemy_actor_id(1001),
-                    config.player.spawn2.pos
-                        + Pos3 {
-                            x: 100.0,
-                            y: 50.0,
-                            z: 100.0,
-                        },
-                    config.player.spawn2.yaw.to_radians(),
-                    test_npc_ship.max_speed,
-                    0.0,
-                    player_bvh.clone(),
-                    test_npc_ship.clone(),
-                ),
-                AttackCruiserActor::new(
-                    enemy_actor_id(1002),
-                    config.player.spawn2.pos
-                        - Pos3 {
-                            x: 100.0,
-                            y: 50.0,
-                            z: 100.0,
-                        },
-                    config.player.spawn2.yaw.to_radians(),
-                    test_npc_ship.max_speed,
-                    0.0,
-                    player_bvh,
-                    test_npc_ship.clone(),
-                ),
-            ],
             player1,
             player2,
             player_states,
@@ -1827,6 +1918,8 @@ impl AttackCruiserGame {
             group,
             config,
             projectiles: AttackCruiserProjectilePool::new(),
+            npcs,
+            actor_id_pool,
         }
     }
 
@@ -2185,9 +2278,9 @@ impl AttackCruiserGame {
             self.active_player_indices
                 .iter()
                 .copied()
-                .filter(|player_index| self.player_states[usize::from(*player_index)].trackable())
-                .map(|player_index| &self.player_states[usize::from(player_index)].actor)
-                .chain(self.npcs.iter().filter(|npc| !npc.dead())),
+                .filter(|player_index| self.player_states[*player_index as usize].trackable())
+                .map(|player_index| &self.player_states[player_index as usize].actor)
+                .chain(self.npcs.values().filter(|npc| !npc.dead())),
             now,
             tick_duration,
         );
@@ -2233,7 +2326,7 @@ impl AttackCruiserGame {
         self.player_states.iter_mut().for_each(|player_state| {
             player_state.pause_or_resume(pause);
         });
-        self.npcs.iter_mut().for_each(|npc| {
+        self.npcs.values_mut().for_each(|npc| {
             npc.pause_or_resume(pause);
         });
         Ok(Vec::new())
@@ -2270,7 +2363,7 @@ impl AttackCruiserGame {
         self.active_players
             .retain(|active_player| *active_player != player);
         self.active_player_indices
-            .retain(|player_index| self.player_states[usize::from(*player_index)].guid != player);
+            .retain(|player_index| self.player_states[*player_index as usize].guid != player);
         self.player_states[player_index].lives = 0;
 
         minigame_status.total_score = self.player_states[player_index].score;
@@ -2479,7 +2572,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: hostility(actor.id),
+                hostility: AttackCruiserActorIdPool::hostility(actor.id),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
@@ -2558,6 +2651,11 @@ impl AttackCruiserGame {
     }
 
     fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
+        let player_actor_ids = &self
+            .active_player_indices
+            .iter()
+            .map(|player_index| self.player_states[*player_index as usize].actor.id)
+            .collect::<Vec<i32>>();
         let mut packets = Self::despawn_client_actor(
             &self.player_states[player_index as usize].actor,
             self.player_states[player_index as usize]
@@ -2567,7 +2665,16 @@ impl AttackCruiserGame {
             self.group,
         );
         let player_state = &mut self.player_states[player_index as usize];
-        player_state.actor.id = player_actor_id(player_index, player_state.lives);
+        // Reusing the actor ID tends to break animations, but at least the game remains playable
+        player_state.actor.id = self
+            .actor_id_pool
+            .next(
+                player_state.actor.ship.can_attack_friendlies,
+                player_state.actor.ship.can_attack_hostiles,
+                player_actor_ids,
+                &self.npcs,
+            )
+            .unwrap_or(player_state.actor.id);
         packets.append(
             &mut self.spawn_client_player_actor(&self.player_states[player_index as usize]),
         );
@@ -2792,7 +2899,7 @@ impl AttackCruiserGame {
         }
 
         // TODO: remove and spawn in waves
-        self.npcs.iter().for_each(|npc| {
+        self.npcs.values().for_each(|npc| {
             packets.append(&mut self.spawn_client_npc_actor(npc, &String::from("test")));
         });
 
@@ -2853,6 +2960,10 @@ impl AttackCruiserGame {
                         })
                     }),
             );
+        }
+
+        for (actors, direction) in actors {
+            //
         }
 
         Ok(vec![Broadcast::Multi(active_players.to_vec(), packets)])
@@ -2948,7 +3059,7 @@ impl AttackCruiserGame {
         hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
-            let player_index = usize::from(player_index);
+            let player_index = player_index as usize;
             let player_state = &mut self.player_states[player_index];
             let in_bounds = is_inside_oval(
                 player_state.actor.pos,
@@ -3136,7 +3247,7 @@ impl AttackCruiserGame {
     ) {
         let (friendlies, hostiles) = self.list_actors_by_hostility();
 
-        self.npcs.retain_mut(|npc| {
+        self.npcs.retain(|_, npc| {
             if npc.paused() {
                 return true;
             }
@@ -3220,8 +3331,8 @@ impl AttackCruiserGame {
             })
             .collect();
         let mut hostiles = Vec::new();
-        for npc in self.npcs.iter().filter(|npc| !npc.dead()) {
-            if can_attack_friendlies(npc.id) {
+        for npc in self.npcs.values().filter(|npc| !npc.dead()) {
+            if AttackCruiserActorIdPool::can_attack_friendlies(npc.id) {
                 hostiles.push(AttackCruiserActorTarget {
                     id: npc.id,
                     pos: npc.pos,
@@ -3229,7 +3340,7 @@ impl AttackCruiserGame {
                 });
             }
 
-            if can_attack_hostiles(npc.id) {
+            if AttackCruiserActorIdPool::can_attack_hostiles(npc.id) {
                 friendlies.push(AttackCruiserActorTarget {
                     id: npc.id,
                     pos: npc.pos,
@@ -3281,12 +3392,12 @@ impl AttackCruiserGame {
 
             distance1.total_cmp(&distance2)
         };
-        if can_attack_friendlies(actor_id) {
+        if AttackCruiserActorIdPool::can_attack_friendlies(actor_id) {
             if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
                 closest_targets.push(closest_friendly);
             }
         }
-        if can_attack_hostiles(actor_id) {
+        if AttackCruiserActorIdPool::can_attack_hostiles(actor_id) {
             if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
                 closest_targets.push(closest_hostile);
             }

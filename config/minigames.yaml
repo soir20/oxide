@@ -3221,6 +3221,7 @@ categories:
                   warning_millis: 5000
                 ships:
                   test:
+                    can_attack_friendlies: true
                     max_alive: 50
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3249,13 +3250,15 @@ categories:
                         - projectiles:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
-                              count: 2
+                              count: 5
                               damage: 1
                               length: 25
                               cooldown_millis: 500
-                              min_launch_angle: !Degrees -30
-                              max_launch_angle: !Degrees 30
+                              wobble: !Degrees 10
+                              min_launch_angle: !Degrees -60
+                              max_launch_angle: !Degrees 60
                   venator:
+                    can_attack_hostiles: true
                     max_alive: 4
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
