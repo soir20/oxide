@@ -218,7 +218,8 @@ struct AttackCruiserActor {
     pub bvh: Option<Arc<Bvh>>,
     pub invulnerability: AttackCruiserActorInvulnerability,
     pub primary_weapon_tier: usize,
-    pub primary_weapon_last_used: Vec<Option<Instant>>,
+    pub primary_weapon_projectile_last_used: Vec<Option<Instant>>,
+    pub primary_weapon_actor_last_used: Vec<Option<Instant>>,
 }
 
 impl AttackCruiserActor {
@@ -247,7 +248,8 @@ impl AttackCruiserActor {
             bvh,
             invulnerability: AttackCruiserActorInvulnerability::default(),
             primary_weapon_tier: 0,
-            primary_weapon_last_used: Vec::new(),
+            primary_weapon_projectile_last_used: Vec::new(),
+            primary_weapon_actor_last_used: Vec::new(),
             ship,
         };
 
@@ -326,13 +328,22 @@ impl AttackCruiserActor {
 
     pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
         self.primary_weapon_tier = new_tier;
-        self.primary_weapon_last_used = vec![
+        self.primary_weapon_projectile_last_used = vec![
             None;
             self.ship
                 .weapons
                 .primary_tiers
                 .first()
                 .map(|weapon| weapon.projectiles.len())
+                .unwrap_or_default()
+        ];
+        self.primary_weapon_actor_last_used = vec![
+            None;
+            self.ship
+                .weapons
+                .primary_tiers
+                .first()
+                .map(|weapon| weapon.actors.len())
                 .unwrap_or_default()
         ];
     }
@@ -343,11 +354,14 @@ impl AttackCruiserActor {
         max_cooldown_error: Duration,
         target_pos: Pos3,
         target_speed: Pos3,
-    ) -> impl Iterator<Item = (&Arc<AttackCruiserProjectileConfig>, Pos3)> + use<'_> {
-        let last_used_slice = &mut self.primary_weapon_last_used;
+    ) -> (
+        impl Iterator<Item = (&Arc<AttackCruiserProjectileConfig>, Pos3)> + use<'_>,
+        impl Iterator<Item = (&AttackCruiserLaunchedActorConfig, Pos3)>,
+    ) {
         let self_pos = self.pos;
         let yaw = self.yaw;
 
+        let last_used_slice = &mut self.primary_weapon_projectile_last_used;
         let projectiles_opt = self
             .ship
             .weapons
@@ -355,7 +369,7 @@ impl AttackCruiserActor {
             .get(self.primary_weapon_tier)
             .map(|weapon| &weapon.projectiles);
 
-        projectiles_opt
+        let projectiles = projectiles_opt
             .into_iter()
             .flatten()
             .enumerate()
@@ -415,26 +429,74 @@ impl AttackCruiserActor {
                             w: 0.0,
                         },
                     );
-                    let attack_angle = direction.x.atan2(direction.z);
-
-                    let min_angle = yaw + projectile.min_launch_angle.to_radians();
-                    let max_angle = yaw + projectile.max_launch_angle.to_radians();
-                    let allows_complete_circle = (max_angle - min_angle).abs() >= 2.0 * PI;
-                    if !allows_complete_circle {
-                        let allowed_sector_width = normalize_angle_positive(max_angle - min_angle);
-                        let relative_attack_angle =
-                            normalize_angle_positive(attack_angle - min_angle);
-
-                        if relative_attack_angle > allowed_sector_width {
-                            return None;
-                        }
-                    }
-
-                    *last_used_opt = Some(now);
-                    return Some((projectile, direction.into()));
+                    return Self::validate_attack_angle(
+                        projectile,
+                        direction,
+                        last_used_opt,
+                        yaw,
+                        projectile.min_launch_angle,
+                        projectile.max_launch_angle,
+                        now,
+                    );
                 }
                 None
-            })
+            });
+
+        let last_used_slice = &mut self.primary_weapon_actor_last_used;
+        let actors_opt = self
+            .ship
+            .weapons
+            .primary_tiers
+            .get(self.primary_weapon_tier)
+            .map(|weapon| &weapon.actors);
+
+        let actors =
+            actors_opt
+                .into_iter()
+                .flatten()
+                .enumerate()
+                .filter_map(move |(index, actor)| {
+                    if let Some(last_used_opt) = last_used_slice.get_mut(index) {
+                        if let Some(last_used) = last_used_opt {
+                            let adjusted_cooldown =
+                                Duration::from_millis(actor.cooldown_millis.into())
+                                    .saturating_sub(max_cooldown_error);
+                            let is_on_cooldown =
+                                now.saturating_duration_since(*last_used) < adjusted_cooldown;
+
+                            if is_on_cooldown {
+                                return None;
+                            }
+                        }
+
+                        let direction = direction(
+                            Pos {
+                                x: self_pos.x,
+                                y: self_pos.y,
+                                z: self_pos.z,
+                                w: 0.0,
+                            },
+                            Pos {
+                                x: target_pos.x,
+                                y: target_pos.y,
+                                z: target_pos.z,
+                                w: 0.0,
+                            },
+                        );
+                        return Self::validate_attack_angle(
+                            actor,
+                            direction,
+                            last_used_opt,
+                            yaw,
+                            actor.min_launch_angle,
+                            actor.max_launch_angle,
+                            now,
+                        );
+                    }
+                    None
+                });
+
+        (projectiles, actors)
     }
 
     pub fn seek_target(&mut self, target_pos: Pos3, target_speed: Pos3, delta_secs: f32) {
@@ -593,6 +655,33 @@ impl AttackCruiserActor {
             (false, true) => Some(time2),
             (false, false) => None,
         }
+    }
+
+    fn validate_attack_angle<T>(
+        value: T,
+        direction: Pos,
+        last_used_opt: &mut Option<Instant>,
+        yaw: f32,
+        min_launch_angle: Angle,
+        max_launch_angle: Angle,
+        now: Instant,
+    ) -> Option<(T, Pos3)> {
+        let attack_angle = direction.x.atan2(direction.z);
+
+        let min_angle = yaw + min_launch_angle.to_radians();
+        let max_angle = yaw + max_launch_angle.to_radians();
+        let allows_complete_circle = (max_angle - min_angle).abs() >= 2.0 * PI;
+        if !allows_complete_circle {
+            let allowed_sector_width = normalize_angle_positive(max_angle - min_angle);
+            let relative_attack_angle = normalize_angle_positive(attack_angle - min_angle);
+
+            if relative_attack_angle > allowed_sector_width {
+                return None;
+            }
+        }
+
+        *last_used_opt = Some(now);
+        Some((value, direction.into()))
     }
 }
 
@@ -974,8 +1063,32 @@ struct AttackCruiserProjectileConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserLaunchedActorConfig {
+    ship: String,
+    #[serde(default = "default_yaw")]
+    yaw: Angle,
+    #[serde(default = "default_wobble")]
+    wobble: Angle,
+    cooldown_millis: u16,
+    #[serde(default = "default_count")]
+    count: u8,
+    #[serde(default = "default_launch_offset")]
+    launch_offset: f32,
+    #[serde(default = "default_launch_height")]
+    launch_height: f32,
+    #[serde(default = "default_min_launch_angle")]
+    min_launch_angle: Angle,
+    #[serde(default = "default_max_launch_angle")]
+    max_launch_angle: Angle,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserPrimaryWeaponConfig {
+    #[serde(default)]
     projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
+    #[serde(default)]
+    actors: Vec<AttackCruiserLaunchedActorConfig>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -992,6 +1105,7 @@ impl AttackCruiserWeaponConfig {
                 tier.projectiles
                     .iter()
                     .map(|projectile| projectile.cooldown_millis)
+                    .chain(tier.actors.iter().map(|actor| actor.cooldown_millis))
             })
             .reduce(gcd_u16)
             .unwrap_or_default()
@@ -2667,12 +2781,13 @@ impl AttackCruiserGame {
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
-        for (projectile, direction) in actor.attack_primary(
+        let (projectiles, actors) = actor.attack_primary(
             now,
             Duration::from_millis(max_cooldown_error_millis.into()),
             target_pos,
             target_speed,
-        ) {
+        );
+        for (projectile, direction) in projectiles {
             packets.extend(
                 projectile_pool
                     .launch(actor_id, actor_pos, direction, projectile, now)?
