@@ -734,6 +734,37 @@ impl AttackCruiserActor {
     }
 }
 
+struct AttackCruiserPendingActor {
+    actor: AttackCruiserActor,
+    ship_name: String,
+}
+
+impl AttackCruiserPendingActor {
+    pub fn new(
+        pos: Pos3,
+        yaw: f32,
+        speed: f32,
+        angular_speed: f32,
+        bvh: Option<Arc<Bvh>>,
+        ship: Arc<AttackCruiserShipConfig>,
+        ship_name: String,
+    ) -> Self {
+        AttackCruiserPendingActor {
+            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship),
+            ship_name,
+        }
+    }
+
+    pub fn ship(&self) -> &Arc<AttackCruiserShipConfig> {
+        &self.actor.ship
+    }
+
+    pub fn finalize(mut self, id: i32) -> (AttackCruiserActor, String) {
+        self.actor.id = id;
+        (self.actor, self.ship_name)
+    }
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 enum AttackCruiserPlayerBoundsPhase {
     #[default]
@@ -1322,6 +1353,23 @@ impl AttackCruiserConfig {
             })
             .clone()
     }
+
+    fn validate_bvhs(&self, bvhs: &HashMap<String, Arc<Bvh>>) -> HashMap<String, Arc<Bvh>> {
+        self.ships
+            .iter()
+            .filter_map(|(ship_name, ship)| {
+                let result = bvhs.get(&ship.asset_name)
+                    .cloned()
+                    .map(|bvh| (ship_name.clone(), bvh));
+
+                if result.is_none() {
+                    info!("Attack Cruiser ship {ship_name} has no valid BVH {}. Defaulting to empty BVH.", ship.asset_name);
+                }
+
+                result
+            })
+            .collect()
+    }
 }
 
 pub fn process_attack_cruiser_packet(
@@ -1431,6 +1479,7 @@ impl AttackCruiserProjectilePool {
 
     pub fn launch(
         &mut self,
+        rng: &mut ThreadRng,
         launched_by_actor_id: i32,
         actor_origin: Pos3,
         direction: Pos3,
@@ -1439,7 +1488,6 @@ impl AttackCruiserProjectilePool {
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
         self.expire(now);
 
-        let rng = &mut thread_rng();
         let mut launched_projectiles = Vec::new();
 
         for _ in 0..projectile.count {
@@ -1753,6 +1801,7 @@ impl AttackCruiserActorIdPool {
 #[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
+    bvhs: HashMap<String, Arc<Bvh>>,
     player1: u32,
     player2: Option<u32>,
     player_states: ArrayVec<AttackCruiserPlayer, 2>,
@@ -1775,13 +1824,8 @@ impl AttackCruiserGame {
     ) -> Self {
         let player_ship = config.ship(&config.player.ship);
 
-        let player_bvh = bvhs.get(&player_ship.asset_name).cloned();
-        if player_bvh.is_none() {
-            info!(
-                "Missing BVH for Attack Cruiser player ship {}. Defaulting to empty BVH.",
-                player_ship.asset_name
-            );
-        }
+        let bvhs = config.validate_bvhs(bvhs);
+        let player_bvh = bvhs.get(&config.player.ship).cloned();
 
         let mut actor_id_pool = AttackCruiserActorIdPool::new();
         let mut npcs = BTreeMap::new();
@@ -1909,6 +1953,7 @@ impl AttackCruiserGame {
         );
 
         AttackCruiserGame {
+            bvhs,
             player1,
             player2,
             player_states,
@@ -2550,16 +2595,22 @@ impl AttackCruiserGame {
         };
 
         let player_state = &mut self.player_states[player_index as usize];
-        Self::actor_attack_primary(
+        let (mut broadcasts, pending_npcs) = Self::actor_attack_primary(
             &mut player_state.actor,
             target_pos,
             Pos3::default(),
             now,
             &mut self.projectiles,
+            &self.config,
+            &self.bvhs,
             &self.active_players,
             self.group,
             self.config.max_weapon_cooldown_error_millis,
-        )
+        )?;
+
+        broadcasts.append(&mut self.finalize_actors(pending_npcs));
+
+        Ok(broadcasts)
     }
 
     fn spawn_client_actor(&self, actor: &AttackCruiserActor, ship_config: &String) -> Vec<Vec<u8>> {
@@ -2592,9 +2643,9 @@ impl AttackCruiserGame {
     fn spawn_client_npc_actor(
         &self,
         actor: &AttackCruiserActor,
-        ship_config: &String,
+        ship_name: &String,
     ) -> Vec<Vec<u8>> {
-        let mut packets = self.spawn_client_actor(actor, ship_config);
+        let mut packets = self.spawn_client_actor(actor, ship_name);
 
         packets.append(&mut self.set_actor_frozen(actor, None, false));
 
@@ -2651,11 +2702,7 @@ impl AttackCruiserGame {
     }
 
     fn replace_client_player_actor(&mut self, player_index: u8) -> Vec<Vec<u8>> {
-        let player_actor_ids = &self
-            .active_player_indices
-            .iter()
-            .map(|player_index| self.player_states[*player_index as usize].actor.id)
-            .collect::<Vec<i32>>();
+        let player_actor_ids = &self.player_actor_ids();
         let mut packets = Self::despawn_client_actor(
             &self.player_states[player_index as usize].actor,
             self.player_states[player_index as usize]
@@ -2909,17 +2956,20 @@ impl AttackCruiserGame {
         )])
     }
 
-    fn actor_attack_primary(
-        actor: &mut AttackCruiserActor,
+    fn actor_attack_primary<'a>(
+        actor: &'a mut AttackCruiserActor,
         target_pos: Pos3,
         target_speed: Pos3,
         now: Instant,
         projectile_pool: &mut AttackCruiserProjectilePool,
+        config: &'a AttackCruiserConfig,
+        bvhs: &HashMap<String, Arc<Bvh>>,
         active_players: &[u32],
         group: MinigameMatchmakingGroup,
         max_cooldown_error_millis: u16,
-    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    ) -> Result<(Vec<Broadcast>, Vec<AttackCruiserPendingActor>), ProcessPacketError> {
         let mut packets = Vec::new();
+        let rng = &mut thread_rng();
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
@@ -2932,7 +2982,7 @@ impl AttackCruiserGame {
         for (projectile, direction) in projectiles {
             packets.extend(
                 projectile_pool
-                    .launch(actor_id, actor_pos, direction, projectile, now)?
+                    .launch(rng, actor_id, actor_pos, direction, projectile, now)?
                     .into_iter()
                     .map(|launched_projectile| {
                         GamePacket::serialize(&TunneledPacket {
@@ -2962,11 +3012,44 @@ impl AttackCruiserGame {
             );
         }
 
-        for (actors, direction) in actors {
-            //
+        let mut new_npcs = Vec::new();
+        for (launched_actor, direction) in actors {
+            let ship = config.ship(&launched_actor.ship);
+            let bvh = bvhs.get(&launched_actor.ship).cloned();
+            if bvh.is_none() {
+                info!(
+                    "Missing BVH for Attack Cruiser NPC ship {}. Defaulting to empty BVH.",
+                    launched_actor.ship
+                );
+            }
+
+            for _ in 0..launched_actor.count {
+                let launch_vector = launch_vector(
+                    rng,
+                    actor_pos,
+                    direction,
+                    ship.max_speed,
+                    launched_actor.wobble,
+                    launched_actor.yaw,
+                    launched_actor.launch_offset,
+                    launched_actor.launch_height,
+                );
+                new_npcs.push(AttackCruiserPendingActor::new(
+                    launch_vector.origin,
+                    launch_vector.yaw,
+                    ship.max_speed,
+                    0.0,
+                    bvh.clone(),
+                    ship.clone(),
+                    launched_actor.ship.clone(),
+                ));
+            }
         }
 
-        Ok(vec![Broadcast::Multi(active_players.to_vec(), packets)])
+        Ok((
+            vec![Broadcast::Multi(active_players.to_vec(), packets)],
+            new_npcs,
+        ))
     }
 
     fn is_singleplayer(&self) -> bool {
@@ -2984,6 +3067,13 @@ impl AttackCruiserGame {
                 format!("Player {player_guid} isn't one of the Attack Cruiser game's players ({self:?})")
             ))
         }
+    }
+
+    fn player_actor_ids(&self) -> Vec<i32> {
+        self.active_player_indices
+            .iter()
+            .map(|player_index| self.player_states[*player_index as usize].actor.id)
+            .collect()
     }
 
     fn player_state_update(
@@ -3247,6 +3337,7 @@ impl AttackCruiserGame {
     ) {
         let (friendlies, hostiles) = self.list_actors_by_hostility();
 
+        let mut pending_npcs = Vec::new();
         self.npcs.retain(|_, npc| {
             if npc.paused() {
                 return true;
@@ -3266,12 +3357,17 @@ impl AttackCruiserGame {
                         target_speed,
                         now,
                         &mut self.projectiles,
+                        &self.config,
+                        &self.bvhs,
                         &self.active_players,
                         self.group,
                         self.config.max_weapon_cooldown_error_millis,
                     );
                     match attack_result {
-                        Ok(mut attack_broadcasts) => broadcasts.append(&mut attack_broadcasts),
+                        Ok((mut attack_broadcasts, mut new_npcs)) => {
+                            broadcasts.append(&mut attack_broadcasts);
+                            pending_npcs.append(&mut new_npcs);
+                        }
                         Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
                     }
                 }
@@ -3308,6 +3404,8 @@ impl AttackCruiserGame {
 
             true
         });
+
+        broadcasts.append(&mut self.finalize_actors(pending_npcs));
     }
 
     fn list_actors_by_hostility(
@@ -3350,6 +3448,34 @@ impl AttackCruiserGame {
         }
 
         (friendlies, hostiles)
+    }
+
+    fn finalize_actors(&mut self, pending_npcs: Vec<AttackCruiserPendingActor>) -> Vec<Broadcast> {
+        let player_actor_ids = &self.player_actor_ids();
+        let mut new_npc_packets = Vec::new();
+        for new_npc in pending_npcs.into_iter() {
+            let id = match self.actor_id_pool.next(
+                new_npc.ship().can_attack_friendlies,
+                new_npc.ship().can_attack_hostiles,
+                player_actor_ids,
+                &self.npcs,
+            ) {
+                Ok(id) => id,
+                Err(err) => {
+                    info!("Attack Cruiser couldn't spawn actor: {err}");
+                    continue;
+                }
+            };
+
+            let (new_actor, ship_name) = new_npc.finalize(id);
+            new_npc_packets.append(&mut self.spawn_client_npc_actor(&new_actor, &ship_name));
+            self.npcs.insert(id, new_actor);
+        }
+
+        vec![Broadcast::Multi(
+            self.active_players.to_vec(),
+            new_npc_packets,
+        )]
     }
 
     fn closest_target<'a>(
