@@ -405,7 +405,7 @@ impl AttackCruiserActor {
         target_speed: Pos3,
     ) -> (
         impl Iterator<Item = (&Arc<AttackCruiserProjectileConfig>, Pos3)> + use<'_>,
-        impl Iterator<Item = (&AttackCruiserLaunchedActorConfig, Pos3)>,
+        impl Iterator<Item = (&AttackCruiserLaunchedShipConfig, Pos3)>,
     ) {
         let self_pos = self.pos;
         let yaw = self.yaw;
@@ -1139,7 +1139,7 @@ struct AttackCruiserProjectileConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserLaunchedActorConfig {
+struct AttackCruiserLaunchedShipConfig {
     ship: String,
     #[serde(default = "default_yaw")]
     yaw: Angle,
@@ -1164,7 +1164,7 @@ struct AttackCruiserPrimaryWeaponConfig {
     #[serde(default)]
     projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
     #[serde(default)]
-    actors: Vec<AttackCruiserLaunchedActorConfig>,
+    actors: Vec<AttackCruiserLaunchedShipConfig>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
