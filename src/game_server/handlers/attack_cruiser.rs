@@ -1,6 +1,6 @@
 use std::{
     cmp::{Ordering, Reverse},
-    collections::{BTreeMap, HashMap},
+    collections::{BTreeMap, HashMap, HashSet},
     f32::consts::PI,
     io::{Cursor, Read},
     iter,
@@ -757,6 +757,10 @@ impl AttackCruiserPendingActor {
 
     pub fn ship(&self) -> &Arc<AttackCruiserShipConfig> {
         &self.actor.ship
+    }
+
+    pub fn ship_name(&self) -> &String {
+        &self.ship_name
     }
 
     pub fn finalize(mut self, id: i32) -> (AttackCruiserActor, String) {
@@ -1748,8 +1752,21 @@ impl AttackCruiserActorIdPool {
         can_attack_friendlies: bool,
         can_attack_hostiles: bool,
         player_actor_ids: &[i32],
-        npcs: &BTreeMap<i32, AttackCruiserActor>,
+        npcs: &HashMap<i32, AttackCruiserActor>,
+        ship_name: &String,
+        actors_by_ship_name: &mut HashMap<String, HashSet<i32>>,
+        max_alive: u16,
     ) -> Result<i32, ProcessPacketError> {
+        let ids_with_ship_name = actors_by_ship_name.entry(ship_name.clone()).or_default();
+        if ids_with_ship_name.len() as u16 >= max_alive {
+            return Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!(
+                    "Attack Cruiser reached maximum number of actors with ship name {ship_name}"
+                ),
+            ));
+        }
+
         let index = can_attack_friendlies as usize | ((can_attack_hostiles as usize) << 1);
 
         let last_id = self.last_ids[index];
@@ -1775,6 +1792,7 @@ impl AttackCruiserActorIdPool {
             next_id |= Self::ATTACK_HOSTILE_MASK;
         }
 
+        ids_with_ship_name.insert(next_id);
         Ok(next_id)
     }
 
@@ -1810,7 +1828,8 @@ pub struct AttackCruiserGame {
     active_player_indices: ArrayVec<u8, 2>,
     group: MinigameMatchmakingGroup,
     projectiles: AttackCruiserProjectilePool,
-    npcs: BTreeMap<i32, AttackCruiserActor>,
+    npcs: HashMap<i32, AttackCruiserActor>,
+    actors_by_ship_name: HashMap<String, HashSet<i32>>,
     actor_id_pool: AttackCruiserActorIdPool,
 }
 
@@ -1828,7 +1847,8 @@ impl AttackCruiserGame {
         let player_bvh = bvhs.get(&config.player.ship).cloned();
 
         let mut actor_id_pool = AttackCruiserActorIdPool::new();
-        let mut npcs = BTreeMap::new();
+        let mut npcs = HashMap::new();
+        let mut actors_by_ship_name = HashMap::new();
 
         let mut players = ArrayVec::new();
         players.push(player1);
@@ -1841,6 +1861,9 @@ impl AttackCruiserGame {
                     player_ship.can_attack_hostiles,
                     &[],
                     &npcs,
+                    &config.player.ship,
+                    &mut actors_by_ship_name,
+                    player_ship.max_alive,
                 )
                 .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
             player_ship.clone(),
@@ -1860,6 +1883,9 @@ impl AttackCruiserGame {
                         player_ship.can_attack_hostiles,
                         &[player_states[0].actor.id],
                         &npcs,
+                        &config.player.ship,
+                        &mut actors_by_ship_name,
+                        player_ship.max_alive,
                     )
                     .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
                 player_ship,
@@ -1875,13 +1901,17 @@ impl AttackCruiserGame {
             .iter()
             .map(|player_state| player_state.actor.id)
             .collect::<Vec<i32>>();
-        let test_npc_ship = config.ship(&String::from("test"));
+        let test_npc_ship_name = "test".to_string();
+        let test_npc_ship = config.ship(&test_npc_ship_name);
         let npc_id1 = actor_id_pool
             .next(
                 test_npc_ship.can_attack_friendlies,
                 test_npc_ship.can_attack_hostiles,
                 player_actor_ids,
                 &npcs,
+                &test_npc_ship_name,
+                &mut actors_by_ship_name,
+                test_npc_ship.max_alive,
             )
             .unwrap();
         npcs.insert(
@@ -1907,6 +1937,9 @@ impl AttackCruiserGame {
                 test_npc_ship.can_attack_hostiles,
                 player_actor_ids,
                 &npcs,
+                &test_npc_ship_name,
+                &mut actors_by_ship_name,
+                test_npc_ship.max_alive,
             )
             .unwrap();
         npcs.insert(
@@ -1932,6 +1965,9 @@ impl AttackCruiserGame {
                 test_npc_ship.can_attack_hostiles,
                 player_actor_ids,
                 &npcs,
+                &test_npc_ship_name,
+                &mut actors_by_ship_name,
+                test_npc_ship.max_alive,
             )
             .unwrap();
         npcs.insert(
@@ -1958,6 +1994,16 @@ impl AttackCruiserGame {
             player2,
             player_states,
             state: AttackCruiserGameState::WaitingForPlayersReady,
+            actors_by_ship_name: HashMap::from([
+                (
+                    config.player.ship.clone(),
+                    HashSet::from_iter(player_actor_ids.iter().copied()),
+                ),
+                (
+                    test_npc_ship_name,
+                    HashSet::from([npc_id1, npc_id2, npc_id3]),
+                ),
+            ]),
             active_player_indices: (0..players.len() as u8).collect(),
             active_players: players,
             group,
@@ -2390,6 +2436,7 @@ impl AttackCruiserGame {
                 .actor
                 .ship
                 .despawn_effect_id,
+            &mut self.actors_by_ship_name,
             self.group,
         );
         packets.push(GamePacket::serialize(&TunneledPacket {
@@ -2409,9 +2456,10 @@ impl AttackCruiserGame {
             .retain(|active_player| *active_player != player);
         self.active_player_indices
             .retain(|player_index| self.player_states[*player_index as usize].guid != player);
-        self.player_states[player_index].lives = 0;
+        let player_state = &mut self.player_states[player_index];
+        player_state.lives = 0;
 
-        minigame_status.total_score = self.player_states[player_index].score;
+        minigame_status.total_score = player_state.score;
         Ok(MinigameRemovePlayerResult {
             broadcasts,
             characters_to_remove: Vec::new(),
@@ -2678,8 +2726,19 @@ impl AttackCruiserGame {
     fn despawn_client_actor(
         actor: &AttackCruiserActor,
         despawn_effect_id: Option<u32>,
+        actors_by_ship_name: &mut HashMap<String, HashSet<i32>>,
         group: MinigameMatchmakingGroup,
     ) -> Vec<Vec<u8>> {
+        // There are usually very few ship types (<10), so the performance cost of iterating
+        // over all ship types is low. If we kept a map of strings to usize, we would need
+        // to clone a string or reference to a string for every actor. That would require
+        // more memory than storing extra i32s and may induce more CPU cache misses than
+        // a contiguous array of IDs.
+        actors_by_ship_name.retain(|_ship_name, ids| {
+            ids.remove(&actor.id);
+            !ids.is_empty()
+        });
+
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserRemoveActor {
@@ -2709,6 +2768,7 @@ impl AttackCruiserGame {
                 .actor
                 .ship
                 .death_end_effect_id,
+            &mut self.actors_by_ship_name,
             self.group,
         );
         let player_state = &mut self.player_states[player_index as usize];
@@ -2720,6 +2780,9 @@ impl AttackCruiserGame {
                 player_state.actor.ship.can_attack_hostiles,
                 player_actor_ids,
                 &self.npcs,
+                &self.config.player.ship,
+                &mut self.actors_by_ship_name,
+                player_state.actor.ship.max_alive,
             )
             .unwrap_or(player_state.actor.id);
         packets.append(
@@ -3397,7 +3460,12 @@ impl AttackCruiserGame {
             if npc.completed_death(now) {
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
-                    Self::despawn_client_actor(npc, npc.ship.death_end_effect_id, self.group),
+                    Self::despawn_client_actor(
+                        npc,
+                        npc.ship.death_end_effect_id,
+                        &mut self.actors_by_ship_name,
+                        self.group,
+                    ),
                 ));
                 return false;
             }
@@ -3459,6 +3527,9 @@ impl AttackCruiserGame {
                 new_npc.ship().can_attack_hostiles,
                 player_actor_ids,
                 &self.npcs,
+                new_npc.ship_name(),
+                &mut self.actors_by_ship_name,
+                new_npc.ship().max_alive,
             ) {
                 Ok(id) => id,
                 Err(err) => {
