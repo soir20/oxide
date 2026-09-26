@@ -3248,13 +3248,45 @@ categories:
                     weapons:
                       primary_tiers:
                         - projectiles:
-                            - composite_effect_id: 1558
+                            - composite_effect_id: 1557
+                              hit_composite_effect_id: 1315
+                              count: 1
+                              damage: 1
+                              length: 25
+                              cooldown_millis: 500
+                              min_launch_angle: !Degrees -60
+                              max_launch_angle: !Degrees 60
+                          actors:
+                            - count: 3
+                              ship: test2
+                              cooldown_millis: 10000
+                              wobble: !Degrees 30
+                              min_launch_angle: !Degrees -60
+                              max_launch_angle: !Degrees 60
+                  test2:
+                    can_attack_friendlies: true
+                    max_alive: 20
+                    model_id: 189
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_roll: !Degrees 15
+                    max_speed: 400.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    death_end_effect_id: 1315
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - composite_effect_id: 1768
                               hit_composite_effect_id: 1315
                               count: 5
                               damage: 1
                               length: 25
                               cooldown_millis: 500
-                              wobble: !Degrees 10
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
                   venator:
@@ -3270,7 +3302,7 @@ categories:
                     max_angular_speed: !Degrees 120
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
-                    max_health: 100
+                    max_health: 10000
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1707
                     invulnerable_effect_id: 1744
