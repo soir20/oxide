@@ -66,7 +66,7 @@ use crate::{
             ui::ExecuteScriptWithStringParams,
             GamePacket, Pos, Pos3, Target,
         },
-        Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
     },
     info,
 };
@@ -1759,11 +1759,12 @@ impl AttackCruiserActorIdPool {
     ) -> Result<i32, ProcessPacketError> {
         let ids_with_ship_name = actors_by_ship_name.entry(ship_name.clone()).or_default();
         if ids_with_ship_name.len() as u16 >= max_alive {
-            return Err(ProcessPacketError::new(
+            return Err(ProcessPacketError::new_with_log_level(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
                     "Attack Cruiser reached maximum number of actors with ship name {ship_name}"
                 ),
+                LogLevel::Debug,
             ));
         }
 
@@ -3533,7 +3534,10 @@ impl AttackCruiserGame {
             ) {
                 Ok(id) => id,
                 Err(err) => {
-                    info!("Attack Cruiser couldn't spawn actor: {err}");
+                    match err.log_level() {
+                        LogLevel::Debug => debug!("Attack Cruiser couldn't spawn actor: {err}"),
+                        LogLevel::Info => info!("Attack Cruiser couldn't spawn actor: {err}"),
+                    }
                     continue;
                 }
             };
