@@ -107,6 +107,7 @@ fn gcd_u16(mut a: u16, mut b: u16) -> u16 {
 
 struct AttackCruiserWeaponLaunchVector {
     origin: Pos3,
+    direction: Pos3,
     speed: Pos3,
     yaw: f32,
     pitch: f32,
@@ -147,6 +148,7 @@ fn launch_vector(
 
     AttackCruiserWeaponLaunchVector {
         origin,
+        direction: wobbled_direction,
         speed,
         yaw,
         pitch,
@@ -1446,6 +1448,7 @@ pub fn process_attack_cruiser_packet(
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectileInstance {
     launched_by_actor_id: i32,
+    direction: Pos3,
     speed: Pos3,
     origin: Pos3,
     launch_time: Instant,
@@ -1524,6 +1527,7 @@ impl AttackCruiserProjectilePool {
                 projectile_id,
                 AttackCruiserProjectileInstance {
                     launched_by_actor_id,
+                    direction: launch_location.direction,
                     speed: launch_location.speed,
                     origin: launch_location.origin,
                     launch_time: now,
@@ -1593,10 +1597,11 @@ impl AttackCruiserProjectilePool {
                     .saturating_duration_since(projectile.launch_time)
                     .as_secs_f32();
 
-                let global_start = Vec3::from(projectile.origin)
-                    + Vec3::from(projectile.speed) * secs_since_launch;
+                let global_speed = Vec3::from(projectile.speed);
+                let global_start = Vec3::from(projectile.origin) + global_speed * secs_since_launch;
 
-                let max_projectile_travel = projectile_speed * delta_secs;
+                let half_projectile_length = projectile_len * 0.5;
+                let max_projectile_travel = projectile_speed * delta_secs + half_projectile_length;
                 let max_ship_travel = Vec3::from(ship_velocity).length() * delta_secs;
                 let max_reach = max_projectile_travel + max_ship_travel + ship_radius;
 
@@ -1636,8 +1641,7 @@ impl AttackCruiserProjectilePool {
                     }
                 });
 
-                let global_speed = Vec3::from(projectile.speed);
-
+                let global_direction = Vec3::from(projectile.direction);
                 let hit = (0..(max_steps as usize)).any(|step_index| {
                     let step_start_secs = if step_index == 0 {
                         0.0
@@ -1653,10 +1657,9 @@ impl AttackCruiserProjectilePool {
                         * (global_start + global_speed * step_start_secs - ship_origin_end);
                     let local_end = inv_rotation_end
                         * (global_start + global_speed * step_secs_end - ship_origin_end);
-
-                    let segment_vector = local_end - local_start;
-                    let projectile_direction = segment_vector.normalize_or_zero();
-                    let half_length_offset = projectile_direction * (projectile_len * 0.5);
+                    let local_direction = inv_rotation_end * global_direction;
+                    
+                    let half_length_offset = local_direction * half_projectile_length;
 
                     let check_start = local_start - half_length_offset;
                     let check_end = local_end + half_length_offset;
