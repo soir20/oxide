@@ -2389,10 +2389,15 @@ impl AttackCruiserGame {
         self.tick_players(now, &mut broadcasts, &hits);
         self.tick_npcs(now, tick_duration, &mut broadcasts, &hits);
 
+        let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
+            .into_values()
+            .flat_map(|hits| hits.into_iter())
+            .collect();
+
         broadcasts.push(Broadcast::Multi(
             self.active_players.to_vec(),
-            hits.into_values()
-                .flat_map(|hits| hits.into_iter())
+            unique_hits
+                .into_iter()
                 .map(|(projectile_id, projectile)| {
                     GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
