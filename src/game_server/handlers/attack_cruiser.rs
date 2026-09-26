@@ -1135,6 +1135,8 @@ struct AttackCruiserProjectileConfig {
     max_launch_angle: Angle,
     length: f32,
     damage: i16,
+    #[serde(default)]
+    self_damage: i16,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1448,7 +1450,7 @@ struct AttackCruiserProjectileInstance {
     speed: Pos3,
     origin: Pos3,
     launch_time: Instant,
-    projectile: Arc<AttackCruiserProjectileConfig>,
+    config: Arc<AttackCruiserProjectileConfig>,
 }
 
 const STEP_CACHE_STACK_LEN: usize = 5;
@@ -1526,7 +1528,7 @@ impl AttackCruiserProjectilePool {
                     speed: launch_location.speed,
                     origin: launch_location.origin,
                     launch_time: now,
-                    projectile: projectile.clone(),
+                    config: projectile.clone(),
                 },
             );
             self.expiry.push(projectile_id, Reverse(expiry_time));
@@ -1548,7 +1550,7 @@ impl AttackCruiserProjectilePool {
         actors: impl IntoIterator<Item = &'a AttackCruiserActor>,
         now: Instant,
         delta: Duration,
-    ) -> BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>> {
+    ) -> BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> {
         let mut projectile_closest: BTreeMap<i32, (i32, f32)> = BTreeMap::new();
 
         for actor in actors {
@@ -1585,8 +1587,8 @@ impl AttackCruiserProjectilePool {
                     continue;
                 }
 
-                let projectile_speed = projectile.projectile.speed;
-                let projectile_len = projectile.projectile.length;
+                let projectile_speed = projectile.config.speed;
+                let projectile_len = projectile.config.length;
 
                 let secs_since_launch = now
                     .saturating_duration_since(projectile.launch_time)
@@ -1674,14 +1676,22 @@ impl AttackCruiserProjectilePool {
             }
         }
 
-        let mut results: BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>> =
+        let mut results: BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> =
             BTreeMap::new();
         for (projectile_id, (actor_id, _)) in projectile_closest {
-            let config = self.remove_unchecked(projectile_id).projectile;
+            let projectile = self.remove_unchecked(projectile_id);
+
+            if projectile.config.self_damage > 0 {
+                results
+                    .entry(projectile.launched_by_actor_id)
+                    .or_default()
+                    .push((projectile_id, projectile.clone()));
+            }
+
             results
                 .entry(actor_id)
                 .or_default()
-                .push((projectile_id, config));
+                .push((projectile_id, projectile));
         }
 
         results
@@ -2393,7 +2403,7 @@ impl AttackCruiserGame {
                                 stage_group_guid: self.group.stage_group_guid,
                             },
                             projectile_id,
-                            despawn_effect_id: projectile.hit_composite_effect_id,
+                            despawn_effect_id: projectile.config.hit_composite_effect_id,
                             delay_seconds: 0.0,
                         },
                     })
@@ -3200,9 +3210,17 @@ impl AttackCruiserGame {
         }
     }
 
-    fn total_damage(projectiles: &[(i32, Arc<AttackCruiserProjectileConfig>)]) -> i16 {
+    fn total_damage(
+        hit_actor_id: i32,
+        projectiles: &[(i32, AttackCruiserProjectileInstance)],
+    ) -> i16 {
         projectiles.iter().fold(0, |total_damage, (_, projectile)| {
-            total_damage.saturating_add(projectile.damage)
+            let damage = match hit_actor_id == projectile.launched_by_actor_id {
+                true => projectile.config.self_damage,
+                false => projectile.config.damage,
+            };
+
+            total_damage.saturating_add(damage)
         })
     }
 
@@ -3210,7 +3228,7 @@ impl AttackCruiserGame {
         &mut self,
         now: Instant,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
+        hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
             let player_index = player_index as usize;
@@ -3321,7 +3339,7 @@ impl AttackCruiserGame {
             let player_state = &mut self.player_states[player_index];
             let actor = &mut player_state.actor;
             if let Some(actor_hits) = hits.get(&actor.id) {
-                let total_damage = Self::total_damage(actor_hits);
+                let total_damage = Self::total_damage(actor.id, actor_hits);
 
                 // If the player still has invulnerability time, process the hits but deal no damage
                 if player_state.vulnerable() {
@@ -3397,7 +3415,7 @@ impl AttackCruiserGame {
         now: Instant,
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &BTreeMap<i32, Vec<(i32, Arc<AttackCruiserProjectileConfig>)>>,
+        hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
     ) {
         let (friendlies, hostiles) = self.list_actors_by_hostility();
 
@@ -3437,7 +3455,7 @@ impl AttackCruiserGame {
                 }
 
                 if let Some(actor_hits) = hits.get(&npc.id) {
-                    let total_damage = Self::total_damage(actor_hits);
+                    let total_damage = Self::total_damage(npc.id, actor_hits);
                     npc.damage(total_damage, now);
 
                     if npc.dead() {
