@@ -1113,7 +1113,7 @@ struct AttackCruiserPlanetConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserProjectileConfig {
-    composite_effect_id: u32,
+    composite_effect_id: Option<u32>,
     hit_composite_effect_id: u32,
     #[serde(default = "default_yaw")]
     yaw: Angle,
@@ -1658,7 +1658,7 @@ impl AttackCruiserProjectilePool {
                     let local_end = inv_rotation_end
                         * (global_start + global_speed * step_secs_end - ship_origin_end);
                     let local_direction = inv_rotation_end * global_direction;
-                    
+
                     let half_length_offset = local_direction * half_projectile_length;
 
                     let check_start = local_start - half_length_offset;
@@ -3076,7 +3076,7 @@ impl AttackCruiserGame {
                                 },
                                 projectile_id: launched_projectile.projectile_id,
                                 unknown2: 0,
-                                effect_id: projectile.composite_effect_id,
+                                effect_id: projectile.composite_effect_id.unwrap_or_default(),
                                 despawn_effect_id: 0,
                                 lifetime_seconds: f32::from(projectile.lifetime_millis) / 1000.0,
                                 origin: launched_projectile.origin,
