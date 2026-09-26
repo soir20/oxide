@@ -139,12 +139,11 @@ fn launch_vector(
         };
 
     let origin = actor_origin + launch_offset;
-    let speed = rotate(direction, relative_yaw, wobble) * speed;
+    let wobbled_direction = rotate(direction, relative_yaw, wobble);
+    let speed = wobbled_direction * speed;
 
-    let speed_length = (speed.x * speed.x + speed.y * speed.y + speed.z * speed.z).sqrt();
-
-    let yaw = speed.x.atan2(speed.z);
-    let pitch = -zero_nan(speed.y / speed_length).asin();
+    let yaw = wobbled_direction.x.atan2(wobbled_direction.z);
+    let pitch = -zero_nan(wobbled_direction.y).asin();
 
     AttackCruiserWeaponLaunchVector {
         origin,
