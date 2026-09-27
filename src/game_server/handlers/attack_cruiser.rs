@@ -2412,9 +2412,7 @@ impl AttackCruiserGame {
             unique_hits
                 .into_iter()
                 .filter_map(|(projectile_id, projectile)| {
-                    if projectile.config.composite_effect_id.is_none() {
-                        return None;
-                    }
+                    projectile.config.composite_effect_id?;
 
                     Some(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
