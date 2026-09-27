@@ -3316,7 +3316,7 @@ categories:
                               speed: 0
                               wobble: !Degrees 0
                               damage: 2
-                              self_damage: 1
+                              self_damage: 100
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
