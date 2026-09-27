@@ -2412,7 +2412,7 @@ impl AttackCruiserGame {
             unique_hits
                 .into_iter()
                 .filter_map(|(projectile_id, projectile)| {
-                    if projectile.config.composite_effect_id.is_some() {
+                    if projectile.config.composite_effect_id.is_none() {
                         return None;
                     }
 
