@@ -3290,8 +3290,8 @@ categories:
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
-                              min_launch_angle: !Degrees -60
-                              max_launch_angle: !Degrees 60
+                              min_launch_angle: !Degrees -90
+                              max_launch_angle: !Degrees 90
                   test3:
                     can_attack_hostiles: true
                     trackable: false
@@ -3320,8 +3320,8 @@ categories:
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
-                              min_launch_angle: !Degrees -60
-                              max_launch_angle: !Degrees 60
+                              min_launch_angle: !Degrees -90
+                              max_launch_angle: !Degrees 90
                   venator:
                     can_attack_hostiles: true
                     max_alive: 4
