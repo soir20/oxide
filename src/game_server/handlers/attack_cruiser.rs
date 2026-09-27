@@ -1554,6 +1554,7 @@ impl AttackCruiserProjectilePool {
         now: Instant,
         delta: Duration,
     ) -> BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> {
+        self.expire(now);
         let mut projectile_closest: BTreeMap<i32, (i32, f32)> = BTreeMap::new();
 
         for actor in actors {
