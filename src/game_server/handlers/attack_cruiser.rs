@@ -993,7 +993,7 @@ const fn default_wipe_style() -> AttackCruiserCinematicStyle {
     AttackCruiserCinematicStyle::Random
 }
 
-const fn default_trackable() -> bool {
+const fn default_true() -> bool {
     true
 }
 
@@ -1265,8 +1265,10 @@ struct AttackCruiserShipConfig {
     can_attack_friendlies: bool,
     #[serde(default)]
     can_attack_hostiles: bool,
-    #[serde(default = "default_trackable")]
+    #[serde(default = "default_true")]
     trackable: bool,
+    #[serde(default = "default_true")]
+    show_directional_indicator: bool,
     max_alive: u16,
     model_id: u32,
     asset_name: String,
@@ -1828,13 +1830,14 @@ impl AttackCruiserActorIdPool {
         actor_id & Self::ATTACK_HOSTILE_MASK != 0
     }
 
-    pub fn hostility(actor_id: i32) -> AttackCruiserHostility {
+    pub fn hostility(actor_id: i32, show_directional_indicator: bool) -> AttackCruiserHostility {
         match (
+            show_directional_indicator,
             Self::can_attack_friendlies(actor_id),
             Self::can_attack_hostiles(actor_id),
         ) {
-            (true, false) => AttackCruiserHostility::Hostile,
-            (false, true) => AttackCruiserHostility::Friendly,
+            (true, true, false) => AttackCruiserHostility::Hostile,
+            (true, false, true) => AttackCruiserHostility::Friendly,
             _ => AttackCruiserHostility::Neutral,
         }
     }
@@ -2702,7 +2705,10 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: AttackCruiserActorIdPool::hostility(actor.id),
+                hostility: AttackCruiserActorIdPool::hostility(
+                    actor.id,
+                    actor.ship.show_directional_indicator,
+                ),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
