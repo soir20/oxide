@@ -3483,14 +3483,10 @@ categories:
                               ship: test3
                               cooldown_millis: 4000
                               yaw: !Degrees -5
-                              min_launch_angle: !Degrees -30
-                              max_launch_angle: !Degrees 30
                             - count: 1
                               ship: test3
                               cooldown_millis: 4000
                               yaw: !Degrees 5
-                              min_launch_angle: !Degrees -30
-                              max_launch_angle: !Degrees 30
                 sound_id: 2413
               zone_template_guid: 250
               score_to_credits_expression: x / 129
