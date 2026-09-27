@@ -1963,7 +1963,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.pos
                     + Pos3 {
                         x: 100.0,
-                        y: 50.0,
+                        y: 25.0,
                         z: 100.0,
                     },
                 config.player.spawn2.yaw.to_radians(),
@@ -1991,7 +1991,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.pos
                     - Pos3 {
                         x: 100.0,
-                        y: 50.0,
+                        y: 25.0,
                         z: 100.0,
                     },
                 config.player.spawn2.yaw.to_radians(),
