@@ -308,6 +308,10 @@ impl AttackCruiserActor {
         actor
     }
 
+    pub fn trackable(&self) -> bool {
+        !self.dead() && self.ship.trackable
+    }
+
     pub fn dead(&self) -> bool {
         self.health == 0
     }
@@ -900,7 +904,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn trackable(&self) -> bool {
-        !self.actor.dead()
+        self.actor.trackable()
             && !self
                 .bounds
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
@@ -987,6 +991,10 @@ const fn default_screen_relative_turning() -> bool {
 
 const fn default_wipe_style() -> AttackCruiserCinematicStyle {
     AttackCruiserCinematicStyle::Random
+}
+
+const fn default_trackable() -> bool {
+    true
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1257,6 +1265,8 @@ struct AttackCruiserShipConfig {
     can_attack_friendlies: bool,
     #[serde(default)]
     can_attack_hostiles: bool,
+    #[serde(default = "default_trackable")]
+    trackable: bool,
     max_alive: u16,
     model_id: u32,
     asset_name: String,
@@ -3524,7 +3534,7 @@ impl AttackCruiserGame {
             })
             .collect();
         let mut hostiles = Vec::new();
-        for npc in self.npcs.values().filter(|npc| !npc.dead()) {
+        for npc in self.npcs.values().filter(|npc| npc.trackable()) {
             if AttackCruiserActorIdPool::can_attack_friendlies(npc.id) {
                 hostiles.push(AttackCruiserActorTarget {
                     id: npc.id,

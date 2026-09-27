@@ -3264,6 +3264,7 @@ categories:
                               max_launch_angle: !Degrees 30
                   test2:
                     can_attack_friendlies: true
+                    trackable: false
                     max_alive: 20
                     model_id: 98
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3293,6 +3294,7 @@ categories:
                               max_launch_angle: !Degrees 60
                   test3:
                     can_attack_hostiles: true
+                    trackable: false
                     max_alive: 20
                     model_id: 98
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3303,7 +3305,7 @@ categories:
                     max_angular_speed: !Degrees 120
                     angular_acceleration: !Degrees 240
                     angular_deceleration: !Degrees 240
-                    max_health: 1
+                    max_health: 100
                     overhead_health_scale: 0.0
                     thruster_effect_id: 1297
                     death_end_effect_id: 1315
