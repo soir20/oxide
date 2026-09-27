@@ -2411,8 +2411,12 @@ impl AttackCruiserGame {
             self.active_players.to_vec(),
             unique_hits
                 .into_iter()
-                .map(|(projectile_id, projectile)| {
-                    GamePacket::serialize(&TunneledPacket {
+                .filter_map(|(projectile_id, projectile)| {
+                    if projectile.config.composite_effect_id.is_some() {
+                        return None;
+                    }
+
+                    Some(GamePacket::serialize(&TunneledPacket {
                         unknown1: true,
                         inner: AttackCruiserRemoveProjectile {
                             minigame_header: MinigameHeader {
@@ -2424,7 +2428,7 @@ impl AttackCruiserGame {
                             despawn_effect_id: projectile.config.hit_composite_effect_id,
                             delay_seconds: 0.0,
                         },
-                    })
+                    }))
                 })
                 .collect(),
         ));
@@ -3076,8 +3080,8 @@ impl AttackCruiserGame {
                 projectile_pool
                     .launch(rng, actor_id, actor_pos, direction, projectile, now)?
                     .into_iter()
-                    .map(|launched_projectile| {
-                        GamePacket::serialize(&TunneledPacket {
+                    .filter_map(|launched_projectile| {
+                        Some(GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
                             inner: AttackCruiserAddProjectile {
                                 minigame_header: MinigameHeader {
@@ -3087,7 +3091,7 @@ impl AttackCruiserGame {
                                 },
                                 projectile_id: launched_projectile.projectile_id,
                                 unknown2: 0,
-                                effect_id: projectile.composite_effect_id.unwrap_or_default(),
+                                effect_id: projectile.composite_effect_id?,
                                 despawn_effect_id: 0,
                                 lifetime_seconds: f32::from(projectile.lifetime_millis) / 1000.0,
                                 origin: launched_projectile.origin,
@@ -3099,7 +3103,7 @@ impl AttackCruiserGame {
                                 unknown12: 0.0,
                                 unknown13: 0,
                             },
-                        })
+                        }))
                     }),
             );
         }
