@@ -21,6 +21,7 @@ use crate::{
         },
         navmesh::{Collision, Navmesh, NavmeshWaypoint, NonLinearPathState},
         packets::{
+            combat::ProcessedAttack,
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
             command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget},
@@ -28,7 +29,7 @@ use crate::{
             minigame::ScoreEntry,
             player_update::{
                 AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
-                CustomizationSlot, HitPointModification, Hostility, HudMessage, Icon, MoveOnRail,
+                CustomizationSlot, Hostility, HudMessage, Icon, MoveOnRail,
                 NameplateImage, NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect,
                 QueueAnimation, RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard,
                 RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
@@ -512,14 +513,17 @@ impl BaseNpc {
         if character.health < character.max_health && self.show_health {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: HitPointModification {
-                    attacker_guid: 0,
+                inner: ProcessedAttack {
+                    attacker_guid1: 0,
+                    attacker_guid2: 0,
                     receiver_guid: Guid::guid(character),
-                    show_hp_delta: false,
+                    damage_dealt: 0,
                     max_hp: character.max_health as i32,
-                    new_hp: character.health as i32,
-                    hp_delta: (character.health as i32).saturating_sub(character.max_health as i32),
-                    critical: false,
+                    receiver_composite_effect_id: 0,
+                    use_hurt_animation: false,
+                    unknown1: false,
+                    attacker_composite_effect_id: 0,
+                    current_hp: character.health as i32,
                 },
             }));
         }

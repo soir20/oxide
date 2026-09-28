@@ -20,12 +20,12 @@ pub struct ProcessedAttack {
     pub attacker_guid2: u64,
     pub receiver_guid: u64,
     pub damage_dealt: u32,
-    pub max_hp: u32,
+    pub max_hp: i32,
     pub receiver_composite_effect_id: u32,
     pub use_hurt_animation: bool,
     pub unknown1: bool,
     pub attacker_composite_effect_id: u32,
-    pub current_hp: u32,
+    pub current_hp: i32,
 }
 
 impl GamePacket for ProcessedAttack {
