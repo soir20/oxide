@@ -3265,7 +3265,7 @@ categories:
                   test2:
                     can_attack_friendlies: true
                     trackable: false
-                    show_directional_indicator: false
+                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 98
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3296,7 +3296,7 @@ categories:
                   test3:
                     can_attack_hostiles: true
                     trackable: false
-                    show_directional_indicator: false
+                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 98
                     asset_name: Ship_RepublicDestroyer_bbe

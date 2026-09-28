@@ -1268,7 +1268,7 @@ struct AttackCruiserShipConfig {
     #[serde(default = "default_true")]
     trackable: bool,
     #[serde(default = "default_true")]
-    show_directional_indicator: bool,
+    show_arrow_to_player: bool,
     max_alive: u16,
     model_id: u32,
     asset_name: String,
@@ -2254,7 +2254,7 @@ impl AttackCruiserGame {
                                 AttackCruiserComplexPhysicsConfig {
                                     base_config: AttackCruiserBasePhysicsConfig {
                                         contact_response: AttackCruiserBool(true),
-                                        mass: match ship.show_directional_indicator {
+                                        mass: match ship.show_arrow_to_player {
                                             true => 1.0,
                                             false => 0.1,
                                         },
