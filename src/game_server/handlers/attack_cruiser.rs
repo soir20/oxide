@@ -321,7 +321,9 @@ impl AttackCruiserActor {
 
     pub fn expired(&self, now: Instant) -> bool {
         match self.ship.lifetime_millis {
-            Some(lifetime_millis) => self.spawn_time + Duration::from_millis(lifetime_millis.into()) < now,
+            Some(lifetime_millis) => {
+                self.spawn_time + Duration::from_millis(lifetime_millis.into()) < now
+            }
             None => false,
         }
     }
@@ -1162,6 +1164,22 @@ struct AttackCruiserProjectileConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserDeathSpawnedShipConfig {
+    ship: String,
+    #[serde(default = "default_yaw")]
+    yaw: Angle,
+    #[serde(default = "default_wobble")]
+    wobble: Angle,
+    #[serde(default = "default_count")]
+    count: u8,
+    #[serde(default = "default_launch_offset")]
+    launch_offset: f32,
+    #[serde(default = "default_launch_height")]
+    launch_height: f32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserLaunchedShipConfig {
     ship: String,
     #[serde(default = "default_yaw")]
@@ -1303,6 +1321,8 @@ struct AttackCruiserShipConfig {
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
     lifetime_millis: Option<u32>,
+    #[serde(default)]
+    ships_on_death: Vec<AttackCruiserDeathSpawnedShipConfig>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -2414,6 +2434,7 @@ impl AttackCruiserGame {
         }
 
         let mut broadcasts = Vec::new();
+        let mut pending_npcs = Vec::new();
         let hits = self.projectiles.hits(
             self.active_player_indices
                 .iter()
@@ -2424,8 +2445,14 @@ impl AttackCruiserGame {
             now,
             tick_duration,
         );
-        self.tick_players(now, &mut broadcasts, &hits);
-        self.tick_npcs(now, tick_duration, &mut broadcasts, &hits);
+        self.tick_players(now, &mut broadcasts, &hits, &mut pending_npcs);
+        self.tick_npcs(
+            now,
+            tick_duration,
+            &mut broadcasts,
+            &hits,
+            &mut pending_npcs,
+        );
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
             .into_values()
@@ -2455,6 +2482,8 @@ impl AttackCruiserGame {
                 })
                 .collect(),
         ));
+
+        broadcasts.append(&mut self.finalize_actors(pending_npcs));
 
         broadcasts
     }
@@ -3278,6 +3307,7 @@ impl AttackCruiserGame {
         now: Instant,
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        pending_npcs: &mut Vec<AttackCruiserPendingActor>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
             let player_index = player_index as usize;
@@ -3339,6 +3369,13 @@ impl AttackCruiserGame {
 
             let player_state = &mut self.player_states[player_index];
             if player_state.respawnable(now) {
+                pending_npcs.append(&mut Self::spawn_actors_on_death(
+                    &player_state.actor,
+                    now,
+                    &self.config,
+                    &self.bvhs,
+                ));
+
                 player_state.respawn(
                     Duration::from_millis(
                         self.config
@@ -3465,10 +3502,10 @@ impl AttackCruiserGame {
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        pending_npcs: &mut Vec<AttackCruiserPendingActor>,
     ) {
         let (friendlies, hostiles) = self.list_actors_by_hostility();
 
-        let mut pending_npcs = Vec::new();
         self.npcs.retain(|_, npc| {
             if npc.paused() {
                 return true;
@@ -3526,6 +3563,13 @@ impl AttackCruiserGame {
             ));
 
             if npc.completed_death(now) {
+                pending_npcs.append(&mut Self::spawn_actors_on_death(
+                    npc,
+                    now,
+                    &self.config,
+                    &self.bvhs,
+                ));
+
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
                     Self::despawn_client_actor(
@@ -3553,8 +3597,6 @@ impl AttackCruiserGame {
 
             true
         });
-
-        broadcasts.append(&mut self.finalize_actors(pending_npcs));
     }
 
     fn list_actors_by_hostility(
@@ -3597,6 +3639,58 @@ impl AttackCruiserGame {
         }
 
         (friendlies, hostiles)
+    }
+
+    fn spawn_actors_on_death(
+        actor: &AttackCruiserActor,
+        now: Instant,
+        config: &AttackCruiserConfig,
+        bvhs: &HashMap<String, Arc<Bvh>>,
+    ) -> Vec<AttackCruiserPendingActor> {
+        let rng = &mut thread_rng();
+        let mut new_npcs = Vec::new();
+
+        let direction = Pos3 {
+            x: actor.yaw.sin(),
+            y: 0.0,
+            z: actor.yaw.cos(),
+        };
+
+        for launched_actor in actor.ship.ships_on_death.iter() {
+            let ship = config.ship(&launched_actor.ship);
+            let bvh = bvhs.get(&launched_actor.ship).cloned();
+            if bvh.is_none() {
+                info!(
+                    "Missing BVH for Attack Cruiser NPC ship {} spawned on death. Defaulting to empty BVH.",
+                    launched_actor.ship
+                );
+            }
+
+            for _ in 0..launched_actor.count {
+                let launch_vector = launch_vector(
+                    rng,
+                    actor.pos,
+                    direction,
+                    ship.max_speed,
+                    launched_actor.wobble,
+                    launched_actor.yaw,
+                    launched_actor.launch_offset,
+                    launched_actor.launch_height,
+                );
+                new_npcs.push(AttackCruiserPendingActor::new(
+                    launch_vector.origin,
+                    launch_vector.yaw,
+                    ship.max_speed,
+                    0.0,
+                    bvh.clone(),
+                    ship.clone(),
+                    launched_actor.ship.clone(),
+                    now,
+                ));
+            }
+        }
+
+        new_npcs
     }
 
     fn finalize_actors(&mut self, pending_npcs: Vec<AttackCruiserPendingActor>) -> Vec<Broadcast> {
