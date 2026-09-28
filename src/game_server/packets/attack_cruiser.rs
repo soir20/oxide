@@ -1310,7 +1310,6 @@ impl GamePacket for AttackCruiserRemoveProjectile {
 #[repr(i32)]
 pub enum AttackCruiserHostility {
     Hostile = -1,
-    Neutral = 0,
     Friendly = 1,
 }
 

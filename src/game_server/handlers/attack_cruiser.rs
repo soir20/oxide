@@ -1830,15 +1830,10 @@ impl AttackCruiserActorIdPool {
         actor_id & Self::ATTACK_HOSTILE_MASK != 0
     }
 
-    pub fn hostility(actor_id: i32, show_directional_indicator: bool) -> AttackCruiserHostility {
-        match (
-            show_directional_indicator,
-            Self::can_attack_friendlies(actor_id),
-            Self::can_attack_hostiles(actor_id),
-        ) {
-            (true, true, false) => AttackCruiserHostility::Hostile,
-            (true, false, true) => AttackCruiserHostility::Friendly,
-            _ => AttackCruiserHostility::Neutral,
+    pub fn hostility(actor_id: i32) -> AttackCruiserHostility {
+        match Self::can_attack_friendlies(actor_id) {
+            true => AttackCruiserHostility::Hostile,
+            _ => AttackCruiserHostility::Friendly,
         }
     }
 }
@@ -2259,7 +2254,10 @@ impl AttackCruiserGame {
                                 AttackCruiserComplexPhysicsConfig {
                                     base_config: AttackCruiserBasePhysicsConfig {
                                         contact_response: AttackCruiserBool(true),
-                                        mass: 1.0,
+                                        mass: match ship.show_directional_indicator {
+                                            true => 1.0,
+                                            false => 0.1,
+                                        },
                                         length: 1.0,
                                         width: 1.0,
                                         height: 1.0,
@@ -2705,10 +2703,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: AttackCruiserActorIdPool::hostility(
-                    actor.id,
-                    actor.ship.show_directional_indicator,
-                ),
+                hostility: AttackCruiserActorIdPool::hostility(actor.id),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
