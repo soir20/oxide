@@ -1301,7 +1301,7 @@ struct AttackCruiserShipConfig {
     show_arrow_to_player: bool,
     max_alive: u16,
     model_id: u32,
-    asset_name: String,
+    asset_name: Option<String>,
     #[serde(default)]
     enable_collision: bool,
     max_roll: Angle,
@@ -1410,15 +1410,17 @@ impl AttackCruiserConfig {
         self.ships
             .iter()
             .filter_map(|(ship_name, ship)| {
-                let result = bvhs.get(&ship.asset_name)
-                    .cloned()
-                    .map(|bvh| (ship_name.clone(), bvh));
+                ship.asset_name.as_ref().and_then(|asset_name| {
+                    let result = bvhs.get(asset_name)
+                        .cloned()
+                        .map(|bvh| (ship_name.clone(), bvh));
 
-                if result.is_none() {
-                    info!("Attack Cruiser ship {ship_name} has no valid BVH {}. Defaulting to empty BVH.", ship.asset_name);
-                }
+                    if result.is_none() {
+                        info!("Attack Cruiser ship {ship_name} has no valid BVH {asset_name}. Defaulting to empty BVH.");
+                    }
 
-                result
+                    result
+                })
             })
             .collect()
     }
@@ -2347,10 +2349,11 @@ impl AttackCruiserGame {
                                             death_effect_id: 0,
                                             despawn_effect_id: 0,
                                             explode_offset: 0.0,
-                                            collision_asset_name: format!(
-                                                "{}.cdt",
-                                                ship.asset_name
-                                            ),
+                                            collision_asset_name: ship
+                                                .asset_name
+                                                .as_ref()
+                                                .map(|asset_name| format!("{asset_name}.cdt",))
+                                                .unwrap_or_default(),
                                             physics_config: AttackCruiserStartupConfigReference {
                                                 class:
                                                     AttackCruiserStartupConfigClass::ComplexPhysics,
@@ -3167,12 +3170,6 @@ impl AttackCruiserGame {
         for (launched_actor, direction) in actors {
             let ship = config.ship(&launched_actor.ship);
             let bvh = bvhs.get(&launched_actor.ship).cloned();
-            if bvh.is_none() {
-                info!(
-                    "Missing BVH for Attack Cruiser NPC ship {}. Defaulting to empty BVH.",
-                    launched_actor.ship
-                );
-            }
 
             for _ in 0..launched_actor.count {
                 let launch_vector = launch_vector(
@@ -3659,12 +3656,6 @@ impl AttackCruiserGame {
         for launched_actor in actor.ship.ships_on_death.iter() {
             let ship = config.ship(&launched_actor.ship);
             let bvh = bvhs.get(&launched_actor.ship).cloned();
-            if bvh.is_none() {
-                info!(
-                    "Missing BVH for Attack Cruiser NPC ship {} spawned on death. Defaulting to empty BVH.",
-                    launched_actor.ship
-                );
-            }
 
             for _ in 0..launched_actor.count {
                 let launch_vector = launch_vector(
