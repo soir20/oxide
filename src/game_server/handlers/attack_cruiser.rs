@@ -1830,10 +1830,14 @@ impl AttackCruiserActorIdPool {
         actor_id & Self::ATTACK_HOSTILE_MASK != 0
     }
 
-    pub fn hostility(actor_id: i32) -> AttackCruiserHostility {
-        match Self::can_attack_friendlies(actor_id) {
-            true => AttackCruiserHostility::Hostile,
-            _ => AttackCruiserHostility::Friendly,
+    pub fn hostility(actor_id: i32, show_directional_indicator: bool) -> AttackCruiserHostility {
+        match (
+            show_directional_indicator,
+            Self::can_attack_friendlies(actor_id),
+        ) {
+            (true, true) => AttackCruiserHostility::Hostile,
+            (true, false) => AttackCruiserHostility::Friendly,
+            _ => AttackCruiserHostility::Neutral,
         }
     }
 }
@@ -2703,7 +2707,10 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: AttackCruiserActorIdPool::hostility(actor.id),
+                hostility: AttackCruiserActorIdPool::hostility(
+                    actor.id,
+                    actor.ship.show_arrow_to_player,
+                ),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
