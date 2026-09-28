@@ -270,6 +270,7 @@ struct AttackCruiserActor {
     pub primary_weapon_tier: usize,
     pub primary_weapon_projectile_last_used: Vec<Option<Instant>>,
     pub primary_weapon_actor_last_used: Vec<Option<Instant>>,
+    pub spawn_time: Instant,
 }
 
 impl AttackCruiserActor {
@@ -281,6 +282,7 @@ impl AttackCruiserActor {
         angular_speed: f32,
         bvh: Option<Arc<Bvh>>,
         ship: Arc<AttackCruiserShipConfig>,
+        now: Instant,
     ) -> Self {
         let mut actor = AttackCruiserActor {
             id,
@@ -301,6 +303,7 @@ impl AttackCruiserActor {
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
             ship,
+            spawn_time: now,
         };
 
         actor.set_primary_weapon_tier(0);
@@ -314,6 +317,13 @@ impl AttackCruiserActor {
 
     pub fn dead(&self) -> bool {
         self.health == 0
+    }
+
+    pub fn expired(&self, now: Instant) -> bool {
+        match self.ship.lifetime_millis {
+            Some(lifetime_millis) => self.spawn_time + Duration::from_millis(lifetime_millis.into()) < now,
+            None => false,
+        }
     }
 
     pub fn paused(&self) -> bool {
@@ -753,9 +763,10 @@ impl AttackCruiserPendingActor {
         bvh: Option<Arc<Bvh>>,
         ship: Arc<AttackCruiserShipConfig>,
         ship_name: String,
+        now: Instant,
     ) -> Self {
         AttackCruiserPendingActor {
-            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship),
+            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship, now),
             ship_name,
         }
     }
@@ -853,11 +864,12 @@ impl AttackCruiserPlayer {
         pos: Pos3,
         yaw: f32,
         bvh: Option<Arc<Bvh>>,
+        now: Instant,
     ) -> Self {
         AttackCruiserPlayer {
             guid,
             ready: false,
-            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship),
+            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship, now),
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -880,7 +892,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn lost(&self, now: Instant) -> bool {
-        self.lives == 0 && self.completed_death(now)
+        (self.lives == 0 && self.completed_death(now)) || self.actor.expired(now)
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
@@ -1290,6 +1302,7 @@ struct AttackCruiserShipConfig {
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
+    lifetime_millis: Option<u32>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -1876,6 +1889,8 @@ impl AttackCruiserGame {
         let mut npcs = HashMap::new();
         let mut actors_by_ship_name = HashMap::new();
 
+        let now = Instant::now();
+
         let mut players = ArrayVec::new();
         players.push(player1);
         let mut player_states = ArrayVec::new();
@@ -1897,6 +1912,7 @@ impl AttackCruiserGame {
             config.player.spawn1.pos,
             config.player.spawn1.yaw.to_radians(),
             player_bvh.clone(),
+            now,
         ));
 
         if let Some(player2) = player2 {
@@ -1919,6 +1935,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.pos,
                 config.player.spawn2.yaw.to_radians(),
                 player_bvh.clone(),
+                now,
             ));
         }
 
@@ -1955,6 +1972,7 @@ impl AttackCruiserGame {
                 0.0,
                 player_bvh.clone(),
                 test_npc_ship.clone(),
+                now,
             ),
         );
         let npc_id2 = actor_id_pool
@@ -1983,6 +2001,7 @@ impl AttackCruiserGame {
                 0.0,
                 player_bvh.clone(),
                 test_npc_ship.clone(),
+                now,
             ),
         );
         let npc_id3 = actor_id_pool
@@ -2011,6 +2030,7 @@ impl AttackCruiserGame {
                 0.0,
                 player_bvh,
                 test_npc_ship.clone(),
+                now,
             ),
         );
 
@@ -3144,6 +3164,7 @@ impl AttackCruiserGame {
                     bvh.clone(),
                     ship.clone(),
                     launched_actor.ship.clone(),
+                    now,
                 ));
             }
         }
@@ -3510,6 +3531,19 @@ impl AttackCruiserGame {
                     Self::despawn_client_actor(
                         npc,
                         npc.ship.death_end_effect_id,
+                        &mut self.actors_by_ship_name,
+                        self.group,
+                    ),
+                ));
+                return false;
+            }
+
+            if npc.expired(now) {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    Self::despawn_client_actor(
+                        npc,
+                        npc.ship.despawn_effect_id,
                         &mut self.actors_by_ship_name,
                         self.group,
                     ),
