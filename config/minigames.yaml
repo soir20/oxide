@@ -3238,6 +3238,9 @@ categories:
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
                     despawn_effect_id: 1718
+                    ships_on_death:
+                      - count: 1
+                        ship: health_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3258,16 +3261,16 @@ categories:
                               max_launch_angle: !Degrees 60
                           ships:
                             - count: 3
-                              ship: test2
-                              cooldown_millis: 30000
+                              ship: enemy_missile
+                              cooldown_millis: 20000
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
-                  test2:
+                  enemy_missile:
                     can_attack_friendlies: true
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
-                    model_id: 98
+                    model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll: !Degrees 15
                     max_speed: 400.0
@@ -3295,12 +3298,12 @@ categories:
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
-                  test3:
+                  player_missile:
                     can_attack_hostiles: true
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
-                    model_id: 98
+                    model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_roll: !Degrees 15
                     max_speed: 400.0
@@ -3328,6 +3331,35 @@ categories:
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
+                  health_powerup:
+                    can_attack_friendlies: true
+                    trackable: false
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 25.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1545
+                    death_end_effect_id: 1774
+                    despawn_effect_id: 1774
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1774
+                              speed: 0
+                              wobble: !Degrees 0
+                              damage: -20
+                              self_damage: 1
+                              length: 100
+                              cooldown_millis: 50
+                              lifetime_millis: 50
                   venator:
                     can_attack_hostiles: true
                     max_alive: 4
@@ -3486,11 +3518,11 @@ categories:
                               cooldown_millis: 250
                           ships:
                             - count: 1
-                              ship: test3
+                              ship: player_missile
                               cooldown_millis: 4000
                               yaw: !Degrees -5
                             - count: 1
-                              ship: test3
+                              ship: player_missile
                               cooldown_millis: 4000
                               yaw: !Degrees 5
                 sound_id: 2413
@@ -10349,7 +10381,7 @@ categories:
                       incorrect_answer_ids: [52269, 52357, 52445]
                     - question_id: 52094
                       correct_answer_id: 52182
-                      incorrect_answer_ids: [52270, 52358, 52446]
+                      incorrect_answer_ids: [52270, 545, 52446]
                     - question_id: 52095
                       correct_answer_id: 52183
                       incorrect_answer_ids: [52271, 52359, 52447]
