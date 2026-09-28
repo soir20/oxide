@@ -407,7 +407,7 @@ impl AttackCruiserActor {
                 .weapons
                 .primary_tiers
                 .first()
-                .map(|weapon| weapon.actors.len())
+                .map(|weapon| weapon.ships.len())
                 .unwrap_or_default()
         ];
     }
@@ -512,7 +512,7 @@ impl AttackCruiserActor {
             .weapons
             .primary_tiers
             .get(self.primary_weapon_tier)
-            .map(|weapon| &weapon.actors);
+            .map(|weapon| &weapon.ships);
 
         let actors =
             actors_opt
@@ -1117,7 +1117,7 @@ impl From<&AttackCruiserIntroCinematicConfig> for AttackCruiserEventCinematicCon
 #[serde(deny_unknown_fields)]
 struct AttackCruiserIntroConfig {
     #[serde(default)]
-    actors: Vec<AttackCruiserIntroActorConfig>,
+    ships: Vec<AttackCruiserIntroActorConfig>,
     #[serde(default)]
     cinematics: Vec<AttackCruiserIntroCinematicConfig>,
 }
@@ -1187,7 +1187,7 @@ struct AttackCruiserPrimaryWeaponConfig {
     #[serde(default)]
     projectiles: Vec<Arc<AttackCruiserProjectileConfig>>,
     #[serde(default)]
-    actors: Vec<AttackCruiserLaunchedShipConfig>,
+    ships: Vec<AttackCruiserLaunchedShipConfig>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -1204,7 +1204,7 @@ impl AttackCruiserWeaponConfig {
                 tier.projectiles
                     .iter()
                     .map(|projectile| projectile.cooldown_millis)
-                    .chain(tier.actors.iter().map(|actor| actor.cooldown_millis))
+                    .chain(tier.ships.iter().map(|actor| actor.cooldown_millis))
             })
             .reduce(gcd_u16)
             .unwrap_or_default()
@@ -2211,7 +2211,7 @@ impl AttackCruiserGame {
                                     "".to_string(),
                                     self.config
                                         .intro
-                                        .actors
+                                        .ships
                                         .iter()
                                         .map(|actor| actor.into())
                                         .collect(),

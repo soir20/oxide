@@ -3169,7 +3169,7 @@ categories:
                   foreground_image_id: 163
                   background_image_id: 164
                 intro:
-                  actors:
+                  ships:
                     - model_id: 580
                       animation_id: 1
                     - model_id: 167
@@ -3256,7 +3256,7 @@ categories:
                               cooldown_millis: 500
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
-                          actors:
+                          ships:
                             - count: 3
                               ship: test2
                               cooldown_millis: 30000
@@ -3484,7 +3484,7 @@ categories:
                               damage: 1
                               length: 75
                               cooldown_millis: 250
-                          actors:
+                          ships:
                             - count: 1
                               ship: test3
                               cooldown_millis: 4000
