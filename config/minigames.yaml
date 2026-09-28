@@ -3338,12 +3338,12 @@ categories:
                     max_alive: 20
                     model_id: 45
                     max_roll: !Degrees 15
-                    max_speed: 25.0
-                    acceleration: 25.0
-                    deceleration: 25.0
-                    max_angular_speed: !Degrees 120
-                    angular_acceleration: !Degrees 240
-                    angular_deceleration: !Degrees 240
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
                     max_health: 1
                     overhead_health_scale: 0.0
                     thruster_effect_id: 1545
