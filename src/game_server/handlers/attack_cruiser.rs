@@ -337,7 +337,10 @@ impl AttackCruiserActor {
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
-        self.health = self.health.saturating_sub_signed(damage);
+        self.health = self
+            .health
+            .saturating_sub_signed(damage)
+            .min(self.ship.max_health);
 
         if self.dead() {
             let death_secs: f32 = self
