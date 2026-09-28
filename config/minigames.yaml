@@ -3281,7 +3281,7 @@ categories:
                     thruster_effect_id: 1532
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
-                    lifetime_millis: 30000
+                    lifetime_millis: 20000
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3314,7 +3314,7 @@ categories:
                     thruster_effect_id: 1297
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
-                    lifetime_millis: 30000
+                    lifetime_millis: 20000
                     weapons:
                       primary_tiers:
                         - projectiles:
