@@ -236,7 +236,7 @@ impl AttackCruiserActorInvulnerability {
         self.timer.schedule_event(duration, now);
     }
 
-    pub fn is_vulnerable(&self) -> bool {
+    pub fn vulnerable(&self) -> bool {
         self.has_phase(AttackCruiserActorInvulnerabilityPhase::Vulnerable)
     }
 
@@ -313,6 +313,10 @@ impl AttackCruiserActor {
 
     pub fn trackable(&self) -> bool {
         !self.dead() && self.ship.trackable
+    }
+
+    pub fn vulnerable(&self) -> bool {
+        self.invulnerability.vulnerable()
     }
 
     pub fn dead(&self) -> bool {
@@ -928,7 +932,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn vulnerable(&self) -> bool {
-        self.trackable() && self.actor.invulnerability.is_vulnerable()
+        self.trackable() && self.actor.vulnerable()
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
@@ -3542,17 +3546,20 @@ impl AttackCruiserGame {
 
                 if let Some(actor_hits) = hits.get(&npc.id) {
                     let total_damage = Self::total_damage(npc.id, actor_hits);
-                    npc.damage(total_damage, now);
 
-                    if npc.dead() {
-                        broadcasts.push(Broadcast::Multi(
-                            self.active_players.to_vec(),
-                            Self::spawn_client_effect(
-                                npc.ship.death_start_effect_id,
-                                npc.pos,
-                                self.group,
-                            ),
-                        ));
+                    if npc.vulnerable() {
+                        npc.damage(total_damage, now);
+
+                        if npc.dead() {
+                            broadcasts.push(Broadcast::Multi(
+                                self.active_players.to_vec(),
+                                Self::spawn_client_effect(
+                                    npc.ship.death_start_effect_id,
+                                    npc.pos,
+                                    self.group,
+                                ),
+                            ));
+                        }
                     }
                 }
             }
