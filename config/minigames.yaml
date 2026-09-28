@@ -3260,8 +3260,8 @@ categories:
                             - count: 3
                               ship: test2
                               cooldown_millis: 30000
-                              min_launch_angle: !Degrees -30
-                              max_launch_angle: !Degrees 30
+                              min_launch_angle: !Degrees -60
+                              max_launch_angle: !Degrees 60
                   test2:
                     can_attack_friendlies: true
                     trackable: false
