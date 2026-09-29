@@ -1244,11 +1244,12 @@ impl AttackCruiserActorDeltas {
             health: self.health.saturating_add(rhs.health),
             primary_tiers: self.primary_tiers.saturating_add(rhs.primary_tiers),
             player_lives: self.player_lives.saturating_add(rhs.player_lives),
-            secondary_item: self.secondary_item.as_ref().and_then(|lhs_item| {
-                rhs.secondary_item
-                    .as_ref()
-                    .map(|rhs_item| lhs_item.saturating_add(rhs_item))
-            }),
+            secondary_item: match (&self.secondary_item, &rhs.secondary_item) {
+                (None, None) => None,
+                (None, Some(rhs_item)) => Some(rhs_item.clone()),
+                (Some(lhs_item), None) => Some(lhs_item.clone()),
+                (Some(lhs_item), Some(rhs_item)) => Some(lhs_item.saturating_add(rhs_item)),
+            },
         }
     }
 }
@@ -3451,7 +3452,6 @@ impl AttackCruiserGame {
             },
             inventory: match update_type.inventory {
                 true => Some(AttackCruiserPlayerStateInventory {
-                    // TODO: handle inventory
                     weapon_tier: 0,
                     primary_quantity: 0,
                     special_quantity: player_state.secondary_item_count.into(),
