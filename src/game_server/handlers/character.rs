@@ -2196,7 +2196,9 @@ impl BaseNpcTemplate {
                 );
             }
 
-            if removal_effect_delay_millis > removal_delay_millis.saturating_add(fade_duration_millis) {
+            if removal_effect_delay_millis
+                > removal_delay_millis.saturating_add(fade_duration_millis)
+            {
                 panic!(
                     "(NPC: {}) in (Zone GUID: {}) has a (Removal Effect Delay: {}ms) greater than \
              total removal time (Fade Duration: {}ms + Removal Delay: {}ms)",
