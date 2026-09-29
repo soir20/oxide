@@ -3303,6 +3303,7 @@ categories:
                                 health: -1
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
@@ -3338,6 +3339,7 @@ categories:
                                 health: -100
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
@@ -3371,6 +3373,7 @@ categories:
                                 health: -1
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   life_powerup:
                     can_attack_friendlies: true
@@ -3402,6 +3405,7 @@ categories:
                                 health: -1
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   weapon_powerup:
                     can_attack_friendlies: true
@@ -3433,6 +3437,7 @@ categories:
                                 health: -1
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   invulnerability_powerup:
                     can_attack_friendlies: true
@@ -3466,6 +3471,7 @@ categories:
                                 health: -1
                               length: 100
                               cooldown_millis: 50
+                              max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   venator:
                     can_attack_hostiles: true

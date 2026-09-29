@@ -479,6 +479,11 @@ impl AttackCruiserActor {
             .filter_map(move |(index, projectile)| {
                 if let Some(last_used_opt) = last_used_slice.get_mut(index) {
                     if let Some(last_used) = last_used_opt {
+                        let max_cooldown_error = projectile
+                            .max_cooldown_error_millis
+                            .map(|millis| Duration::from_millis(millis.into()))
+                            .unwrap_or(max_cooldown_error);
+
                         let adjusted_cooldown =
                             Duration::from_millis(projectile.cooldown_millis.into())
                                 .saturating_sub(max_cooldown_error);
@@ -566,6 +571,11 @@ impl AttackCruiserActor {
                 .filter_map(move |(index, actor)| {
                     if let Some(last_used_opt) = last_used_slice.get_mut(index) {
                         if let Some(last_used) = last_used_opt {
+                            let max_cooldown_error = actor
+                                .max_cooldown_error_millis
+                                .map(|millis| Duration::from_millis(millis.into()))
+                                .unwrap_or(max_cooldown_error);
+
                             let adjusted_cooldown =
                                 Duration::from_millis(actor.cooldown_millis.into())
                                     .saturating_sub(max_cooldown_error);
@@ -1285,6 +1295,7 @@ struct AttackCruiserProjectileConfig {
     #[serde(default = "default_speed")]
     speed: f32,
     cooldown_millis: u16,
+    max_cooldown_error_millis: Option<u16>,
     #[serde(default = "default_lifetime_millis")]
     lifetime_millis: u16,
     #[serde(default = "default_count")]
@@ -1329,6 +1340,7 @@ struct AttackCruiserLaunchedShipConfig {
     #[serde(default = "default_wobble")]
     wobble: Angle,
     cooldown_millis: u16,
+    max_cooldown_error_millis: Option<u16>,
     #[serde(default = "default_count")]
     count: u8,
     #[serde(default = "default_launch_offset")]
