@@ -39,7 +39,7 @@ use crate::{
                 AttackCruiserActorState, AttackCruiserActorUpdate, AttackCruiserAddActor,
                 AttackCruiserAddPlayer, AttackCruiserAddProjectile, AttackCruiserBasePhysicsConfig,
                 AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserChallengeMode,
-                AttackCruiserCinematicStyle, AttackCruiserClickedLocation,
+                AttackCruiserCinematicStyle, AttackCruiserClickType, AttackCruiserClickedLocation,
                 AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
                 AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
                 AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
@@ -388,6 +388,19 @@ impl AttackCruiserActor {
         self.primary_weapon_actor_last_used.clear();
     }
 
+    pub fn use_invulnerable_powerup(&mut self, invulnerability_duration: Duration, now: Instant) {
+        self.invulnerability.set_phase(
+            AttackCruiserActorInvulnerabilityPhase::UsedPowerup,
+            invulnerability_duration,
+            now,
+        );
+    }
+
+    pub fn used_invulnerable_powerup(&self) -> bool {
+        self.invulnerability
+            .has_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup)
+    }
+
     pub fn completed_death(&self, now: Instant) -> bool {
         self.dead()
             && self
@@ -418,11 +431,6 @@ impl AttackCruiserActor {
 
     pub fn complete_respawn(&mut self) {
         self.invulnerability.set_vulnerable();
-    }
-
-    pub fn used_invulnerable_powerup(&self) -> bool {
-        self.invulnerability
-            .has_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup)
     }
 
     pub fn attack_primary(
@@ -879,6 +887,8 @@ struct AttackCruiserPlayer {
     pub bounds: AttackCruiserPlayerBounds,
     pub bounds_warning_hud_timer: MinigameCountdown,
     pub damage_alarm_sound_timer: MinigameCountdown,
+    pub secondary_item: String,
+    pub secondary_item_count: u8,
 }
 
 impl AttackCruiserPlayer {
@@ -905,6 +915,8 @@ impl AttackCruiserPlayer {
             bounds: AttackCruiserPlayerBounds::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
             damage_alarm_sound_timer: MinigameCountdown::new(),
+            secondary_item: "".to_string(),
+            secondary_item_count: 0,
         }
     }
 
@@ -974,6 +986,29 @@ impl AttackCruiserPlayer {
 
     pub fn add_primary_tiers(&mut self, tiers: i16) {
         self.actor.add_primary_weapon_tiers(tiers);
+    }
+
+    pub fn add_secondary_item(&mut self, item: &String, delta_count: i8) {
+        if &self.secondary_item != item {
+            self.secondary_item_count = 0;
+        }
+
+        self.secondary_item = item.clone();
+        self.secondary_item_count = self.secondary_item_count.saturating_add_signed(delta_count);
+    }
+
+    pub fn use_secondary_item(&mut self) -> Option<&String> {
+        if self.secondary_item_count == 0 {
+            return None;
+        }
+
+        self.secondary_item_count -= 1;
+        Some(&self.secondary_item)
+    }
+
+    pub fn use_invulnerable_powerup(&mut self, invulnerability_duration: Duration, now: Instant) {
+        self.actor
+            .use_invulnerable_powerup(invulnerability_duration, now);
     }
 
     pub fn paused(&self) -> bool {
@@ -1172,7 +1207,26 @@ struct AttackCruiserPlanetConfig {
     angular_speed: Angle,
 }
 
-#[derive(Clone, Copy, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserActorSecondaryItemDeltaConfig {
+    name: String,
+    count: i8,
+}
+
+impl AttackCruiserActorSecondaryItemDeltaConfig {
+    fn saturating_add(&self, rhs: &Self) -> Self {
+        AttackCruiserActorSecondaryItemDeltaConfig {
+            name: rhs.name.clone(),
+            count: match self.name == rhs.name {
+                true => self.count.saturating_add(rhs.count),
+                false => rhs.count,
+            },
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserActorDeltas {
     #[serde(default)]
@@ -1181,6 +1235,7 @@ struct AttackCruiserActorDeltas {
     primary_tiers: i16,
     #[serde(default)]
     player_lives: i8,
+    secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
 }
 
 impl AttackCruiserActorDeltas {
@@ -1189,6 +1244,11 @@ impl AttackCruiserActorDeltas {
             health: self.health.saturating_add(rhs.health),
             primary_tiers: self.primary_tiers.saturating_add(rhs.primary_tiers),
             player_lives: self.player_lives.saturating_add(rhs.player_lives),
+            secondary_item: self.secondary_item.as_ref().and_then(|lhs_item| {
+                rhs.secondary_item
+                    .as_ref()
+                    .map(|rhs_item| lhs_item.saturating_add(rhs_item))
+            }),
         }
     }
 }
@@ -1226,7 +1286,7 @@ struct AttackCruiserProjectileConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserDeathSpawnedShipConfig {
+struct AttackCruiserSpawnedShipConfig {
     ship: String,
     #[serde(default = "default_yaw")]
     yaw: Angle,
@@ -1384,7 +1444,7 @@ struct AttackCruiserShipConfig {
     despawn_effect_id: Option<u32>,
     lifetime_millis: Option<u32>,
     #[serde(default)]
-    ships_on_death: Vec<AttackCruiserDeathSpawnedShipConfig>,
+    ships_on_death: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -1415,6 +1475,16 @@ struct AttackCruiserSpawnLocation {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserPlayerSecondaryItemConfig {
+    icon_id: i32,
+    #[serde(default)]
+    actors: Vec<AttackCruiserSpawnedShipConfig>,
+    #[serde(default)]
+    invulnerability_millis: u32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
     lives: u8,
     max_lives: u8,
@@ -1424,6 +1494,8 @@ struct AttackCruiserPlayerConfig {
     post_respawn_invulnerability_millis: u32,
     out_of_bounds_warp_millis: u32,
     out_of_bounds_warp_delay_millis: u32,
+    #[serde(default)]
+    secondary_items: HashMap<String, AttackCruiserPlayerSecondaryItemConfig>,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: String,
@@ -1486,6 +1558,24 @@ impl AttackCruiserConfig {
                 })
             })
             .collect()
+    }
+
+    fn validate_secondary_items(&self) {
+        self.ships.values().for_each(|ship| {
+            ship.weapons.primary_tiers.iter().for_each(|tier| tier.projectiles.iter().for_each(|projectile| {
+                if let Some(secondary_item) = &projectile.self_deltas.secondary_item {
+                    if !self.player.secondary_items.contains_key(&secondary_item.name) {
+                        info!("Attack Cruiser ship self_deltas references unknown secondary item {}", secondary_item.name);
+                    }
+                }
+
+                if let Some(secondary_item) = &projectile.target_deltas.secondary_item {
+                    if !self.player.secondary_items.contains_key(&secondary_item.name) {
+                        info!("Attack Cruiser ship target_deltas references unknown secondary item {}", secondary_item.name);
+                    }
+                }
+            }));
+        });
     }
 }
 
@@ -1963,6 +2053,7 @@ impl AttackCruiserGame {
         group: MinigameMatchmakingGroup,
         bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
+        config.validate_secondary_items();
         let player_ship = config.ship(&config.player.ship);
 
         let bvhs = config.validate_bvhs(bvhs);
@@ -2754,6 +2845,26 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
+        if matches!(click.click_type, AttackCruiserClickType::Right) {
+            let player_state = &mut self.player_states[player_index as usize];
+            let secondary_item_opt =
+                player_state
+                    .use_secondary_item()
+                    .and_then(|secondary_item_name| {
+                        self.config.player.secondary_items.get(secondary_item_name)
+                    });
+
+            if let Some(secondary_item) = secondary_item_opt {
+                if secondary_item.invulnerability_millis > 0 {
+                    player_state.use_invulnerable_powerup(
+                        Duration::from_millis(secondary_item.invulnerability_millis.into()),
+                        now,
+                    );
+                }
+            }
+            return Ok(Vec::new());
+        }
+
         let attacker_pos = Pos {
             x: player_state.actor.pos.x,
             y: player_state.actor.pos.y,
@@ -3343,9 +3454,15 @@ impl AttackCruiserGame {
                     // TODO: handle inventory
                     weapon_tier: 0,
                     primary_quantity: 0,
-                    special_quantity: 0,
+                    special_quantity: player_state.secondary_item_count.into(),
                     unknown4: 0,
-                    special_icon_id: 0,
+                    special_icon_id: self
+                        .config
+                        .player
+                        .secondary_items
+                        .get(&player_state.secondary_item)
+                        .map(|item| item.icon_id)
+                        .unwrap_or_default(),
                     special_id: 0,
                 }),
                 false => None,
@@ -3367,11 +3484,11 @@ impl AttackCruiserGame {
             AttackCruiserActorDeltas::default(),
             |total_deltas, (_, projectile)| {
                 let deltas = match hit_actor_id == projectile.launched_by_actor_id {
-                    true => projectile.config.self_deltas,
-                    false => projectile.config.target_deltas,
+                    true => &projectile.config.self_deltas,
+                    false => &projectile.config.target_deltas,
                 };
 
-                total_deltas.saturating_add(&deltas)
+                total_deltas.saturating_add(deltas)
             },
         )
     }
@@ -3503,6 +3620,9 @@ impl AttackCruiserGame {
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
+                if let Some(secondary_item) = total_deltas.secondary_item {
+                    player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
+                }
 
                 if player_state.dead() {
                     let mut death_packets = Self::spawn_client_effect(
