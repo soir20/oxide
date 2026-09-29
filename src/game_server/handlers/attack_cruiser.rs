@@ -865,6 +865,7 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier_progress: u16,
     pub score_multiplier_tier: u8,
     pub lives: u8,
+    pub max_lives: u8,
     pub bounds: AttackCruiserPlayerBounds,
     pub bounds_warning_hud_timer: MinigameCountdown,
     pub damage_alarm_sound_timer: MinigameCountdown,
@@ -876,6 +877,7 @@ impl AttackCruiserPlayer {
         actor_id: i32,
         ship: Arc<AttackCruiserShipConfig>,
         lives: u8,
+        max_lives: u8,
         pos: Pos3,
         yaw: f32,
         bvh: Option<Arc<Bvh>>,
@@ -889,6 +891,7 @@ impl AttackCruiserPlayer {
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
             lives,
+            max_lives,
             bounds: AttackCruiserPlayerBounds::default(),
             bounds_warning_hud_timer: MinigameCountdown::new(),
             damage_alarm_sound_timer: MinigameCountdown::new(),
@@ -903,11 +906,15 @@ impl AttackCruiserPlayer {
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
-        self.lives > 0 && self.completed_death(now)
+        self.has_lives() && self.completed_death(now)
+    }
+
+    pub fn has_lives(&self) -> bool {
+        self.lives > 0
     }
 
     pub fn lost(&self, now: Instant) -> bool {
-        (self.lives == 0 && self.completed_death(now)) || self.actor.expired(now)
+        (!self.has_lives() && self.completed_death(now)) || self.actor.expired(now)
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
@@ -923,7 +930,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn dead(&self) -> bool {
-        self.actor.dead() || self.lives == 0
+        self.actor.dead() || !self.has_lives()
     }
 
     pub fn respawning(&self) -> bool {
@@ -942,9 +949,17 @@ impl AttackCruiserPlayer {
             self.actor.damage(damage, now);
 
             if self.actor.dead() {
-                self.lives = self.lives.saturating_sub(1);
+                self.add_lives(-1);
             }
         }
+    }
+
+    pub fn add_lives(&mut self, lives: i8) {
+        self.lives = self.lives.saturating_add_signed(lives).max(self.max_lives);
+    }
+
+    pub fn set_lives(&mut self, lives: u8) {
+        self.lives = lives.max(self.max_lives)
     }
 
     pub fn paused(&self) -> bool {
@@ -1366,6 +1381,7 @@ struct AttackCruiserSpawnLocation {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerConfig {
     lives: u8,
+    max_lives: u8,
     damage_alarm_sound_id: u32,
     damage_alarm_health_percent: f32,
     damage_alarm_interval_millis: u32,
@@ -1942,6 +1958,7 @@ impl AttackCruiserGame {
                 .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
             player_ship.clone(),
             config.player.lives,
+            config.player.max_lives,
             config.player.spawn1.pos,
             config.player.spawn1.yaw.to_radians(),
             player_bvh.clone(),
@@ -1965,6 +1982,7 @@ impl AttackCruiserGame {
                     .expect("Attack Cruiser couldn't obtain player actor ID at startup"),
                 player_ship,
                 config.player.lives,
+                config.player.max_lives,
                 config.player.spawn2.pos,
                 config.player.spawn2.yaw.to_radians(),
                 player_bvh.clone(),
@@ -2556,7 +2574,7 @@ impl AttackCruiserGame {
         self.active_player_indices
             .retain(|player_index| self.player_states[*player_index as usize].guid != player);
         let player_state = &mut self.player_states[player_index];
-        player_state.lives = 0;
+        player_state.set_lives(0);
 
         minigame_status.total_score = player_state.score;
         Ok(MinigameRemovePlayerResult {

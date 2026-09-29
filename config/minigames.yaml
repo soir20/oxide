@@ -3190,6 +3190,7 @@ categories:
                   angular_speed: !Radians -0.008
                 player:
                   lives: 3
+                  max_lives: 5
                   damage_alarm_sound_id: 2426
                   damage_alarm_health_percent: 21.0
                   damage_alarm_interval_millis: 2500
