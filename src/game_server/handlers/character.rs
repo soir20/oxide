@@ -2181,6 +2181,34 @@ impl BaseNpcTemplate {
             }
         }
 
+        if let RemovalMode::Graceful {
+            removal_delay_millis,
+            removal_effect_delay_millis,
+            removal_composite_effect_id,
+            fade_duration_millis,
+            ..
+        } = config.removal_mode
+        {
+            if removal_effect_delay_millis > 0 && removal_composite_effect_id == 0 {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a removal effect delay but no removal effect",
+                    npc_name, zone_guid,
+                );
+            }
+
+            if removal_effect_delay_millis > removal_delay_millis.saturating_add(fade_duration_millis) {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a (Removal Effect Delay: {}ms) greater than \
+             total removal time (Fade Duration: {}ms + Removal Delay: {}ms)",
+                    npc_name,
+                    zone_guid,
+                    removal_effect_delay_millis,
+                    fade_duration_millis,
+                    removal_delay_millis,
+                );
+            }
+        }
+
         let resolved_action = config.one_shot_interaction.as_ref().map(|action_config| {
             OneShotInteractionTemplate::from_config(
                 action_config,
