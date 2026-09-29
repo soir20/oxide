@@ -1714,8 +1714,6 @@ impl AttackCruiserProjectilePool {
         projectile: &Arc<AttackCruiserProjectileConfig>,
         now: Instant,
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
-        self.expire(now);
-
         let mut launched_projectiles = Vec::new();
 
         for _ in 0..projectile.count {
@@ -1774,7 +1772,6 @@ impl AttackCruiserProjectilePool {
         now: Instant,
         delta: Duration,
     ) -> BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> {
-        self.expire(now);
         let mut projectile_closest: BTreeMap<i32, (i32, f32)> = BTreeMap::new();
 
         for actor in actors {
@@ -1816,6 +1813,7 @@ impl AttackCruiserProjectilePool {
 
                 let secs_since_launch = now
                     .saturating_duration_since(projectile.launch_time)
+                    .saturating_sub(delta)
                     .as_secs_f32();
 
                 let global_speed = Vec3::from(projectile.speed);
@@ -2612,6 +2610,7 @@ impl AttackCruiserGame {
 
         let mut broadcasts = Vec::new();
         let mut pending_npcs = Vec::new();
+
         let hits = self.projectiles.hits(
             self.active_player_indices
                 .iter()
@@ -2622,6 +2621,8 @@ impl AttackCruiserGame {
             now,
             tick_duration,
         );
+        self.projectiles.expire(now);
+
         self.tick_players(now, &mut broadcasts, &hits, &mut pending_npcs);
         self.tick_npcs(
             now,
