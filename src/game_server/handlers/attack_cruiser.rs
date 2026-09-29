@@ -341,24 +341,30 @@ impl AttackCruiserActor {
     }
 
     pub fn damage(&mut self, damage: i16, now: Instant) {
-        self.health = self
-            .health
-            .saturating_sub_signed(damage)
-            .min(self.ship.max_health);
-
         if self.dead() {
-            let death_secs: f32 = self
-                .ship
-                .animations
-                .iter()
-                .filter(|animation| animation.animation_type.is_death())
-                .map(|animation| animation.duration_seconds)
-                .fold(0.0, |a, b| a.max(b));
-            self.invulnerability.set_phase(
-                AttackCruiserActorInvulnerabilityPhase::Dead,
-                Duration::from_secs_f32(death_secs),
-                now,
-            );
+            return;
+        }
+
+        if self.vulnerable() || damage < 0 {
+            self.health = self
+                .health
+                .saturating_sub_signed(damage)
+                .min(self.ship.max_health);
+
+            if self.dead() {
+                let death_secs: f32 = self
+                    .ship
+                    .animations
+                    .iter()
+                    .filter(|animation| animation.animation_type.is_death())
+                    .map(|animation| animation.duration_seconds)
+                    .fold(0.0, |a, b| a.max(b));
+                self.invulnerability.set_phase(
+                    AttackCruiserActorInvulnerabilityPhase::Dead,
+                    Duration::from_secs_f32(death_secs),
+                    now,
+                );
+            }
         }
     }
 
@@ -931,15 +937,13 @@ impl AttackCruiserPlayer {
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
-    pub fn vulnerable(&self) -> bool {
-        self.trackable() && self.actor.vulnerable()
-    }
-
     pub fn damage(&mut self, damage: i16, now: Instant) {
-        self.actor.damage(damage, now);
+        if self.trackable() {
+            self.actor.damage(damage, now);
 
-        if self.actor.dead() {
-            self.lives = self.lives.saturating_sub(1);
+            if self.actor.dead() {
+                self.lives = self.lives.saturating_sub(1);
+            }
         }
     }
 
@@ -3430,40 +3434,36 @@ impl AttackCruiserGame {
             let actor = &mut player_state.actor;
             if let Some(actor_hits) = hits.get(&actor.id) {
                 let total_damage = Self::total_damage(actor.id, actor_hits);
+                player_state.damage(total_damage, now);
 
-                // If the player still has invulnerability time, process the hits but deal no damage
-                if player_state.vulnerable() {
-                    player_state.damage(total_damage, now);
+                if player_state.dead() {
+                    let mut death_packets = Self::spawn_client_effect(
+                        player_state.actor.ship.death_start_effect_id,
+                        player_state.actor.pos,
+                        self.group,
+                    );
 
-                    if player_state.dead() {
-                        let mut death_packets = Self::spawn_client_effect(
-                            player_state.actor.ship.death_start_effect_id,
-                            player_state.actor.pos,
-                            self.group,
-                        );
+                    let player_state = &self.player_states[player_index];
+                    death_packets.append(&mut self.set_actor_frozen(
+                        &player_state.actor,
+                        Some(player_state.guid),
+                        true,
+                    ));
+                    death_packets.append(&mut self.update_client_players_once_ready(
+                        AttackCruiserPlayerStateType {
+                            index: false,
+                            score: true,
+                            unknown3: false,
+                            inventory: false,
+                            actor_id: false,
+                        },
+                    ));
+                    broadcasts.push(Broadcast::Multi(
+                        self.active_players.to_vec(),
+                        death_packets,
+                    ));
 
-                        let player_state = &self.player_states[player_index];
-                        death_packets.append(&mut self.set_actor_frozen(
-                            &player_state.actor,
-                            Some(player_state.guid),
-                            true,
-                        ));
-                        death_packets.append(&mut self.update_client_players_once_ready(
-                            AttackCruiserPlayerStateType {
-                                index: false,
-                                score: true,
-                                unknown3: false,
-                                inventory: false,
-                                actor_id: false,
-                            },
-                        ));
-                        broadcasts.push(Broadcast::Multi(
-                            self.active_players.to_vec(),
-                            death_packets,
-                        ));
-
-                        update_clients = true;
-                    }
+                    update_clients = true;
                 }
             }
 
@@ -3546,20 +3546,17 @@ impl AttackCruiserGame {
 
                 if let Some(actor_hits) = hits.get(&npc.id) {
                     let total_damage = Self::total_damage(npc.id, actor_hits);
+                    npc.damage(total_damage, now);
 
-                    if npc.vulnerable() {
-                        npc.damage(total_damage, now);
-
-                        if npc.dead() {
-                            broadcasts.push(Broadcast::Multi(
-                                self.active_players.to_vec(),
-                                Self::spawn_client_effect(
-                                    npc.ship.death_start_effect_id,
-                                    npc.pos,
-                                    self.group,
-                                ),
-                            ));
-                        }
+                    if npc.dead() {
+                        broadcasts.push(Broadcast::Multi(
+                            self.active_players.to_vec(),
+                            Self::spawn_client_effect(
+                                npc.ship.death_start_effect_id,
+                                npc.pos,
+                                self.group,
+                            ),
+                        ));
                     }
                 }
             }
