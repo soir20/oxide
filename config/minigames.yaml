@@ -3241,7 +3241,7 @@ categories:
                     despawn_effect_id: 1718
                     ships_on_death:
                       - count: 1
-                        ship: life_powerup
+                        ship: weapon_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3562,6 +3562,20 @@ categories:
                               z: -45.8687
                     weapons:
                       primary_tiers:
+                        - projectiles:
+                            - composite_effect_id: 1558
+                              hit_composite_effect_id: 1315
+                              count: 2
+                              target_deltas:
+                                health: -1
+                              length: 25
+                              cooldown_millis: 250
+                            - composite_effect_id: 1763
+                              hit_composite_effect_id: 1315
+                              target_deltas:
+                                health: -1
+                              length: 75
+                              cooldown_millis: 250
                         - projectiles:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
