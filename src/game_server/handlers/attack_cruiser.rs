@@ -3456,12 +3456,15 @@ impl AttackCruiserGame {
                     primary_quantity: 0,
                     special_quantity: player_state.secondary_item_count.into(),
                     unknown4: 0,
-                    special_icon_id: self
-                        .config
-                        .player
-                        .secondary_items
-                        .get(&player_state.secondary_item)
-                        .map(|item| item.icon_id)
+                    special_icon_id: (player_state.secondary_item_count > 0)
+                        .then(|| {
+                            self.config
+                                .player
+                                .secondary_items
+                                .get(&player_state.secondary_item)
+                                .map(|item| item.icon_id)
+                        })
+                        .flatten()
                         .unwrap_or_default(),
                     special_id: 0,
                 }),
