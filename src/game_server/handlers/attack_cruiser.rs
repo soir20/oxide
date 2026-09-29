@@ -340,15 +340,15 @@ impl AttackCruiserActor {
         self.invulnerability.pause_or_resume(pause);
     }
 
-    pub fn damage(&mut self, damage: i16, now: Instant) {
+    pub fn add_health(&mut self, delta_health: i16, now: Instant) {
         if self.dead() {
             return;
         }
 
-        if self.vulnerable() || damage < 0 {
+        if self.vulnerable() || delta_health > 0 {
             self.health = self
                 .health
-                .saturating_sub_signed(damage)
+                .saturating_add_signed(delta_health)
                 .min(self.ship.max_health);
 
             if self.dead() {
@@ -944,9 +944,9 @@ impl AttackCruiserPlayer {
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
-    pub fn damage(&mut self, damage: i16, now: Instant) {
+    pub fn add_health(&mut self, delta_health: i16, now: Instant) {
         if self.trackable() {
-            self.actor.damage(damage, now);
+            self.actor.add_health(delta_health, now);
 
             if self.actor.dead() {
                 self.add_lives(-1);
@@ -1183,9 +1183,9 @@ struct AttackCruiserProjectileConfig {
     #[serde(default = "default_max_launch_angle")]
     max_launch_angle: Angle,
     length: f32,
-    damage: i16,
+    target_delta_health: i16,
     #[serde(default)]
-    self_damage: i16,
+    self_delta_health: i16,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1758,17 +1758,19 @@ impl AttackCruiserProjectilePool {
         for (projectile_id, (actor_id, _)) in projectile_closest {
             let projectile = self.remove_unchecked(projectile_id);
 
-            if projectile.config.self_damage > 0 {
+            if projectile.config.self_delta_health != 0 {
                 results
                     .entry(projectile.launched_by_actor_id)
                     .or_default()
                     .push((projectile_id, projectile.clone()));
             }
 
-            results
-                .entry(actor_id)
-                .or_default()
-                .push((projectile_id, projectile));
+            if projectile.config.target_delta_health != 0 {
+                results
+                    .entry(actor_id)
+                    .or_default()
+                    .push((projectile_id, projectile));
+            }
         }
 
         results
@@ -3314,18 +3316,20 @@ impl AttackCruiserGame {
         }
     }
 
-    fn total_damage(
+    fn total_delta_health(
         hit_actor_id: i32,
         projectiles: &[(i32, AttackCruiserProjectileInstance)],
     ) -> i16 {
-        projectiles.iter().fold(0, |total_damage, (_, projectile)| {
-            let damage = match hit_actor_id == projectile.launched_by_actor_id {
-                true => projectile.config.self_damage,
-                false => projectile.config.damage,
-            };
+        projectiles
+            .iter()
+            .fold(0, |total_delta_health, (_, projectile)| {
+                let delta_health = match hit_actor_id == projectile.launched_by_actor_id {
+                    true => projectile.config.self_delta_health,
+                    false => projectile.config.target_delta_health,
+                };
 
-            total_damage.saturating_add(damage)
-        })
+                total_delta_health.saturating_add(delta_health)
+            })
     }
 
     fn tick_players(
@@ -3451,8 +3455,8 @@ impl AttackCruiserGame {
             let player_state = &mut self.player_states[player_index];
             let actor = &mut player_state.actor;
             if let Some(actor_hits) = hits.get(&actor.id) {
-                let total_damage = Self::total_damage(actor.id, actor_hits);
-                player_state.damage(total_damage, now);
+                let delta_health = Self::total_delta_health(actor.id, actor_hits);
+                player_state.add_health(delta_health, now);
 
                 if player_state.dead() {
                     let mut death_packets = Self::spawn_client_effect(
@@ -3563,8 +3567,8 @@ impl AttackCruiserGame {
                 }
 
                 if let Some(actor_hits) = hits.get(&npc.id) {
-                    let total_damage = Self::total_damage(npc.id, actor_hits);
-                    npc.damage(total_damage, now);
+                    let total_delta_health = Self::total_delta_health(npc.id, actor_hits);
+                    npc.add_health(total_delta_health, now);
 
                     if npc.dead() {
                         broadcasts.push(Broadcast::Multi(

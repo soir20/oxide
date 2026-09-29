@@ -3255,7 +3255,7 @@ categories:
                             - composite_effect_id: 1557
                               hit_composite_effect_id: 1315
                               count: 1
-                              damage: 1
+                              target_delta_health: -1
                               length: 25
                               cooldown_millis: 500
                               min_launch_angle: !Degrees -60
@@ -3292,8 +3292,8 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
-                              damage: 2
-                              self_damage: 1
+                              target_delta_health: -2
+                              self_delta_health: -1
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3325,8 +3325,8 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
-                              damage: 2
-                              self_damage: 100
+                              target_delta_health: -2
+                              self_delta_health: -100
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3356,8 +3356,8 @@ categories:
                             - hit_composite_effect_id: 1774
                               speed: 0
                               wobble: !Degrees 0
-                              damage: -20
-                              self_damage: 1
+                              target_delta_health: 20
+                              self_delta_health: -1
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3497,24 +3497,24 @@ categories:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
                               count: 2
-                              damage: 1
+                              target_delta_health: -1
                               length: 25
                               cooldown_millis: 250
                             - composite_effect_id: 1763
                               hit_composite_effect_id: 1315
-                              damage: 1
+                              target_delta_health: -1
                               length: 75
                               cooldown_millis: 250
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees 5
-                              damage: 1
+                              target_delta_health: -1
                               length: 75
                               cooldown_millis: 250
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees -5
-                              damage: 1
+                              target_delta_health: -1
                               length: 75
                               cooldown_millis: 250
                           ships:
