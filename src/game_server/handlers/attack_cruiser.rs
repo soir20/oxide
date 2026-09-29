@@ -245,6 +245,10 @@ impl AttackCruiserActorInvulnerability {
         self.timer.schedule_event(Duration::ZERO, Instant::now());
     }
 
+    pub fn time_remaining(&self, now: Instant) -> Duration {
+        self.timer.time_until_next_event(now)
+    }
+
     pub fn paused(&self) -> bool {
         self.timer.paused()
     }
@@ -391,7 +395,9 @@ impl AttackCruiserActor {
     pub fn use_invulnerable_powerup(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.invulnerability.set_phase(
             AttackCruiserActorInvulnerabilityPhase::UsedPowerup,
-            invulnerability_duration,
+            self.invulnerability
+                .time_remaining(now)
+                .saturating_add(invulnerability_duration),
             now,
         );
     }
@@ -399,6 +405,11 @@ impl AttackCruiserActor {
     pub fn used_invulnerable_powerup(&self) -> bool {
         self.invulnerability
             .has_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup)
+    }
+
+    pub fn completed_invulnerable_powerup(&self, now: Instant) -> bool {
+        self.invulnerability
+            .has_completed_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup, now)
     }
 
     pub fn completed_death(&self, now: Instant) -> bool {
@@ -429,7 +440,7 @@ impl AttackCruiserActor {
                 .has_completed_phase(AttackCruiserActorInvulnerabilityPhase::Respawning, now)
     }
 
-    pub fn complete_respawn(&mut self) {
+    pub fn set_vulnerable(&mut self) {
         self.invulnerability.set_vulnerable();
     }
 
@@ -948,7 +959,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn complete_respawn(&mut self) {
-        self.actor.complete_respawn()
+        self.actor.set_vulnerable()
     }
 
     pub fn dead(&self) -> bool {
@@ -1009,6 +1020,14 @@ impl AttackCruiserPlayer {
     pub fn use_invulnerable_powerup(&mut self, invulnerability_duration: Duration, now: Instant) {
         self.actor
             .use_invulnerable_powerup(invulnerability_duration, now);
+    }
+
+    pub fn completed_invulnerable_powerup(&self, now: Instant) -> bool {
+        self.actor.completed_invulnerable_powerup(now)
+    }
+
+    pub fn complete_invulnerable_powerup(&mut self) {
+        self.actor.set_vulnerable();
     }
 
     pub fn paused(&self) -> bool {
@@ -3614,6 +3633,8 @@ impl AttackCruiserGame {
                     self.active_players.to_vec(),
                     self.set_actor_frozen(&player_state.actor, Some(player_state.guid), false),
                 ));
+            } else if player_state.completed_invulnerable_powerup(now) {
+                player_state.complete_invulnerable_powerup();
             }
 
             let player_state = &mut self.player_states[player_index];
