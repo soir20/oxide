@@ -3734,44 +3734,42 @@ impl AttackCruiserGame {
                     .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
-            if !npc.dead() {
-                if is_real_target {
-                    let attack_result = Self::actor_attack_primary(
-                        npc,
-                        target_pos,
-                        target_speed,
-                        now,
-                        &mut self.projectiles,
-                        &self.config,
-                        &self.bvhs,
-                        &self.active_players,
-                        self.group,
-                        self.config.max_weapon_cooldown_error_millis,
-                    );
-                    match attack_result {
-                        Ok((mut attack_broadcasts, mut new_npcs)) => {
-                            broadcasts.append(&mut attack_broadcasts);
-                            pending_npcs.append(&mut new_npcs);
-                        }
-                        Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
-                    }
+            if let Some(actor_hits) = hits.get(&npc.id) {
+                let total_deltas = Self::total_actor_deltas(npc.id, actor_hits);
+                npc.add_health(total_deltas.health, now);
+                npc.add_primary_weapon_tiers(total_deltas.primary_tiers);
+
+                if npc.dead() {
+                    broadcasts.push(Broadcast::Multi(
+                        self.active_players.to_vec(),
+                        Self::spawn_client_effect(
+                            npc.ship.death_start_effect_id,
+                            npc.pos,
+                            self.group,
+                        ),
+                    ));
                 }
+            }
 
-                if let Some(actor_hits) = hits.get(&npc.id) {
-                    let total_deltas = Self::total_actor_deltas(npc.id, actor_hits);
-                    npc.add_health(total_deltas.health, now);
-                    npc.add_primary_weapon_tiers(total_deltas.primary_tiers);
-
-                    if npc.dead() {
-                        broadcasts.push(Broadcast::Multi(
-                            self.active_players.to_vec(),
-                            Self::spawn_client_effect(
-                                npc.ship.death_start_effect_id,
-                                npc.pos,
-                                self.group,
-                            ),
-                        ));
+            if is_real_target && !npc.dead() {
+                let attack_result = Self::actor_attack_primary(
+                    npc,
+                    target_pos,
+                    target_speed,
+                    now,
+                    &mut self.projectiles,
+                    &self.config,
+                    &self.bvhs,
+                    &self.active_players,
+                    self.group,
+                    self.config.max_weapon_cooldown_error_millis,
+                );
+                match attack_result {
+                    Ok((mut attack_broadcasts, mut new_npcs)) => {
+                        broadcasts.append(&mut attack_broadcasts);
+                        pending_npcs.append(&mut new_npcs);
                     }
+                    Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
                 }
             }
 
