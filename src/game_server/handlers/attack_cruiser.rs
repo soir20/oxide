@@ -368,6 +368,26 @@ impl AttackCruiserActor {
         }
     }
 
+    pub fn add_primary_weapon_tiers(&mut self, tiers: i16) {
+        self.set_primary_weapon_tier(
+            self.primary_weapon_tier
+                .saturating_add_signed(tiers.into())
+                .min(self.ship.weapons.primary_tiers.len().saturating_sub(1)),
+        );
+    }
+
+    pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
+        let is_initialized = !self.primary_weapon_projectile_last_used.is_empty()
+            || !self.primary_weapon_actor_last_used.is_empty();
+        if self.primary_weapon_tier == new_tier && is_initialized {
+            return;
+        }
+
+        self.primary_weapon_tier = new_tier;
+        self.primary_weapon_projectile_last_used.clear();
+        self.primary_weapon_actor_last_used.clear();
+    }
+
     pub fn completed_death(&self, now: Instant) -> bool {
         self.dead()
             && self
@@ -405,28 +425,6 @@ impl AttackCruiserActor {
             .has_phase(AttackCruiserActorInvulnerabilityPhase::UsedPowerup)
     }
 
-    pub fn set_primary_weapon_tier(&mut self, new_tier: usize) {
-        self.primary_weapon_tier = new_tier;
-        self.primary_weapon_projectile_last_used = vec![
-            None;
-            self.ship
-                .weapons
-                .primary_tiers
-                .first()
-                .map(|weapon| weapon.projectiles.len())
-                .unwrap_or_default()
-        ];
-        self.primary_weapon_actor_last_used = vec![
-            None;
-            self.ship
-                .weapons
-                .primary_tiers
-                .first()
-                .map(|weapon| weapon.ships.len())
-                .unwrap_or_default()
-        ];
-    }
-
     pub fn attack_primary(
         &mut self,
         now: Instant,
@@ -440,13 +438,20 @@ impl AttackCruiserActor {
         let self_pos = self.pos;
         let yaw = self.yaw;
 
-        let last_used_slice = &mut self.primary_weapon_projectile_last_used;
         let projectiles_opt = self
             .ship
             .weapons
             .primary_tiers
             .get(self.primary_weapon_tier)
             .map(|weapon| &weapon.projectiles);
+
+        self.primary_weapon_projectile_last_used.resize(
+            projectiles_opt
+                .map(|projectiles| projectiles.len())
+                .unwrap_or_default(),
+            None,
+        );
+        let last_used_slice = &mut self.primary_weapon_projectile_last_used;
 
         let projectiles = projectiles_opt
             .into_iter()
@@ -521,13 +526,18 @@ impl AttackCruiserActor {
                 None
             });
 
-        let last_used_slice = &mut self.primary_weapon_actor_last_used;
         let actors_opt = self
             .ship
             .weapons
             .primary_tiers
             .get(self.primary_weapon_tier)
             .map(|weapon| &weapon.ships);
+
+        self.primary_weapon_actor_last_used.resize(
+            actors_opt.map(|actors| actors.len()).unwrap_or_default(),
+            None,
+        );
+        let last_used_slice = &mut self.primary_weapon_actor_last_used;
 
         let actors =
             actors_opt
@@ -955,11 +965,15 @@ impl AttackCruiserPlayer {
     }
 
     pub fn add_lives(&mut self, lives: i8) {
-        self.lives = self.lives.saturating_add_signed(lives).max(self.max_lives);
+        self.set_lives(self.lives.saturating_add_signed(lives));
     }
 
     pub fn set_lives(&mut self, lives: u8) {
-        self.lives = lives.max(self.max_lives)
+        self.lives = lives.min(self.max_lives);
+    }
+
+    pub fn add_primary_tiers(&mut self, tiers: i16) {
+        self.actor.add_primary_weapon_tiers(tiers);
     }
 
     pub fn paused(&self) -> bool {
@@ -1158,6 +1172,27 @@ struct AttackCruiserPlanetConfig {
     angular_speed: Angle,
 }
 
+#[derive(Clone, Copy, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserActorDeltas {
+    #[serde(default)]
+    health: i16,
+    #[serde(default)]
+    primary_tiers: i16,
+    #[serde(default)]
+    player_lives: i8,
+}
+
+impl AttackCruiserActorDeltas {
+    fn saturating_add(&self, rhs: &Self) -> Self {
+        AttackCruiserActorDeltas {
+            health: self.health.saturating_add(rhs.health),
+            primary_tiers: self.primary_tiers.saturating_add(rhs.primary_tiers),
+            player_lives: self.player_lives.saturating_add(rhs.player_lives),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserProjectileConfig {
@@ -1183,9 +1218,10 @@ struct AttackCruiserProjectileConfig {
     #[serde(default = "default_max_launch_angle")]
     max_launch_angle: Angle,
     length: f32,
-    target_delta_health: i16,
     #[serde(default)]
-    self_delta_health: i16,
+    target_deltas: AttackCruiserActorDeltas,
+    #[serde(default)]
+    self_deltas: AttackCruiserActorDeltas,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1758,19 +1794,15 @@ impl AttackCruiserProjectilePool {
         for (projectile_id, (actor_id, _)) in projectile_closest {
             let projectile = self.remove_unchecked(projectile_id);
 
-            if projectile.config.self_delta_health != 0 {
-                results
-                    .entry(projectile.launched_by_actor_id)
-                    .or_default()
-                    .push((projectile_id, projectile.clone()));
-            }
+            results
+                .entry(projectile.launched_by_actor_id)
+                .or_default()
+                .push((projectile_id, projectile.clone()));
 
-            if projectile.config.target_delta_health != 0 {
-                results
-                    .entry(actor_id)
-                    .or_default()
-                    .push((projectile_id, projectile));
-            }
+            results
+                .entry(actor_id)
+                .or_default()
+                .push((projectile_id, projectile));
         }
 
         results
@@ -2518,6 +2550,17 @@ impl AttackCruiserGame {
         ));
 
         broadcasts.append(&mut self.finalize_actors(pending_npcs));
+
+        broadcasts.push(Broadcast::Multi(
+            self.active_players.to_vec(),
+            self.update_client_players_once_ready(AttackCruiserPlayerStateType {
+                index: false,
+                score: true,
+                unknown3: false,
+                inventory: true,
+                actor_id: false,
+            }),
+        ));
 
         broadcasts
     }
@@ -3316,20 +3359,21 @@ impl AttackCruiserGame {
         }
     }
 
-    fn total_delta_health(
+    fn total_actor_deltas(
         hit_actor_id: i32,
         projectiles: &[(i32, AttackCruiserProjectileInstance)],
-    ) -> i16 {
-        projectiles
-            .iter()
-            .fold(0, |total_delta_health, (_, projectile)| {
-                let delta_health = match hit_actor_id == projectile.launched_by_actor_id {
-                    true => projectile.config.self_delta_health,
-                    false => projectile.config.target_delta_health,
+    ) -> AttackCruiserActorDeltas {
+        projectiles.iter().fold(
+            AttackCruiserActorDeltas::default(),
+            |total_deltas, (_, projectile)| {
+                let deltas = match hit_actor_id == projectile.launched_by_actor_id {
+                    true => projectile.config.self_deltas,
+                    false => projectile.config.target_deltas,
                 };
 
-                total_delta_health.saturating_add(delta_health)
-            })
+                total_deltas.saturating_add(&deltas)
+            },
+        )
     }
 
     fn tick_players(
@@ -3455,8 +3499,10 @@ impl AttackCruiserGame {
             let player_state = &mut self.player_states[player_index];
             let actor = &mut player_state.actor;
             if let Some(actor_hits) = hits.get(&actor.id) {
-                let delta_health = Self::total_delta_health(actor.id, actor_hits);
-                player_state.add_health(delta_health, now);
+                let total_deltas = Self::total_actor_deltas(actor.id, actor_hits);
+                player_state.add_health(total_deltas.health, now);
+                player_state.add_primary_tiers(total_deltas.primary_tiers);
+                player_state.add_lives(total_deltas.player_lives);
 
                 if player_state.dead() {
                     let mut death_packets = Self::spawn_client_effect(
@@ -3567,8 +3613,9 @@ impl AttackCruiserGame {
                 }
 
                 if let Some(actor_hits) = hits.get(&npc.id) {
-                    let total_delta_health = Self::total_delta_health(npc.id, actor_hits);
-                    npc.add_health(total_delta_health, now);
+                    let total_deltas = Self::total_actor_deltas(npc.id, actor_hits);
+                    npc.add_health(total_deltas.health, now);
+                    npc.add_primary_weapon_tiers(total_deltas.primary_tiers);
 
                     if npc.dead() {
                         broadcasts.push(Broadcast::Multi(

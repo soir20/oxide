@@ -3241,7 +3241,7 @@ categories:
                     despawn_effect_id: 1718
                     ships_on_death:
                       - count: 1
-                        ship: health_powerup
+                        ship: life_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3255,7 +3255,8 @@ categories:
                             - composite_effect_id: 1557
                               hit_composite_effect_id: 1315
                               count: 1
-                              target_delta_health: -1
+                              target_deltas:
+                                health: -1
                               length: 25
                               cooldown_millis: 500
                               min_launch_angle: !Degrees -60
@@ -3292,8 +3293,10 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
-                              target_delta_health: -2
-                              self_delta_health: -1
+                              target_deltas:
+                                health: -2
+                              self_deltas:
+                                health: -1
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3325,8 +3328,10 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
-                              target_delta_health: -2
-                              self_delta_health: -100
+                              target_deltas:
+                                health: -2
+                              self_deltas:
+                                health: -100
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3356,8 +3361,72 @@ categories:
                             - hit_composite_effect_id: 1774
                               speed: 0
                               wobble: !Degrees 0
-                              target_delta_health: 20
-                              self_delta_health: -1
+                              target_deltas:
+                                health: 20
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              lifetime_millis: 50
+                  life_powerup:
+                    can_attack_friendlies: true
+                    trackable: false
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1541
+                    death_end_effect_id: 1777
+                    despawn_effect_id: 1777
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1777
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_deltas:
+                                player_lives: 1
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              lifetime_millis: 50
+                  weapon_powerup:
+                    can_attack_friendlies: true
+                    trackable: false
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1538
+                    death_end_effect_id: 1772
+                    despawn_effect_id: 1772
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1772
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_deltas:
+                                primary_tiers: 1
+                              self_deltas:
+                                health: -1
                               length: 100
                               cooldown_millis: 50
                               lifetime_millis: 50
@@ -3497,24 +3566,28 @@ categories:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
                               count: 2
-                              target_delta_health: -1
+                              target_deltas:
+                                health: -1
                               length: 25
                               cooldown_millis: 250
                             - composite_effect_id: 1763
                               hit_composite_effect_id: 1315
-                              target_delta_health: -1
+                              target_deltas:
+                                health: -1
                               length: 75
                               cooldown_millis: 250
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees 5
-                              target_delta_health: -1
+                              target_deltas:
+                                health: -1
                               length: 75
                               cooldown_millis: 250
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees -5
-                              target_delta_health: -1
+                              target_deltas:
+                                health: -1
                               length: 75
                               cooldown_millis: 250
                           ships:
