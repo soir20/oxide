@@ -433,6 +433,10 @@ impl AttackCruiserActor {
             return;
         }
 
+        if new_tier < self.primary_weapon_tier && !self.vulnerable() {
+            return;
+        }
+
         self.primary_weapon_tier = new_tier;
         self.primary_weapon_projectile_last_used.clear();
         self.primary_weapon_actor_last_used.clear();
@@ -491,10 +495,12 @@ impl AttackCruiserActor {
     }
 
     pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
-        self.stun.stun(
-            self.stun.time_remaining(now).saturating_add(stun_duration),
-            now,
-        );
+        if self.vulnerable() {
+            self.stun.stun(
+                self.stun.time_remaining(now).saturating_add(stun_duration),
+                now,
+            );
+        }
     }
 
     pub fn stunned(&self) -> bool {
@@ -1061,20 +1067,22 @@ impl AttackCruiserPlayer {
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
-        if self.trackable() {
+        if !self.dead() {
             self.actor.add_health(delta_health, now);
 
             if self.actor.dead() {
-                self.add_lives(-1);
+                self.lives = self.lives.saturating_sub(1);
             }
         }
     }
 
     pub fn add_lives(&mut self, lives: i8) {
-        self.set_lives(self.lives.saturating_add_signed(lives));
+        if self.actor.vulnerable() || lives > 0 {
+            self.set_lives_unchecked(self.lives.saturating_add_signed(lives));
+        }
     }
 
-    pub fn set_lives(&mut self, lives: u8) {
+    pub fn set_lives_unchecked(&mut self, lives: u8) {
         self.lives = lives.min(self.max_lives);
     }
 
@@ -2842,7 +2850,7 @@ impl AttackCruiserGame {
         self.active_player_indices
             .retain(|player_index| self.player_states[*player_index as usize].guid != player);
         let player_state = &mut self.player_states[player_index];
-        player_state.set_lives(0);
+        player_state.set_lives_unchecked(0);
 
         minigame_status.total_score = player_state.score;
         Ok(MinigameRemovePlayerResult {
