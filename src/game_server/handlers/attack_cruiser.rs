@@ -1471,6 +1471,7 @@ struct AttackCruiserShipConfig {
     overhead_health_scale: f32,
     thruster_effect_id: Option<u32>,
     invulnerable_effect_id: Option<u32>,
+    stunned_effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
@@ -2579,7 +2580,9 @@ impl AttackCruiserGame {
                                         invulnerable_effect_id: ship
                                             .invulnerable_effect_id
                                             .unwrap_or_default(),
-                                        stun_effect_id: 0,
+                                        stunned_effect_id: ship
+                                            .stunned_effect_id
+                                            .unwrap_or_default(),
                                         weapons: AttackCruiserVec::new(),
                                         roll_max_angle: ship.max_roll.to_degrees(),
                                         pitch_max_angle: 0.0,
@@ -3197,7 +3200,7 @@ impl AttackCruiserGame {
                             warp_end_game: false,
                             reset_speed_damage_state: warp_out,
                             unknown14: false,
-                            unknown15: false,
+                            show_stun_effect: false,
                             hide_ring: warp_out,
                             show_boss_ring: false,
                         },
@@ -3244,7 +3247,7 @@ impl AttackCruiserGame {
                         warp_end_game: false,
                         reset_speed_damage_state: warp_out,
                         unknown14: false,
-                        unknown15: false,
+                        show_stun_effect: false,
                         hide_ring: warp_out,
                         show_boss_ring: false,
                     },

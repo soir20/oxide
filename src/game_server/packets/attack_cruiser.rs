@@ -383,7 +383,7 @@ pub struct AttackCruiserShipStartupConfig {
     pub actor_config: AttackCruiserActorConfig,
     pub thruster_effect_id: u32,
     pub invulnerable_effect_id: u32,
-    pub stun_effect_id: u32,
+    pub stunned_effect_id: u32,
     pub weapons: AttackCruiserVec<AttackCruiserShipWeaponConfig>,
     pub roll_max_angle: f32,
     pub pitch_max_angle: f32,
@@ -1091,7 +1091,7 @@ pub struct AttackCruiserActorState {
     pub warp_end_game: bool,
     pub reset_speed_damage_state: bool,
     pub unknown14: bool,
-    pub unknown15: bool,
+    pub show_stun_effect: bool,
     pub hide_ring: bool,
     pub show_boss_ring: bool,
 }
@@ -1155,7 +1155,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 13;
         }
 
-        if self.unknown15 {
+        if self.show_stun_effect {
             state |= 1 << 14;
         }
 
@@ -1212,7 +1212,7 @@ impl DeserializePacket for AttackCruiserActorState {
             warp_end_game: end_game_hyperdrive,
             reset_speed_damage_state: reset_damage_state,
             unknown14,
-            unknown15,
+            show_stun_effect: unknown15,
             hide_ring: unknown16,
             show_boss_ring: unknown17,
         })
