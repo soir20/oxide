@@ -253,8 +253,47 @@ impl AttackCruiserActorInvulnerability {
         self.timer.paused()
     }
 
-    pub fn pause_or_resume(&mut self, paused: bool) {
-        self.timer.pause_or_resume(paused);
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.timer.pause_or_resume(pause);
+    }
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserActorStun {
+    stunned: bool,
+    timer: MinigameCountdown,
+}
+
+impl Default for AttackCruiserActorStun {
+    fn default() -> Self {
+        AttackCruiserActorStun {
+            stunned: false,
+            timer: MinigameCountdown::new(),
+        }
+    }
+}
+
+impl AttackCruiserActorStun {
+    pub fn stunned(&self) -> bool {
+        self.stunned
+    }
+
+    pub fn stun(&mut self, duration: Duration, now: Instant) {
+        self.stunned = true;
+        self.timer.schedule_event(duration, now);
+    }
+
+    pub fn remove_stun(&mut self) {
+        self.stunned = false;
+        self.timer.schedule_event(Duration::ZERO, Instant::now());
+    }
+
+    pub fn time_remaining(&self, now: Instant) -> Duration {
+        self.timer.time_until_next_event(now)
+    }
+
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.timer.pause_or_resume(pause);
     }
 }
 
@@ -271,6 +310,7 @@ struct AttackCruiserActor {
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
     pub invulnerability: AttackCruiserActorInvulnerability,
+    pub stun: AttackCruiserActorStun,
     pub primary_weapon_tier: usize,
     pub primary_weapon_projectile_last_used: Vec<Option<Instant>>,
     pub primary_weapon_actor_last_used: Vec<Option<Instant>>,
@@ -303,6 +343,7 @@ impl AttackCruiserActor {
             health: ship.max_health,
             bvh,
             invulnerability: AttackCruiserActorInvulnerability::default(),
+            stun: AttackCruiserActorStun::default(),
             primary_weapon_tier: 0,
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
@@ -342,6 +383,7 @@ impl AttackCruiserActor {
 
     pub fn pause_or_resume(&mut self, pause: bool) {
         self.invulnerability.pause_or_resume(pause);
+        self.stun.pause_or_resume(pause);
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -438,6 +480,22 @@ impl AttackCruiserActor {
             && self
                 .invulnerability
                 .has_completed_phase(AttackCruiserActorInvulnerabilityPhase::Respawning, now)
+    }
+
+    pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
+        self.stun.stun(stun_duration, now);
+    }
+
+    pub fn stunned(&self) -> bool {
+        self.stun.stunned()
+    }
+
+    pub fn remove_stun(&mut self) {
+        self.stun.remove_stun();
+    }
+
+    pub fn completed_stun(&self, now: Instant) -> bool {
+        self.stun.stunned() && self.stun.time_remaining(now).is_zero()
     }
 
     pub fn set_vulnerable(&mut self) {
@@ -707,8 +765,12 @@ impl AttackCruiserActor {
         };
 
         let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
-        self.speed.x = new_yaw.sin() * speed;
-        self.speed.z = new_yaw.cos() * speed;
+
+        let accelerated_speed =
+            (speed + self.ship.acceleration * delta_secs).min(self.ship.max_speed);
+        self.speed.x = new_yaw.sin() * accelerated_speed;
+        self.speed.z = new_yaw.cos() * accelerated_speed;
+
         self.yaw = new_yaw;
         self.angular_speed = new_angular_speed;
         self.turn_multiplier = zero_nan(new_angular_speed / max_angular_speed);
@@ -1032,6 +1094,10 @@ impl AttackCruiserPlayer {
             .use_invulnerable_powerup(invulnerability_duration, now);
     }
 
+    pub fn used_invulnerable_powerup(&self) -> bool {
+        self.actor.used_invulnerable_powerup()
+    }
+
     pub fn completed_invulnerable_powerup(&self, now: Instant) -> bool {
         self.actor.completed_invulnerable_powerup(now)
     }
@@ -1040,12 +1106,28 @@ impl AttackCruiserPlayer {
         self.actor.set_vulnerable();
     }
 
+    pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
+        self.actor.stun(stun_duration, now);
+    }
+
+    pub fn stunned(&self) -> bool {
+        self.actor.stunned()
+    }
+
+    pub fn remove_stun(&mut self) {
+        self.actor.remove_stun();
+    }
+
+    pub fn completed_stun(&self, now: Instant) -> bool {
+        self.actor.completed_stun(now)
+    }
+
     pub fn paused(&self) -> bool {
         self.actor.paused()
     }
 
     pub fn disabled(&self) -> bool {
-        self.dead() || self.respawning() || self.paused()
+        self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
     pub fn disarmed(&self) -> bool {
@@ -3186,9 +3268,7 @@ impl AttackCruiserGame {
                         state: AttackCruiserActorState {
                             unknown1: false,
                             unknown2: false,
-                            show_invulnerablity_effect: player_state
-                                .actor
-                                .used_invulnerable_powerup(),
+                            show_invulnerablity_effect: player_state.used_invulnerable_powerup(),
                             unknown4: false,
                             unknown5: false,
                             unknown6: false,
@@ -3200,7 +3280,7 @@ impl AttackCruiserGame {
                             warp_end_game: false,
                             reset_speed_damage_state: warp_out,
                             unknown14: false,
-                            show_stun_effect: false,
+                            show_stun_effect: player_state.stunned(),
                             hide_ring: warp_out,
                             show_boss_ring: false,
                         },
@@ -3247,7 +3327,7 @@ impl AttackCruiserGame {
                         warp_end_game: false,
                         reset_speed_damage_state: warp_out,
                         unknown14: false,
-                        show_stun_effect: false,
+                        show_stun_effect: actor.stunned(),
                         hide_ring: warp_out,
                         show_boss_ring: false,
                     },
@@ -3541,6 +3621,10 @@ impl AttackCruiserGame {
         for player_index in self.active_player_indices.clone().into_iter() {
             let player_index = player_index as usize;
             let player_state = &mut self.player_states[player_index];
+            if player_state.paused() {
+                continue;
+            }
+
             let in_bounds = is_inside_oval(
                 player_state.actor.pos,
                 self.config.playfield.center,
@@ -3597,6 +3681,10 @@ impl AttackCruiserGame {
             };
 
             let player_state = &mut self.player_states[player_index];
+            if player_state.completed_stun(now) {
+                player_state.remove_stun();
+            }
+
             if player_state.respawnable(now) {
                 pending_npcs.append(&mut Self::spawn_actors_on_death(
                     &player_state.actor,
@@ -3743,6 +3831,14 @@ impl AttackCruiserGame {
                 return true;
             }
 
+            if npc.completed_invulnerable_powerup(now) {
+                npc.set_vulnerable();
+            }
+
+            if npc.completed_stun(now) {
+                npc.remove_stun();
+            }
+
             let (is_real_target, target_pos, target_speed) =
                 Self::closest_target(npc.id, npc.pos, &friendlies, &hostiles)
                     .map(|target| (true, target.pos, target.speed))
@@ -3766,7 +3862,7 @@ impl AttackCruiserGame {
                 }
             }
 
-            if is_real_target && !npc.dead() {
+            if is_real_target && !npc.dead() && !npc.stunned() {
                 let attack_result = Self::actor_attack_primary(
                     npc,
                     target_pos,
