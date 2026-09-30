@@ -521,6 +521,15 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
+    pub fn current_ai_behavior(&self) -> &AttackCruiserShipAiBehavior {
+        for rule in &self.ship.ai_states {
+            if self.matches_condition(&rule.condition) {
+                return &rule.behavior;
+            }
+        }
+        &self.ship.default_ai_behavior
+    }
+
     pub fn attack_primary(
         &mut self,
         now: Instant,
@@ -796,6 +805,32 @@ impl AttackCruiserActor {
 
         self.pos.x += self.speed.x * delta_secs;
         self.pos.z += self.speed.z * delta_secs;
+    }
+
+    fn matches_condition(&self, expr: &AttackCruiserShipBoolExpr) -> bool {
+        match expr {
+            AttackCruiserShipBoolExpr::Condition(prop) => match prop {
+                AttackCruiserShipPropertyExpr::HealthPercent(op, value) => {
+                    let current_pct = self.health as f32 / self.ship.max_health as f32;
+                    op.eval(current_pct, *value)
+                }
+                AttackCruiserShipPropertyExpr::LifetimeMillis(op, value) => {
+                    let lifetime_millis = self.spawn_time.elapsed().as_millis();
+                    op.eval(lifetime_millis, *value as u128)
+                }
+                AttackCruiserShipPropertyExpr::ProbabilityLessThan(chance) => {
+                    let roll: f32 = rand::thread_rng().gen();
+                    roll < *chance
+                }
+            },
+            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner),
+            AttackCruiserShipBoolExpr::And(expressions) => {
+                expressions.iter().all(|e| self.matches_condition(e))
+            }
+            AttackCruiserShipBoolExpr::Or(expressions) => {
+                expressions.iter().any(|e| self.matches_condition(e))
+            }
+        }
     }
 
     fn calculate_time_to_intercept(
@@ -1548,6 +1583,81 @@ impl From<&AttackCruiserShipDamageStateConfig> for AttackCruiserActorDamageState
     }
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserShipOp {
+    LessThan,
+    LessOrEqual,
+    Equal,
+    GreaterOrEqual,
+    GreaterThan,
+}
+
+impl AttackCruiserShipOp {
+    fn eval<T: PartialOrd>(&self, left: T, right: T) -> bool {
+        match self {
+            AttackCruiserShipOp::LessThan => left < right,
+            AttackCruiserShipOp::LessOrEqual => left <= right,
+            AttackCruiserShipOp::Equal => left == right,
+            AttackCruiserShipOp::GreaterOrEqual => left >= right,
+            AttackCruiserShipOp::GreaterThan => left > right,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserShipPropertyExpr {
+    HealthPercent(AttackCruiserShipOp, f32),
+    LifetimeMillis(AttackCruiserShipOp, u32),
+    ProbabilityLessThan(f32),
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserShipBoolExpr {
+    Condition(AttackCruiserShipPropertyExpr),
+    Not(Box<AttackCruiserShipBoolExpr>),
+    And(Vec<AttackCruiserShipBoolExpr>),
+    Or(Vec<AttackCruiserShipBoolExpr>),
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserShipAiMovement {
+    #[default]
+    SeekTarget,
+    RandomPos,
+    FixedPos(Pos3),
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserAoe {
+    radius: f32,
+    target_deltas: AttackCruiserActorDeltas,
+    self_deltas: AttackCruiserActorDeltas,
+    composite_effect_id: Option<u32>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserShipAiBehavior {
+    movement: AttackCruiserShipAiMovement,
+    aoe: Option<AttackCruiserAoe>,
+    #[serde(default)]
+    ships: Vec<AttackCruiserSpawnedShipConfig>,
+    #[serde(default)]
+    despawn: bool,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserShipAiStateRule {
+    condition: AttackCruiserShipBoolExpr,
+    behavior: AttackCruiserShipAiBehavior,
+}
+
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
@@ -1592,6 +1702,10 @@ struct AttackCruiserShipConfig {
     damage_states: Vec<AttackCruiserShipDamageStateConfig>,
     #[serde(default)]
     weapons: AttackCruiserWeaponConfig,
+    #[serde(default)]
+    ai_states: Vec<AttackCruiserShipAiStateRule>,
+    #[serde(default)]
+    default_ai_behavior: AttackCruiserShipAiBehavior,
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -1617,7 +1731,7 @@ struct AttackCruiserSpawnLocation {
 struct AttackCruiserPlayerSecondaryItemConfig {
     icon_id: i32,
     #[serde(default)]
-    actors: Vec<AttackCruiserSpawnedShipConfig>,
+    ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
     invulnerability_millis: u32,
 }
