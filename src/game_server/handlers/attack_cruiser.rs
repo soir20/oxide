@@ -496,10 +496,8 @@ impl AttackCruiserActor {
 
     pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
         if self.vulnerable() {
-            self.stun.stun(
-                self.stun.time_remaining(now).saturating_add(stun_duration),
-                now,
-            );
+            // Adding to existing stun time is too overpowered, so always replace the stun time
+            self.stun.stun(stun_duration, now);
         }
     }
 
