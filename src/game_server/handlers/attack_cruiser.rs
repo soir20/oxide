@@ -693,7 +693,7 @@ impl AttackCruiserActor {
 
         let speed = (self.speed.x.powi(2) + self.speed.z.powi(2)).sqrt();
 
-        if self.dead() {
+        if self.dead() || self.stunned() {
             let new_speed = speed - self.ship.deceleration * delta_secs;
             let scaling_factor = (new_speed / speed).max(0.0);
             self.speed.x *= scaling_factor;
