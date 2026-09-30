@@ -517,6 +517,10 @@ impl AttackCruiserActor {
         self.invulnerability.set_vulnerable();
     }
 
+    pub fn disabled(&self) -> bool {
+        self.dead() || self.respawning() || self.stunned() || self.paused()
+    }
+
     pub fn attack_primary(
         &mut self,
         now: Instant,
@@ -697,7 +701,7 @@ impl AttackCruiserActor {
 
         let speed = (self.speed.x.powi(2) + self.speed.z.powi(2)).sqrt();
 
-        if self.dead() || self.stunned() {
+        if self.disabled() {
             let new_speed = speed - self.ship.deceleration * delta_secs;
             let scaling_factor = (new_speed / speed).max(0.0);
             self.speed.x *= scaling_factor;
@@ -3884,7 +3888,7 @@ impl AttackCruiserGame {
                 }
             }
 
-            if is_real_target && !npc.dead() && !npc.stunned() {
+            if is_real_target && !npc.disabled() {
                 let attack_result = Self::actor_attack_primary(
                     npc,
                     target_pos,
