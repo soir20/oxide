@@ -279,6 +279,10 @@ impl AttackCruiserActorStun {
     }
 
     pub fn stun(&mut self, duration: Duration, now: Instant) {
+        if duration.is_zero() {
+            return;
+        }
+
         self.stunned = true;
         self.timer.schedule_event(duration, now);
     }
@@ -435,6 +439,10 @@ impl AttackCruiserActor {
     }
 
     pub fn use_invulnerable_powerup(&mut self, invulnerability_duration: Duration, now: Instant) {
+        if invulnerability_duration.is_zero() {
+            return;
+        }
+
         self.invulnerability.set_phase(
             AttackCruiserActorInvulnerabilityPhase::UsedPowerup,
             self.invulnerability
@@ -483,7 +491,10 @@ impl AttackCruiserActor {
     }
 
     pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
-        self.stun.stun(stun_duration, now);
+        self.stun.stun(
+            self.stun.time_remaining(now).saturating_add(stun_duration),
+            now,
+        );
     }
 
     pub fn stunned(&self) -> bool {
@@ -1347,6 +1358,8 @@ struct AttackCruiserActorDeltas {
     #[serde(default)]
     player_lives: i8,
     secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
+    #[serde(default)]
+    stun_millis: u32,
 }
 
 impl AttackCruiserActorDeltas {
@@ -1361,6 +1374,7 @@ impl AttackCruiserActorDeltas {
                 (Some(lhs_item), None) => Some(lhs_item.clone()),
                 (Some(lhs_item), Some(rhs_item)) => Some(lhs_item.saturating_add(rhs_item)),
             },
+            stun_millis: self.stun_millis.saturating_add(rhs.stun_millis),
         }
     }
 }
@@ -3748,6 +3762,7 @@ impl AttackCruiserGame {
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
+                player_state.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
                 if let Some(secondary_item) = total_deltas.secondary_item {
                     player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
                 }
@@ -3849,6 +3864,7 @@ impl AttackCruiserGame {
                 let total_deltas = Self::total_actor_deltas(npc.id, actor_hits);
                 npc.add_health(total_deltas.health, now);
                 npc.add_primary_weapon_tiers(total_deltas.primary_tiers);
+                npc.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
 
                 if npc.dead() {
                     broadcasts.push(Broadcast::Multi(
