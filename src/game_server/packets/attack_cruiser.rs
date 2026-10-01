@@ -25,7 +25,7 @@ pub enum AttackCruiserOpCode {
     RemoveProjectile = 0xc,
     AddActor = 0xd,
     RemoveActor = 0xe,
-    WorldEffect = 0xf,
+    CompositeEffect = 0xf,
     AddScore = 0x10,
     DebugRender = 0x11,
     DebugDrawData = 0x12,
@@ -1345,13 +1345,13 @@ impl GamePacket for AttackCruiserRemoveActor {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserWorldEffect {
+pub struct AttackCruiserCompositeEffect {
     pub minigame_header: MinigameHeader,
     pub effect_id: u32,
     pub pos: Pos3,
 }
 
-impl GamePacket for AttackCruiserWorldEffect {
+impl GamePacket for AttackCruiserCompositeEffect {
     type Header = MinigameOpCode;
 
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;

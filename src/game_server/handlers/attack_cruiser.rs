@@ -42,22 +42,22 @@ use crate::{
                 AttackCruiserCinematicStyle, AttackCruiserClickType, AttackCruiserClickedLocation,
                 AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
                 AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-                AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-                AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig,
-                AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
-                AttackCruiserOpCode, AttackCruiserPlanetStartupConfig,
-                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
-                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
-                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
-                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
-                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
-                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-                AttackCruiserUpdateServerActors, AttackCruiserVec, AttackCruiserWorldEffect,
+                AttackCruiserCompositeEffect, AttackCruiserEventActorConfig,
+                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
+                AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
+                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
+                AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
+                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
+                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
+                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
+                AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
+                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
+                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
+                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             command::PlaySoundIdOnTarget,
             minigame::MinigameHeader,
@@ -1096,11 +1096,13 @@ impl AttackCruiserPlayer {
         self.actor.respawning()
     }
 
+    pub fn warped_away(&self) -> bool {
+        self.bounds
+            .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
+    }
+
     pub fn trackable(&self) -> bool {
-        self.actor.trackable()
-            && !self
-                .bounds
-                .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
+        self.actor.trackable() && !self.warped_away()
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -1633,7 +1635,7 @@ enum AttackCruiserShipAiMovement {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct AttackCruiserAoe {
+struct AttackCruiserAoeConfig {
     radius: f32,
     target_deltas: AttackCruiserActorDeltas,
     self_deltas: AttackCruiserActorDeltas,
@@ -1644,7 +1646,7 @@ struct AttackCruiserAoe {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAiBehavior {
     movement: AttackCruiserShipAiMovement,
-    aoe: Option<AttackCruiserAoe>,
+    aoe: Option<Arc<AttackCruiserAoeConfig>>,
     #[serde(default)]
     ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
@@ -1734,6 +1736,7 @@ struct AttackCruiserSpawnLocation {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserPlayerSecondaryItemConfig {
     icon_id: i32,
+    aoe: Option<Arc<AttackCruiserAoeConfig>>,
     #[serde(default)]
     ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
@@ -2284,6 +2287,13 @@ impl AttackCruiserActorIdPool {
 }
 
 #[derive(Clone, Debug)]
+struct AttackCruiserPendingAoe {
+    config: Arc<AttackCruiserAoeConfig>,
+    launched_by_actor_id: i32,
+    pos: Pos3,
+}
+
+#[derive(Clone, Debug)]
 pub struct AttackCruiserGame {
     config: Arc<AttackCruiserConfig>,
     bvhs: HashMap<String, Arc<Bvh>>,
@@ -2298,6 +2308,7 @@ pub struct AttackCruiserGame {
     npcs: HashMap<i32, AttackCruiserActor>,
     actors_by_ship_name: HashMap<String, HashSet<i32>>,
     actor_id_pool: AttackCruiserActorIdPool,
+    pending_aoes: Vec<AttackCruiserPendingAoe>,
 }
 
 impl AttackCruiserGame {
@@ -2488,6 +2499,7 @@ impl AttackCruiserGame {
             projectiles: AttackCruiserProjectilePool::new(),
             npcs,
             actor_id_pool,
+            pending_aoes: Vec::new(),
         }
     }
 
@@ -2850,25 +2862,76 @@ impl AttackCruiserGame {
         let mut broadcasts = Vec::new();
         let mut pending_npcs = Vec::new();
 
-        let hits = self.projectiles.hits(
-            self.active_player_indices
-                .iter()
-                .copied()
-                .filter(|player_index| self.player_states[*player_index as usize].trackable())
-                .map(|player_index| &self.player_states[player_index as usize].actor)
-                .chain(self.npcs.values().filter(|npc| !npc.dead())),
-            now,
-            tick_duration,
-        );
+        let actor_iter = self
+            .active_player_indices
+            .iter()
+            .copied()
+            .filter(|player_index| {
+                !self.player_states[*player_index as usize].dead()
+                    && !self.player_states[*player_index as usize].warped_away()
+            })
+            .map(|player_index| &self.player_states[player_index as usize].actor)
+            .chain(self.npcs.values().filter(|npc| !npc.dead()));
+
+        let hits = self
+            .projectiles
+            .hits(actor_iter.clone(), now, tick_duration);
         self.projectiles.expire(now);
 
-        self.tick_players(now, &mut broadcasts, &hits, &mut pending_npcs);
+        let mut aoe_effect_packets = Vec::new();
+        let mut aoes: HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>> = HashMap::new();
+        for aoe in self.pending_aoes.drain(..) {
+            aoe_effect_packets.append(&mut Self::spawn_client_effect(
+                aoe.config.composite_effect_id,
+                aoe.pos,
+                self.group,
+            ));
+
+            actor_iter
+                .clone()
+                .filter(|target| {
+                    distance3_sq(
+                        target.pos.x,
+                        target.pos.y,
+                        target.pos.z,
+                        aoe.pos.x,
+                        aoe.pos.y,
+                        aoe.pos.z,
+                    ) <= aoe.config.radius * aoe.config.radius
+                })
+                .for_each(|target| {
+                    let are_both_friendly =
+                        AttackCruiserActorIdPool::can_seek_hostiles(aoe.launched_by_actor_id)
+                            && !AttackCruiserActorIdPool::can_seek_friendlies(target.id);
+                    let are_both_hostile =
+                        AttackCruiserActorIdPool::can_seek_friendlies(aoe.launched_by_actor_id)
+                            && !AttackCruiserActorIdPool::can_seek_hostiles(target.id);
+
+                    if are_both_friendly || are_both_hostile {
+                        return;
+                    }
+
+                    aoes.entry(target.id)
+                        .or_default()
+                        .push((aoe.launched_by_actor_id, aoe.config.clone()))
+                })
+        }
+        broadcasts.push(Broadcast::Multi(
+            self.active_players.to_vec(),
+            aoe_effect_packets,
+        ));
+
+        let (friendlies, hostiles) = self.list_trackable_actors_by_hostility();
+        self.tick_players(now, &mut broadcasts, &hits, &aoes, &mut pending_npcs);
         self.tick_npcs(
             now,
             tick_duration,
             &mut broadcasts,
             &hits,
+            &aoes,
             &mut pending_npcs,
+            &friendlies,
+            &hostiles,
         );
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
@@ -3130,6 +3193,14 @@ impl AttackCruiserGame {
                     &self.config,
                     &self.bvhs,
                 ));
+
+                if let Some(config) = &secondary_item.aoe {
+                    self.pending_aoes.push(AttackCruiserPendingAoe {
+                        config: config.clone(),
+                        launched_by_actor_id: player_state.actor.id,
+                        pos: player_state.actor.pos,
+                    });
+                }
             }
             return Ok(self.finalize_actors(pending_npcs));
         }
@@ -3148,7 +3219,7 @@ impl AttackCruiserGame {
         };
         let approx_horizontal_distance_to_target = distance3_pos(attacker_pos, approx_target_pos);
 
-        let (friendlies, hostiles) = self.list_actors_by_hostility();
+        let (friendlies, hostiles) = self.list_trackable_actors_by_hostility();
         let (target_y, horizontal_distance_to_target) = Self::closest_target(
             player_state.actor.id,
             true,
@@ -3257,10 +3328,10 @@ impl AttackCruiserGame {
             .map(|effect_id| {
                 vec![GamePacket::serialize(&TunneledPacket {
                     unknown1: true,
-                    inner: AttackCruiserWorldEffect {
+                    inner: AttackCruiserCompositeEffect {
                         minigame_header: MinigameHeader {
                             stage_guid: group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::WorldEffect as i32,
+                            sub_op_code: AttackCruiserOpCode::CompositeEffect as i32,
                             stage_group_guid: group.stage_group_guid,
                         },
                         effect_id,
@@ -3751,18 +3822,31 @@ impl AttackCruiserGame {
     fn total_actor_deltas(
         hit_actor_id: i32,
         projectiles: &[(i32, AttackCruiserProjectileInstance)],
+        aoes: &[(i32, Arc<AttackCruiserAoeConfig>)],
     ) -> AttackCruiserActorDeltas {
-        projectiles.iter().fold(
-            AttackCruiserActorDeltas::default(),
-            |total_deltas, (_, projectile)| {
-                let deltas = match hit_actor_id == projectile.launched_by_actor_id {
-                    true => &projectile.config.self_deltas,
-                    false => &projectile.config.target_deltas,
-                };
+        projectiles
+            .iter()
+            .map(|(_, projectile)| {
+                (
+                    projectile.launched_by_actor_id,
+                    &projectile.config.self_deltas,
+                    &projectile.config.target_deltas,
+                )
+            })
+            .chain(aoes.iter().map(|(launched_by_actor_id, aoe)| {
+                (*launched_by_actor_id, &aoe.self_deltas, &aoe.target_deltas)
+            }))
+            .fold(
+                AttackCruiserActorDeltas::default(),
+                |total_deltas, (launched_by_actor_id, self_deltas, target_deltas)| {
+                    let deltas = match hit_actor_id == launched_by_actor_id {
+                        true => self_deltas,
+                        false => target_deltas,
+                    };
 
-                total_deltas.saturating_add(deltas)
-            },
-        )
+                    total_deltas.saturating_add(deltas)
+                },
+            )
     }
 
     fn tick_players(
@@ -3770,6 +3854,7 @@ impl AttackCruiserGame {
         now: Instant,
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
@@ -3897,9 +3982,13 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            let actor = &mut player_state.actor;
-            if let Some(actor_hits) = hits.get(&actor.id) {
-                let total_deltas = Self::total_actor_deltas(actor.id, actor_hits);
+            if !player_state.dead() {
+                let actor = &mut player_state.actor;
+                let total_deltas = Self::total_actor_deltas(
+                    actor.id,
+                    hits.get(&actor.id).map(|v| v.as_slice()).unwrap_or(&[]),
+                    aoes.get(&actor.id).map(|v| v.as_slice()).unwrap_or(&[]),
+                );
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
@@ -3978,10 +4067,11 @@ impl AttackCruiserGame {
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
         hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
+        friendlies: &[AttackCruiserActorTarget],
+        hostiles: &[AttackCruiserActorTarget],
     ) {
-        let (friendlies, hostiles) = self.list_actors_by_hostility();
-
         self.npcs.retain(|_, npc| {
             if npc.paused() {
                 return true;
@@ -4000,16 +4090,20 @@ impl AttackCruiserGame {
                 npc.ship.can_seek_players,
                 npc.ship.can_seek_npcs,
                 npc.pos,
-                &friendlies,
-                &hostiles,
+                friendlies,
+                hostiles,
                 &self.config.playfield,
             )
             .map(|target| (true, target.pos, target.speed))
             .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
-            if let Some(actor_hits) = hits.get(&npc.id) {
-                let total_deltas = Self::total_actor_deltas(npc.id, actor_hits);
+            if !npc.dead() {
+                let total_deltas = Self::total_actor_deltas(
+                    npc.id,
+                    hits.get(&npc.id).map(|v| v.as_slice()).unwrap_or(&[]),
+                    aoes.get(&npc.id).map(|v| v.as_slice()).unwrap_or(&[]),
+                );
                 npc.add_health(total_deltas.health, now);
                 npc.add_primary_weapon_tiers(total_deltas.primary_tiers);
                 npc.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
@@ -4091,7 +4185,7 @@ impl AttackCruiserGame {
         });
     }
 
-    fn list_actors_by_hostility(
+    fn list_trackable_actors_by_hostility(
         &self,
     ) -> (Vec<AttackCruiserActorTarget>, Vec<AttackCruiserActorTarget>) {
         let mut friendlies: Vec<AttackCruiserActorTarget> = self
