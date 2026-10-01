@@ -1637,7 +1637,9 @@ enum AttackCruiserShipAiMovement {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserAoeConfig {
     radius: f32,
+    #[serde(default)]
     target_deltas: AttackCruiserActorDeltas,
+    #[serde(default)]
     self_deltas: AttackCruiserActorDeltas,
     composite_effect_id: Option<u32>,
 }
