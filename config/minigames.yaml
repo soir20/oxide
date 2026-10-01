@@ -3210,7 +3210,7 @@ categories:
                     emp:
                       icon_id: 516
                       aoe:
-                        radius: 500.0
+                        radius: 1000.0
                         composite_effect_id: 1739
                         target_deltas:
                           stun_millis: 5000
