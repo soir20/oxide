@@ -3150,6 +3150,7 @@ impl AttackCruiserGame {
             approx_target_pos.into(),
             &friendlies,
             &hostiles,
+            &self.config.playfield,
         )
         .map(|target| {
             (
@@ -3988,10 +3989,15 @@ impl AttackCruiserGame {
                 npc.remove_stun();
             }
 
-            let (is_real_target, target_pos, target_speed) =
-                Self::closest_target(npc.id, npc.pos, &friendlies, &hostiles)
-                    .map(|target| (true, target.pos, target.speed))
-                    .unwrap_or((false, self.config.playfield.center, Pos3::default()));
+            let (is_real_target, target_pos, target_speed) = Self::closest_target(
+                npc.id,
+                npc.pos,
+                &friendlies,
+                &hostiles,
+                &self.config.playfield,
+            )
+            .map(|target| (true, target.pos, target.speed))
+            .unwrap_or((false, self.config.playfield.center, Pos3::default()));
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if let Some(actor_hits) = hits.get(&npc.id) {
@@ -4205,19 +4211,33 @@ impl AttackCruiserGame {
         target_pos: Pos3,
         friendlies: &'a [AttackCruiserActorTarget],
         hostiles: &'a [AttackCruiserActorTarget],
+        playfield: &AttackCruiserPlayfieldConfig,
     ) -> Option<&'a AttackCruiserActorTarget> {
         let mut closest_targets: ArrayVec<&AttackCruiserActorTarget, 2> = ArrayVec::new();
         let comparator = |target1: &&AttackCruiserActorTarget,
                           target2: &&AttackCruiserActorTarget| {
-            if target1.id == actor_id && target2.id == actor_id {
+            let target1_in_bounds = is_inside_oval(
+                target1.pos,
+                playfield.center,
+                playfield.radius_x,
+                playfield.radius_z,
+            );
+            let target2_in_bounds = is_inside_oval(
+                target2.pos,
+                playfield.center,
+                playfield.radius_x,
+                playfield.radius_z,
+            );
+
+            if !target1_in_bounds && !target2_in_bounds {
                 return Ordering::Equal;
             }
 
-            if target1.id == actor_id {
+            if !target1_in_bounds {
                 return Ordering::Greater;
             }
 
-            if target2.id == actor_id {
+            if !target2_in_bounds {
                 return Ordering::Less;
             }
 
@@ -4241,12 +4261,20 @@ impl AttackCruiserGame {
             distance1.total_cmp(&distance2)
         };
         if AttackCruiserActorIdPool::can_attack_friendlies(actor_id) {
-            if let Some(closest_friendly) = friendlies.iter().min_by(comparator) {
+            if let Some(closest_friendly) = friendlies
+                .iter()
+                .filter(|target| target.id != actor_id)
+                .min_by(comparator)
+            {
                 closest_targets.push(closest_friendly);
             }
         }
         if AttackCruiserActorIdPool::can_attack_hostiles(actor_id) {
-            if let Some(closest_hostile) = hostiles.iter().min_by(comparator) {
+            if let Some(closest_hostile) = hostiles
+                .iter()
+                .filter(|target| target.id != actor_id)
+                .min_by(comparator)
+            {
                 closest_targets.push(closest_hostile);
             }
         }
