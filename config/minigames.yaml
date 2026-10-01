@@ -3207,6 +3207,13 @@ categories:
                         - count: 5
                           ship: v19
                           wobble: !Degrees 360
+                    emp:
+                      icon_id: 516
+                      aoe:
+                        radius: 500.0
+                        composite_effect_id: 1739
+                        target_deltas:
+                          stun_millis: 5000
                   spawn1:
                     pos:
                       x: 3.9
@@ -3246,12 +3253,13 @@ categories:
                     max_health: 20
                     overhead_health_scale: 0.5
                     thruster_effect_id: 1689
+                    stunned_effect_id: 1736
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
                     despawn_effect_id: 1718
                     ships_on_death:
                       - count: 1
-                        ship: torrent_powerup
+                        ship: emp_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3292,6 +3300,7 @@ categories:
                     angular_acceleration: !Degrees 240
                     angular_deceleration: !Degrees 240
                     max_health: 1
+                    stunnable: false
                     overhead_health_scale: 0.0
                     thruster_effect_id: 1532
                     death_end_effect_id: 1450
@@ -3328,6 +3337,7 @@ categories:
                     angular_acceleration: !Degrees 240
                     angular_deceleration: !Degrees 240
                     max_health: 100
+                    stunnable: false
                     overhead_health_scale: 0.0
                     thruster_effect_id: 1297
                     death_end_effect_id: 1450
@@ -3511,6 +3521,41 @@ categories:
                               target_deltas:
                                 secondary_item:
                                   name: torrent
+                                  count: 1
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              max_cooldown_error_millis: 0
+                              lifetime_millis: 50
+                  emp_powerup:
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
+                    trackable: false
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1537
+                    death_end_effect_id: 1773
+                    despawn_effect_id: 1773
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1773
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_deltas:
+                                secondary_item:
+                                  name: emp
                                   count: 1
                               self_deltas:
                                 health: -1
