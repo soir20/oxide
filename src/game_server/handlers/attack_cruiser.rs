@@ -495,7 +495,7 @@ impl AttackCruiserActor {
     }
 
     pub fn stun(&mut self, stun_duration: Duration, now: Instant) {
-        if self.vulnerable() {
+        if self.vulnerable() && self.ship.stunnable {
             // Adding to existing stun time is too overpowered, so always replace the stun time
             self.stun.stun(stun_duration, now);
         }
@@ -1692,6 +1692,8 @@ struct AttackCruiserShipConfig {
     #[serde(default)]
     stationary_turn: f32,
     max_health: u16,
+    #[serde(default = "default_true")]
+    stunnable: bool,
     overhead_health_scale: f32,
     thruster_effect_id: Option<u32>,
     invulnerable_effect_id: Option<u32>,
