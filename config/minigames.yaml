@@ -3232,7 +3232,7 @@ categories:
                   warning_millis: 5000
                 ships:
                   test:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
                     max_alive: 50
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3278,7 +3278,7 @@ categories:
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
                   enemy_missile:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3314,7 +3314,7 @@ categories:
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
                   player_missile:
-                    can_attack_hostiles: true
+                    can_seek_hostiles: true
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3350,7 +3350,8 @@ categories:
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
                   health_powerup:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3382,7 +3383,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   life_powerup:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3414,7 +3416,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   weapon_powerup:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3446,7 +3449,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   invulnerability_powerup:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3480,7 +3484,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   torrent_powerup:
-                    can_attack_friendlies: true
+                    can_seek_friendlies: true
+                    can_seek_npcs: false
                     trackable: false
                     show_arrow_to_player: false
                     max_alive: 20
@@ -3514,7 +3519,7 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   v19:
-                    can_attack_hostiles: true
+                    can_seek_hostiles: true
                     show_arrow_to_player: false
                     max_alive: 50
                     model_id: 241
@@ -3543,7 +3548,7 @@ categories:
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
                   venator:
-                    can_attack_hostiles: true
+                    can_seek_hostiles: true
                     max_alive: 4
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe

@@ -1662,9 +1662,13 @@ struct AttackCruiserShipAiStateRule {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
     #[serde(default)]
-    can_attack_friendlies: bool,
+    can_seek_friendlies: bool,
     #[serde(default)]
-    can_attack_hostiles: bool,
+    can_seek_hostiles: bool,
+    #[serde(default = "default_true")]
+    can_seek_players: bool,
+    #[serde(default = "default_true")]
+    can_seek_npcs: bool,
     #[serde(default = "default_true")]
     trackable: bool,
     #[serde(default = "default_true")]
@@ -2031,12 +2035,11 @@ impl AttackCruiserProjectilePool {
             for (projectile_id, projectile) in &self.live_projectiles {
                 let launched_by_self = projectile.launched_by_actor_id == actor.id;
                 let are_both_friendly =
-                    AttackCruiserActorIdPool::can_attack_hostiles(projectile.launched_by_actor_id)
-                        && !AttackCruiserActorIdPool::can_attack_friendlies(actor.id);
+                    AttackCruiserActorIdPool::can_seek_hostiles(projectile.launched_by_actor_id)
+                        && !AttackCruiserActorIdPool::can_seek_friendlies(actor.id);
                 let are_both_hostile =
-                    AttackCruiserActorIdPool::can_attack_friendlies(
-                        projectile.launched_by_actor_id,
-                    ) && !AttackCruiserActorIdPool::can_attack_hostiles(actor.id);
+                    AttackCruiserActorIdPool::can_seek_friendlies(projectile.launched_by_actor_id)
+                        && !AttackCruiserActorIdPool::can_seek_hostiles(actor.id);
                 if launched_by_self || are_both_friendly || are_both_hostile {
                     continue;
                 }
@@ -2187,6 +2190,7 @@ struct AttackCruiserActorTarget {
     id: i32,
     pos: Pos3,
     speed: Pos3,
+    is_player: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -2211,8 +2215,8 @@ impl AttackCruiserActorIdPool {
 
     pub fn next(
         &mut self,
-        can_attack_friendlies: bool,
-        can_attack_hostiles: bool,
+        can_seek_friendlies: bool,
+        can_seek_hostiles: bool,
         player_actor_ids: &[i32],
         npcs: &HashMap<i32, AttackCruiserActor>,
         ship_name: &String,
@@ -2230,7 +2234,7 @@ impl AttackCruiserActorIdPool {
             ));
         }
 
-        let index = can_attack_friendlies as usize | ((can_attack_hostiles as usize) << 1);
+        let index = can_seek_friendlies as usize | ((can_seek_hostiles as usize) << 1);
 
         let last_id = self.last_ids[index];
         let mut next_id = (last_id + 1) % Self::MAX_ACTOR_ID;
@@ -2247,11 +2251,11 @@ impl AttackCruiserActorIdPool {
 
         self.last_ids[index] = next_id;
 
-        if can_attack_friendlies {
+        if can_seek_friendlies {
             next_id |= Self::ATTACK_FRIENDLY_MASK;
         }
 
-        if can_attack_hostiles {
+        if can_seek_hostiles {
             next_id |= Self::ATTACK_HOSTILE_MASK;
         }
 
@@ -2259,18 +2263,18 @@ impl AttackCruiserActorIdPool {
         Ok(next_id)
     }
 
-    pub fn can_attack_friendlies(actor_id: i32) -> bool {
+    pub fn can_seek_friendlies(actor_id: i32) -> bool {
         actor_id & Self::ATTACK_FRIENDLY_MASK != 0
     }
 
-    pub fn can_attack_hostiles(actor_id: i32) -> bool {
+    pub fn can_seek_hostiles(actor_id: i32) -> bool {
         actor_id & Self::ATTACK_HOSTILE_MASK != 0
     }
 
     pub fn hostility(actor_id: i32, show_directional_indicator: bool) -> AttackCruiserHostility {
         match (
             show_directional_indicator,
-            Self::can_attack_friendlies(actor_id),
+            Self::can_seek_friendlies(actor_id),
         ) {
             (true, true) => AttackCruiserHostility::Hostile,
             (true, false) => AttackCruiserHostility::Friendly,
@@ -2323,8 +2327,8 @@ impl AttackCruiserGame {
             player1,
             actor_id_pool
                 .next(
-                    player_ship.can_attack_friendlies,
-                    player_ship.can_attack_hostiles,
+                    player_ship.can_seek_friendlies,
+                    player_ship.can_seek_hostiles,
                     &[],
                     &npcs,
                     &config.player.ship,
@@ -2347,8 +2351,8 @@ impl AttackCruiserGame {
                 player2,
                 actor_id_pool
                     .next(
-                        player_ship.can_attack_friendlies,
-                        player_ship.can_attack_hostiles,
+                        player_ship.can_seek_friendlies,
+                        player_ship.can_seek_hostiles,
                         &[player_states[0].actor.id],
                         &npcs,
                         &config.player.ship,
@@ -2375,8 +2379,8 @@ impl AttackCruiserGame {
         let test_npc_ship = config.ship(&test_npc_ship_name);
         let npc_id1 = actor_id_pool
             .next(
-                test_npc_ship.can_attack_friendlies,
-                test_npc_ship.can_attack_hostiles,
+                test_npc_ship.can_seek_friendlies,
+                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -2404,8 +2408,8 @@ impl AttackCruiserGame {
         );
         let npc_id2 = actor_id_pool
             .next(
-                test_npc_ship.can_attack_friendlies,
-                test_npc_ship.can_attack_hostiles,
+                test_npc_ship.can_seek_friendlies,
+                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -2433,8 +2437,8 @@ impl AttackCruiserGame {
         );
         let npc_id3 = actor_id_pool
             .next(
-                test_npc_ship.can_attack_friendlies,
-                test_npc_ship.can_attack_hostiles,
+                test_npc_ship.can_seek_friendlies,
+                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -3147,6 +3151,8 @@ impl AttackCruiserGame {
         let (friendlies, hostiles) = self.list_actors_by_hostility();
         let (target_y, horizontal_distance_to_target) = Self::closest_target(
             player_state.actor.id,
+            true,
+            true,
             approx_target_pos.into(),
             &friendlies,
             &hostiles,
@@ -3318,8 +3324,8 @@ impl AttackCruiserGame {
         player_state.actor.id = self
             .actor_id_pool
             .next(
-                player_state.actor.ship.can_attack_friendlies,
-                player_state.actor.ship.can_attack_hostiles,
+                player_state.actor.ship.can_seek_friendlies,
+                player_state.actor.ship.can_seek_hostiles,
                 player_actor_ids,
                 &self.npcs,
                 &self.config.player.ship,
@@ -3991,6 +3997,8 @@ impl AttackCruiserGame {
 
             let (is_real_target, target_pos, target_speed) = Self::closest_target(
                 npc.id,
+                npc.ship.can_seek_players,
+                npc.ship.can_seek_npcs,
                 npc.pos,
                 &friendlies,
                 &hostiles,
@@ -4098,6 +4106,7 @@ impl AttackCruiserGame {
                         id: actor.id,
                         pos: actor.pos,
                         speed: actor.speed,
+                        is_player: true,
                     }),
                     false => None,
                 }
@@ -4105,19 +4114,21 @@ impl AttackCruiserGame {
             .collect();
         let mut hostiles = Vec::new();
         for npc in self.npcs.values().filter(|npc| npc.trackable()) {
-            if AttackCruiserActorIdPool::can_attack_friendlies(npc.id) {
+            if AttackCruiserActorIdPool::can_seek_friendlies(npc.id) {
                 hostiles.push(AttackCruiserActorTarget {
                     id: npc.id,
                     pos: npc.pos,
                     speed: npc.speed,
+                    is_player: false,
                 });
             }
 
-            if AttackCruiserActorIdPool::can_attack_hostiles(npc.id) {
+            if AttackCruiserActorIdPool::can_seek_hostiles(npc.id) {
                 friendlies.push(AttackCruiserActorTarget {
                     id: npc.id,
                     pos: npc.pos,
                     speed: npc.speed,
+                    is_player: false,
                 });
             }
         }
@@ -4177,8 +4188,8 @@ impl AttackCruiserGame {
         let mut new_npc_packets = Vec::new();
         for new_npc in pending_npcs.into_iter() {
             let id = match self.actor_id_pool.next(
-                new_npc.ship().can_attack_friendlies,
-                new_npc.ship().can_attack_hostiles,
+                new_npc.ship().can_seek_friendlies,
+                new_npc.ship().can_seek_hostiles,
                 player_actor_ids,
                 &self.npcs,
                 new_npc.ship_name(),
@@ -4208,6 +4219,8 @@ impl AttackCruiserGame {
 
     fn closest_target<'a>(
         actor_id: i32,
+        include_players: bool,
+        include_npcs: bool,
         target_pos: Pos3,
         friendlies: &'a [AttackCruiserActorTarget],
         hostiles: &'a [AttackCruiserActorTarget],
@@ -4260,19 +4273,23 @@ impl AttackCruiserGame {
 
             distance1.total_cmp(&distance2)
         };
-        if AttackCruiserActorIdPool::can_attack_friendlies(actor_id) {
+        if AttackCruiserActorIdPool::can_seek_friendlies(actor_id) {
             if let Some(closest_friendly) = friendlies
                 .iter()
                 .filter(|target| target.id != actor_id)
+                .filter(|target| include_players || !target.is_player)
+                .filter(|target| include_npcs || target.is_player)
                 .min_by(comparator)
             {
                 closest_targets.push(closest_friendly);
             }
         }
-        if AttackCruiserActorIdPool::can_attack_hostiles(actor_id) {
+        if AttackCruiserActorIdPool::can_seek_hostiles(actor_id) {
             if let Some(closest_hostile) = hostiles
                 .iter()
                 .filter(|target| target.id != actor_id)
+                .filter(|target| include_players || !target.is_player)
+                .filter(|target| include_npcs || target.is_player)
                 .min_by(comparator)
             {
                 closest_targets.push(closest_hostile);
