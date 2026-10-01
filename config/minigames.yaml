@@ -3201,6 +3201,12 @@ categories:
                     invulnerability:
                       icon_id: 517
                       invulnerability_millis: 5000
+                    torrent:
+                      icon_id: 515
+                      ships:
+                        - count: 5
+                          ship: v19
+                          wobble: !Degrees 360
                   spawn1:
                     pos:
                       x: 3.9
@@ -3245,7 +3251,7 @@ categories:
                     despawn_effect_id: 1718
                     ships_on_death:
                       - count: 1
-                        ship: invulnerability_powerup
+                        ship: torrent_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3473,6 +3479,69 @@ categories:
                               cooldown_millis: 50
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
+                  torrent_powerup:
+                    can_attack_friendlies: true
+                    trackable: false
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1539
+                    death_end_effect_id: 1779
+                    despawn_effect_id: 1779
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1779
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_deltas:
+                                secondary_item:
+                                  name: torrent
+                                  count: 1
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              max_cooldown_error_millis: 0
+                              lifetime_millis: 50
+                  v19:
+                    can_attack_hostiles: true
+                    show_arrow_to_player: false
+                    max_alive: 50
+                    model_id: 241
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_roll: !Degrees 15
+                    max_speed: 400.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 60
+                    angular_acceleration: !Degrees 120
+                    angular_deceleration: !Degrees 120
+                    max_health: 20
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1827
+                    despawn_effect_id: 1718
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - composite_effect_id: 1761
+                              hit_composite_effect_id: 1315
+                              count: 1
+                              target_deltas:
+                                health: -1
+                              length: 25
+                              cooldown_millis: 500
+                              min_launch_angle: !Degrees -60
+                              max_launch_angle: !Degrees 60
                   venator:
                     can_attack_hostiles: true
                     max_alive: 4

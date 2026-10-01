@@ -3109,6 +3109,7 @@ impl AttackCruiserGame {
                     .and_then(|secondary_item_name| {
                         self.config.player.secondary_items.get(secondary_item_name)
                     });
+            let mut pending_npcs = Vec::new();
 
             if let Some(secondary_item) = secondary_item_opt {
                 if secondary_item.invulnerability_millis > 0 {
@@ -3117,8 +3118,16 @@ impl AttackCruiserGame {
                         now,
                     );
                 }
+
+                pending_npcs.append(&mut Self::launch_actors_from_actor(
+                    &player_state.actor,
+                    &secondary_item.ships,
+                    now,
+                    &self.config,
+                    &self.bvhs,
+                ));
             }
-            return Ok(Vec::new());
+            return Ok(self.finalize_actors(pending_npcs));
         }
 
         let attacker_pos = Pos {
@@ -3824,8 +3833,9 @@ impl AttackCruiserGame {
             }
 
             if player_state.respawnable(now) {
-                pending_npcs.append(&mut Self::spawn_actors_on_death(
+                pending_npcs.append(&mut Self::launch_actors_from_actor(
                     &player_state.actor,
+                    &player_state.actor.ship.ships_on_death,
                     now,
                     &self.config,
                     &self.bvhs,
@@ -4030,8 +4040,9 @@ impl AttackCruiserGame {
             ));
 
             if npc.completed_death(now) {
-                pending_npcs.append(&mut Self::spawn_actors_on_death(
+                pending_npcs.append(&mut Self::launch_actors_from_actor(
                     npc,
+                    &npc.ship.ships_on_death,
                     now,
                     &self.config,
                     &self.bvhs,
@@ -4108,8 +4119,9 @@ impl AttackCruiserGame {
         (friendlies, hostiles)
     }
 
-    fn spawn_actors_on_death(
+    fn launch_actors_from_actor(
         actor: &AttackCruiserActor,
+        new_ships: &[AttackCruiserSpawnedShipConfig],
         now: Instant,
         config: &AttackCruiserConfig,
         bvhs: &HashMap<String, Arc<Bvh>>,
@@ -4123,7 +4135,7 @@ impl AttackCruiserGame {
             z: actor.yaw.cos(),
         };
 
-        for launched_actor in actor.ship.ships_on_death.iter() {
+        for launched_actor in new_ships.iter() {
             let ship = config.ship(&launched_actor.ship);
             let bvh = bvhs.get(&launched_actor.ship).cloned();
 
