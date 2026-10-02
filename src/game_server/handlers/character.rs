@@ -1,15 +1,18 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
 use chrono::{DateTime, FixedOffset, Utc};
+use croner::Cron;
 use enum_iterator::Sequence;
 use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::{
+    debug,
     game_server::{
         handlers::{
             combat::ThreatTable,
@@ -295,11 +298,14 @@ pub struct BaseNpcConfig {
     pub enable_tilt: bool,
     #[serde(default = "default_true")]
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    #[serde(default)]
+    pub scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     #[serde(default)]
     pub force_despawn: bool,
     #[serde(default)]
@@ -349,6 +355,7 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -457,7 +464,10 @@ impl BaseNpc {
                     rail_unknown1: 0.0,
                     rail_unknown2: 0.0,
                     auto_interact_radius: character.auto_interact_radius,
-                    head_customization_override: "".to_string(),
+                    head_customization_override: self
+                        .head_customization_override
+                        .clone()
+                        .unwrap_or_default(),
                     hair_customization_override: "".to_string(),
                     body_customization_override: "".to_string(),
                     override_terrain_model: !self.use_terrain_model,
@@ -1356,6 +1366,13 @@ pub struct TickableProcedureConfig {
     pub is_interruptible: bool,
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScheduledProcedureConfig {
+    pub possible_procedures: Vec<TickableProcedureReference>,
+    pub schedule: Cron,
+}
+
 pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>),
     MustChangeProcedure(String),
@@ -1713,6 +1730,65 @@ fn trigger_synchronized_interaction(
             });
 
     supplier?(game_server)
+}
+
+#[derive(Clone)]
+pub struct ScheduledProcedureSelector {
+    scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
+    distributions: Arc<Vec<WeightedAliasIndex<u32>>>,
+}
+
+impl ScheduledProcedureSelector {
+    pub fn new(scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>) -> Self {
+        let distributions = Arc::new(
+            scheduled_procedures
+                .iter()
+                .map(|config| {
+                    let weights: Vec<u32> = config
+                        .possible_procedures
+                        .iter()
+                        .map(|procedure| procedure.weight)
+                        .collect();
+                    WeightedAliasIndex::new(weights).expect("Failed to build alias index")
+                })
+                .collect(),
+        );
+
+        Self {
+            scheduled_procedures,
+            distributions,
+        }
+    }
+
+    pub fn select_procedure(&self, calendar_now: &DateTime<Utc>) -> Option<String> {
+        for (scheduled_procedure, distribution) in self
+            .scheduled_procedures
+            .iter()
+            .zip(self.distributions.iter())
+        {
+            let is_match = match scheduled_procedure.schedule.is_time_matching(calendar_now) {
+                Ok(is_match) => is_match,
+                Err(err) => {
+                    debug!(
+                        "Unable to evaluate cron expression {}: {err}",
+                        scheduled_procedure.schedule
+                    );
+                    false
+                }
+            };
+
+            if is_match {
+                let index = distribution.sample(&mut thread_rng());
+                return Some(
+                    scheduled_procedure.possible_procedures[index]
+                        .procedure
+                        .clone(),
+                );
+            }
+        }
+
+        None
+    }
 }
 
 pub type EquippedItemMap = BTreeMap<EquipmentSlot, i32>;
@@ -2129,6 +2205,7 @@ pub struct BaseNpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    pub scheduled_procedure_selector: ScheduledProcedureSelector,
     pub force_despawn: bool,
     pub physics: PhysicsState,
     pub max_distance_from_target: f32,
@@ -2153,6 +2230,7 @@ pub struct BaseNpcTemplate {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -2215,6 +2293,9 @@ impl BaseNpcTemplate {
             tickable_procedures: config.tickable_procedures.clone(),
             first_possible_procedures: config.first_possible_procedures.clone(),
             synchronize_with: config.synchronize_with.clone(),
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(
+                config.scheduled_procedures.clone(),
+            ),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             health: config.health,
@@ -2248,6 +2329,7 @@ impl BaseNpcTemplate {
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
+            head_customization_override: config.head_customization_override.clone(),
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
@@ -2332,6 +2414,7 @@ impl BaseNpcTemplate {
                     .copied()
                     .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
+            scheduled_procedure_selector: self.scheduled_procedure_selector.clone(),
         }
     }
 
@@ -2353,6 +2436,7 @@ impl BaseNpcTemplate {
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
+            head_customization_override: self.head_customization_override.clone(),
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
@@ -2595,6 +2679,7 @@ pub struct Character {
     pub stats: CharacterStats,
     tickable_procedure_tracker: TickableProcedureTracker,
     pub synchronize_with: Option<u64>,
+    scheduled_procedure_selector: ScheduledProcedureSelector,
 }
 
 impl
@@ -2687,6 +2772,7 @@ impl Character {
         tickable_procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
         synchronize_with: Option<u64>,
+        scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -2738,6 +2824,7 @@ impl Character {
                 first_possible_procedures,
             ),
             synchronize_with,
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(scheduled_procedures),
         }
     }
 
@@ -2807,6 +2894,7 @@ impl Character {
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(Arc::new(Vec::new())),
         }
     }
 
@@ -2830,6 +2918,7 @@ impl Character {
     pub fn tick(
         &mut self,
         now: Instant,
+        calendar_now: &DateTime<Utc>,
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
@@ -2840,6 +2929,13 @@ impl Character {
         collision: &Collision,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         self.update_target(nearby_characters, navmesh);
+
+        if let Some(procedure_key) = self
+            .scheduled_procedure_selector
+            .select_procedure(calendar_now)
+        {
+            self.set_tickable_procedure_if_exists(procedure_key, now);
+        }
 
         let (mut broadcasts, pos_update) = self.seek_next_pos(
             now,
