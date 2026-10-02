@@ -298,6 +298,7 @@ pub struct BaseNpcConfig {
     pub enable_tilt: bool,
     #[serde(default = "default_true")]
     pub use_terrain_model: bool,
+    pub body_customization_override: Option<String>,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
@@ -354,6 +355,7 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub body_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -464,7 +466,10 @@ impl BaseNpc {
                     auto_interact_radius: character.auto_interact_radius,
                     head_customization_override: "".to_string(),
                     hair_customization_override: "".to_string(),
-                    body_customization_override: "".to_string(),
+                    body_customization_override: self
+                        .body_customization_override
+                        .clone()
+                        .unwrap_or_default(),
                     override_terrain_model: !self.use_terrain_model,
                     hover_glow: 0,
                     hover_description: self
@@ -2225,6 +2230,7 @@ pub struct BaseNpcTemplate {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub body_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
@@ -2323,6 +2329,7 @@ impl BaseNpcTemplate {
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
+            body_customization_override: config.body_customization_override.clone(),
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
@@ -2429,6 +2436,7 @@ impl BaseNpcTemplate {
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
+            body_customization_override: self.body_customization_override.clone(),
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
