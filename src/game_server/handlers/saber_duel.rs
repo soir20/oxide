@@ -675,7 +675,7 @@ impl SaberDuelGame {
                 enable_gravity: true,
                 enable_tilt: false,
                 use_terrain_model: false,
-                body_customization_override: None,
+                head_customization_override: None,
                 attachments,
                 composite_effect_id: None,
                 sub_title_id: None,
