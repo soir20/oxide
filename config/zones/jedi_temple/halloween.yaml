@@ -163,3 +163,25 @@ jedi_temple:
       tickable_procedures: *halloween_tickable_procedures
       first_possible_procedures: *halloween_first_possible_procedures
       scheduled_procedures: *halloween_scheduled_procedures
+    halloween_workshop_rocket_rescue:
+      model_id: 2568
+      name_id: 19202
+      pos:
+        x: -351.20938
+        y: 10.12735
+        z: 1784.4583
+        w: 1.0
+      rot:
+        x: -0.8070982
+        y: 0
+        z: -0.5904171
+        w: 0.0
+      cursor: 54
+      notification_icon: 28
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 69
+        duration_millis: 1

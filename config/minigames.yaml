@@ -4769,6 +4769,34 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 20
+            - !StageGroup
+              guid: 69
+              name_id: 12200
+              description_id: 11921
+              icon_id: 538
+              stage_icon_id: 538
+              members_only: false
+              stage_select_map_name: r2
+              stages:
+                - !Stage
+                  guid: 12031
+                  name_id: 19202
+                  description_id: 11921
+                  stage_icon_id: 2355
+                  start_screen_icon_id: 2356
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 4462
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage01
+                  minigame_type:
+                    !Flash
+                    game_swf_name: r2halloween.swf
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 6.62
       - guid: 13000
         name_id: 14051
         description_id: 14964
