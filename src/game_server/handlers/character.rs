@@ -12,6 +12,7 @@ use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::{
+    debug,
     game_server::{
         handlers::{
             combat::ThreatTable,
@@ -1760,10 +1761,16 @@ impl ScheduledProcedureSelector {
             .iter()
             .zip(self.distributions.iter())
         {
-            let is_match = scheduled_procedure
-                .schedule
-                .is_time_matching(calendar_now)
-                .unwrap_or(false);
+            let is_match = match scheduled_procedure.schedule.is_time_matching(calendar_now) {
+                Ok(is_match) => is_match,
+                Err(err) => {
+                    debug!(
+                        "Unable to evaluate cron expression {}: {err}",
+                        scheduled_procedure.schedule
+                    );
+                    false
+                }
+            };
 
             if is_match {
                 let index = distribution.sample(&mut thread_rng());
