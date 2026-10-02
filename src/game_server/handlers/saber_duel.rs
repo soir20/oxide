@@ -1,6 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, VecDeque},
     io::{Cursor, Read},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -697,6 +698,7 @@ impl SaberDuelGame {
             HashMap::new(),
             Vec::new(),
             None,
+            Arc::new(Vec::new()),
         );
 
         Ok(vec![opponent])

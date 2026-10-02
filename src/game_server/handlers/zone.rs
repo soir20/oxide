@@ -2,6 +2,7 @@ use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     iter,
     path::Path,
+    sync::Arc,
 };
 
 use enum_iterator::all;
@@ -408,6 +409,7 @@ impl ZoneInstance {
                 HashMap::new(),
                 Vec::new(),
                 None,
+                Arc::new(Vec::new()),
             ));
         }
         template.to_zone_instance(guid, Some(house), global_characters_table)

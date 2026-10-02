@@ -1,9 +1,11 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
 use chrono::{DateTime, FixedOffset, Utc};
+use croner::Cron;
 use enum_iterator::Sequence;
 use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
@@ -300,6 +302,8 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    #[serde(default)]
+    pub scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     #[serde(default)]
     pub force_despawn: bool,
     #[serde(default)]
@@ -1356,6 +1360,13 @@ pub struct TickableProcedureConfig {
     pub is_interruptible: bool,
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScheduledProcedureConfig {
+    pub possible_procedures: Vec<TickableProcedureReference>,
+    pub schedule: Cron,
+}
+
 pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>),
     MustChangeProcedure(String),
@@ -2129,6 +2140,7 @@ pub struct BaseNpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    pub scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     pub force_despawn: bool,
     pub physics: PhysicsState,
     pub max_distance_from_target: f32,
@@ -2215,6 +2227,7 @@ impl BaseNpcTemplate {
             tickable_procedures: config.tickable_procedures.clone(),
             first_possible_procedures: config.first_possible_procedures.clone(),
             synchronize_with: config.synchronize_with.clone(),
+            scheduled_procedures: config.scheduled_procedures.clone(),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             health: config.health,
@@ -2332,6 +2345,7 @@ impl BaseNpcTemplate {
                     .copied()
                     .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
+            scheduled_procedures: self.scheduled_procedures.clone(),
         }
     }
 
@@ -2595,6 +2609,7 @@ pub struct Character {
     pub stats: CharacterStats,
     tickable_procedure_tracker: TickableProcedureTracker,
     pub synchronize_with: Option<u64>,
+    pub scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
 }
 
 impl
@@ -2687,6 +2702,7 @@ impl Character {
         tickable_procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
         synchronize_with: Option<u64>,
+        scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -2738,6 +2754,7 @@ impl Character {
                 first_possible_procedures,
             ),
             synchronize_with,
+            scheduled_procedures,
         }
     }
 
@@ -2807,6 +2824,7 @@ impl Character {
             },
             tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
             synchronize_with: None,
+            scheduled_procedures: Arc::new(Vec::new()),
         }
     }
 
