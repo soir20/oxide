@@ -4004,7 +4004,7 @@ categories:
                   short_name: lddooku
                   minigame_type:
                     !SaberDuel
-                    camera_rot: *saber_duel_dathomir_arena_camera_rot
+                    camera_rot: 0.0
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 8
                     keys_per_basic_bout: 4
@@ -4056,7 +4056,7 @@ categories:
                     force_points_per_bout_tied: *saber_duel_force_points_per_bout_tied
                     force_points_per_bout_lost: *saber_duel_force_points_per_bout_lost
                     force_powers: *saber_duel_force_power_definitions
-                  zone_template_guid: 209
+                  zone_template_guid: 214
                   score_to_credits_expression: x / 122.5
       - guid: 9000
         name_id: 45187
