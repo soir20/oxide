@@ -149,6 +149,19 @@ pub enum RemovalMode {
     },
 }
 
+impl RemovalMode {
+    pub fn total_duration_millis(&self) -> u64 {
+        match self {
+            RemovalMode::Immediate => 0,
+            RemovalMode::Graceful {
+                removal_delay_millis,
+                fade_duration_millis,
+                ..
+            } => (*removal_delay_millis as u64).saturating_add(*fade_duration_millis as u64),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Default, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub enum SpawnedState {
@@ -694,7 +707,7 @@ impl OneShotAction {
 pub struct PlayerOneShotAction {
     pub animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: u32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -712,7 +725,7 @@ pub struct OneShotInteractionConfig {
     pub player_reaction: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -729,7 +742,7 @@ pub struct OneShotInteractionTemplate {
     pub one_shot_action: OneShotAction,
     pub player_one_shot_action: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
@@ -764,7 +777,7 @@ impl OneShotInteractionTemplate {
             hud_message: config.hud_message,
             player_one_shot_action: config.player_reaction,
             one_shot_animation_id: config.one_shot_animation_id,
-            animation_delay_seconds: config.animation_delay_seconds,
+            animation_delay_millis: config.animation_delay_millis,
             composite_effect_id: config.composite_effect_id,
             composite_effect_delay_millis: config.composite_effect_delay_millis,
             despawn_npc: config.despawn_npc,
@@ -796,7 +809,7 @@ impl OneShotInteractionTemplate {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -823,7 +836,8 @@ impl OneShotInteractionTemplate {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.player_one_shot_action.animation_delay_seconds as f32,
+                    delay_seconds: self.player_one_shot_action.animation_delay_millis as f32
+                        / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -940,7 +954,7 @@ pub struct TickableStep {
     pub wander: Option<WanderConfig>,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -981,6 +995,13 @@ impl TickableStep {
             z: self.new_pos_z.unwrap_or(current_pos.z) + self.new_pos_offset_z,
             w: current_pos.w,
         }
+    }
+
+    pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
+        let effect_delay =
+            (self.animation_delay_millis as u64).max(self.composite_effect_delay_millis as u64);
+
+        self.min_duration_millis + effect_delay + removal_duration_millis
     }
 
     pub fn apply(
@@ -1144,7 +1165,7 @@ impl TickableStep {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.min_duration_millis as f32 / 1000.0,
                 },
             }));
@@ -1391,9 +1412,40 @@ pub struct TickableProcedure {
 
 impl TickableProcedure {
     pub fn from_config(
+        procedure_name: &str,
         config: TickableProcedureConfig,
         all_procedures: &HashMap<String, TickableProcedureConfig>,
+        removal_duration_millis: u64,
     ) -> Self {
+        if removal_duration_millis > 0 {
+            for (step_index, step) in config.steps.iter().enumerate() {
+                if !matches!(step.spawned_state, SpawnedState::Despawn) {
+                    continue;
+                }
+
+                let animation_delay = step.animation_delay_millis as u64;
+                let composite_effect_delay = step.composite_effect_delay_millis as u64;
+
+                assert!(
+                animation_delay <= removal_duration_millis,
+                "Procedure {} has an animation delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                animation_delay,
+                removal_duration_millis,
+                step_index,
+            );
+
+                assert!(
+                composite_effect_delay <= removal_duration_millis,
+                "Procedure {} has a composite effect delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                composite_effect_delay,
+                removal_duration_millis,
+                step_index,
+            );
+            }
+        }
+
         let (distribution, next_possible_procedures) = if config.next_possible_procedures.is_empty()
         {
             (
@@ -1476,7 +1528,10 @@ impl TickableProcedure {
                     .unwrap_or(true);
 
                 let should_change_steps = time_since_last_step_change
-                    >= Duration::from_millis(current_step.min_duration_millis)
+                    >= Duration::from_millis(
+                        current_step
+                            .min_duration_millis(character.removal_mode.total_duration_millis()),
+                    )
                     && reached_destination;
 
                 (should_change_steps, pos_update_packet)
@@ -1564,6 +1619,7 @@ impl TickableProcedureTracker {
     pub fn new(
         procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
+        removal_duration_millis: u64,
     ) -> Self {
         let current_procedure_key = if procedures.is_empty() {
             String::from("")
@@ -1603,7 +1659,12 @@ impl TickableProcedureTracker {
                 .map(|(key, config)| {
                     (
                         key.clone(),
-                        TickableProcedure::from_config(config.clone(), &procedures),
+                        TickableProcedure::from_config(
+                            key,
+                            config.clone(),
+                            &procedures,
+                            removal_duration_millis,
+                        ),
                     )
                 })
                 .collect(),
@@ -2263,6 +2324,35 @@ impl BaseNpcTemplate {
             }
         }
 
+        if let RemovalMode::Graceful {
+            removal_delay_millis,
+            removal_effect_delay_millis,
+            removal_composite_effect_id,
+            fade_duration_millis,
+            ..
+        } = config.removal_mode
+        {
+            if removal_effect_delay_millis > 0 && removal_composite_effect_id == 0 {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a removal effect delay but no removal effect",
+                    npc_name, zone_guid,
+                );
+            }
+
+            let total_removal_time = removal_delay_millis.saturating_add(fade_duration_millis);
+            if removal_effect_delay_millis > total_removal_time {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a (Removal Effect Delay: {}ms) greater than \
+             total removal time (Fade Duration: {}ms + Removal Delay: {}ms)",
+                    npc_name,
+                    zone_guid,
+                    removal_effect_delay_millis,
+                    fade_duration_millis,
+                    removal_delay_millis,
+                );
+            }
+        }
+
         let resolved_action = config.one_shot_interaction.as_ref().map(|action_config| {
             OneShotInteractionTemplate::from_config(
                 action_config,
@@ -2407,6 +2497,7 @@ impl BaseNpcTemplate {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
                 self.first_possible_procedures.clone(),
+                self.removal_mode.total_duration_millis(),
             ),
             synchronize_with: self.synchronize_with.as_ref().map(|key| {
                 keys_to_guid
@@ -2822,6 +2913,7 @@ impl Character {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
                 first_possible_procedures,
+                RemovalMode::default().total_duration_millis(),
             ),
             synchronize_with,
             scheduled_procedure_selector: ScheduledProcedureSelector::new(scheduled_procedures),
@@ -2892,7 +2984,11 @@ impl Character {
                 navmesh: None,
                 ability_height: default_ability_height(),
             },
-            tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
+            tickable_procedure_tracker: TickableProcedureTracker::new(
+                HashMap::new(),
+                Vec::new(),
+                RemovalMode::default().total_duration_millis(),
+            ),
             synchronize_with: None,
             scheduled_procedure_selector: ScheduledProcedureSelector::new(Arc::new(Vec::new())),
         }

@@ -601,7 +601,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -643,7 +643,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
