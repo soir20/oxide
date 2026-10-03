@@ -78,7 +78,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_Rotunda_Group_01.adr
       enable_gravity: false
       pos:
-        x: 1281.0
+        x: 1280.825
         y: 10.0
         z: 257.0
         w: 1.0
