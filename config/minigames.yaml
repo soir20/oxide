@@ -4010,7 +4010,7 @@ categories:
                     keys_per_basic_bout: 4
                     keys_per_special_bout: 6
                     first_special_bout: 3
-                    special_bout_interval: 3
+                    special_bout_interval: 4
                     points_per_basic_bout: *saber_duel_points_per_basic_bout
                     points_per_special_bout: *saber_duel_points_per_special_bout
                     bout_max_millis: *saber_duel_bout_max_millis
@@ -4021,7 +4021,7 @@ categories:
                     camera_entrance_animation_id: *saber_duel_camera_entrance_animation_id
                     ai:
                       name_id: 32942
-                      model_id: 1308
+                      model_id: 2567
                       primary_saber:
                         hilt_item_guid: 528
                         shape_item_guid: 90008
