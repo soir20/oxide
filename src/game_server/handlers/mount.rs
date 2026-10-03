@@ -438,7 +438,7 @@ pub fn spawn_mount_npc(
                 terrain_object_id: 0,
                 enable_attachments: false,
                 speed: 0.0,
-                unknown21: false,
+                hide_target_circle: false,
                 interactable_size_pct: 0,
                 walk_animation_id: -1,
                 sprint_animation_id: -1,
@@ -453,7 +453,7 @@ pub fn spawn_mount_npc(
                 unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
-                hide_despawn_fade: false,
+                enable_camera_clipping: false,
                 enable_tilt: false,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,

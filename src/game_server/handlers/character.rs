@@ -1,15 +1,18 @@
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
 use chrono::{DateTime, FixedOffset, Utc};
+use croner::Cron;
 use enum_iterator::Sequence;
 use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
 use crate::{
+    debug,
     game_server::{
         handlers::{
             combat::ThreatTable,
@@ -23,16 +26,17 @@ use crate::{
         packets::{
             chat::{ActionBarTextColor, SendStringId},
             client_update::UpdateCredits,
+            combat::ProcessedAttack,
             command::{EnterDialog, ExitDialog, PlaySoundIdOnTarget},
             item::{Attachment, BaseAttachmentGroup, EquipmentSlot, WieldType},
             minigame::ScoreEntry,
             player_update::{
                 AddCompositeEffectTag, AddNotifications, AddNpc, AddPc, Customization,
-                CustomizationSlot, HitPointModification, Hostility, HudMessage, Icon, MoveOnRail,
-                NameplateImage, NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect,
-                QueueAnimation, RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard,
-                RemoveTemporaryModel, SetAnimation, SingleNotification, SingleNpcRelevance,
-                UpdateSpeed, UpdateTemporaryModel,
+                CustomizationSlot, Hostility, HudMessage, Icon, MoveOnRail, NameplateImage,
+                NotificationData, NpcRelevance, PhysicsState, PlayCompositeEffect, QueueAnimation,
+                RemoveCompositeEffectTag, RemoveGracefully, RemoveStandard, RemoveTemporaryModel,
+                SetAnimation, SingleNotification, SingleNpcRelevance, UpdateSpeed,
+                UpdateTemporaryModel,
             },
             tunnel::TunneledPacket,
             ui::{ExecuteScriptWithIntParams, ExecuteScriptWithStringParams},
@@ -143,6 +147,19 @@ pub enum RemovalMode {
         #[serde(default = "default_fade_millis")]
         fade_duration_millis: u32,
     },
+}
+
+impl RemovalMode {
+    pub fn total_duration_millis(&self) -> u64 {
+        match self {
+            RemovalMode::Immediate => 0,
+            RemovalMode::Graceful {
+                removal_delay_millis,
+                fade_duration_millis,
+                ..
+            } => (*removal_delay_millis as u64).saturating_add(*fade_duration_millis as u64),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Default, Deserialize, PartialEq)]
@@ -294,11 +311,14 @@ pub struct BaseNpcConfig {
     pub enable_tilt: bool,
     #[serde(default = "default_true")]
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     #[serde(default)]
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     #[serde(default)]
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    #[serde(default)]
+    pub scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     #[serde(default)]
     pub force_despawn: bool,
     #[serde(default)]
@@ -306,6 +326,8 @@ pub struct BaseNpcConfig {
     pub composite_effect_id: Option<u32>,
     #[serde(default = "default_true")]
     pub clickable: bool,
+    #[serde(default)]
+    pub enable_camera_clipping: bool,
     #[serde(default = "default_spawn_animation_id")]
     pub spawn_animation_id: i32,
     #[serde(default)]
@@ -346,9 +368,11 @@ pub struct BaseNpc {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub enable_camera_clipping: bool,
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -400,7 +424,7 @@ impl BaseNpc {
                     terrain_object_id: self.terrain_object_id,
                     enable_attachments: !self.attachments.is_empty(),
                     speed: character.speed.total(),
-                    unknown21: false,
+                    hide_target_circle: false,
                     interactable_size_pct: 100,
                     walk_animation_id: -1,
                     sprint_animation_id: -1,
@@ -415,7 +439,7 @@ impl BaseNpc {
                     unused_death_animation_id: 0, // can cause crashes when death anim is enabled upon removal, but has no visual effect
                     unknown34: false,
                     show_health: self.show_health,
-                    hide_despawn_fade: false,
+                    enable_camera_clipping: self.enable_camera_clipping, // Disabling camera clipping breaks the graceful removal fade
                     enable_tilt: self.enable_tilt,
                     base_attachment_group: BaseAttachmentGroup {
                         unknown1: 0,
@@ -453,7 +477,10 @@ impl BaseNpc {
                     rail_unknown1: 0.0,
                     rail_unknown2: 0.0,
                     auto_interact_radius: character.auto_interact_radius,
-                    head_customization_override: "".to_string(),
+                    head_customization_override: self
+                        .head_customization_override
+                        .clone()
+                        .unwrap_or_default(),
                     hair_customization_override: "".to_string(),
                     body_customization_override: "".to_string(),
                     override_terrain_model: !self.use_terrain_model,
@@ -509,14 +536,17 @@ impl BaseNpc {
         if character.health < character.max_health && self.show_health {
             packets.push(GamePacket::serialize(&TunneledPacket {
                 unknown1: true,
-                inner: HitPointModification {
-                    attacker_guid: 0,
+                inner: ProcessedAttack {
+                    attacker_guid1: 0,
+                    attacker_guid2: 0,
                     receiver_guid: Guid::guid(character),
-                    show_hp_delta: false,
+                    damage_dealt: 0,
                     max_hp: character.max_health as i32,
-                    new_hp: character.health as i32,
-                    hp_delta: (character.health as i32).saturating_sub(character.max_health as i32),
-                    critical: false,
+                    receiver_composite_effect_id: 0,
+                    use_hurt_animation: false,
+                    unknown1: false,
+                    attacker_composite_effect_id: 0,
+                    current_hp: character.health as i32,
                 },
             }));
         }
@@ -677,7 +707,7 @@ impl OneShotAction {
 pub struct PlayerOneShotAction {
     pub animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: u32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -695,7 +725,7 @@ pub struct OneShotInteractionConfig {
     pub player_reaction: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -712,7 +742,7 @@ pub struct OneShotInteractionTemplate {
     pub one_shot_action: OneShotAction,
     pub player_one_shot_action: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
@@ -747,7 +777,7 @@ impl OneShotInteractionTemplate {
             hud_message: config.hud_message,
             player_one_shot_action: config.player_reaction,
             one_shot_animation_id: config.one_shot_animation_id,
-            animation_delay_seconds: config.animation_delay_seconds,
+            animation_delay_millis: config.animation_delay_millis,
             composite_effect_id: config.composite_effect_id,
             composite_effect_delay_millis: config.composite_effect_delay_millis,
             despawn_npc: config.despawn_npc,
@@ -779,7 +809,7 @@ impl OneShotInteractionTemplate {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -806,7 +836,8 @@ impl OneShotInteractionTemplate {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.player_one_shot_action.animation_delay_seconds as f32,
+                    delay_seconds: self.player_one_shot_action.animation_delay_millis as f32
+                        / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -923,7 +954,7 @@ pub struct TickableStep {
     pub wander: Option<WanderConfig>,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -964,6 +995,13 @@ impl TickableStep {
             z: self.new_pos_z.unwrap_or(current_pos.z) + self.new_pos_offset_z,
             w: current_pos.w,
         }
+    }
+
+    pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
+        let effect_delay =
+            (self.animation_delay_millis as u64).max(self.composite_effect_delay_millis as u64);
+
+        self.min_duration_millis + effect_delay + removal_duration_millis
     }
 
     pub fn apply(
@@ -1127,7 +1165,7 @@ impl TickableStep {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.min_duration_millis as f32 / 1000.0,
                 },
             }));
@@ -1349,6 +1387,13 @@ pub struct TickableProcedureConfig {
     pub is_interruptible: bool,
 }
 
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScheduledProcedureConfig {
+    pub possible_procedures: Vec<TickableProcedureReference>,
+    pub schedule: Cron,
+}
+
 pub enum TickResult {
     TickedCurrentProcedure(Vec<Broadcast>, Option<(UpdatePlayerPos, Pos)>),
     MustChangeProcedure(String),
@@ -1367,9 +1412,40 @@ pub struct TickableProcedure {
 
 impl TickableProcedure {
     pub fn from_config(
+        procedure_name: &str,
         config: TickableProcedureConfig,
         all_procedures: &HashMap<String, TickableProcedureConfig>,
+        removal_duration_millis: u64,
     ) -> Self {
+        if removal_duration_millis > 0 {
+            for (step_index, step) in config.steps.iter().enumerate() {
+                if !matches!(step.spawned_state, SpawnedState::Despawn) {
+                    continue;
+                }
+
+                let animation_delay = step.animation_delay_millis as u64;
+                let composite_effect_delay = step.composite_effect_delay_millis as u64;
+
+                assert!(
+                animation_delay <= removal_duration_millis,
+                "Procedure {} has an animation delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                animation_delay,
+                removal_duration_millis,
+                step_index,
+            );
+
+                assert!(
+                composite_effect_delay <= removal_duration_millis,
+                "Procedure {} has a composite effect delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                composite_effect_delay,
+                removal_duration_millis,
+                step_index,
+            );
+            }
+        }
+
         let (distribution, next_possible_procedures) = if config.next_possible_procedures.is_empty()
         {
             (
@@ -1452,7 +1528,10 @@ impl TickableProcedure {
                     .unwrap_or(true);
 
                 let should_change_steps = time_since_last_step_change
-                    >= Duration::from_millis(current_step.min_duration_millis)
+                    >= Duration::from_millis(
+                        current_step
+                            .min_duration_millis(character.removal_mode.total_duration_millis()),
+                    )
                     && reached_destination;
 
                 (should_change_steps, pos_update_packet)
@@ -1540,6 +1619,7 @@ impl TickableProcedureTracker {
     pub fn new(
         procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
+        removal_duration_millis: u64,
     ) -> Self {
         let current_procedure_key = if procedures.is_empty() {
             String::from("")
@@ -1579,7 +1659,12 @@ impl TickableProcedureTracker {
                 .map(|(key, config)| {
                     (
                         key.clone(),
-                        TickableProcedure::from_config(config.clone(), &procedures),
+                        TickableProcedure::from_config(
+                            key,
+                            config.clone(),
+                            &procedures,
+                            removal_duration_millis,
+                        ),
                     )
                 })
                 .collect(),
@@ -1706,6 +1791,65 @@ fn trigger_synchronized_interaction(
             });
 
     supplier?(game_server)
+}
+
+#[derive(Clone)]
+pub struct ScheduledProcedureSelector {
+    scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
+    distributions: Arc<Vec<WeightedAliasIndex<u32>>>,
+}
+
+impl ScheduledProcedureSelector {
+    pub fn new(scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>) -> Self {
+        let distributions = Arc::new(
+            scheduled_procedures
+                .iter()
+                .map(|config| {
+                    let weights: Vec<u32> = config
+                        .possible_procedures
+                        .iter()
+                        .map(|procedure| procedure.weight)
+                        .collect();
+                    WeightedAliasIndex::new(weights).expect("Failed to build alias index")
+                })
+                .collect(),
+        );
+
+        Self {
+            scheduled_procedures,
+            distributions,
+        }
+    }
+
+    pub fn select_procedure(&self, calendar_now: &DateTime<Utc>) -> Option<String> {
+        for (scheduled_procedure, distribution) in self
+            .scheduled_procedures
+            .iter()
+            .zip(self.distributions.iter())
+        {
+            let is_match = match scheduled_procedure.schedule.is_time_matching(calendar_now) {
+                Ok(is_match) => is_match,
+                Err(err) => {
+                    debug!(
+                        "Unable to evaluate cron expression {}: {err}",
+                        scheduled_procedure.schedule
+                    );
+                    false
+                }
+            };
+
+            if is_match {
+                let index = distribution.sample(&mut thread_rng());
+                return Some(
+                    scheduled_procedure.possible_procedures[index]
+                        .procedure
+                        .clone(),
+                );
+            }
+        }
+
+        None
+    }
 }
 
 pub type EquippedItemMap = BTreeMap<EquipmentSlot, i32>;
@@ -2123,6 +2267,7 @@ pub struct BaseNpcTemplate {
     pub tickable_procedures: HashMap<String, TickableProcedureConfig>,
     pub first_possible_procedures: Vec<String>,
     pub synchronize_with: Option<String>,
+    pub scheduled_procedure_selector: ScheduledProcedureSelector,
     pub force_despawn: bool,
     pub physics: PhysicsState,
     pub max_distance_from_target: f32,
@@ -2147,9 +2292,11 @@ pub struct BaseNpcTemplate {
     pub enable_gravity: bool,
     pub enable_tilt: bool,
     pub use_terrain_model: bool,
+    pub head_customization_override: Option<String>,
     pub attachments: Vec<Attachment>,
     pub composite_effect_id: Option<u32>,
     pub clickable: bool,
+    pub enable_camera_clipping: bool,
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
@@ -2174,6 +2321,35 @@ impl BaseNpcTemplate {
                 panic!(
                     "(NPC: {}) in (Zone GUID: {}) contains a self-reference in its (Triggered NPC Keys: {:?})",
                     npc_name, zone_guid, config.triggered_npc_keys_on_interact,
+                );
+            }
+        }
+
+        if let RemovalMode::Graceful {
+            removal_delay_millis,
+            removal_effect_delay_millis,
+            removal_composite_effect_id,
+            fade_duration_millis,
+            ..
+        } = config.removal_mode
+        {
+            if removal_effect_delay_millis > 0 && removal_composite_effect_id == 0 {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a removal effect delay but no removal effect",
+                    npc_name, zone_guid,
+                );
+            }
+
+            let total_removal_time = removal_delay_millis.saturating_add(fade_duration_millis);
+            if removal_effect_delay_millis > total_removal_time {
+                panic!(
+                    "(NPC: {}) in (Zone GUID: {}) has a (Removal Effect Delay: {}ms) greater than \
+             total removal time (Fade Duration: {}ms + Removal Delay: {}ms)",
+                    npc_name,
+                    zone_guid,
+                    removal_effect_delay_millis,
+                    fade_duration_millis,
+                    removal_delay_millis,
                 );
             }
         }
@@ -2208,6 +2384,9 @@ impl BaseNpcTemplate {
             tickable_procedures: config.tickable_procedures.clone(),
             first_possible_procedures: config.first_possible_procedures.clone(),
             synchronize_with: config.synchronize_with.clone(),
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(
+                config.scheduled_procedures.clone(),
+            ),
             stand_animation_id: config.stand_animation_id,
             cursor: config.cursor,
             health: config.health,
@@ -2241,9 +2420,11 @@ impl BaseNpcTemplate {
             enable_gravity: config.enable_gravity,
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
+            head_customization_override: config.head_customization_override.clone(),
             attachments: Vec::new(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
+            enable_camera_clipping: config.enable_camera_clipping,
             spawn_animation_id: config.spawn_animation_id,
             hover_description: config.hover_description,
             procedure_on_interact: config.procedure_on_interact.clone(),
@@ -2317,6 +2498,7 @@ impl BaseNpcTemplate {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
                 self.first_possible_procedures.clone(),
+                self.removal_mode.total_duration_millis(),
             ),
             synchronize_with: self.synchronize_with.as_ref().map(|key| {
                 keys_to_guid
@@ -2324,6 +2506,7 @@ impl BaseNpcTemplate {
                     .copied()
                     .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
+            scheduled_procedure_selector: self.scheduled_procedure_selector.clone(),
         }
     }
 
@@ -2345,9 +2528,11 @@ impl BaseNpcTemplate {
             enable_gravity: self.enable_gravity,
             enable_tilt: self.enable_tilt,
             use_terrain_model: self.use_terrain_model,
+            head_customization_override: self.head_customization_override.clone(),
             attachments: self.attachments.clone(),
             composite_effect_id: self.composite_effect_id,
             clickable: self.clickable,
+            enable_camera_clipping: self.enable_camera_clipping,
             spawn_animation_id: self.spawn_animation_id,
             hover_description: self.hover_description,
             procedure_on_interact: self.procedure_on_interact.clone(),
@@ -2597,6 +2782,7 @@ pub struct Character {
     pub stats: CharacterStats,
     tickable_procedure_tracker: TickableProcedureTracker,
     pub synchronize_with: Option<u64>,
+    scheduled_procedure_selector: ScheduledProcedureSelector,
 }
 
 impl
@@ -2689,6 +2875,7 @@ impl Character {
         tickable_procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
         synchronize_with: Option<u64>,
+        scheduled_procedures: Arc<Vec<ScheduledProcedureConfig>>,
     ) -> Character {
         Character {
             stats: CharacterStats {
@@ -2738,8 +2925,10 @@ impl Character {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
                 first_possible_procedures,
+                RemovalMode::default().total_duration_millis(),
             ),
             synchronize_with,
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(scheduled_procedures),
         }
     }
 
@@ -2807,8 +2996,13 @@ impl Character {
                 navmesh: None,
                 ability_height: default_ability_height(),
             },
-            tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
+            tickable_procedure_tracker: TickableProcedureTracker::new(
+                HashMap::new(),
+                Vec::new(),
+                RemovalMode::default().total_duration_millis(),
+            ),
             synchronize_with: None,
+            scheduled_procedure_selector: ScheduledProcedureSelector::new(Arc::new(Vec::new())),
         }
     }
 
@@ -2832,6 +3026,7 @@ impl Character {
     pub fn tick(
         &mut self,
         now: Instant,
+        calendar_now: &DateTime<Utc>,
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
@@ -2842,6 +3037,13 @@ impl Character {
         collision: &Collision,
     ) -> (Vec<Broadcast>, Option<UpdatePlayerPos>) {
         self.update_target(nearby_characters, navmesh);
+
+        if let Some(procedure_key) = self
+            .scheduled_procedure_selector
+            .select_procedure(calendar_now)
+        {
+            self.set_tickable_procedure_if_exists(procedure_key, now);
+        }
 
         let (mut broadcasts, pos_update) = self.seek_next_pos(
             now,

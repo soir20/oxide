@@ -220,7 +220,7 @@ jedi_temple:
         duration_millis: 2000
 
     #
-    # Hanger
+    # Hangar
     #
     breaker:
       key: breaker
@@ -601,7 +601,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -643,7 +643,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -657,7 +657,7 @@ jedi_temple:
               weight: 36
             - procedure: empty
               weight: 1259
-    clone_guard_hanger_1:
+    clone_guard_hangar_1:
       model_id: 1936
       pos:
         x: 72.97756
@@ -678,7 +678,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 2.5
-    clone_guard_hanger_2:
+    clone_guard_hangar_2:
       model_id: 1936
       pos:
         x: 72.97756
@@ -699,7 +699,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 2.5
-    hanger_dianoga_barrel:
+    hangar_dianoga_barrel:
       model_id: 1089
       pos:
         x: 97.0
@@ -721,7 +721,7 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 6000
-    hanger_clone_with_missile_rack:
+    hangar_clone_with_missile_rack:
       model_id: 968
       pos:
         x: 106.64343
@@ -1005,7 +1005,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Guard Left of Hanger Door
+    # Guard Left of Hangar Door
     clone_guard_main_hall_7:
       model_id: 1936
       pos:
@@ -1027,7 +1027,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Guard Right of Hanger Door
+    # Guard Right of Hangar Door
     clone_guard_main_hall_8:
       model_id: 1936
       pos:
