@@ -1,0 +1,24 @@
+---
+duel_halloween_cave_singleplayer:
+  guid: 214
+  max_players: 1
+  template_name: 6426
+  asset_name: LD_HalloweenDooku
+  hide_ui: false
+  is_combat: false
+  default_point_of_interest:
+    guid: 214
+    pos:
+      x: 280.5
+      y: 109.01597
+      z: 278.0
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800

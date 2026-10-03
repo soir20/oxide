@@ -165,7 +165,7 @@ jedi_temple:
       scheduled_procedures: *halloween_scheduled_procedures
     halloween_workshop_rocket_rescue:
       model_id: 2568
-      name_id: 19202
+      name_id: 3021
       pos:
         x: -351.20938
         y: 10.12735
@@ -184,4 +184,26 @@ jedi_temple:
       one_shot_interaction:
         script: !OpenMinigameStageGroup
           stage_group_id: 69
+        duration_millis: 1
+    halloween_workshop_dark_side_duel:
+      model_id: 1146
+      name_id: 18879
+      pos:
+        x: 152.5
+        y: 6.823141
+        z: 406.0
+        w: 1.0
+      rot:
+        x: 0.5834988
+        y: 0
+        z: 0.81211406
+        w: 0.0
+      cursor: 54
+      notification_icon: 12
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 123
         duration_millis: 1
