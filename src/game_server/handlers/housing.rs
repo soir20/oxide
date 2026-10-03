@@ -183,7 +183,7 @@ pub fn fixture_packets(
                 terrain_object_id: 0,
                 enable_attachments: false,
                 speed: 0.0,
-                unknown21: false,
+                hide_target_circle: false,
                 interactable_size_pct: 100,
                 walk_animation_id: -1,
                 sprint_animation_id: -1,
@@ -198,7 +198,7 @@ pub fn fixture_packets(
                 unused_death_animation_id: 0,
                 unknown34: false,
                 show_health: false,
-                hide_despawn_fade: false,
+                enable_camera_clipping: false,
                 enable_tilt: true,
                 base_attachment_group: BaseAttachmentGroup {
                     unknown1: 0,

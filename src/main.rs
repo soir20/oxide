@@ -571,6 +571,7 @@ fn spawn_chunk_tick_threads(
                 .expect("Chunk tick channel disconnected");
             let broadcasts = game_server.tick_single_chunk(
                 Instant::now(),
+                &Utc::now(),
                 instance_guid,
                 chunk,
                 synchronization,

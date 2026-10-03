@@ -675,10 +675,12 @@ impl SaberDuelGame {
                 enable_gravity: true,
                 enable_tilt: false,
                 use_terrain_model: false,
+                head_customization_override: None,
                 attachments,
                 composite_effect_id: None,
                 sub_title_id: None,
                 clickable: true,
+                enable_camera_clipping: false,
                 spawn_animation_id: default_spawn_animation_id(),
                 hover_description: HoverDescriptionMode::default(),
                 procedure_on_interact: None,
@@ -697,6 +699,7 @@ impl SaberDuelGame {
             HashMap::new(),
             Vec::new(),
             None,
+            Arc::new(Vec::new()),
         );
 
         Ok(vec![opponent])

@@ -1,0 +1,89 @@
+---
+members_only:
+  ambient_npcs:
+    life_day_decorations_officers_club:
+      model_id: 94
+      head_customization_override: Events_LifeDay_Members_Club_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 782.7
+        y: 10.0
+        z: 680.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: &life_day_tickable_procedures
+        spawn:
+          steps:
+            - spawned_state: Always
+              min_duration_millis: 1
+          next_possible_procedures:
+            - procedure: spawn
+        despawn:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 1
+          next_possible_procedures:
+            - procedure: despawn
+      first_possible_procedures: &life_day_first_possible_procedures [despawn]
+      scheduled_procedures: &life_day_scheduled_procedures
+        - schedule: "* * * * 12 *"
+          possible_procedures:
+            - procedure: spawn
+        - schedule: "* * * * 1-11 *"
+          possible_procedures:
+            - procedure: despawn
+    life_day_decorations_officers_club_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 782.7
+        y: 10.0
+        z: 680.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1384393167
+      use_terrain_model: false
+    life_day_decorations_construction_chamber:
+      model_id: 94
+      head_customization_override: Events_LifeDay_Members_LightsaberConstructoin_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 1480.0
+        y: 70.0
+        z: 906.0
+        w: 1.0
+      rot:
+        x: -0.1736
+        y: 0
+        z: -0.9848
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *life_day_tickable_procedures
+      first_possible_procedures: *life_day_first_possible_procedures
+      scheduled_procedures: *life_day_scheduled_procedures
+    life_day_decorations_construction_chamber_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 1480.0
+        y: 70.0
+        z: 906.0
+        w: 1.0
+      rot:
+        x: -0.1736
+        y: 0
+        z: -0.9848
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1384393165
+      use_terrain_model: false

@@ -31,7 +31,7 @@ jedi_temple:
       close_dialog: true
 
     #
-    # Hanger
+    # Hangar
     #
     - button_key: Breaker
       npc_key: breaker

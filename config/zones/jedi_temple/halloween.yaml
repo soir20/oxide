@@ -1,0 +1,339 @@
+---
+jedi_temple:
+  ambient_npcs:
+    halloween_decorations_veranda:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_Veranda_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 915.825
+        y: 150.0
+        z: 1563.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: &halloween_tickable_procedures
+        spawn:
+          steps:
+            - spawned_state: Always
+              min_duration_millis: 1
+          next_possible_procedures:
+            - procedure: spawn
+        despawn:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 1
+          next_possible_procedures:
+            - procedure: despawn
+      first_possible_procedures: &halloween_first_possible_procedures [despawn]
+      scheduled_procedures: &halloween_scheduled_procedures
+        - schedule: "* * * * 10 *"
+          possible_procedures:
+            - procedure: spawn
+        - schedule: "* * * * 1-9,11-12 *"
+          possible_procedures:
+            - procedure: despawn
+    halloween_decorations_veranda_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 915.825
+        y: 150.0
+        z: 1563.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969294
+      use_terrain_model: false
+    halloween_decorations_archives:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_Archives_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 1724.0
+        y: 10.0
+        z: 1694.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_archives_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 1724.0
+        y: 10.0
+        z: 1694.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969292
+      use_terrain_model: false
+    halloween_decorations_workshop:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_Workshop_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: -348.0
+        y: 10.0
+        z: 1784.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_workshop_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: -348.0
+        y: 10.0
+        z: 1784.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: -1
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969298
+      use_terrain_model: false
+    halloween_decorations_main_hall:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_Rotunda_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 1280.825
+        y: 10.0
+        z: 257.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_main_hall_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 1280.825
+        y: 10.0
+        z: 257.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969290
+      use_terrain_model: false
+    halloween_decorations_training_room:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_TrainingRoom_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 135.75
+        y: 10.0
+        z: 380.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_training_room_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 135.75
+        y: 10.0
+        z: 380.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969283
+      use_terrain_model: false
+    halloween_decorations_hangar:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_Hangar_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 193.0
+        y: 9.9
+        z: -191.03
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_hangar_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 193.0
+        y: 9.9
+        z: -191.03
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379720393
+      use_terrain_model: false
+    halloween_decorations_war_room:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_WarRoom_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: 641.0
+        y: 10.0
+        z: 1.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_war_room_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: 641.0
+        y: 10.0
+        z: 1.0
+        w: 1.0
+      rot:
+        x: -1
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969288
+      use_terrain_model: false
+    halloween_decorations_lounge:
+      model_id: 94
+      head_customization_override: Events_Halloween_JediTemple_lounge_Group_01.adr
+      enable_gravity: false
+      pos:
+        x: -115.2
+        y: 10.0
+        z: 1266.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969296
+      use_terrain_model: false
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+    halloween_decorations_lounge_hide:
+      model_id: 94
+      enable_gravity: false
+      pos:
+        x: -115.2
+        y: 10.0
+        z: 1266.0
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      enable_camera_clipping: true
+      terrain_object_id: 1379969296
+      use_terrain_model: false
+    halloween_workshop_rocket_rescue:
+      model_id: 2568
+      name_id: 3021
+      pos:
+        x: -351.20938
+        y: 10.12735
+        z: 1784.4583
+        w: 1.0
+      rot:
+        x: -0.8070982
+        y: 0
+        z: -0.5904171
+        w: 0.0
+      cursor: 54
+      notification_icon: 28
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 69
+        duration_millis: 1
+    halloween_workshop_dark_side_duel:
+      model_id: 1146
+      name_id: 18879
+      pos:
+        x: 152.5
+        y: 6.823141
+        z: 406.0
+        w: 1.0
+      rot:
+        x: 0.5834988
+        y: 0
+        z: 0.81211406
+        w: 0.0
+      cursor: 54
+      notification_icon: 12
+      tickable_procedures: *halloween_tickable_procedures
+      first_possible_procedures: *halloween_first_possible_procedures
+      scheduled_procedures: *halloween_scheduled_procedures
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 123
+        duration_millis: 1
