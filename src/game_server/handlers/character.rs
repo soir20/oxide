@@ -145,6 +145,19 @@ pub enum RemovalMode {
     },
 }
 
+impl RemovalMode {
+    pub fn total_duration_millis(&self) -> u64 {
+        match self {
+            RemovalMode::Immediate => 0,
+            RemovalMode::Graceful {
+                removal_delay_millis,
+                fade_duration_millis,
+                ..
+            } => (*removal_delay_millis as u64).saturating_add(*fade_duration_millis as u64),
+        }
+    }
+}
+
 #[derive(Clone, Copy, Default, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub enum SpawnedState {
@@ -969,6 +982,13 @@ impl TickableStep {
         }
     }
 
+    pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
+        let effect_delay = ((self.animation_delay_seconds * 1000.0) as u64)
+            .max(self.composite_effect_delay_millis as u64);
+
+        self.min_duration_millis + effect_delay + removal_duration_millis
+    }
+
     pub fn apply(
         &self,
         character: &mut CharacterStats,
@@ -1370,9 +1390,40 @@ pub struct TickableProcedure {
 
 impl TickableProcedure {
     pub fn from_config(
+        procedure_name: &str,
         config: TickableProcedureConfig,
         all_procedures: &HashMap<String, TickableProcedureConfig>,
+        removal_duration_millis: u64,
     ) -> Self {
+        if removal_duration_millis > 0 {
+            for (step_index, step) in config.steps.iter().enumerate() {
+                if !matches!(step.spawned_state, SpawnedState::Despawn) {
+                    continue;
+                }
+
+                let animation_delay = (step.animation_delay_seconds * 1000.0) as u64;
+                let composite_effect_delay = step.composite_effect_delay_millis as u64;
+
+                assert!(
+                animation_delay <= removal_duration_millis,
+                "Procedure {} has an animation delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                animation_delay,
+                removal_duration_millis,
+                step_index,
+            );
+
+                assert!(
+                composite_effect_delay <= removal_duration_millis,
+                "Procedure {} has a composite effect delay of {}ms which exceeds the removal duration of {}ms at step index {}",
+                procedure_name,
+                composite_effect_delay,
+                removal_duration_millis,
+                step_index,
+            );
+            }
+        }
+
         let (distribution, next_possible_procedures) = if config.next_possible_procedures.is_empty()
         {
             (
@@ -1455,7 +1506,10 @@ impl TickableProcedure {
                     .unwrap_or(true);
 
                 let should_change_steps = time_since_last_step_change
-                    >= Duration::from_millis(current_step.min_duration_millis)
+                    >= Duration::from_millis(
+                        current_step
+                            .min_duration_millis(character.removal_mode.total_duration_millis()),
+                    )
                     && reached_destination;
 
                 (should_change_steps, pos_update_packet)
@@ -1543,6 +1597,7 @@ impl TickableProcedureTracker {
     pub fn new(
         procedures: HashMap<String, TickableProcedureConfig>,
         first_possible_procedures: Vec<String>,
+        removal_duration_millis: u64,
     ) -> Self {
         let current_procedure_key = if procedures.is_empty() {
             String::from("")
@@ -1582,7 +1637,12 @@ impl TickableProcedureTracker {
                 .map(|(key, config)| {
                     (
                         key.clone(),
-                        TickableProcedure::from_config(config.clone(), &procedures),
+                        TickableProcedure::from_config(
+                            key,
+                            config.clone(),
+                            &procedures,
+                            removal_duration_millis,
+                        ),
                     )
                 })
                 .collect(),
@@ -2350,6 +2410,7 @@ impl BaseNpcTemplate {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 self.tickable_procedures.clone(),
                 self.first_possible_procedures.clone(),
+                self.removal_mode.total_duration_millis(),
             ),
             synchronize_with: self.synchronize_with.as_ref().map(|key| {
                 keys_to_guid
@@ -2761,6 +2822,7 @@ impl Character {
             tickable_procedure_tracker: TickableProcedureTracker::new(
                 tickable_procedures,
                 first_possible_procedures,
+                RemovalMode::default().total_duration_millis(),
             ),
             synchronize_with,
         }
@@ -2830,7 +2892,11 @@ impl Character {
                 navmesh: None,
                 ability_height: default_ability_height(),
             },
-            tickable_procedure_tracker: TickableProcedureTracker::new(HashMap::new(), Vec::new()),
+            tickable_procedure_tracker: TickableProcedureTracker::new(
+                HashMap::new(),
+                Vec::new(),
+                RemovalMode::default().total_duration_millis(),
+            ),
             synchronize_with: None,
         }
     }
