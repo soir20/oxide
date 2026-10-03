@@ -18,7 +18,7 @@ duel_halloween_cave_singleplayer:
       y: 0
       z: 0
       w: 0
-  speed: 8
+  speed: 0
   jump_height_multiplier: 1
   gravity_multiplier: 1
   seconds_per_day: 10800
