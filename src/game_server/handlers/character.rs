@@ -693,7 +693,7 @@ impl OneShotAction {
 pub struct PlayerOneShotAction {
     pub animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: u32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -711,7 +711,7 @@ pub struct OneShotInteractionConfig {
     pub player_reaction: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -728,7 +728,7 @@ pub struct OneShotInteractionTemplate {
     pub one_shot_action: OneShotAction,
     pub player_one_shot_action: PlayerOneShotAction,
     pub one_shot_animation_id: Option<i32>,
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     pub composite_effect_delay_millis: u32,
     pub dialog_option_id: Option<u32>,
@@ -763,7 +763,7 @@ impl OneShotInteractionTemplate {
             hud_message: config.hud_message,
             player_one_shot_action: config.player_reaction,
             one_shot_animation_id: config.one_shot_animation_id,
-            animation_delay_seconds: config.animation_delay_seconds,
+            animation_delay_millis: config.animation_delay_millis,
             composite_effect_id: config.composite_effect_id,
             composite_effect_delay_millis: config.composite_effect_delay_millis,
             despawn_npc: config.despawn_npc,
@@ -795,7 +795,7 @@ impl OneShotInteractionTemplate {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -822,7 +822,8 @@ impl OneShotInteractionTemplate {
                     character_guid: player_guid(requester),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.player_one_shot_action.animation_delay_seconds as f32,
+                    delay_seconds: self.player_one_shot_action.animation_delay_millis as f32
+                        / 1000.0,
                     duration_seconds: self.duration_millis as f32 / 1000.0,
                 },
             }));
@@ -939,7 +940,7 @@ pub struct TickableStep {
     pub wander: Option<WanderConfig>,
     pub one_shot_animation_id: Option<i32>,
     #[serde(default)]
-    pub animation_delay_seconds: f32,
+    pub animation_delay_millis: u32,
     pub composite_effect_id: Option<u32>,
     #[serde(default)]
     pub composite_effect_delay_millis: u32,
@@ -983,8 +984,8 @@ impl TickableStep {
     }
 
     pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
-        let effect_delay = ((self.animation_delay_seconds * 1000.0) as u64)
-            .max(self.composite_effect_delay_millis as u64);
+        let effect_delay =
+            (self.animation_delay_millis as u64).max(self.composite_effect_delay_millis as u64);
 
         self.min_duration_millis + effect_delay + removal_duration_millis
     }
@@ -1150,7 +1151,7 @@ impl TickableStep {
                     character_guid: Guid::guid(character),
                     animation_id,
                     queue_pos: 0,
-                    delay_seconds: self.animation_delay_seconds,
+                    delay_seconds: self.animation_delay_millis as f32 / 1000.0,
                     duration_seconds: self.min_duration_millis as f32 / 1000.0,
                 },
             }));
@@ -1401,7 +1402,7 @@ impl TickableProcedure {
                     continue;
                 }
 
-                let animation_delay = (step.animation_delay_seconds * 1000.0) as u64;
+                let animation_delay = step.animation_delay_millis as u64;
                 let composite_effect_delay = step.composite_effect_delay_millis as u64;
 
                 assert!(
