@@ -6,7 +6,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_Veranda_Group_01.adr
       enable_gravity: false
       pos:
-        x: 916.0
+        x: 915.825
         y: 150.0
         z: 1563.0
         w: 1.0
@@ -78,7 +78,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_Rotunda_Group_01.adr
       enable_gravity: false
       pos:
-        x: 1281.0
+        x: 1280.825
         y: 10.0
         z: 257.0
         w: 1.0
@@ -96,7 +96,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_TrainingRoom_Group_01.adr
       enable_gravity: false
       pos:
-        x: 136.0
+        x: 135.75
         y: 10.0
         z: 380.0
         w: 1.0
@@ -116,7 +116,7 @@ jedi_temple:
       pos:
         x: 193.0
         y: 9.9
-        z: -191.0
+        z: -191.03
         w: 1.0
       rot:
         x: -1
@@ -150,7 +150,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_lounge_Group_01.adr
       enable_gravity: false
       pos:
-        x: -115.0
+        x: -115.2
         y: 10.0
         z: 1266.0
         w: 1.0
