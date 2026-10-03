@@ -6,7 +6,7 @@ members_only:
       head_customization_override: Events_Halloween_Members_Club_Group_01.adr
       enable_gravity: false
       pos:
-        x: 783.0
+        x: 782.7
         y: 10.0
         z: 680.0
         w: 1.0
