@@ -1,9 +1,9 @@
 ---
 members_only:
   ambient_npcs:
-    halloween_decorations_officers_club:
+    life_day_decorations_officers_club:
       model_id: 94
-      head_customization_override: Events_Halloween_Members_Club_Group_01.adr
+      head_customization_override: Events_LifeDay_Members_Club_Group_01.adr
       enable_gravity: false
       pos:
         x: 782.7
@@ -16,7 +16,7 @@ members_only:
         z: 0
         w: 0
       enable_camera_clipping: true
-      tickable_procedures: &halloween_tickable_procedures
+      tickable_procedures: &life_day_tickable_procedures
         spawn:
           steps:
             - spawned_state: Always
@@ -29,15 +29,15 @@ members_only:
               min_duration_millis: 1
           next_possible_procedures:
             - procedure: despawn
-      first_possible_procedures: &halloween_first_possible_procedures [despawn]
-      scheduled_procedures: &halloween_scheduled_procedures
-        - schedule: "* * * * 10 *"
+      first_possible_procedures: &life_day_first_possible_procedures [despawn]
+      scheduled_procedures: &life_day_scheduled_procedures
+        - schedule: "* * * * 12 *"
           possible_procedures:
             - procedure: spawn
-        - schedule: "* * * * 1-9,11-12 *"
+        - schedule: "* * * * 1-11 *"
           possible_procedures:
             - procedure: despawn
-    halloween_decorations_officers_club_hide:
+    life_day_decorations_officers_club_hide:
       model_id: 94
       enable_gravity: false
       pos:
@@ -51,11 +51,11 @@ members_only:
         z: 0
         w: 0
       enable_camera_clipping: true
-      terrain_object_id: 1379969942
+      terrain_object_id: 1384393167
       use_terrain_model: false
-    halloween_decorations_construction_chamber:
+    life_day_decorations_construction_chamber:
       model_id: 94
-      head_customization_override: Events_Halloween_Members_LSCC_Group_01.adr
+      head_customization_override: Events_LifeDay_Members_LightsaberConstructoin_Group_01.adr
       enable_gravity: false
       pos:
         x: 1480.0
@@ -68,10 +68,10 @@ members_only:
         z: -0.9848
         w: 0
       enable_camera_clipping: true
-      tickable_procedures: *halloween_tickable_procedures
-      first_possible_procedures: *halloween_first_possible_procedures
-      scheduled_procedures: *halloween_scheduled_procedures
-    halloween_decorations_construction_chamber_hide:
+      tickable_procedures: *life_day_tickable_procedures
+      first_possible_procedures: *life_day_first_possible_procedures
+      scheduled_procedures: *life_day_scheduled_procedures
+    life_day_decorations_construction_chamber_hide:
       model_id: 94
       enable_gravity: false
       pos:
@@ -85,5 +85,5 @@ members_only:
         z: -0.9848
         w: 0
       enable_camera_clipping: true
-      terrain_object_id: 1379969944
+      terrain_object_id: 1384393165
       use_terrain_model: false
