@@ -6,7 +6,7 @@ jedi_temple:
       head_customization_override: Events_Halloween_JediTemple_Veranda_Group_01.adr
       enable_gravity: false
       pos:
-        x: 916.0
+        x: 915.825
         y: 150.0
         z: 1563.0
         w: 1.0
