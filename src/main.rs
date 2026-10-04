@@ -106,7 +106,9 @@ async fn main() {
     let server_options =
         Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
     server_options.validate();
-    TIMEZONE.set(server_options.utc_offset_seconds.0);
+    TIMEZONE
+        .set(server_options.utc_offset_seconds.0)
+        .expect("Unable to set server timezone");
 
     spawn(asset_server::start(
         server_options.bind_ip,
