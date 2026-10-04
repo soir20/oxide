@@ -10,7 +10,7 @@ use std::cell::Cell;
 use std::fs::File;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
 use std::path::{Path, PathBuf};
-use std::sync::{Arc, LazyLock};
+use std::sync::{Arc, LazyLock, OnceLock};
 use std::thread::{self, JoinHandle};
 use std::time::{Duration, Instant};
 use std::{env, panic, process};
@@ -27,6 +27,7 @@ mod config;
 mod game_server;
 mod protocol;
 
+static TIMEZONE: OnceLock<FixedOffset> = OnceLock::new();
 thread_local! {
     pub static PROCESSED_CLIENT_ADDR: Cell<Option<SocketAddr>> = const { Cell::new(None) };
     pub static PROCESSED_CLIENT_GUID: Cell<Option<u32>> = const { Cell::new(None) };
@@ -43,7 +44,12 @@ pub fn log_info(message: &str) {
     } else {
         "".to_string()
     };
-    println!("{}{client}{guid}\t{message}", Utc::now().to_rfc3339());
+    let now_utc = Utc::now();
+    let now = match TIMEZONE.get() {
+        Some(timezone) => now_utc.with_timezone(timezone),
+        None => now_utc.fixed_offset(),
+    };
+    println!("{}{client}{guid}\t{message}", now.to_rfc3339());
 }
 
 static DEBUG_ENABLED: LazyLock<bool> = LazyLock::new(|| {
@@ -100,6 +106,7 @@ async fn main() {
     let server_options =
         Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
     server_options.validate();
+    TIMEZONE.set(server_options.utc_offset_seconds.0);
 
     spawn(asset_server::start(
         server_options.bind_ip,
