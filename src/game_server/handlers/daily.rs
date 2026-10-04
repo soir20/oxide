@@ -5,20 +5,23 @@ use rand::{seq::SliceRandom, thread_rng, Rng};
 use rand_distr::{Distribution, WeightedAliasIndex};
 use serde::Deserialize;
 
-use crate::game_server::{
-    handlers::{
-        character::MinigameWinStatus,
-        minigame::{
-            award_credits, DailyGamePlayability, DailyResetOffset, MinigameCountdown,
-            MinigameStageConfig, PlayerMinigameStats,
+use crate::{
+    game_server::{
+        handlers::{
+            character::MinigameWinStatus,
+            minigame::{
+                award_credits, DailyGamePlayability, MinigameCountdown, MinigameStageConfig,
+                PlayerMinigameStats,
+            },
         },
+        packets::{
+            minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
+            tunnel::TunneledPacket,
+            GamePacket,
+        },
+        Broadcast, ProcessPacketError, ProcessPacketErrorType,
     },
-    packets::{
-        minigame::{FlashPayload, MinigameHeader, ScoreEntry, ScoreType},
-        tunnel::TunneledPacket,
-        GamePacket,
-    },
-    Broadcast, ProcessPacketError, ProcessPacketErrorType,
+    UtcOffset,
 };
 
 #[derive(Clone, Debug, Deserialize)]
@@ -300,7 +303,7 @@ impl DailyHolocronGame {
         &mut self,
         sender: u32,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        daily_reset_offset: UtcOffset,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if !matches!(self.state, DailyHolocronGameState::WaitingForConnection) {
             return Err(ProcessPacketError::new(

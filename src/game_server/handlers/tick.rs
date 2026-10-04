@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset};
 use crossbeam_channel::Sender;
 
 use crate::{
@@ -69,7 +69,7 @@ pub fn enqueue_tickable_chunks(
 pub fn tick_single_chunk(
     game_server: &GameServer,
     now: Instant,
-    calendar_now: &DateTime<Utc>,
+    calendar_now: &DateTime<FixedOffset>,
     instance_guid: u64,
     chunk: Chunk,
     synchronization: TickableNpcSynchronization,
@@ -355,7 +355,7 @@ pub fn reset_daily_minigames(game_server: &GameServer) -> Vec<Broadcast> {
                             },
                         };
 
-                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats);
+                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats, game_server.utc_offset());
 
                         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
                             unknown1: true,

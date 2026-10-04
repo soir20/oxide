@@ -9,7 +9,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use std::vec;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset};
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
 use handlers::ability::{load_abilities, process_ability, AbilityConfig};
@@ -69,6 +69,7 @@ use crate::game_server::handlers::store::{redirect_packets, ItemCostMap};
 use crate::game_server::handlers::tick::reset_daily_minigames;
 use crate::game_server::navmesh::config::{load_bvhs, load_navmeshes};
 use crate::game_server::navmesh::{Collision, Navmesh};
+use crate::UtcOffset;
 use packet_serialize::{DeserializePacket, DeserializePacketError};
 
 mod handlers;
@@ -190,6 +191,7 @@ pub struct GameServer {
     abilities: HashMap<String, AbilityConfig>,
     bvhs: HashMap<String, Arc<Bvh>>,
     categories: CategoryDefinitions,
+    commands: CommandConfig,
     costs: ItemCostMap,
     customizations: BTreeMap<i32, Customization>,
     customization_item_mappings: BTreeMap<i32, Vec<i32>>,
@@ -204,12 +206,12 @@ pub struct GameServer {
     navmeshes: HashMap<String, (Navmesh, Collision)>,
     points_of_interest: BTreeMap<u32, (u8, PointOfInterestConfig)>,
     start_time: Instant,
+    utc_offset: UtcOffset,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
-    commands: CommandConfig,
 }
 
 impl GameServer {
-    pub fn new(config_dir: &Path) -> Result<Self, ConfigError> {
+    pub fn new(config_dir: &Path, utc_offset: UtcOffset) -> Result<Self, ConfigError> {
         let abilities = load_abilities(config_dir)?;
         let bvhs = load_bvhs(config_dir)?;
         let characters = GuidTable::new();
@@ -219,6 +221,7 @@ impl GameServer {
         Ok(GameServer {
             abilities,
             categories: load_categories(config_dir)?,
+            commands: load_commands(config_dir)?,
             costs,
             customizations: load_customizations(config_dir)?,
             customization_item_mappings: load_customization_item_mappings(config_dir)?,
@@ -235,9 +238,9 @@ impl GameServer {
             navmeshes: load_navmeshes(config_dir, &bvhs)?,
             points_of_interest,
             start_time: Instant::now(),
+            utc_offset,
             zone_templates: templates,
             bvhs,
-            commands: load_commands(config_dir)?,
         })
     }
 
@@ -282,7 +285,7 @@ impl GameServer {
     pub fn tick_single_chunk(
         &self,
         now: Instant,
-        calendar_now: &DateTime<Utc>,
+        calendar_now: &DateTime<FixedOffset>,
         instance_guid: u64,
         chunk: Chunk,
         synchronization: TickableNpcSynchronization,
@@ -404,7 +407,7 @@ impl GameServer {
                                             },
                                         }));
 
-                                        let (minigame_definitions, dailies) = self.minigames.definitions(&player.minigame_stats);
+                                        let (minigame_definitions, dailies) = self.minigames.definitions(&player.minigame_stats, self.utc_offset());
                                         sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
                                             unknown1: true,
                                             inner: minigame_definitions,
@@ -891,6 +894,10 @@ impl GameServer {
 
     pub fn start_time(&self) -> Instant {
         self.start_time
+    }
+
+    pub fn utc_offset(&self) -> UtcOffset {
+        self.utc_offset
     }
 
     pub fn lock_enforcer(&self) -> CharacterLockEnforcer<'_> {

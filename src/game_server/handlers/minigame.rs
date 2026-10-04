@@ -14,7 +14,7 @@ use num_enum::TryFromPrimitive;
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use rand::{seq::SliceRandom, thread_rng};
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
 use crate::{
     game_server::{
@@ -60,7 +60,7 @@ use crate::{
         },
         Broadcast, GameServer, ProcessPacketError, ProcessPacketErrorType,
     },
-    info, teleport_to_zone, ConfigError,
+    info, teleport_to_zone, ConfigError, UtcOffset,
 };
 
 use super::{
@@ -125,7 +125,7 @@ impl PlayerMinigameStats {
         stage_guid: i32,
         score: i32,
         win_time: DateTime<FixedOffset>,
-        daily_reset_offset: &DailyResetOffset,
+        daily_reset_offset: UtcOffset,
     ) {
         // Storing a count for each day of the week is more space-efficient than storing a list of times.
         // It could make the list slightly inaccurate if the reset time is changed, but that should be
@@ -171,7 +171,7 @@ impl PlayerMinigameStats {
         &self,
         stage_guid: i32,
         now: DateTime<FixedOffset>,
-        daily_reset_offset: &DailyResetOffset,
+        daily_reset_offset: UtcOffset,
     ) -> [u8; 7] {
         self.stage_guid_to_stats
             .get(&stage_guid)
@@ -1373,7 +1373,7 @@ impl MinigamePortalCategoryConfig {
     pub fn to_definitions(
         &self,
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        daily_reset_offset: UtcOffset,
     ) -> (
         MinigamePortalCategory,
         Vec<MinigamePortalEntry>,
@@ -1422,7 +1422,7 @@ impl MinigameDefinitions {
     fn from_portal_category_configs(
         value: &[MinigamePortalCategoryConfig],
         minigame_stats: &PlayerMinigameStats,
-        daily_reset_offset: &DailyResetOffset,
+        daily_reset_offset: UtcOffset,
     ) -> (Self, Vec<AddDailyMinigame>) {
         let mut portal_categories = Vec::new();
         let mut portal_entries = Vec::new();
@@ -1577,39 +1577,13 @@ pub struct StageConfigRef<'a> {
     pub portal_entry_guid: u32,
 }
 
-#[derive(Clone)]
-pub struct DailyResetOffset(pub FixedOffset);
-
-impl Default for DailyResetOffset {
-    fn default() -> Self {
-        Self(FixedOffset::east_opt(0).expect("Couldn't create fixed offset of 0"))
-    }
-}
-
-impl<'de> Deserialize<'de> for DailyResetOffset {
-    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let daily_reset_offset_seconds: i32 = Deserialize::deserialize(deserializer)?;
-
-        FixedOffset::east_opt(daily_reset_offset_seconds)
-            .map(DailyResetOffset)
-            .ok_or_else(|| {
-                serde::de::Error::custom(format!(
-                    "Daily reset offset {daily_reset_offset_seconds} is longer than a day"
-                ))
-            })
-    }
-}
-
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct DeserializableMinigameConfigs {
-    #[serde(rename(deserialize = "daily_reset_utc_offset_seconds"))]
-    daily_reset_offset: DailyResetOffset,
     categories: Vec<MinigamePortalCategoryConfig>,
 }
 
 pub struct AllMinigameConfigs {
-    pub daily_reset_offset: DailyResetOffset,
     categories: Vec<MinigamePortalCategoryConfig>,
     stage_groups: BTreeMap<i32, (Arc<MinigameStageGroupConfig>, u32)>,
 }
@@ -1624,7 +1598,6 @@ impl From<DeserializableMinigameConfigs> for AllMinigameConfigs {
         }
 
         AllMinigameConfigs {
-            daily_reset_offset: value.daily_reset_offset,
             categories: value.categories,
             stage_groups,
         }
@@ -1632,29 +1605,31 @@ impl From<DeserializableMinigameConfigs> for AllMinigameConfigs {
 }
 
 impl AllMinigameConfigs {
-    pub fn seconds_until_minigame_daily_reset(&self) -> u32 {
+    pub fn seconds_until_minigame_daily_reset(&self, utc_offset: UtcOffset) -> u32 {
         86400
             - Utc::now()
-                .with_timezone(&self.daily_reset_offset.0)
+                .with_timezone(&utc_offset.0)
                 .num_seconds_from_midnight()
     }
 
     pub fn definitions(
         &self,
         minigame_stats: &PlayerMinigameStats,
+        utc_offset: UtcOffset,
     ) -> (MinigameDefinitions, Vec<AddDailyMinigame>) {
         MinigameDefinitions::from_portal_category_configs(
             &self.categories[..],
             minigame_stats,
-            &self.daily_reset_offset,
+            utc_offset,
         )
     }
 
     pub fn update_dailies_for_player(
         &self,
         minigame_stats: &PlayerMinigameStats,
+        utc_offset: UtcOffset,
     ) -> (Vec<MinigamePortalEntry>, Vec<UpdateDailyMinigame>) {
-        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+        let now = Utc::now().with_timezone(&utc_offset.0);
 
         self.categories
             .iter()
@@ -1683,11 +1658,12 @@ impl AllMinigameConfigs {
         &self,
         portal_entry_guid: u32,
         minigame_stats: &PlayerMinigameStats,
+        utc_offset: UtcOffset,
     ) -> Option<(
         MinigamePortalEntry,
         Option<(DailyGamePlayability, AddDailyMinigame)>,
     )> {
-        let now = Utc::now().with_timezone(&self.daily_reset_offset.0);
+        let now = Utc::now().with_timezone(&utc_offset.0);
 
         self.categories.iter().find_map(|category| {
             category
@@ -2249,7 +2225,7 @@ fn prepare_active_minigame_instance_for_player(
         }
 
         let (portal_entry, daily_settings) = game_server.minigames()
-            .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
+            .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats, game_server.utc_offset())
             .ok_or_else(|| ProcessPacketError::new(
                 ProcessPacketErrorType::ConstraintViolated,
                 format!(
@@ -2276,7 +2252,7 @@ fn prepare_active_minigame_instance_for_player(
 
         let daily_game_playability = daily_settings.map(|(daily_game_playability, _)| daily_game_playability)
             .unwrap_or(DailyGamePlayability::Unplayable {
-                timestamp: Utc::now().with_timezone(&game_server.minigames().daily_reset_offset.0),
+                timestamp: Utc::now().with_timezone(&game_server.utc_offset().0),
             });
 
         minigame_status.type_data = stage_config.stage_config.minigame_type().to_type_data(
@@ -3189,7 +3165,7 @@ fn handle_flash_payload(
                         MinigameTypeData::DailyHolocron { game } => game.connect(
                             sender,
                             minigame_stats,
-                            &game_server.minigames().daily_reset_offset
+                            game_server.utc_offset()
                         ),
                         MinigameTypeData::DailyTrivia { game } => game.connect(sender, minigame_stats),
                         _ => Err(ProcessPacketError::new(
@@ -3841,7 +3817,7 @@ fn leave_active_minigame_single_player_if_any(
                     minigame_status.group.stage_guid,
                     minigame_status.total_score,
                     win_time,
-                    &game_server.minigames().daily_reset_offset
+                    game_server.utc_offset()
                 );
             }
 
@@ -3943,7 +3919,7 @@ fn leave_active_minigame_single_player_if_any(
             );
 
             let (portal_entry, possible_daily) = game_server.minigames()
-                .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats)
+                .portal_entry(stage_config.portal_entry_guid, &player.minigame_stats, game_server.utc_offset())
                 .ok_or_else(|| ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
