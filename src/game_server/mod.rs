@@ -9,7 +9,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use std::vec;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset};
 use crossbeam_channel::Sender;
 use enum_iterator::Sequence;
 use handlers::ability::{load_abilities, process_ability, AbilityConfig};
@@ -285,7 +285,7 @@ impl GameServer {
     pub fn tick_single_chunk(
         &self,
         now: Instant,
-        calendar_now: &DateTime<Utc>,
+        calendar_now: &DateTime<FixedOffset>,
         instance_guid: u64,
         chunk: Chunk,
         synchronization: TickableNpcSynchronization,

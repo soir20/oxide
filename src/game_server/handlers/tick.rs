@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset};
 use crossbeam_channel::Sender;
 
 use crate::{
@@ -69,7 +69,7 @@ pub fn enqueue_tickable_chunks(
 pub fn tick_single_chunk(
     game_server: &GameServer,
     now: Instant,
-    calendar_now: &DateTime<Utc>,
+    calendar_now: &DateTime<FixedOffset>,
     instance_guid: u64,
     chunk: Chunk,
     synchronization: TickableNpcSynchronization,
