@@ -1,11 +1,11 @@
-use chrono::Utc;
+use chrono::{FixedOffset, Utc};
 use clap::Parser;
 use crossbeam_channel::{bounded, tick, unbounded, Receiver, Sender};
 use defer_lite::defer;
 use game_server::{Broadcast, TickableNpcSynchronization};
 use parking_lot::{Mutex, MutexGuard, RwLock, RwLockReadGuard};
 use protocol::{BufferSize, DisconnectReason, MAX_BUFFER_SIZE};
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
 use std::cell::Cell;
 use std::fs::File;
 use std::net::{IpAddr, SocketAddr, UdpSocket};
@@ -115,7 +115,7 @@ async fn main() {
     .expect("couldn't bind to socket");
 
     let channel_manager = RwLock::new(ChannelManager::new(server_options.max_sessions));
-    let game_server = GameServer::new(config_dir).unwrap();
+    let game_server = GameServer::new(config_dir, server_options.utc_offset_seconds).unwrap();
 
     if args.validate {
         return;
@@ -204,12 +204,36 @@ async fn main() {
     }
 }
 
+#[derive(Clone, Copy)]
+pub struct UtcOffset(pub FixedOffset);
+
+impl Default for UtcOffset {
+    fn default() -> Self {
+        Self(FixedOffset::east_opt(0).expect("Couldn't create fixed offset of 0"))
+    }
+}
+
+impl<'de> Deserialize<'de> for UtcOffset {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let utc_offset_secs: i32 = Deserialize::deserialize(deserializer)?;
+
+        FixedOffset::east_opt(utc_offset_secs)
+            .map(UtcOffset)
+            .ok_or_else(|| {
+                serde::de::Error::custom(format!(
+                    "UTC offset {utc_offset_secs} is longer than a day"
+                ))
+            })
+    }
+}
+
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ServerOptions {
     pub bind_ip: IpAddr,
     pub udp_port: u16,
     pub https_port: u16,
+    pub utc_offset_seconds: UtcOffset,
     pub crc_length: u8,
     pub allow_packet_compression: bool,
     pub receive_threads: u16,
@@ -710,7 +734,9 @@ fn spawn_minigame_daily_reset_thread(
 
     thread::spawn(move || loop {
         thread::sleep(Duration::from_secs(
-            game_server.minigames().seconds_until_minigame_daily_reset() as u64,
+            game_server
+                .minigames()
+                .seconds_until_minigame_daily_reset(game_server.utc_offset()) as u64,
         ));
 
         let broadcasts = game_server.reset_daily_minigames();

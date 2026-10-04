@@ -354,7 +354,7 @@ pub fn reset_daily_minigames(game_server: &GameServer) -> Vec<Broadcast> {
                             },
                         };
 
-                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats);
+                        let (portal_entries, daily_updates) = game_server.minigames().update_dailies_for_player(&player.minigame_stats, game_server.utc_offset());
 
                         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
                             unknown1: true,
