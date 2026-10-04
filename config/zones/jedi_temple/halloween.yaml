@@ -272,8 +272,6 @@ jedi_temple:
         z: 0
         w: 0
       enable_camera_clipping: true
-      terrain_object_id: 1379969296
-      use_terrain_model: false
       tickable_procedures: *halloween_tickable_procedures
       first_possible_procedures: *halloween_first_possible_procedures
       scheduled_procedures: *halloween_scheduled_procedures
