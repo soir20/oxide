@@ -1821,7 +1821,7 @@ impl ScheduledProcedureSelector {
         }
     }
 
-    pub fn select_procedure(&self, calendar_now: &DateTime<Utc>) -> Option<String> {
+    pub fn select_procedure(&self, calendar_now: &DateTime<FixedOffset>) -> Option<String> {
         for (scheduled_procedure, distribution) in self
             .scheduled_procedures
             .iter()
@@ -3014,7 +3014,7 @@ impl Character {
     pub fn tick(
         &mut self,
         now: Instant,
-        calendar_now: &DateTime<Utc>,
+        calendar_now: &DateTime<FixedOffset>,
         nearby_player_guids: &[u32],
         nearby_characters: &mut BTreeMap<u64, CharacterWriteGuard>,
         mount_configs: &BTreeMap<u32, MountConfig>,
