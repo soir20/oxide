@@ -1135,7 +1135,8 @@ impl SaberDuelGame {
         );
 
         // Time
-        let duel_seconds = i16::try_from(self.stopwatch.elapsed().as_secs()).unwrap_or(i16::MAX);
+        let duel_seconds =
+            i16::try_from(self.stopwatch.elapsed(Instant::now()).as_secs()).unwrap_or(i16::MAX);
         let time_bonus = match beat_opponent {
             true => (self.config.max_time_score_bonus
                 - Into::<f32>::into(duel_seconds) * self.config.score_penalty_per_second)

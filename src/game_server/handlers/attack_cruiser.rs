@@ -26,7 +26,7 @@ use crate::{
             direction, distance3_pos, distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
-                SharedMinigameTypeData,
+                MinigameStopwatch, SharedMinigameTypeData,
             },
             unique_guid::player_guid,
         },
@@ -316,9 +316,9 @@ struct AttackCruiserActor {
     pub invulnerability: AttackCruiserActorInvulnerability,
     pub stun: AttackCruiserActorStun,
     pub primary_weapon_tier: usize,
-    pub primary_weapon_projectile_last_used: Vec<Option<Instant>>,
-    pub primary_weapon_actor_last_used: Vec<Option<Instant>>,
-    pub spawn_time: Instant,
+    pub primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
+    pub primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
+    pub spawn_time: MinigameStopwatch,
 }
 
 impl AttackCruiserActor {
@@ -352,7 +352,7 @@ impl AttackCruiserActor {
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
             ship,
-            spawn_time: now,
+            spawn_time: MinigameStopwatch::new(Some(now)),
         };
 
         actor.set_primary_weapon_tier(0);
@@ -375,7 +375,7 @@ impl AttackCruiserActor {
     pub fn expired(&self, now: Instant) -> bool {
         match self.ship.lifetime_millis {
             Some(lifetime_millis) => {
-                self.spawn_time + Duration::from_millis(lifetime_millis.into()) < now
+                self.spawn_time.elapsed(now) > Duration::from_millis(lifetime_millis.into())
             }
             None => false,
         }
@@ -388,6 +388,21 @@ impl AttackCruiserActor {
     pub fn pause_or_resume(&mut self, pause: bool) {
         self.invulnerability.pause_or_resume(pause);
         self.stun.pause_or_resume(pause);
+        self.primary_weapon_projectile_last_used
+            .iter_mut()
+            .for_each(|timer_opt| {
+                if let Some(timer) = timer_opt {
+                    timer.pause_or_resume(pause);
+                }
+            });
+        self.primary_weapon_actor_last_used
+            .iter_mut()
+            .for_each(|timer_opt| {
+                if let Some(timer) = timer_opt {
+                    timer.pause_or_resume(pause);
+                }
+            });
+        self.spawn_time.pause_or_resume(pause);
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -521,9 +536,9 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
-    pub fn current_ai_behavior(&self) -> &AttackCruiserShipAiBehavior {
+    pub fn current_ai_behavior(&self, now: Instant) -> &AttackCruiserShipAiBehavior {
         for rule in &self.ship.ai_states {
-            if self.matches_condition(&rule.condition) {
+            if self.matches_condition(&rule.condition, now) {
                 return &rule.behavior;
             }
         }
@@ -603,8 +618,7 @@ impl AttackCruiserActor {
                         let adjusted_cooldown =
                             Duration::from_millis(projectile.cooldown_millis.into())
                                 .saturating_sub(max_cooldown_error);
-                        let is_on_cooldown =
-                            now.saturating_duration_since(*last_used) < adjusted_cooldown;
+                        let is_on_cooldown = last_used.elapsed(now) < adjusted_cooldown;
 
                         if is_on_cooldown {
                             return None;
@@ -695,8 +709,7 @@ impl AttackCruiserActor {
                             let adjusted_cooldown =
                                 Duration::from_millis(actor.cooldown_millis.into())
                                     .saturating_sub(max_cooldown_error);
-                            let is_on_cooldown =
-                                now.saturating_duration_since(*last_used) < adjusted_cooldown;
+                            let is_on_cooldown = last_used.elapsed(now) < adjusted_cooldown;
 
                             if is_on_cooldown {
                                 return None;
@@ -837,7 +850,7 @@ impl AttackCruiserActor {
         self.pos.z += self.speed.z * delta_secs;
     }
 
-    fn matches_condition(&self, expr: &AttackCruiserShipBoolExpr) -> bool {
+    fn matches_condition(&self, expr: &AttackCruiserShipBoolExpr, now: Instant) -> bool {
         match expr {
             AttackCruiserShipBoolExpr::Condition(prop) => match prop {
                 AttackCruiserShipPropertyExpr::HealthPercent(op, value) => {
@@ -845,7 +858,7 @@ impl AttackCruiserActor {
                     op.eval(current_pct, *value)
                 }
                 AttackCruiserShipPropertyExpr::LifetimeMillis(op, value) => {
-                    let lifetime_millis = self.spawn_time.elapsed().as_millis();
+                    let lifetime_millis = self.spawn_time.elapsed(now).as_millis();
                     op.eval(lifetime_millis, *value as u128)
                 }
                 AttackCruiserShipPropertyExpr::ProbabilityLessThan(chance) => {
@@ -853,13 +866,13 @@ impl AttackCruiserActor {
                     roll < *chance
                 }
             },
-            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner),
-            AttackCruiserShipBoolExpr::And(expressions) => {
-                expressions.iter().all(|e| self.matches_condition(e))
-            }
-            AttackCruiserShipBoolExpr::Or(expressions) => {
-                expressions.iter().any(|e| self.matches_condition(e))
-            }
+            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner, now),
+            AttackCruiserShipBoolExpr::And(expressions) => expressions
+                .iter()
+                .all(|expr| self.matches_condition(expr, now)),
+            AttackCruiserShipBoolExpr::Or(expressions) => expressions
+                .iter()
+                .any(|expr| self.matches_condition(expr, now)),
         }
     }
 
@@ -924,7 +937,7 @@ impl AttackCruiserActor {
     fn validate_attack_angle<T>(
         value: T,
         direction: Pos,
-        last_used_opt: &mut Option<Instant>,
+        last_used_opt: &mut Option<MinigameStopwatch>,
         yaw: f32,
         min_launch_angle: Angle,
         max_launch_angle: Angle,
@@ -944,7 +957,7 @@ impl AttackCruiserActor {
             }
         }
 
-        *last_used_opt = Some(now);
+        *last_used_opt = Some(MinigameStopwatch::new(Some(now)));
         Some((value, direction.into()))
     }
 }
@@ -2003,14 +2016,16 @@ struct AttackCruiserProjectileSpawn {
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectilePool {
     live_projectiles: BTreeMap<i32, AttackCruiserProjectileInstance>,
-    expiry: PriorityQueue<i32, Reverse<Instant>>,
+    expiry: PriorityQueue<i32, Reverse<Duration>>,
+    global_time: MinigameStopwatch,
 }
 
 impl AttackCruiserProjectilePool {
-    pub fn new() -> Self {
+    pub fn new(now: Instant) -> Self {
         AttackCruiserProjectilePool {
             live_projectiles: BTreeMap::new(),
             expiry: PriorityQueue::new(),
+            global_time: MinigameStopwatch::new(Some(now)),
         }
     }
 
@@ -2039,7 +2054,9 @@ impl AttackCruiserProjectilePool {
                 projectile.launch_height,
             );
 
-            let expiry_time = now
+            let expiry_time = self
+                .global_time
+                .elapsed(now)
                 .checked_add(Duration::from_millis(projectile.lifetime_millis.into()))
                 .ok_or_else(|| {
                     ProcessPacketError::new(
@@ -2118,8 +2135,11 @@ impl AttackCruiserProjectilePool {
                 let projectile_speed = projectile.config.speed;
                 let projectile_len = projectile.config.length;
 
-                let secs_since_launch = now
-                    .saturating_duration_since(projectile.launch_time)
+                // Compare to global time, as comparing Instants directly does not account for pauses
+                let secs_since_launch = self
+                    .global_time
+                    .elapsed(now)
+                    .saturating_sub(self.global_time.elapsed(projectile.launch_time))
                     .saturating_sub(delta)
                     .as_secs_f32();
 
@@ -2223,7 +2243,16 @@ impl AttackCruiserProjectilePool {
         results
     }
 
+    pub fn pause_or_resume(&mut self, pause: bool) {
+        self.global_time.pause_or_resume(pause);
+    }
+
+    pub fn paused(&self) -> bool {
+        self.global_time.paused()
+    }
+
     pub fn expire(&mut self, now: Instant) {
+        let now = self.global_time.elapsed(now);
         while let Some((&projectile_id, Reverse(expiry))) = self.expiry.peek() {
             if expiry > &now {
                 break;
@@ -2514,7 +2543,7 @@ impl AttackCruiserGame {
             active_players: players,
             group,
             config,
-            projectiles: AttackCruiserProjectilePool::new(),
+            projectiles: AttackCruiserProjectilePool::new(now),
             npcs,
             actor_id_pool,
             pending_aoes: Vec::new(),
@@ -2873,7 +2902,7 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
-        if !matches!(self.state, AttackCruiserGameState::WaveActive) {
+        if !matches!(self.state, AttackCruiserGameState::WaveActive) || self.paused() {
             return Vec::new();
         }
 
@@ -3009,6 +3038,7 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
+        self.projectiles.pause_or_resume(pause);
         self.player_states.iter_mut().for_each(|player_state| {
             player_state.pause_or_resume(pause);
         });
@@ -3016,6 +3046,10 @@ impl AttackCruiserGame {
             npc.pause_or_resume(pause);
         });
         Ok(Vec::new())
+    }
+
+    pub fn paused(&self) -> bool {
+        self.projectiles.paused()
     }
 
     pub fn remove_player(
