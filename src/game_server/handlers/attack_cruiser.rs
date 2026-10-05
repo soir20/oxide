@@ -360,8 +360,8 @@ impl AttackCruiserActor {
         actor
     }
 
-    pub fn trackable(&self) -> bool {
-        !self.dead() && self.ship.trackable
+    pub fn seekable(&self) -> bool {
+        !self.dead()
     }
 
     pub fn vulnerable(&self) -> bool {
@@ -528,6 +528,36 @@ impl AttackCruiserActor {
             }
         }
         &self.ship.default_ai_behavior
+    }
+
+    pub fn hostility(
+        &self,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
+    ) -> AttackCruiserHostility {
+        if !self.ship.show_arrow_to_player {
+            return AttackCruiserHostility::Neutral;
+        }
+
+        let mut hostility = AttackCruiserHostility::Neutral;
+        for faction in self.ship.self_factions.iter() {
+            let Some(faction_config) = faction_configs.get(faction) else {
+                continue;
+            };
+
+            hostility = match (hostility, faction_config.hostility) {
+                (AttackCruiserHostility::Neutral, _) => faction_config.hostility,
+                (_, AttackCruiserHostility::Neutral) => hostility,
+                (AttackCruiserHostility::Friendly, AttackCruiserHostility::Hostile) => {
+                    AttackCruiserHostility::Hostile
+                }
+                (AttackCruiserHostility::Hostile, AttackCruiserHostility::Friendly) => {
+                    AttackCruiserHostility::Hostile
+                }
+                _ => hostility,
+            };
+        }
+
+        hostility
     }
 
     pub fn attack_primary(
@@ -1101,8 +1131,8 @@ impl AttackCruiserPlayer {
             .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
-    pub fn trackable(&self) -> bool {
-        self.actor.trackable() && !self.warped_away()
+    pub fn seekable(&self) -> bool {
+        self.actor.seekable() && !self.warped_away()
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -1306,6 +1336,11 @@ impl AttackCruiserChallengeConfig {
         }
     }
 }
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserFactionConfig {
+    hostility: AttackCruiserHostility,
+}
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -1452,6 +1487,7 @@ struct AttackCruiserProjectileConfig {
     #[serde(default = "default_max_launch_angle")]
     max_launch_angle: Angle,
     length: f32,
+    target_factions: HashSet<String>,
     #[serde(default)]
     target_deltas: AttackCruiserActorDeltas,
     #[serde(default)]
@@ -1637,6 +1673,7 @@ enum AttackCruiserShipAiMovement {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserAoeConfig {
     radius: f32,
+    target_factions: HashSet<String>,
     #[serde(default)]
     target_deltas: AttackCruiserActorDeltas,
     #[serde(default)]
@@ -1665,16 +1702,8 @@ struct AttackCruiserShipAiStateRule {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
-    #[serde(default)]
-    can_seek_friendlies: bool,
-    #[serde(default)]
-    can_seek_hostiles: bool,
-    #[serde(default = "default_true")]
-    can_seek_players: bool,
-    #[serde(default = "default_true")]
-    can_seek_npcs: bool,
-    #[serde(default = "default_true")]
-    trackable: bool,
+    self_factions: HashSet<String>,
+    seek_factions: HashSet<String>,
     #[serde(default = "default_true")]
     show_arrow_to_player: bool,
     max_alive: u16,
@@ -1784,6 +1813,7 @@ pub struct AttackCruiserConfig {
     client_actor_update_interval_millis: u16,
     #[serde(default)]
     challenge: AttackCruiserChallengeConfig,
+    factions: HashMap<String, AttackCruiserFactionConfig>,
     health_bar: AttackCruiserHealthBarConfig,
     intro: AttackCruiserIntroConfig,
     max_weapon_cooldown_error_millis: u16,
@@ -1824,21 +1854,56 @@ impl AttackCruiserConfig {
             .collect()
     }
 
-    fn validate_secondary_items(&self) {
+    fn validate_ships(&self) {
         self.ships.values().for_each(|ship| {
+            ship.self_factions.iter().for_each(|faction|  {
+                if !self.factions.contains_key(faction) {
+                    info!("Attack Cruiser ship self_factions references unknown faction {}", faction);
+                }
+            });
+            ship.seek_factions.iter().for_each(|faction|  {
+                if !self.factions.contains_key(faction) {
+                    info!("Attack Cruiser ship seek_factions references unknown faction {}", faction);
+                }
+            });
+
             ship.weapons.primary_tiers.iter().for_each(|tier| tier.projectiles.iter().for_each(|projectile| {
                 if let Some(secondary_item) = &projectile.self_deltas.secondary_item {
                     if !self.player.secondary_items.contains_key(&secondary_item.name) {
-                        info!("Attack Cruiser ship self_deltas references unknown secondary item {}", secondary_item.name);
+                        info!("Attack Cruiser ship projectile self_deltas references unknown secondary item {}", secondary_item.name);
                     }
                 }
 
                 if let Some(secondary_item) = &projectile.target_deltas.secondary_item {
                     if !self.player.secondary_items.contains_key(&secondary_item.name) {
-                        info!("Attack Cruiser ship target_deltas references unknown secondary item {}", secondary_item.name);
+                        info!("Attack Cruiser ship projectile target_deltas references unknown secondary item {}", secondary_item.name);
                     }
                 }
+
+                projectile.target_factions.iter().for_each(|target_faction| {
+                    if !self.factions.contains_key(target_faction) {
+                        info!("Attack Cruiser ship projectile target_factions references unknown faction {}", target_faction);
+                    }
+                });
             }));
+
+            if let Some(aoe) = &ship.default_ai_behavior.aoe {
+                aoe.target_factions.iter().for_each(|target_faction| {
+                    if !self.factions.contains_key(target_faction) {
+                        info!("Attack Cruiser ship AOE target_factions references unknown faction {}", target_faction);
+                    }
+                });
+            }
+
+            ship.ai_states.iter().for_each(|ai_state| {
+                if let Some(aoe) = &ai_state.behavior.aoe {
+                    aoe.target_factions.iter().for_each(|target_faction| {
+                        if !self.factions.contains_key(target_faction) {
+                            info!("Attack Cruiser ship AOE target_factions references unknown faction {}", target_faction);
+                        }
+                    });
+                }
+            });
         });
     }
 }
@@ -2041,13 +2106,12 @@ impl AttackCruiserProjectilePool {
 
             for (projectile_id, projectile) in &self.live_projectiles {
                 let launched_by_self = projectile.launched_by_actor_id == actor.id;
-                let are_both_friendly =
-                    AttackCruiserActorIdPool::can_seek_hostiles(projectile.launched_by_actor_id)
-                        && !AttackCruiserActorIdPool::can_seek_friendlies(actor.id);
-                let are_both_hostile =
-                    AttackCruiserActorIdPool::can_seek_friendlies(projectile.launched_by_actor_id)
-                        && !AttackCruiserActorIdPool::can_seek_hostiles(actor.id);
-                if launched_by_self || are_both_friendly || are_both_hostile {
+                let can_target_faction = projectile
+                    .config
+                    .target_factions
+                    .iter()
+                    .any(|faction| actor.ship.self_factions.contains(faction));
+                if launched_by_self || !can_target_faction {
                     continue;
                 }
 
@@ -2202,28 +2266,18 @@ struct AttackCruiserActorTarget {
 
 #[derive(Clone, Debug)]
 struct AttackCruiserActorIdPool {
-    last_ids: [i32; 4],
+    last_id: i32,
 }
 
 impl AttackCruiserActorIdPool {
-    // Player actor IDs use the first 2 bits (1 bit index and 1 bit for even/odd life).
-    // Ignore the 32nd bit to avoid negative actor IDs.
-    // If an actor can attack friendlies, it has the 30th bit set.
-    // If an actor can attack hostiles, it has the 31st bit set.
-    // If an actor can attack both friendlies and hostiles, it has both the 30th and 31st bits set.
-    // If an actor can attack another, then the other actor can retaliate.
-    const ATTACK_FRIENDLY_MASK: i32 = 0b0010_0000_0000_0000_0000_0000_0000_0000;
-    const ATTACK_HOSTILE_MASK: i32 = 0b0100_0000_0000_0000_0000_0000_0000_0000;
-    const MAX_ACTOR_ID: i32 = 0b0001_1111_1111_1111_1111_1111_1111_1111;
+    const MAX_ACTOR_ID: i32 = i32::MAX;
 
     pub fn new() -> AttackCruiserActorIdPool {
-        AttackCruiserActorIdPool { last_ids: [0; 4] }
+        AttackCruiserActorIdPool { last_id: 0 }
     }
 
     pub fn next(
         &mut self,
-        can_seek_friendlies: bool,
-        can_seek_hostiles: bool,
         player_actor_ids: &[i32],
         npcs: &HashMap<i32, AttackCruiserActor>,
         ship_name: &String,
@@ -2241,52 +2295,22 @@ impl AttackCruiserActorIdPool {
             ));
         }
 
-        let index = can_seek_friendlies as usize | ((can_seek_hostiles as usize) << 1);
-
-        let last_id = self.last_ids[index];
-        let mut next_id = (last_id + 1) % Self::MAX_ACTOR_ID;
+        let mut next_id = (self.last_id + 1) % Self::MAX_ACTOR_ID;
         while next_id == 0 || player_actor_ids.contains(&next_id) || npcs.contains_key(&next_id) {
-            if next_id == last_id {
+            if next_id == self.last_id {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
-                    format!("Attack Cruiser reached maximum number of actors of type {index}"),
+                    "Attack Cruiser reached maximum number of actors".to_string(),
                 ));
             }
 
             next_id = (next_id + 1) % Self::MAX_ACTOR_ID;
         }
 
-        self.last_ids[index] = next_id;
-
-        if can_seek_friendlies {
-            next_id |= Self::ATTACK_FRIENDLY_MASK;
-        }
-
-        if can_seek_hostiles {
-            next_id |= Self::ATTACK_HOSTILE_MASK;
-        }
+        self.last_id = next_id;
 
         ids_with_ship_name.insert(next_id);
         Ok(next_id)
-    }
-
-    pub fn can_seek_friendlies(actor_id: i32) -> bool {
-        actor_id & Self::ATTACK_FRIENDLY_MASK != 0
-    }
-
-    pub fn can_seek_hostiles(actor_id: i32) -> bool {
-        actor_id & Self::ATTACK_HOSTILE_MASK != 0
-    }
-
-    pub fn hostility(actor_id: i32, show_directional_indicator: bool) -> AttackCruiserHostility {
-        match (
-            show_directional_indicator,
-            Self::can_seek_friendlies(actor_id),
-        ) {
-            (true, true) => AttackCruiserHostility::Hostile,
-            (true, false) => AttackCruiserHostility::Friendly,
-            _ => AttackCruiserHostility::Neutral,
-        }
     }
 }
 
@@ -2323,7 +2347,7 @@ impl AttackCruiserGame {
         group: MinigameMatchmakingGroup,
         bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
-        config.validate_secondary_items();
+        config.validate_ships();
         let player_ship = config.ship(&config.player.ship);
 
         let bvhs = config.validate_bvhs(bvhs);
@@ -2342,8 +2366,6 @@ impl AttackCruiserGame {
             player1,
             actor_id_pool
                 .next(
-                    player_ship.can_seek_friendlies,
-                    player_ship.can_seek_hostiles,
                     &[],
                     &npcs,
                     &config.player.ship,
@@ -2366,8 +2388,6 @@ impl AttackCruiserGame {
                 player2,
                 actor_id_pool
                     .next(
-                        player_ship.can_seek_friendlies,
-                        player_ship.can_seek_hostiles,
                         &[player_states[0].actor.id],
                         &npcs,
                         &config.player.ship,
@@ -2394,8 +2414,6 @@ impl AttackCruiserGame {
         let test_npc_ship = config.ship(&test_npc_ship_name);
         let npc_id1 = actor_id_pool
             .next(
-                test_npc_ship.can_seek_friendlies,
-                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -2423,8 +2441,6 @@ impl AttackCruiserGame {
         );
         let npc_id2 = actor_id_pool
             .next(
-                test_npc_ship.can_seek_friendlies,
-                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -2452,8 +2468,6 @@ impl AttackCruiserGame {
         );
         let npc_id3 = actor_id_pool
             .next(
-                test_npc_ship.can_seek_friendlies,
-                test_npc_ship.can_seek_hostiles,
                 player_actor_ids,
                 &npcs,
                 &test_npc_ship_name,
@@ -2904,14 +2918,13 @@ impl AttackCruiserGame {
                     ) <= aoe.config.radius * aoe.config.radius
                 })
                 .for_each(|target| {
-                    let are_both_friendly =
-                        AttackCruiserActorIdPool::can_seek_hostiles(aoe.launched_by_actor_id)
-                            && !AttackCruiserActorIdPool::can_seek_friendlies(target.id);
-                    let are_both_hostile =
-                        AttackCruiserActorIdPool::can_seek_friendlies(aoe.launched_by_actor_id)
-                            && !AttackCruiserActorIdPool::can_seek_hostiles(target.id);
+                    let can_target_faction = aoe
+                        .config
+                        .target_factions
+                        .iter()
+                        .any(|faction| target.ship.self_factions.contains(faction));
 
-                    if are_both_friendly || are_both_hostile {
+                    if !can_target_faction {
                         return;
                     }
 
@@ -2925,7 +2938,13 @@ impl AttackCruiserGame {
             aoe_effect_packets,
         ));
 
-        let (friendlies, hostiles) = self.list_trackable_actors_by_hostility();
+        let actors_by_faction = Self::list_actors_by_faction(
+            &self.active_player_indices,
+            &self.player_states,
+            &self.npcs,
+            AttackCruiserPlayer::seekable,
+            AttackCruiserActor::seekable,
+        );
         self.tick_players(now, &mut broadcasts, &hits, &aoes, &mut pending_npcs);
         self.tick_npcs(
             now,
@@ -2934,8 +2953,7 @@ impl AttackCruiserGame {
             &hits,
             &aoes,
             &mut pending_npcs,
-            &friendlies,
-            &hostiles,
+            &actors_by_faction,
         );
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
@@ -3223,14 +3241,18 @@ impl AttackCruiserGame {
         };
         let approx_horizontal_distance_to_target = distance3_pos(attacker_pos, approx_target_pos);
 
-        let (friendlies, hostiles) = self.list_trackable_actors_by_hostility();
+        let actors_by_faction = Self::list_actors_by_faction(
+            &self.active_player_indices,
+            &self.player_states,
+            &self.npcs,
+            |player| !player.dead(),
+            |npc| !npc.dead(),
+        );
         let (target_y, horizontal_distance_to_target) = Self::closest_target(
             player_state.actor.id,
-            true,
-            true,
+            &player_state.actor.ship.seek_factions,
             approx_target_pos.into(),
-            &friendlies,
-            &hostiles,
+            &actors_by_faction,
             &self.config.playfield,
         )
         .map(|target| {
@@ -3291,10 +3313,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: AttackCruiserActorIdPool::hostility(
-                    actor.id,
-                    actor.ship.show_arrow_to_player,
-                ),
+                hostility: actor.hostility(&self.config.factions),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: AttackCruiserStartupConfigClass::Ship,
@@ -3357,7 +3376,7 @@ impl AttackCruiserGame {
         // to clone a string or reference to a string for every actor. That would require
         // more memory than storing extra i32s and may induce more CPU cache misses than
         // a contiguous array of IDs.
-        actors_by_ship_name.retain(|_ship_name, ids| {
+        actors_by_ship_name.retain(|_, ids| {
             ids.remove(&actor.id);
             !ids.is_empty()
         });
@@ -3399,8 +3418,6 @@ impl AttackCruiserGame {
         player_state.actor.id = self
             .actor_id_pool
             .next(
-                player_state.actor.ship.can_seek_friendlies,
-                player_state.actor.ship.can_seek_hostiles,
                 player_actor_ids,
                 &self.npcs,
                 &self.config.player.ship,
@@ -4073,8 +4090,7 @@ impl AttackCruiserGame {
         hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
         aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
-        friendlies: &[AttackCruiserActorTarget],
-        hostiles: &[AttackCruiserActorTarget],
+        actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) {
         self.npcs.retain(|_, npc| {
             if npc.paused() {
@@ -4091,11 +4107,9 @@ impl AttackCruiserGame {
 
             let (is_real_target, target_pos, target_speed) = Self::closest_target(
                 npc.id,
-                npc.ship.can_seek_players,
-                npc.ship.can_seek_npcs,
+                &npc.ship.seek_factions,
                 npc.pos,
-                friendlies,
-                hostiles,
+                actors_by_faction,
                 &self.config.playfield,
             )
             .map(|target| (true, target.pos, target.speed))
@@ -4189,49 +4203,63 @@ impl AttackCruiserGame {
         });
     }
 
-    fn list_trackable_actors_by_hostility(
-        &self,
-    ) -> (Vec<AttackCruiserActorTarget>, Vec<AttackCruiserActorTarget>) {
-        let mut friendlies: Vec<AttackCruiserActorTarget> = self
-            .active_player_indices
-            .iter()
-            .copied()
-            .filter_map(|player_index| {
-                let player_state = &self.player_states[player_index as usize];
+    fn list_actors_by_faction(
+        active_player_indices: &[u8],
+        player_states: &[AttackCruiserPlayer],
+        npcs: &HashMap<i32, AttackCruiserActor>,
+        player_filter: impl Fn(&AttackCruiserPlayer) -> bool,
+        npc_filter: impl Fn(&AttackCruiserActor) -> bool,
+    ) -> HashMap<String, Vec<AttackCruiserActorTarget>> {
+        let mut actors_by_faction: HashMap<String, Vec<AttackCruiserActorTarget>> = HashMap::new();
+
+        for player_index in active_player_indices.iter().copied() {
+            let player_state = &player_states[player_index as usize];
+
+            if player_filter(player_state) {
                 let actor = &player_state.actor;
-                match player_state.trackable() {
-                    true => Some(AttackCruiserActorTarget {
+                for faction in actor.ship.self_factions.iter() {
+                    let target = AttackCruiserActorTarget {
                         id: actor.id,
                         pos: actor.pos,
                         speed: actor.speed,
                         is_player: true,
-                    }),
-                    false => None,
-                }
-            })
-            .collect();
-        let mut hostiles = Vec::new();
-        for npc in self.npcs.values().filter(|npc| npc.trackable()) {
-            if AttackCruiserActorIdPool::can_seek_friendlies(npc.id) {
-                hostiles.push(AttackCruiserActorTarget {
-                    id: npc.id,
-                    pos: npc.pos,
-                    speed: npc.speed,
-                    is_player: false,
-                });
-            }
+                    };
 
-            if AttackCruiserActorIdPool::can_seek_hostiles(npc.id) {
-                friendlies.push(AttackCruiserActorTarget {
-                    id: npc.id,
-                    pos: npc.pos,
-                    speed: npc.speed,
-                    is_player: false,
-                });
+                    if !actors_by_faction.contains_key(faction) {
+                        actors_by_faction.insert(faction.to_owned(), vec![target]);
+                        continue;
+                    }
+
+                    actors_by_faction
+                        .get_mut(faction)
+                        .expect("Actor faction list should have been initialized")
+                        .push(target);
+                }
             }
         }
 
-        (friendlies, hostiles)
+        for npc in npcs.values().filter(|npc| npc_filter(npc)) {
+            for faction in npc.ship.self_factions.iter() {
+                let target = AttackCruiserActorTarget {
+                    id: npc.id,
+                    pos: npc.pos,
+                    speed: npc.speed,
+                    is_player: true,
+                };
+
+                if !actors_by_faction.contains_key(faction) {
+                    actors_by_faction.insert(faction.to_owned(), vec![target]);
+                    continue;
+                }
+
+                actors_by_faction
+                    .get_mut(faction)
+                    .expect("Actor faction list should have been initialized")
+                    .push(target);
+            }
+        }
+
+        actors_by_faction
     }
 
     fn launch_actors_from_actor(
@@ -4286,8 +4314,6 @@ impl AttackCruiserGame {
         let mut new_npc_packets = Vec::new();
         for new_npc in pending_npcs.into_iter() {
             let id = match self.actor_id_pool.next(
-                new_npc.ship().can_seek_friendlies,
-                new_npc.ship().can_seek_hostiles,
                 player_actor_ids,
                 &self.npcs,
                 new_npc.ship_name(),
@@ -4317,14 +4343,11 @@ impl AttackCruiserGame {
 
     fn closest_target<'a>(
         actor_id: i32,
-        include_players: bool,
-        include_npcs: bool,
+        seek_factions: &HashSet<String>,
         target_pos: Pos3,
-        friendlies: &'a [AttackCruiserActorTarget],
-        hostiles: &'a [AttackCruiserActorTarget],
+        actors_by_faction: &'a HashMap<String, Vec<AttackCruiserActorTarget>>,
         playfield: &AttackCruiserPlayfieldConfig,
     ) -> Option<&'a AttackCruiserActorTarget> {
-        let mut closest_targets: ArrayVec<&AttackCruiserActorTarget, 2> = ArrayVec::new();
         let comparator = |target1: &&AttackCruiserActorTarget,
                           target2: &&AttackCruiserActorTarget| {
             let target1_in_bounds = is_inside_oval(
@@ -4371,29 +4394,12 @@ impl AttackCruiserGame {
 
             distance1.total_cmp(&distance2)
         };
-        if AttackCruiserActorIdPool::can_seek_friendlies(actor_id) {
-            if let Some(closest_friendly) = friendlies
-                .iter()
-                .filter(|target| target.id != actor_id)
-                .filter(|target| include_players || !target.is_player)
-                .filter(|target| include_npcs || target.is_player)
-                .min_by(comparator)
-            {
-                closest_targets.push(closest_friendly);
-            }
-        }
-        if AttackCruiserActorIdPool::can_seek_hostiles(actor_id) {
-            if let Some(closest_hostile) = hostiles
-                .iter()
-                .filter(|target| target.id != actor_id)
-                .filter(|target| include_players || !target.is_player)
-                .filter(|target| include_npcs || target.is_player)
-                .min_by(comparator)
-            {
-                closest_targets.push(closest_hostile);
-            }
-        }
 
-        closest_targets.into_iter().min_by(comparator)
+        seek_factions
+            .iter()
+            .filter_map(|faction| actors_by_faction.get(faction))
+            .flat_map(|targets| targets.iter())
+            .filter(|target| target.id != actor_id)
+            .min_by(comparator)
     }
 }

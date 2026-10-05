@@ -1306,7 +1306,16 @@ impl GamePacket for AttackCruiserRemoveProjectile {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(Clone, Copy, IntoPrimitive, TryFromPrimitive, SerializePacket, DeserializePacket)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Deserialize,
+    IntoPrimitive,
+    TryFromPrimitive,
+    SerializePacket,
+    DeserializePacket,
+)]
 #[repr(i32)]
 pub enum AttackCruiserHostility {
     Hostile = -1,

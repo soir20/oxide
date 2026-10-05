@@ -3164,6 +3164,19 @@ categories:
                   zoom_step_high_level_quotient: 0.1
                   near_clip_distance: 1
                 client_actor_update_interval_millis: 100
+                factions:
+                  separatist:
+                    hostility: Hostile
+                  separatist_missile:
+                    hostility: Hostile
+                  republic:
+                    hostility: Friendly
+                  republic_missile:
+                    hostility: Friendly
+                  player:
+                    hostility: Friendly
+                  player_powerup:
+                    hostility: Friendly
                 health_bar:
                   foreground_image_id: 163
                   background_image_id: 164
@@ -3211,6 +3224,7 @@ categories:
                       aoe:
                         radius: 1000.0
                         composite_effect_id: 1739
+                        target_factions: [separatist]
                         target_deltas:
                           stun_millis: 5000
                   spawn1:
@@ -3238,7 +3252,8 @@ categories:
                   warning_millis: 5000
                 ships:
                   test:
-                    can_seek_friendlies: true
+                    seek_factions: [republic]
+                    self_factions: [separatist]
                     max_alive: 50
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3272,6 +3287,7 @@ categories:
                             - composite_effect_id: 1557
                               hit_composite_effect_id: 1315
                               count: 1
+                              target_factions: [republic, republic_missile]
                               target_deltas:
                                 health: -1
                               length: 25
@@ -3280,13 +3296,13 @@ categories:
                               max_launch_angle: !Degrees 60
                           ships:
                             - count: 3
-                              ship: enemy_missile
+                              ship: separatist_missile
                               cooldown_millis: 20000
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
-                  enemy_missile:
-                    can_seek_friendlies: true
-                    trackable: false
+                  separatist_missile:
+                    seek_factions: [republic]
+                    self_factions: [separatist_missile]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3311,6 +3327,7 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [republic, republic_missile]
                               target_deltas:
                                 health: -2
                               self_deltas:
@@ -3321,9 +3338,9 @@ categories:
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
-                  player_missile:
-                    can_seek_hostiles: true
-                    trackable: false
+                  republic_missile:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3348,6 +3365,7 @@ categories:
                             - hit_composite_effect_id: 1315
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -2
                               self_deltas:
@@ -3359,9 +3377,8 @@ categories:
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
                   health_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3383,6 +3400,7 @@ categories:
                             - hit_composite_effect_id: 1774
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 health: 20
                               self_deltas:
@@ -3392,9 +3410,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   life_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3416,6 +3433,7 @@ categories:
                             - hit_composite_effect_id: 1777
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 player_lives: 1
                               self_deltas:
@@ -3425,9 +3443,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   weapon_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3449,6 +3466,7 @@ categories:
                             - hit_composite_effect_id: 1772
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 primary_tiers: 1
                               self_deltas:
@@ -3458,9 +3476,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   invulnerability_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3482,6 +3499,7 @@ categories:
                             - hit_composite_effect_id: 1775
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 secondary_item:
                                   name: invulnerability
@@ -3493,9 +3511,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   torrent_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3517,6 +3534,7 @@ categories:
                             - hit_composite_effect_id: 1779
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 secondary_item:
                                   name: torrent
@@ -3528,9 +3546,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   emp_powerup:
-                    can_seek_friendlies: true
-                    can_seek_npcs: false
-                    trackable: false
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
@@ -3552,6 +3569,7 @@ categories:
                             - hit_composite_effect_id: 1773
                               speed: 0
                               wobble: !Degrees 0
+                              target_factions: [player]
                               target_deltas:
                                 secondary_item:
                                   name: emp
@@ -3563,7 +3581,8 @@ categories:
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
                   v19:
-                    can_seek_hostiles: true
+                    seek_factions: [separatist]
+                    self_factions: [republic]
                     show_arrow_to_player: false
                     max_alive: 50
                     model_id: 241
@@ -3585,6 +3604,7 @@ categories:
                             - composite_effect_id: 1761
                               hit_composite_effect_id: 1315
                               count: 1
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 25
@@ -3592,7 +3612,8 @@ categories:
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
                   venator:
-                    can_seek_hostiles: true
+                    seek_factions: [separatist]
+                    self_factions: [republic, player]
                     max_alive: 4
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3727,12 +3748,14 @@ categories:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
                               count: 2
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 25
                               cooldown_millis: 250
                             - composite_effect_id: 1763
                               hit_composite_effect_id: 1315
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 75
@@ -3741,12 +3764,14 @@ categories:
                             - composite_effect_id: 1558
                               hit_composite_effect_id: 1315
                               count: 2
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 25
                               cooldown_millis: 250
                             - composite_effect_id: 1763
                               hit_composite_effect_id: 1315
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 75
@@ -3754,6 +3779,7 @@ categories:
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees 5
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 75
@@ -3761,17 +3787,18 @@ categories:
                             - composite_effect_id: 1762
                               hit_composite_effect_id: 1315
                               yaw: !Degrees -5
+                              target_factions: [separatist, separatist_missile]
                               target_deltas:
                                 health: -1
                               length: 75
                               cooldown_millis: 250
                           ships:
                             - count: 1
-                              ship: player_missile
+                              ship: republic_missile
                               cooldown_millis: 4000
                               yaw: !Degrees -5
                             - count: 1
-                              ship: player_missile
+                              ship: republic_missile
                               cooldown_millis: 4000
                               yaw: !Degrees 5
                 sound_id: 2413
