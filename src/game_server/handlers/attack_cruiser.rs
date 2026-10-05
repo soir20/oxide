@@ -2968,8 +2968,8 @@ impl AttackCruiserGame {
             &self.active_player_indices,
             &self.player_states,
             &self.npcs,
-            AttackCruiserPlayer::permeable,
-            AttackCruiserActor::permeable,
+            |player| !player.permeable(),
+            |npc| !npc.permeable(),
         );
         self.tick_players(now, &mut broadcasts, &hits, &aoes, &mut pending_npcs);
         self.tick_npcs(
