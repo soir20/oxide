@@ -3159,6 +3159,10 @@ impl AttackCruiserGame {
         sender: u32,
         client_states: AttackCruiserUpdateClientActors,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        if self.paused() {
+            return Ok(Vec::new());
+        }
+
         let player_index = self.player_index(sender)?;
         let player_state = &mut self.player_states[player_index as usize];
 
