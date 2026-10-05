@@ -23,7 +23,9 @@ use crate::{
 };
 
 use super::{
-    character::{coerce_to_broadcast_supplier, CharacterStats, CharacterType, PlayerAbilityGroup},
+    character::{
+        coerce_to_broadcast_supplier, Character, CharacterStats, CharacterType, PlayerAbilityGroup,
+    },
     combat::player_can_attack,
     distance3_pos,
     guid::{Guid, GuidTableIndexer, IndexedGuid},
@@ -189,18 +191,18 @@ fn compute_ability_damage(config: &AbilityConfig, ability_key: &str) -> Result<(
 
 fn deal_ability_damage(
     caster: u64,
-    target_stats: &mut CharacterStats,
+    target: &mut Character,
     nearby_player_guids: &[u32],
     ability_key: &str,
     ability_config: &AbilityConfig,
 ) -> Result<Vec<Broadcast>, Error> {
     let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_key)?;
 
-    let current_health = target_stats.health as i32;
-    let max_health = target_stats.max_health as i32;
+    let current_health = target.stats.health as i32;
+    let max_health = target.stats.max_health as i32;
 
     let new_health = (current_health - damage_dealt as i32).clamp(0, max_health) as u16;
-    target_stats.health = new_health;
+    target.stats.health = new_health;
 
     let mut broadcasts = vec![Broadcast::Multi(
         nearby_player_guids.to_vec(),
@@ -208,7 +210,7 @@ fn deal_ability_damage(
             unknown1: true,
             inner: HitPointModification {
                 attacker_guid: caster,
-                receiver_guid: Guid::guid(target_stats),
+                receiver_guid: Guid::guid(&target.stats),
                 show_hp_delta: true,
                 max_hp: max_health,
                 new_hp: new_health as i32,
@@ -219,7 +221,7 @@ fn deal_ability_damage(
     )];
 
     if current_health > 0 && new_health == 0 {
-        broadcasts.extend(target_stats.knock_out(nearby_player_guids));
+        broadcasts.extend(target.knock_out(nearby_player_guids));
     }
 
     Ok(broadcasts)
@@ -372,7 +374,7 @@ pub fn handle_targeted_cast(
         if let Some(target_write_handle) = nearby_characters.get_mut(&target) {
             broadcasts.extend(deal_ability_damage(
                 caster_guid,
-                &mut target_write_handle.stats,
+                target_write_handle,
                 nearby_player_guids,
                 ability_name,
                 ability_config,
@@ -400,7 +402,7 @@ pub fn handle_targeted_cast(
                     if let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) {
                         broadcasts.extend(deal_ability_damage(
                             caster_guid,
-                            &mut target_write_handle.stats,
+                            target_write_handle,
                             nearby_player_guids,
                             ability_name,
                             ability_config,

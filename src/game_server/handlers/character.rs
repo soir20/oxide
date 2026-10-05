@@ -343,6 +343,7 @@ pub struct BaseNpcConfig {
     #[serde(default)]
     pub enemy_prioritization: HashMap<String, i8>,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub procedure_on_death: Option<String>,
     pub one_shot_interaction: Option<OneShotInteractionConfig>,
     #[serde(default)]
     pub triggered_npc_keys_on_interact: Vec<String>,
@@ -2300,6 +2301,7 @@ pub struct BaseNpcTemplate {
     pub spawn_animation_id: i32,
     pub hover_description: HoverDescriptionMode,
     pub procedure_on_interact: Option<Vec<TickableProcedureReference>>,
+    pub procedure_on_death: Option<String>,
     pub one_shot_interaction: Option<OneShotInteractionTemplate>,
     pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
@@ -2428,6 +2430,7 @@ impl BaseNpcTemplate {
             spawn_animation_id: config.spawn_animation_id,
             hover_description: config.hover_description,
             procedure_on_interact: config.procedure_on_interact.clone(),
+            procedure_on_death: config.procedure_on_death.clone(),
             one_shot_interaction: resolved_action,
             triggered_npc_keys_on_interact: config.triggered_npc_keys_on_interact.clone(),
             notification_icon: config.notification_icon,
@@ -2507,6 +2510,7 @@ impl BaseNpcTemplate {
                     .unwrap_or_else(|| panic!("Tried to synchronize with unknown NPC {key}"))
             }),
             scheduled_procedure_selector: self.scheduled_procedure_selector.clone(),
+            procedure_on_death: self.procedure_on_death.clone(),
         }
     }
 
@@ -2649,17 +2653,6 @@ impl CharacterStats {
         self.health = self.max_health;
     }
 
-    pub fn knock_out(&self, nearby_player_guids: &[u32]) -> Vec<Broadcast> {
-        match &self.character_type {
-            CharacterType::AmbientNpc(_) | CharacterType::Fixture(_, _) => vec![Broadcast::Multi(
-                nearby_player_guids.to_vec(),
-                self.remove_packets(self.removal_mode),
-            )],
-            // TODO
-            CharacterType::Player(_) => Vec::new(),
-        }
-    }
-
     pub fn add_packets(
         &self,
         override_is_spawned: bool,
@@ -2783,6 +2776,7 @@ pub struct Character {
     tickable_procedure_tracker: TickableProcedureTracker,
     pub synchronize_with: Option<u64>,
     scheduled_procedure_selector: ScheduledProcedureSelector,
+    pub procedure_on_death: Option<String>,
 }
 
 impl
@@ -2843,6 +2837,23 @@ impl
 }
 
 impl Character {
+    pub fn knock_out(&mut self, nearby_player_guids: &[u32]) -> Vec<Broadcast> {
+        match &self.stats.character_type {
+            CharacterType::AmbientNpc(_) | CharacterType::Fixture(_, _) => {
+                if let Some(death_procedure) = self.procedure_on_death.clone() {
+                    self.set_tickable_procedure_if_exists(death_procedure, Instant::now());
+                    Vec::new()
+                } else {
+                    vec![Broadcast::Multi(
+                        nearby_player_guids.to_vec(),
+                        self.stats.remove_packets(self.stats.removal_mode),
+                    )]
+                }
+            }
+            CharacterType::Player(_) => Vec::new(),
+        }
+    }
+
     pub const MIN_CHUNK: Chunk = Chunk {
         x: i32::MIN,
         z: i32::MIN,
@@ -2929,6 +2940,7 @@ impl Character {
             ),
             synchronize_with,
             scheduled_procedure_selector: ScheduledProcedureSelector::new(scheduled_procedures),
+            procedure_on_death: None,
         }
     }
 
@@ -3003,6 +3015,7 @@ impl Character {
             ),
             synchronize_with: None,
             scheduled_procedure_selector: ScheduledProcedureSelector::new(Arc::new(Vec::new())),
+            procedure_on_death: None,
         }
     }
 
