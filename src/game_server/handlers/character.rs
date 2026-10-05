@@ -998,10 +998,17 @@ impl TickableStep {
     }
 
     pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
-        let effect_delay =
-            (self.animation_delay_millis as u64).max(self.composite_effect_delay_millis as u64);
+        let effect_delay = self
+            .animation_delay_millis
+            .max(self.composite_effect_delay_millis);
 
-        self.min_duration_millis + effect_delay + removal_duration_millis
+        let extra_duration = if matches!(self.spawned_state, SpawnedState::Despawn) {
+            (effect_delay as u64).max(removal_duration_millis)
+        } else {
+            effect_delay as u64
+        };
+
+        self.min_duration_millis.saturating_add(extra_duration)
     }
 
     pub fn apply(
