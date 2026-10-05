@@ -13,7 +13,7 @@ use glam::{EulerRot, Quat, Vec3};
 use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use priority_queue::PriorityQueue;
-use rand::{rngs::ThreadRng, thread_rng, Rng};
+use rand::{rngs::SmallRng, Rng, SeedableRng};
 use serde::Deserialize;
 use smallvec::SmallVec;
 
@@ -114,7 +114,7 @@ struct AttackCruiserWeaponLaunchVector {
 }
 
 fn launch_vector(
-    rng: &mut ThreadRng,
+    rng: &mut SmallRng,
     actor_origin: Pos3,
     direction: Pos3,
     speed: f32,
@@ -319,6 +319,8 @@ struct AttackCruiserActor {
     pub primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
     pub primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
     pub spawn_time: MinigameStopwatch,
+    pub last_behavior_randomization: Instant,
+    pub next_behavior_randomization: MinigameCountdown,
 }
 
 impl AttackCruiserActor {
@@ -331,6 +333,7 @@ impl AttackCruiserActor {
         bvh: Option<Arc<Bvh>>,
         ship: Arc<AttackCruiserShipConfig>,
         now: Instant,
+        rng: &mut SmallRng,
     ) -> Self {
         let mut actor = AttackCruiserActor {
             id,
@@ -351,8 +354,16 @@ impl AttackCruiserActor {
             primary_weapon_tier: 0,
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
-            ship,
             spawn_time: MinigameStopwatch::new(Some(now)),
+            last_behavior_randomization: now,
+            // Add jitter so not all AIs update at the same time
+            next_behavior_randomization: MinigameCountdown::new_with_event(
+                Duration::from_millis(
+                    rng.gen_range(0..ship.ai_randomization_interval_millis.into()),
+                ),
+                now,
+            ),
+            ship,
         };
 
         actor.set_primary_weapon_tier(0);
@@ -403,6 +414,7 @@ impl AttackCruiserActor {
                 }
             });
         self.spawn_time.pause_or_resume(pause);
+        self.next_behavior_randomization.pause_or_resume(pause);
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -536,9 +548,13 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
-    pub fn current_ai_behavior(&self, now: Instant) -> &AttackCruiserShipAiBehavior {
+    pub fn current_ai_behavior(
+        &self,
+        now: Instant,
+        rng: &mut SmallRng,
+    ) -> &AttackCruiserShipAiBehavior {
         for rule in &self.ship.ai_states {
-            if self.matches_condition(&rule.condition, now) {
+            if self.matches_condition(&rule.condition, now, rng) {
                 return &rule.behavior;
             }
         }
@@ -850,7 +866,12 @@ impl AttackCruiserActor {
         self.pos.z += self.speed.z * delta_secs;
     }
 
-    fn matches_condition(&self, expr: &AttackCruiserShipBoolExpr, now: Instant) -> bool {
+    fn matches_condition(
+        &self,
+        expr: &AttackCruiserShipBoolExpr,
+        now: Instant,
+        rng: &mut SmallRng,
+    ) -> bool {
         match expr {
             AttackCruiserShipBoolExpr::Condition(prop) => match prop {
                 AttackCruiserShipPropertyExpr::HealthPercent(op, value) => {
@@ -862,17 +883,17 @@ impl AttackCruiserActor {
                     op.eval(lifetime_millis, *value as u128)
                 }
                 AttackCruiserShipPropertyExpr::ProbabilityLessThan(chance) => {
-                    let roll: f32 = rand::thread_rng().gen();
+                    let roll: f32 = rng.gen();
                     roll < *chance
                 }
             },
-            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner, now),
+            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner, now, rng),
             AttackCruiserShipBoolExpr::And(expressions) => expressions
                 .iter()
-                .all(|expr| self.matches_condition(expr, now)),
+                .all(|expr| self.matches_condition(expr, now, rng)),
             AttackCruiserShipBoolExpr::Or(expressions) => expressions
                 .iter()
-                .any(|expr| self.matches_condition(expr, now)),
+                .any(|expr| self.matches_condition(expr, now, rng)),
         }
     }
 
@@ -977,9 +998,10 @@ impl AttackCruiserPendingActor {
         ship: Arc<AttackCruiserShipConfig>,
         ship_name: String,
         now: Instant,
+        rng: &mut SmallRng,
     ) -> Self {
         AttackCruiserPendingActor {
-            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship, now),
+            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship, now, rng),
             ship_name,
         }
     }
@@ -1082,11 +1104,12 @@ impl AttackCruiserPlayer {
         yaw: f32,
         bvh: Option<Arc<Bvh>>,
         now: Instant,
+        rng: &mut SmallRng,
     ) -> Self {
         AttackCruiserPlayer {
             guid,
             ready: false,
-            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship, now),
+            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship, now, rng),
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -1292,6 +1315,10 @@ const fn default_screen_relative_turning() -> bool {
 
 const fn default_wipe_style() -> AttackCruiserCinematicStyle {
     AttackCruiserCinematicStyle::Random
+}
+
+const fn default_ai_randomization_interval_millis() -> u32 {
+    2000
 }
 
 const fn default_true() -> bool {
@@ -1758,6 +1785,8 @@ struct AttackCruiserShipConfig {
     ai_states: Vec<AttackCruiserShipAiStateRule>,
     #[serde(default)]
     default_ai_behavior: AttackCruiserShipAiBehavior,
+    #[serde(default = "default_ai_randomization_interval_millis")]
+    ai_randomization_interval_millis: u32,
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -2031,7 +2060,7 @@ impl AttackCruiserProjectilePool {
 
     pub fn launch(
         &mut self,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
         launched_by_actor_id: i32,
         actor_origin: Pos3,
         direction: Pos3,
@@ -2290,7 +2319,6 @@ struct AttackCruiserActorTarget {
     id: i32,
     pos: Pos3,
     speed: Pos3,
-    is_player: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -2387,6 +2415,7 @@ impl AttackCruiserGame {
         let mut actors_by_ship_name = HashMap::new();
 
         let now = Instant::now();
+        let rng = &mut SmallRng::from_entropy();
 
         let mut players = ArrayVec::new();
         players.push(player1);
@@ -2409,6 +2438,7 @@ impl AttackCruiserGame {
             config.player.spawn1.yaw.to_radians(),
             player_bvh.clone(),
             now,
+            rng,
         ));
 
         if let Some(player2) = player2 {
@@ -2431,6 +2461,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.yaw.to_radians(),
                 player_bvh.clone(),
                 now,
+                rng,
             ));
         }
 
@@ -2466,6 +2497,7 @@ impl AttackCruiserGame {
                 player_bvh.clone(),
                 test_npc_ship.clone(),
                 now,
+                rng,
             ),
         );
         let npc_id2 = actor_id_pool
@@ -2493,6 +2525,7 @@ impl AttackCruiserGame {
                 player_bvh.clone(),
                 test_npc_ship.clone(),
                 now,
+                rng,
             ),
         );
         let npc_id3 = actor_id_pool
@@ -2520,6 +2553,7 @@ impl AttackCruiserGame {
                 player_bvh,
                 test_npc_ship.clone(),
                 now,
+                rng,
             ),
         );
 
@@ -3705,7 +3739,7 @@ impl AttackCruiserGame {
         max_cooldown_error_millis: u16,
     ) -> Result<(Vec<Broadcast>, Vec<AttackCruiserPendingActor>), ProcessPacketError> {
         let mut packets = Vec::new();
-        let rng = &mut thread_rng();
+        let rng = &mut SmallRng::from_entropy();
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
@@ -3773,6 +3807,7 @@ impl AttackCruiserGame {
                     ship.clone(),
                     launched_actor.ship.clone(),
                     now,
+                    rng,
                 ));
             }
         }
@@ -4140,15 +4175,68 @@ impl AttackCruiserGame {
                 npc.remove_stun();
             }
 
-            let (is_real_target, target_pos, target_speed) = Self::closest_target(
-                npc.id,
-                &npc.ship.seek_factions,
-                npc.pos,
-                actors_by_faction,
-                &self.config.playfield,
-            )
-            .map(|target| (true, target.pos, target.speed))
-            .unwrap_or((false, self.config.playfield.center, Pos3::default()));
+            if npc
+                .next_behavior_randomization
+                .time_until_next_event(now)
+                .is_zero()
+            {
+                npc.next_behavior_randomization.schedule_event(
+                    Duration::from_millis(npc.ship.ai_randomization_interval_millis.into()),
+                    now,
+                );
+                npc.last_behavior_randomization = now;
+            }
+
+            // Seed RNG according to time so we don't constantly re-select behaviors on every tick
+            let seed = (npc.spawn_time.elapsed(now).as_millis() % u64::MAX as u128) as u64;
+            let ai_rng = &mut SmallRng::seed_from_u64(seed);
+
+            let behavior = npc.current_ai_behavior(now, ai_rng);
+            if let Some(config) = &behavior.aoe {
+                self.pending_aoes.push(AttackCruiserPendingAoe {
+                    config: config.clone(),
+                    launched_by_actor_id: npc.id,
+                    pos: npc.pos,
+                });
+            }
+            pending_npcs.append(&mut Self::launch_actors_from_actor(
+                npc,
+                &behavior.ships,
+                now,
+                &self.config,
+                &self.bvhs,
+            ));
+
+            if behavior.despawn {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    Self::despawn_client_actor(
+                        npc,
+                        npc.ship.despawn_effect_id,
+                        &mut self.actors_by_ship_name,
+                        self.group,
+                    ),
+                ));
+                return false;
+            }
+
+            let (is_real_target, target_pos, target_speed) = match behavior.movement {
+                AttackCruiserShipAiMovement::SeekTarget => Self::closest_target(
+                    npc.id,
+                    &npc.ship.seek_factions,
+                    npc.pos,
+                    actors_by_faction,
+                    &self.config.playfield,
+                )
+                .map(|target| (true, target.pos, target.speed))
+                .unwrap_or((false, self.config.playfield.center, Pos3::default())),
+                AttackCruiserShipAiMovement::RandomPos => (
+                    false,
+                    Self::random_pos_in_bounds(npc.pos.y, &self.config.playfield, ai_rng),
+                    Pos3::default(),
+                ),
+                AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
+            };
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if !npc.dead() {
@@ -4221,19 +4309,6 @@ impl AttackCruiserGame {
                 return false;
             }
 
-            if npc.expired(now) {
-                broadcasts.push(Broadcast::Multi(
-                    self.active_players.to_vec(),
-                    Self::despawn_client_actor(
-                        npc,
-                        npc.ship.despawn_effect_id,
-                        &mut self.actors_by_ship_name,
-                        self.group,
-                    ),
-                ));
-                return false;
-            }
-
             true
         });
     }
@@ -4257,7 +4332,6 @@ impl AttackCruiserGame {
                         id: actor.id,
                         pos: actor.pos,
                         speed: actor.speed,
-                        is_player: true,
                     };
 
                     if !actors_by_faction.contains_key(faction) {
@@ -4279,7 +4353,6 @@ impl AttackCruiserGame {
                     id: npc.id,
                     pos: npc.pos,
                     speed: npc.speed,
-                    is_player: true,
                 };
 
                 if !actors_by_faction.contains_key(faction) {
@@ -4304,7 +4377,7 @@ impl AttackCruiserGame {
         config: &AttackCruiserConfig,
         bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Vec<AttackCruiserPendingActor> {
-        let rng = &mut thread_rng();
+        let rng = &mut SmallRng::from_entropy();
         let mut new_npcs = Vec::new();
 
         let direction = Pos3 {
@@ -4337,6 +4410,7 @@ impl AttackCruiserGame {
                     ship.clone(),
                     launched_actor.ship.clone(),
                     now,
+                    rng,
                 ));
             }
         }
@@ -4436,5 +4510,16 @@ impl AttackCruiserGame {
             .flat_map(|targets| targets.iter())
             .filter(|target| target.id != actor_id)
             .min_by(comparator)
+    }
+
+    fn random_pos_in_bounds(
+        y: f32,
+        playfield: &AttackCruiserPlayfieldConfig,
+        rng: &mut SmallRng,
+    ) -> Pos3 {
+        let x = rng.gen_range(-playfield.radius_x..playfield.radius_x) + playfield.center.x;
+        let z = rng.gen_range(-playfield.radius_z..playfield.radius_z) + playfield.center.y;
+
+        Pos3 { x, y, z }
     }
 }
