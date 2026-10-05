@@ -4322,11 +4322,13 @@ impl AttackCruiserGame {
     ) -> HashMap<String, Vec<AttackCruiserActorTarget>> {
         let mut actors_by_faction: HashMap<String, Vec<AttackCruiserActorTarget>> = HashMap::new();
 
-        for player_index in active_player_indices.iter().copied() {
-            let player_state = &player_states[player_index as usize];
-
-            if player_filter(player_state) {
-                let actor = &player_state.actor;
+        active_player_indices
+            .iter()
+            .copied()
+            .filter(|player_index| player_filter(&player_states[*player_index as usize]))
+            .map(|player_index| &player_states[player_index as usize].actor)
+            .chain(npcs.values().filter(|npc| npc_filter(npc)))
+            .for_each(|actor| {
                 for faction in actor.ship.self_factions.iter() {
                     let target = AttackCruiserActorTarget {
                         id: actor.id,
@@ -4344,28 +4346,7 @@ impl AttackCruiserGame {
                         .expect("Actor faction list should have been initialized")
                         .push(target);
                 }
-            }
-        }
-
-        for npc in npcs.values().filter(|npc| npc_filter(npc)) {
-            for faction in npc.ship.self_factions.iter() {
-                let target = AttackCruiserActorTarget {
-                    id: npc.id,
-                    pos: npc.pos,
-                    speed: npc.speed,
-                };
-
-                if !actors_by_faction.contains_key(faction) {
-                    actors_by_faction.insert(faction.to_owned(), vec![target]);
-                    continue;
-                }
-
-                actors_by_faction
-                    .get_mut(faction)
-                    .expect("Actor faction list should have been initialized")
-                    .push(target);
-            }
-        }
+            });
 
         actors_by_faction
     }
