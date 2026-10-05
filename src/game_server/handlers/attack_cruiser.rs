@@ -360,8 +360,8 @@ impl AttackCruiserActor {
         actor
     }
 
-    pub fn seekable(&self) -> bool {
-        !self.dead()
+    pub fn permeable(&self) -> bool {
+        self.dead()
     }
 
     pub fn vulnerable(&self) -> bool {
@@ -1131,8 +1131,8 @@ impl AttackCruiserPlayer {
             .has_phase(AttackCruiserPlayerBoundsPhase::Outside)
     }
 
-    pub fn seekable(&self) -> bool {
-        self.actor.seekable() && !self.warped_away()
+    pub fn permeable(&self) -> bool {
+        self.actor.permeable() || self.warped_away()
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -2880,20 +2880,17 @@ impl AttackCruiserGame {
         let mut broadcasts = Vec::new();
         let mut pending_npcs = Vec::new();
 
-        let actor_iter = self
+        let impermeable_actors = self
             .active_player_indices
             .iter()
             .copied()
-            .filter(|player_index| {
-                !self.player_states[*player_index as usize].dead()
-                    && !self.player_states[*player_index as usize].warped_away()
-            })
+            .filter(|player_index| !self.player_states[*player_index as usize].permeable())
             .map(|player_index| &self.player_states[player_index as usize].actor)
-            .chain(self.npcs.values().filter(|npc| !npc.dead()));
+            .chain(self.npcs.values().filter(|npc| !npc.permeable()));
 
         let hits = self
             .projectiles
-            .hits(actor_iter.clone(), now, tick_duration);
+            .hits(impermeable_actors.clone(), now, tick_duration);
         self.projectiles.expire(now);
 
         let mut aoe_effect_packets = Vec::new();
@@ -2905,7 +2902,7 @@ impl AttackCruiserGame {
                 self.group,
             ));
 
-            actor_iter
+            impermeable_actors
                 .clone()
                 .filter(|target| {
                     distance3_sq(
@@ -2942,8 +2939,8 @@ impl AttackCruiserGame {
             &self.active_player_indices,
             &self.player_states,
             &self.npcs,
-            AttackCruiserPlayer::seekable,
-            AttackCruiserActor::seekable,
+            AttackCruiserPlayer::permeable,
+            AttackCruiserActor::permeable,
         );
         self.tick_players(now, &mut broadcasts, &hits, &aoes, &mut pending_npcs);
         self.tick_npcs(
