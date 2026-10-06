@@ -321,6 +321,7 @@ struct AttackCruiserActor {
     pub spawn_time: MinigameStopwatch,
     pub last_behavior_randomization: Instant,
     pub next_behavior_randomization: MinigameCountdown,
+    pub ai_state_executions: Vec<u32>,
 }
 
 impl AttackCruiserActor {
@@ -363,6 +364,7 @@ impl AttackCruiserActor {
                 ),
                 now,
             ),
+            ai_state_executions: vec![0; ship.ai_states.len()],
             ship,
         };
 
@@ -549,16 +551,36 @@ impl AttackCruiserActor {
     }
 
     pub fn current_ai_behavior(
-        &self,
+        &mut self,
         now: Instant,
-        rng: &mut SmallRng,
-    ) -> &AttackCruiserShipAiBehavior {
-        for rule in &self.ship.ai_states {
-            if self.matches_condition(&rule.condition, now, rng) {
-                return &rule.behavior;
+    ) -> (&AttackCruiserShipAiBehavior, SmallRng) {
+        let mut executions_delta = 0;
+        if self
+            .next_behavior_randomization
+            .time_until_next_event(now)
+            .is_zero()
+        {
+            self.next_behavior_randomization.schedule_event(
+                Duration::from_millis(self.ship.ai_randomization_interval_millis.into()),
+                now,
+            );
+            self.last_behavior_randomization = now;
+            executions_delta = 1;
+        }
+
+        // Seed RNG according to time so we don't constantly re-select behaviors on every tick
+        let seed = (self.spawn_time.elapsed(now).as_millis() % u64::MAX as u128) as u64;
+        let mut rng = SmallRng::seed_from_u64(seed);
+
+        for (index, rule) in self.ship.ai_states.iter().enumerate() {
+            let execution_count = self.ai_state_executions[index];
+            if self.matches_condition(&rule.condition, execution_count, now, &mut rng) {
+                self.ai_state_executions[index] =
+                    self.ai_state_executions[index].saturating_add(executions_delta);
+                return (&rule.behavior, rng);
             }
         }
-        &self.ship.default_ai_behavior
+        (&self.ship.default_ai_behavior, rng)
     }
 
     pub fn hostility(
@@ -869,6 +891,7 @@ impl AttackCruiserActor {
     fn matches_condition(
         &self,
         expr: &AttackCruiserShipBoolExpr,
+        execution_count: u32,
         now: Instant,
         rng: &mut SmallRng,
     ) -> bool {
@@ -886,14 +909,17 @@ impl AttackCruiserActor {
                     let roll: f32 = rng.gen();
                     roll < *chance
                 }
+                AttackCruiserShipPropertyExpr::ExecutionCount(_) => todo!(),
             },
-            AttackCruiserShipBoolExpr::Not(inner) => !self.matches_condition(inner, now, rng),
+            AttackCruiserShipBoolExpr::Not(inner) => {
+                !self.matches_condition(inner, execution_count, now, rng)
+            }
             AttackCruiserShipBoolExpr::And(expressions) => expressions
                 .iter()
-                .all(|expr| self.matches_condition(expr, now, rng)),
+                .all(|expr| self.matches_condition(expr, execution_count, now, rng)),
             AttackCruiserShipBoolExpr::Or(expressions) => expressions
                 .iter()
-                .any(|expr| self.matches_condition(expr, now, rng)),
+                .any(|expr| self.matches_condition(expr, execution_count, now, rng)),
         }
     }
 
@@ -1689,6 +1715,7 @@ enum AttackCruiserShipPropertyExpr {
     HealthPercent(AttackCruiserShipOp, f32),
     LifetimeMillis(AttackCruiserShipOp, u32),
     ProbabilityLessThan(f32),
+    ExecutionCount(u32),
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -3278,7 +3305,8 @@ impl AttackCruiserGame {
                 }
 
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    &player_state.actor,
+                    player_state.actor.pos,
+                    player_state.actor.yaw,
                     &secondary_item.ships,
                     now,
                     &self.config,
@@ -4017,7 +4045,8 @@ impl AttackCruiserGame {
 
             if player_state.respawnable(now) {
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    &player_state.actor,
+                    player_state.actor.pos,
+                    player_state.actor.yaw,
                     &player_state.actor.ship.ships_on_death,
                     now,
                     &self.config,
@@ -4175,32 +4204,20 @@ impl AttackCruiserGame {
                 npc.remove_stun();
             }
 
-            if npc
-                .next_behavior_randomization
-                .time_until_next_event(now)
-                .is_zero()
-            {
-                npc.next_behavior_randomization.schedule_event(
-                    Duration::from_millis(npc.ship.ai_randomization_interval_millis.into()),
-                    now,
-                );
-                npc.last_behavior_randomization = now;
-            }
-
-            // Seed RNG according to time so we don't constantly re-select behaviors on every tick
-            let seed = (npc.spawn_time.elapsed(now).as_millis() % u64::MAX as u128) as u64;
-            let ai_rng = &mut SmallRng::seed_from_u64(seed);
-
-            let behavior = npc.current_ai_behavior(now, ai_rng);
+            let npc_id = npc.id;
+            let npc_pos = npc.pos;
+            let npc_yaw = npc.yaw;
+            let (behavior, mut ai_rng) = npc.current_ai_behavior(now);
             if let Some(config) = &behavior.aoe {
                 self.pending_aoes.push(AttackCruiserPendingAoe {
                     config: config.clone(),
-                    launched_by_actor_id: npc.id,
-                    pos: npc.pos,
+                    launched_by_actor_id: npc_id,
+                    pos: npc_pos,
                 });
             }
             pending_npcs.append(&mut Self::launch_actors_from_actor(
-                npc,
+                npc_pos,
+                npc_yaw,
                 &behavior.ships,
                 now,
                 &self.config,
@@ -4232,7 +4249,7 @@ impl AttackCruiserGame {
                 .unwrap_or((false, self.config.playfield.center, Pos3::default())),
                 AttackCruiserShipAiMovement::RandomPos => (
                     false,
-                    Self::random_pos_in_bounds(npc.pos.y, &self.config.playfield, ai_rng),
+                    Self::random_pos_in_bounds(npc.pos.y, &self.config.playfield, &mut ai_rng),
                     Pos3::default(),
                 ),
                 AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
@@ -4290,7 +4307,8 @@ impl AttackCruiserGame {
 
             if npc.completed_death(now) {
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    npc,
+                    npc.pos,
+                    npc.yaw,
                     &npc.ship.ships_on_death,
                     now,
                     &self.config,
@@ -4352,7 +4370,8 @@ impl AttackCruiserGame {
     }
 
     fn launch_actors_from_actor(
-        actor: &AttackCruiserActor,
+        origin: Pos3,
+        yaw: f32,
         new_ships: &[AttackCruiserSpawnedShipConfig],
         now: Instant,
         config: &AttackCruiserConfig,
@@ -4362,9 +4381,9 @@ impl AttackCruiserGame {
         let mut new_npcs = Vec::new();
 
         let direction = Pos3 {
-            x: actor.yaw.sin(),
+            x: yaw.sin(),
             y: 0.0,
-            z: actor.yaw.cos(),
+            z: yaw.cos(),
         };
 
         for launched_actor in new_ships.iter() {
@@ -4374,7 +4393,7 @@ impl AttackCruiserGame {
             for _ in 0..launched_actor.count {
                 let launch_vector = launch_vector(
                     rng,
-                    actor.pos,
+                    origin,
                     direction,
                     ship.max_speed,
                     launched_actor.wobble,
