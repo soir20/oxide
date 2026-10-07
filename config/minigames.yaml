@@ -3664,7 +3664,7 @@ categories:
                           aoe:
                             radius: 1000.0
                             composite_effect_id: 1836
-                            target_factions: [separatist]
+                            target_factions: [separatist, separatist_missile]
                             target_deltas:
                               health: -20
                           despawn: true
