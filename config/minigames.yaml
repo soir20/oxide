@@ -3227,6 +3227,15 @@ categories:
                         target_factions: [separatist]
                         target_deltas:
                           stun_millis: 5000
+                    mine:
+                      icon_id: 519
+                      aoe:
+                        radius: 0
+                        composite_effect_id: 2021
+                        target_factions: []
+                      ships:
+                        - count: 1
+                          ship: mine
                   spawn1:
                     pos:
                       x: 3.9
@@ -3305,7 +3314,7 @@ categories:
                         behavior:
                           ships:
                             - count: 1
-                              ship: emp_powerup
+                              ship: mine_powerup
                   separatist_missile:
                     seek_factions: [republic]
                     self_factions: [separatist_missile]
@@ -3596,6 +3605,69 @@ categories:
                               cooldown_millis: 50
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
+                  mine_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    max_roll: !Degrees 15
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1543
+                    death_end_effect_id: 1778
+                    despawn_effect_id: 1778
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1778
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_factions: [player]
+                              target_deltas:
+                                secondary_item:
+                                  name: mine
+                                  count: 1
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              max_cooldown_error_millis: 0
+                              lifetime_millis: 50
+                  mine:
+                    seek_factions: []
+                    self_factions: [player_powerup]
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 572
+                    max_roll: !Degrees 15
+                    max_speed: 0.0
+                    acceleration: 0.0
+                    deceleration: 0.0
+                    max_angular_speed: !Degrees 0
+                    angular_acceleration: !Degrees 0
+                    angular_deceleration: !Degrees 0
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    death_end_effect_id: 1836
+                    despawn_effect_id: 1836
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 3000]
+                        behavior:
+                          aoe:
+                            radius: 1000.0
+                            composite_effect_id: 1836
+                            target_factions: [separatist]
+                            target_deltas:
+                              health: -20
+                          despawn: true
                   v19:
                     seek_factions: [separatist]
                     self_factions: [republic]
