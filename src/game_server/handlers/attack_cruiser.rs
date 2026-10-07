@@ -301,6 +301,12 @@ impl AttackCruiserActorStun {
     }
 }
 
+struct AttackCruiserAiTickResult<'a> {
+    pub behavior: &'a AttackCruiserShipAiBehavior,
+    pub rng: SmallRng,
+    pub triggered: bool,
+}
+
 #[derive(Clone, Debug)]
 struct AttackCruiserActor {
     pub id: i32,
@@ -545,10 +551,7 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
-    pub fn current_ai_behavior(
-        &mut self,
-        now: Instant,
-    ) -> (&AttackCruiserShipAiBehavior, SmallRng) {
+    pub fn current_ai_behavior(&mut self, now: Instant) -> AttackCruiserAiTickResult<'_> {
         let mut reselected = false;
         let mut reexecuted = false;
 
@@ -608,7 +611,9 @@ impl AttackCruiserActor {
             self.next_behavior_execution = None;
         }
 
-        if reselected || reexecuted {
+        let triggered = reselected || reexecuted;
+
+        if triggered {
             if let Some((index, _)) = selected_behavior {
                 self.ai_state_executions[index] = self.ai_state_executions[index].saturating_add(1);
             }
@@ -621,7 +626,11 @@ impl AttackCruiserActor {
             % u64::MAX as u128) as u64;
         let execution_rng = SmallRng::seed_from_u64(execution_seed);
 
-        (behavior, execution_rng)
+        AttackCruiserAiTickResult {
+            behavior,
+            rng: execution_rng,
+            triggered,
+        }
     }
 
     pub fn hostility(
@@ -4260,37 +4269,39 @@ impl AttackCruiserGame {
             let npc_id = npc.id;
             let npc_pos = npc.pos;
             let npc_yaw = npc.yaw;
-            let (behavior, mut ai_rng) = npc.current_ai_behavior(now);
-            if let Some(config) = &behavior.aoe {
-                self.pending_aoes.push(AttackCruiserPendingAoe {
-                    config: config.clone(),
-                    launched_by_actor_id: npc_id,
-                    pos: npc_pos,
-                });
-            }
-            pending_npcs.append(&mut Self::launch_actors_from_actor(
-                npc_pos,
-                npc_yaw,
-                &behavior.ships,
-                now,
-                &self.config,
-                &self.bvhs,
-            ));
-
-            if behavior.despawn {
-                broadcasts.push(Broadcast::Multi(
-                    self.active_players.to_vec(),
-                    Self::despawn_client_actor(
-                        npc,
-                        npc.ship.despawn_effect_id,
-                        &mut self.actors_by_ship_name,
-                        self.group,
-                    ),
+            let mut ai_result = npc.current_ai_behavior(now);
+            if ai_result.triggered {
+                if let Some(config) = &ai_result.behavior.aoe {
+                    self.pending_aoes.push(AttackCruiserPendingAoe {
+                        config: config.clone(),
+                        launched_by_actor_id: npc_id,
+                        pos: npc_pos,
+                    });
+                }
+                pending_npcs.append(&mut Self::launch_actors_from_actor(
+                    npc_pos,
+                    npc_yaw,
+                    &ai_result.behavior.ships,
+                    now,
+                    &self.config,
+                    &self.bvhs,
                 ));
-                return false;
+
+                if ai_result.behavior.despawn {
+                    broadcasts.push(Broadcast::Multi(
+                        self.active_players.to_vec(),
+                        Self::despawn_client_actor(
+                            npc,
+                            npc.ship.despawn_effect_id,
+                            &mut self.actors_by_ship_name,
+                            self.group,
+                        ),
+                    ));
+                    return false;
+                }
             }
 
-            let (is_real_target, target_pos, target_speed) = match behavior.movement {
+            let (is_real_target, target_pos, target_speed) = match ai_result.behavior.movement {
                 AttackCruiserShipAiMovement::SeekTarget => Self::closest_target(
                     npc.id,
                     &npc.ship.seek_factions,
@@ -4302,7 +4313,11 @@ impl AttackCruiserGame {
                 .unwrap_or((false, self.config.playfield.center, Pos3::default())),
                 AttackCruiserShipAiMovement::RandomPos => (
                     false,
-                    Self::random_pos_in_bounds(npc.pos.y, &self.config.playfield, &mut ai_rng),
+                    Self::random_pos_in_bounds(
+                        npc_pos.y,
+                        &self.config.playfield,
+                        &mut ai_result.rng,
+                    ),
                     Pos3::default(),
                 ),
                 AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
