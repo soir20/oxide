@@ -362,7 +362,7 @@ impl AttackCruiserActor {
             // Add jitter so not all AIs update at the same time
             next_behavior_selection: MinigameCountdown::new_with_event(
                 Duration::from_millis(
-                    rng.gen_range(0..ship.ai_behavior_selection_interval_millis.into()),
+                    rng.gen_range(0..ship.ai_behavior_randomization_interval_millis.into()),
                 ),
                 now,
             ),
@@ -387,15 +387,6 @@ impl AttackCruiserActor {
 
     pub fn dead(&self) -> bool {
         self.health == 0
-    }
-
-    pub fn expired(&self, now: Instant) -> bool {
-        match self.ship.lifetime_millis {
-            Some(lifetime_millis) => {
-                self.spawn_time.elapsed(now) > Duration::from_millis(lifetime_millis.into())
-            }
-            None => false,
-        }
     }
 
     pub fn paused(&self) -> bool {
@@ -567,7 +558,7 @@ impl AttackCruiserActor {
             .is_zero()
         {
             self.next_behavior_selection.schedule_event(
-                Duration::from_millis(self.ship.ai_behavior_selection_interval_millis.into()),
+                Duration::from_millis(self.ship.ai_behavior_randomization_interval_millis.into()),
                 now,
             );
             self.last_behavior_selection = now;
@@ -963,13 +954,13 @@ impl AttackCruiserActor {
                     op.eval(execution_count, *value)
                 }
             },
-            AttackCruiserShipBoolExpr::Not(inner) => {
-                !self.matches_condition(inner, execution_count, now, rng)
+            AttackCruiserShipBoolExpr::Not { expr } => {
+                !self.matches_condition(expr, execution_count, now, rng)
             }
-            AttackCruiserShipBoolExpr::And(expressions) => expressions
+            AttackCruiserShipBoolExpr::And { exprs } => exprs
                 .iter()
                 .all(|expr| self.matches_condition(expr, execution_count, now, rng)),
-            AttackCruiserShipBoolExpr::Or(expressions) => expressions
+            AttackCruiserShipBoolExpr::Or { exprs } => exprs
                 .iter()
                 .any(|expr| self.matches_condition(expr, execution_count, now, rng)),
         }
@@ -1217,7 +1208,7 @@ impl AttackCruiserPlayer {
     }
 
     pub fn lost(&self, now: Instant) -> bool {
-        (!self.has_lives() && self.completed_death(now)) || self.actor.expired(now)
+        !self.has_lives() && self.completed_death(now)
     }
 
     pub fn respawn(&mut self, invulnerability_duration: Duration, now: Instant) {
@@ -1771,12 +1762,21 @@ enum AttackCruiserShipPropertyExpr {
 }
 
 #[derive(Clone, Debug, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(untagged, deny_unknown_fields)]
 enum AttackCruiserShipBoolExpr {
+    Not {
+        #[serde(rename = "Not")]
+        expr: Box<AttackCruiserShipBoolExpr>,
+    },
+    And {
+        #[serde(rename = "And")]
+        exprs: Vec<AttackCruiserShipBoolExpr>,
+    },
+    Or {
+        #[serde(rename = "Or")]
+        exprs: Vec<AttackCruiserShipBoolExpr>,
+    },
     Condition(AttackCruiserShipPropertyExpr),
-    Not(Box<AttackCruiserShipBoolExpr>),
-    And(Vec<AttackCruiserShipBoolExpr>),
-    Or(Vec<AttackCruiserShipBoolExpr>),
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -1850,7 +1850,6 @@ struct AttackCruiserShipConfig {
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
-    lifetime_millis: Option<u32>,
     #[serde(default)]
     ships_on_death: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
@@ -1866,7 +1865,7 @@ struct AttackCruiserShipConfig {
     #[serde(default)]
     default_ai_behavior: AttackCruiserShipAiBehavior,
     #[serde(default = "ai_randomization_interval_millis")]
-    ai_behavior_selection_interval_millis: u32,
+    ai_behavior_randomization_interval_millis: u32,
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =

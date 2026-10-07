@@ -3320,7 +3320,6 @@ categories:
                     thruster_effect_id: 1532
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
-                    lifetime_millis: 20000
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3338,6 +3337,15 @@ categories:
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 20000]
+                        behavior:
+                          movement: SeekTarget
+                          despawn: true
+                    default_ai_behavior:
+                      movement: SeekTarget
                   republic_missile:
                     seek_factions: [separatist]
                     self_factions: [republic_missile]
@@ -3358,7 +3366,6 @@ categories:
                     thruster_effect_id: 1297
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
-                    lifetime_millis: 20000
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3376,6 +3383,15 @@ categories:
                               lifetime_millis: 50
                               min_launch_angle: !Degrees -90
                               max_launch_angle: !Degrees 90
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 20000]
+                        behavior:
+                          movement: SeekTarget
+                          despawn: true
+                    default_ai_behavior:
+                      movement: SeekTarget
                   health_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
