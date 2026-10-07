@@ -301,8 +301,8 @@ impl AttackCruiserActorStun {
     }
 }
 
-struct AttackCruiserAiTickResult<'a> {
-    pub behavior: &'a AttackCruiserShipAiBehavior,
+struct AttackCruiserAiTickResult {
+    pub behavior: Arc<AttackCruiserShipAiBehavior>,
     pub rng: SmallRng,
     pub triggered: bool,
 }
@@ -553,7 +553,7 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
-    pub fn current_ai_behavior(&mut self, now: Instant) -> AttackCruiserAiTickResult<'_> {
+    pub fn current_ai_behavior(&mut self, now: Instant) -> AttackCruiserAiTickResult {
         let mut selection_timer_expired = false;
 
         if self
@@ -636,7 +636,7 @@ impl AttackCruiserActor {
         let execution_rng = SmallRng::seed_from_u64(execution_seed);
 
         AttackCruiserAiTickResult {
-            behavior,
+            behavior: behavior.clone(),
             rng: execution_rng,
             triggered,
         }
@@ -1846,7 +1846,7 @@ struct AttackCruiserShipAiBehavior {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAiStateRule {
     condition: AttackCruiserShipBoolExpr,
-    behavior: AttackCruiserShipAiBehavior,
+    behavior: Arc<AttackCruiserShipAiBehavior>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize)]
@@ -1891,7 +1891,7 @@ struct AttackCruiserShipConfig {
     #[serde(default)]
     ai_states: Vec<AttackCruiserShipAiStateRule>,
     #[serde(default)]
-    default_ai_behavior: AttackCruiserShipAiBehavior,
+    default_ai_behavior: Arc<AttackCruiserShipAiBehavior>,
     #[serde(default = "ai_randomization_interval_millis")]
     ai_behavior_randomization_interval_millis: u32,
 }
@@ -3388,7 +3388,7 @@ impl AttackCruiserGame {
 
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     player_state.actor.pos,
-                    player_state.actor.yaw,
+                    click.clicked_pos.x.atan2(click.clicked_pos.z),
                     &secondary_item.ships,
                     now,
                     &self.config,
@@ -4286,21 +4286,40 @@ impl AttackCruiserGame {
                 npc.remove_stun();
             }
 
-            let npc_id = npc.id;
-            let npc_pos = npc.pos;
-            let npc_yaw = npc.yaw;
             let mut ai_result = npc.current_ai_behavior(now);
+            let (is_real_target, target_pos, target_speed) = match ai_result.behavior.movement {
+                AttackCruiserShipAiMovement::SeekTarget => Self::closest_target(
+                    npc.id,
+                    &npc.ship.seek_factions,
+                    npc.pos,
+                    actors_by_faction,
+                    &self.config.playfield,
+                )
+                .map(|target| (true, target.pos, target.speed))
+                .unwrap_or((false, self.config.playfield.center, Pos3::default())),
+                AttackCruiserShipAiMovement::RandomPos => (
+                    false,
+                    Self::random_pos_in_bounds(
+                        npc.pos.y,
+                        &self.config.playfield,
+                        &mut ai_result.rng,
+                    ),
+                    Pos3::default(),
+                ),
+                AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
+            };
+
             if ai_result.triggered {
                 if let Some(config) = &ai_result.behavior.aoe {
                     self.pending_aoes.push(AttackCruiserPendingAoe {
                         config: config.clone(),
-                        launched_by_actor_id: npc_id,
-                        pos: npc_pos,
+                        launched_by_actor_id: npc.id,
+                        pos: npc.pos,
                     });
                 }
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    npc_pos,
-                    npc_yaw,
+                    npc.pos,
+                    target_pos.x.atan2(target_pos.z),
                     &ai_result.behavior.ships,
                     now,
                     &self.config,
@@ -4321,27 +4340,6 @@ impl AttackCruiserGame {
                 }
             }
 
-            let (is_real_target, target_pos, target_speed) = match ai_result.behavior.movement {
-                AttackCruiserShipAiMovement::SeekTarget => Self::closest_target(
-                    npc.id,
-                    &npc.ship.seek_factions,
-                    npc.pos,
-                    actors_by_faction,
-                    &self.config.playfield,
-                )
-                .map(|target| (true, target.pos, target.speed))
-                .unwrap_or((false, self.config.playfield.center, Pos3::default())),
-                AttackCruiserShipAiMovement::RandomPos => (
-                    false,
-                    Self::random_pos_in_bounds(
-                        npc_pos.y,
-                        &self.config.playfield,
-                        &mut ai_result.rng,
-                    ),
-                    Pos3::default(),
-                ),
-                AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
-            };
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if !npc.dead() {
