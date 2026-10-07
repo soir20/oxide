@@ -964,6 +964,16 @@ impl AttackCruiserActor {
                     let lifetime_millis = self.spawn_time.elapsed(now).as_millis();
                     op.eval(lifetime_millis, *value as u128)
                 }
+                AttackCruiserShipPropertyExpr::DeathMillisRemaining(op, value) => {
+                    let death_millis_remaining = match self
+                        .invulnerability
+                        .has_phase(AttackCruiserActorInvulnerabilityPhase::Dead)
+                    {
+                        true => self.invulnerability.time_remaining(now).as_millis(),
+                        false => 0,
+                    };
+                    op.eval(death_millis_remaining, *value as u128)
+                }
                 AttackCruiserShipPropertyExpr::Probability(op, chance) => {
                     let roll: f32 = rng.gen();
                     op.eval(roll, *chance)
@@ -1775,6 +1785,7 @@ impl AttackCruiserShipOp {
 enum AttackCruiserShipPropertyExpr {
     HealthPercent(AttackCruiserShipOp, f32),
     LifetimeMillis(AttackCruiserShipOp, u32),
+    DeathMillisRemaining(AttackCruiserShipOp, u32),
     Probability(AttackCruiserShipOp, f32),
     ExecutionCount(AttackCruiserShipOp, u32),
 }
