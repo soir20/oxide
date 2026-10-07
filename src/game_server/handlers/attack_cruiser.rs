@@ -319,8 +319,10 @@ struct AttackCruiserActor {
     pub primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
     pub primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
     pub spawn_time: MinigameStopwatch,
-    pub last_behavior_randomization: Instant,
-    pub next_behavior_randomization: MinigameCountdown,
+    pub last_behavior_selection: Instant,
+    pub next_behavior_selection: MinigameCountdown,
+    pub last_behavior_execution: Instant,
+    pub next_behavior_execution: Option<MinigameCountdown>,
     pub ai_state_executions: Vec<u32>,
 }
 
@@ -356,14 +358,16 @@ impl AttackCruiserActor {
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
             spawn_time: MinigameStopwatch::new(Some(now)),
-            last_behavior_randomization: now,
+            last_behavior_selection: now,
             // Add jitter so not all AIs update at the same time
-            next_behavior_randomization: MinigameCountdown::new_with_event(
+            next_behavior_selection: MinigameCountdown::new_with_event(
                 Duration::from_millis(
-                    rng.gen_range(0..ship.ai_randomization_interval_millis.into()),
+                    rng.gen_range(0..ship.ai_behavior_selection_interval_millis.into()),
                 ),
                 now,
             ),
+            last_behavior_execution: now,
+            next_behavior_execution: None,
             ai_state_executions: vec![0; ship.ai_states.len()],
             ship,
         };
@@ -416,7 +420,7 @@ impl AttackCruiserActor {
                 }
             });
         self.spawn_time.pause_or_resume(pause);
-        self.next_behavior_randomization.pause_or_resume(pause);
+        self.next_behavior_selection.pause_or_resume(pause);
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -554,33 +558,79 @@ impl AttackCruiserActor {
         &mut self,
         now: Instant,
     ) -> (&AttackCruiserShipAiBehavior, SmallRng) {
-        let mut executions_delta = 0;
+        let mut reselected = false;
+        let mut reexecuted = false;
+
         if self
-            .next_behavior_randomization
+            .next_behavior_selection
             .time_until_next_event(now)
             .is_zero()
         {
-            self.next_behavior_randomization.schedule_event(
-                Duration::from_millis(self.ship.ai_randomization_interval_millis.into()),
+            self.next_behavior_selection.schedule_event(
+                Duration::from_millis(self.ship.ai_behavior_selection_interval_millis.into()),
                 now,
             );
-            self.last_behavior_randomization = now;
-            executions_delta = 1;
+            self.last_behavior_selection = now;
+            self.next_behavior_execution = None;
+            self.last_behavior_execution = now;
+
+            reselected = true;
         }
 
-        // Seed RNG according to time so we don't constantly re-select behaviors on every tick
-        let seed = (self.spawn_time.elapsed(now).as_millis() % u64::MAX as u128) as u64;
-        let mut rng = SmallRng::seed_from_u64(seed);
+        let mut selected_behavior = None;
+        let selection_seed = (self
+            .spawn_time
+            .elapsed(self.last_behavior_selection)
+            .as_millis()
+            % u64::MAX as u128) as u64;
+        let mut selection_rng = SmallRng::seed_from_u64(selection_seed);
 
         for (index, rule) in self.ship.ai_states.iter().enumerate() {
             let execution_count = self.ai_state_executions[index];
-            if self.matches_condition(&rule.condition, execution_count, now, &mut rng) {
-                self.ai_state_executions[index] =
-                    self.ai_state_executions[index].saturating_add(executions_delta);
-                return (&rule.behavior, rng);
+            if self.matches_condition(&rule.condition, execution_count, now, &mut selection_rng) {
+                selected_behavior = Some((index, &rule.behavior));
+                break;
             }
         }
-        (&self.ship.default_ai_behavior, rng)
+
+        let behavior = match selected_behavior {
+            Some((_, behavior)) => behavior,
+            None => &self.ship.default_ai_behavior,
+        };
+
+        if let Some(interval_millis) = behavior.execution_interval_millis {
+            if self
+                .next_behavior_execution
+                .as_ref()
+                .map(|countdown| countdown.time_until_next_event(now).is_zero())
+                .unwrap_or(true)
+            {
+                self.next_behavior_execution = Some(MinigameCountdown::new_with_event(
+                    Duration::from_millis(interval_millis.into()),
+                    now,
+                ));
+                self.last_behavior_execution = now;
+
+                reexecuted = true;
+            }
+        } else {
+            self.next_behavior_execution = None;
+        }
+
+        if reselected || reexecuted {
+            if let Some((index, _)) = selected_behavior {
+                self.ai_state_executions[index] = self.ai_state_executions[index].saturating_add(1);
+            }
+        }
+
+        let execution_seed = (self
+            .spawn_time
+            .elapsed(self.last_behavior_execution)
+            .as_millis()
+            % u64::MAX as u128) as u64;
+        let execution_rng = SmallRng::seed_from_u64(execution_seed);
+
+        (behavior, execution_rng)
     }
 
     pub fn hostility(
@@ -905,11 +955,13 @@ impl AttackCruiserActor {
                     let lifetime_millis = self.spawn_time.elapsed(now).as_millis();
                     op.eval(lifetime_millis, *value as u128)
                 }
-                AttackCruiserShipPropertyExpr::ProbabilityLessThan(chance) => {
+                AttackCruiserShipPropertyExpr::Probability(op, chance) => {
                     let roll: f32 = rng.gen();
-                    roll < *chance
+                    op.eval(roll, *chance)
                 }
-                AttackCruiserShipPropertyExpr::ExecutionCount(_) => todo!(),
+                AttackCruiserShipPropertyExpr::ExecutionCount(op, value) => {
+                    op.eval(execution_count, *value)
+                }
             },
             AttackCruiserShipBoolExpr::Not(inner) => {
                 !self.matches_condition(inner, execution_count, now, rng)
@@ -1343,7 +1395,7 @@ const fn default_wipe_style() -> AttackCruiserCinematicStyle {
     AttackCruiserCinematicStyle::Random
 }
 
-const fn default_ai_randomization_interval_millis() -> u32 {
+const fn ai_randomization_interval_millis() -> u32 {
     2000
 }
 
@@ -1714,8 +1766,8 @@ impl AttackCruiserShipOp {
 enum AttackCruiserShipPropertyExpr {
     HealthPercent(AttackCruiserShipOp, f32),
     LifetimeMillis(AttackCruiserShipOp, u32),
-    ProbabilityLessThan(f32),
-    ExecutionCount(u32),
+    Probability(AttackCruiserShipOp, f32),
+    ExecutionCount(AttackCruiserShipOp, u32),
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1757,6 +1809,7 @@ struct AttackCruiserShipAiBehavior {
     ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
     despawn: bool,
+    execution_interval_millis: Option<u32>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -1812,8 +1865,8 @@ struct AttackCruiserShipConfig {
     ai_states: Vec<AttackCruiserShipAiStateRule>,
     #[serde(default)]
     default_ai_behavior: AttackCruiserShipAiBehavior,
-    #[serde(default = "default_ai_randomization_interval_millis")]
-    ai_randomization_interval_millis: u32,
+    #[serde(default = "ai_randomization_interval_millis")]
+    ai_behavior_selection_interval_millis: u32,
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
