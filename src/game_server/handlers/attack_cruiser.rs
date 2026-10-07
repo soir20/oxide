@@ -319,17 +319,18 @@ struct AttackCruiserActor {
     pub turn_multiplier: f32,
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
-    pub invulnerability: AttackCruiserActorInvulnerability,
-    pub stun: AttackCruiserActorStun,
-    pub primary_weapon_tier: usize,
-    pub primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
-    pub primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
-    pub spawn_time: MinigameStopwatch,
-    pub last_behavior_selection: Instant,
-    pub next_behavior_selection: MinigameCountdown,
-    pub last_behavior_execution: Instant,
-    pub next_behavior_execution: Option<MinigameCountdown>,
-    pub ai_state_executions: Vec<u32>,
+    invulnerability: AttackCruiserActorInvulnerability,
+    stun: AttackCruiserActorStun,
+    primary_weapon_tier: usize,
+    primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
+    primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
+    spawn_time: MinigameStopwatch,
+    last_behavior_selection: Instant,
+    next_behavior_selection: MinigameCountdown,
+    last_behavior_execution: Instant,
+    next_behavior_execution: Option<MinigameCountdown>,
+    ai_state_executions: Vec<u32>,
+    active_behavior_index: Option<usize>,
 }
 
 impl AttackCruiserActor {
@@ -375,6 +376,7 @@ impl AttackCruiserActor {
             last_behavior_execution: now,
             next_behavior_execution: None,
             ai_state_executions: vec![0; ship.ai_states.len()],
+            active_behavior_index: None,
             ship,
         };
 
@@ -552,8 +554,7 @@ impl AttackCruiserActor {
     }
 
     pub fn current_ai_behavior(&mut self, now: Instant) -> AttackCruiserAiTickResult<'_> {
-        let mut reselected = false;
-        let mut reexecuted = false;
+        let mut selection_timer_expired = false;
 
         if self
             .next_behavior_selection
@@ -565,13 +566,10 @@ impl AttackCruiserActor {
                 now,
             );
             self.last_behavior_selection = now;
-            self.next_behavior_execution = None;
-            self.last_behavior_execution = now;
-
-            reselected = true;
+            selection_timer_expired = true;
         }
 
-        let mut selected_behavior = None;
+        let mut current_selected = None;
         let selection_seed = (self
             .spawn_time
             .elapsed(self.last_behavior_selection)
@@ -582,16 +580,27 @@ impl AttackCruiserActor {
         for (index, rule) in self.ship.ai_states.iter().enumerate() {
             let execution_count = self.ai_state_executions[index];
             if self.matches_condition(&rule.condition, execution_count, now, &mut selection_rng) {
-                selected_behavior = Some((index, &rule.behavior));
+                current_selected = Some((index, &rule.behavior));
                 break;
             }
         }
 
-        let behavior = match selected_behavior {
+        let current_index = current_selected.map(|(index, _)| index);
+        let behavior_changed = current_index != self.active_behavior_index;
+
+        self.active_behavior_index = current_index;
+
+        let behavior = match current_selected {
             Some((_, behavior)) => behavior,
             None => &self.ship.default_ai_behavior,
         };
 
+        if behavior_changed {
+            self.next_behavior_execution = None;
+            self.last_behavior_execution = now;
+        }
+
+        let mut reexecuted = false;
         if let Some(interval_millis) = behavior.execution_interval_millis {
             if self
                 .next_behavior_execution
@@ -611,10 +620,10 @@ impl AttackCruiserActor {
             self.next_behavior_execution = None;
         }
 
-        let triggered = reselected || reexecuted;
+        let triggered = selection_timer_expired || behavior_changed || reexecuted;
 
         if triggered {
-            if let Some((index, _)) = selected_behavior {
+            if let Some((index, _)) = current_selected {
                 self.ai_state_executions[index] = self.ai_state_executions[index].saturating_add(1);
             }
         }
