@@ -4320,7 +4320,7 @@ impl AttackCruiserGame {
                 }
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     npc.pos,
-                    target_pos.x.atan2(target_pos.z),
+                    (target_pos.x - npc.pos.x).atan2(target_pos.z - npc.pos.z),
                     &ai_result.behavior.ships,
                     now,
                     &self.config,
