@@ -4115,15 +4115,6 @@ impl AttackCruiserGame {
             }
 
             if player_state.respawnable(now) {
-                pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    player_state.actor.pos,
-                    player_state.actor.yaw,
-                    &self.config.player.ships_on_death,
-                    now,
-                    &self.config,
-                    &self.bvhs,
-                ));
-
                 player_state.respawn(
                     Duration::from_millis(
                         self.config
@@ -4213,6 +4204,15 @@ impl AttackCruiserGame {
                     broadcasts.push(Broadcast::Multi(
                         self.active_players.to_vec(),
                         death_packets,
+                    ));
+
+                    pending_npcs.append(&mut Self::launch_actors_from_actor(
+                        player_state.actor.pos,
+                        player_state.actor.yaw,
+                        &self.config.player.ships_on_death,
+                        now,
+                        &self.config,
+                        &self.bvhs,
                     ));
 
                     update_clients = true;
