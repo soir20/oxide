@@ -3388,7 +3388,8 @@ impl AttackCruiserGame {
 
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     player_state.actor.pos,
-                    click.clicked_pos.x.atan2(click.clicked_pos.z),
+                    (click.clicked_pos.x - player_state.actor.pos.x)
+                        .atan2(click.clicked_pos.y - player_state.actor.pos.z),
                     &secondary_item.ships,
                     now,
                     &self.config,
