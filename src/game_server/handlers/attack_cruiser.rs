@@ -1803,6 +1803,7 @@ struct AttackCruiserAoeConfig {
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAiBehavior {
+    #[serde(default)]
     movement: AttackCruiserShipAiMovement,
     aoe: Option<Arc<AttackCruiserAoeConfig>>,
     #[serde(default)]
@@ -1850,8 +1851,6 @@ struct AttackCruiserShipConfig {
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
-    #[serde(default)]
-    ships_on_death: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -1910,6 +1909,8 @@ struct AttackCruiserPlayerConfig {
     out_of_bounds_warp_delay_millis: u32,
     #[serde(default)]
     secondary_items: HashMap<String, AttackCruiserPlayerSecondaryItemConfig>,
+    #[serde(default)]
+    ships_on_death: Vec<AttackCruiserSpawnedShipConfig>,
     spawn1: AttackCruiserSpawnLocation,
     spawn2: AttackCruiserSpawnLocation,
     ship: String,
@@ -4099,7 +4100,7 @@ impl AttackCruiserGame {
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     player_state.actor.pos,
                     player_state.actor.yaw,
-                    &player_state.actor.ship.ships_on_death,
+                    &self.config.player.ships_on_death,
                     now,
                     &self.config,
                     &self.bvhs,
@@ -4358,15 +4359,6 @@ impl AttackCruiserGame {
             ));
 
             if npc.completed_death(now) {
-                pending_npcs.append(&mut Self::launch_actors_from_actor(
-                    npc.pos,
-                    npc.yaw,
-                    &npc.ship.ships_on_death,
-                    now,
-                    &self.config,
-                    &self.bvhs,
-                ));
-
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
                     Self::despawn_client_actor(

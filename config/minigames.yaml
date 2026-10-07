@@ -3271,9 +3271,6 @@ categories:
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
                     despawn_effect_id: 1718
-                    ships_on_death:
-                      - count: 1
-                        ship: emp_powerup
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3300,6 +3297,15 @@ categories:
                               cooldown_millis: 20000
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
+                    ai_states:
+                      - condition:
+                          And:
+                            - HealthPercent: [Equal, 0.0]
+                            - ExecutionCount: [Equal, 0]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: emp_powerup
                   separatist_missile:
                     seek_factions: [republic]
                     self_factions: [separatist_missile]
@@ -3342,10 +3348,7 @@ categories:
                       - condition:
                           LifetimeMillis: [GreaterThan, 20000]
                         behavior:
-                          movement: SeekTarget
                           despawn: true
-                    default_ai_behavior:
-                      movement: SeekTarget
                   republic_missile:
                     seek_factions: [separatist]
                     self_factions: [republic_missile]
@@ -3388,10 +3391,7 @@ categories:
                       - condition:
                           LifetimeMillis: [GreaterThan, 20000]
                         behavior:
-                          movement: SeekTarget
                           despawn: true
-                    default_ai_behavior:
-                      movement: SeekTarget
                   health_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
