@@ -3236,6 +3236,18 @@ categories:
                       ships:
                         - count: 1
                           ship: mine
+                    jerico:
+                      icon_id: 518
+                      ships:
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees -60
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees 0
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees 60
                   spawn1:
                     pos:
                       x: 3.9
@@ -3314,7 +3326,7 @@ categories:
                         behavior:
                           ships:
                             - count: 1
-                              ship: mine_powerup
+                              ship: jerico_powerup
                   separatist_missile:
                     seek_factions: [republic]
                     self_factions: [separatist_missile]
@@ -3640,34 +3652,41 @@ categories:
                               cooldown_millis: 50
                               max_cooldown_error_millis: 0
                               lifetime_millis: 50
-                  mine:
-                    seek_factions: []
+                  jerico_powerup:
+                    seek_factions: [player]
                     self_factions: [player_powerup]
                     show_arrow_to_player: false
                     max_alive: 20
-                    model_id: 572
+                    model_id: 45
                     max_roll: !Degrees 15
-                    max_speed: 0.0
-                    acceleration: 0.0
-                    deceleration: 0.0
-                    max_angular_speed: !Degrees 0
-                    angular_acceleration: !Degrees 0
-                    angular_deceleration: !Degrees 0
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
                     max_health: 1
                     overhead_health_scale: 0.0
-                    death_end_effect_id: 1836
-                    despawn_effect_id: 1836
-                    ai_states:
-                      - condition:
-                          LifetimeMillis: [GreaterThan, 3000]
-                        behavior:
-                          aoe:
-                            radius: 1000.0
-                            composite_effect_id: 1836
-                            target_factions: [separatist, separatist_missile]
-                            target_deltas:
-                              health: -20
-                          despawn: true
+                    thruster_effect_id: 1542
+                    death_end_effect_id: 1776
+                    despawn_effect_id: 1776
+                    weapons:
+                      primary_tiers:
+                        - projectiles:
+                            - hit_composite_effect_id: 1776
+                              speed: 0
+                              wobble: !Degrees 0
+                              target_factions: [player]
+                              target_deltas:
+                                secondary_item:
+                                  name: jerico
+                                  count: 1
+                              self_deltas:
+                                health: -1
+                              length: 100
+                              cooldown_millis: 50
+                              max_cooldown_error_millis: 0
+                              lifetime_millis: 50
                   v19:
                     seek_factions: [separatist]
                     self_factions: [republic]
@@ -3699,6 +3718,108 @@ categories:
                               cooldown_millis: 500
                               min_launch_angle: !Degrees -60
                               max_launch_angle: !Degrees 60
+                  mine:
+                    seek_factions: []
+                    self_factions: [player_powerup]
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 572
+                    max_roll: !Degrees 15
+                    max_speed: 0.0
+                    acceleration: 0.0
+                    deceleration: 0.0
+                    max_angular_speed: !Degrees 0
+                    angular_acceleration: !Degrees 0
+                    angular_deceleration: !Degrees 0
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    death_end_effect_id: 1836
+                    despawn_effect_id: 1836
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 3000]
+                        behavior:
+                          aoe:
+                            radius: 1000.0
+                            composite_effect_id: 1836
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -20
+                          despawn: true
+                  jerico_missile1:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_roll: !Degrees 15
+                    max_speed: 300.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 100
+                    stunnable: false
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1725
+                    death_end_effect_id: 1724
+                    despawn_effect_id: 1724
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 1000]
+                        behavior:
+                          despawn: true
+                          ships:
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 0
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 72
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 144
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 216
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 288
+                  jerico_missile2:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
+                    show_arrow_to_player: false
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_roll: !Degrees 15
+                    max_speed: 300.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 100
+                    stunnable: false
+                    overhead_health_scale: 0.0
+                    thruster_effect_id: 1726
+                    death_end_effect_id: 1724
+                    despawn_effect_id: 1724
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 1000]
+                        behavior:
+                          despawn: true
+                          aoe:
+                            radius: 300.0
+                            composite_effect_id: 1723
+                            target_factions: [separatist]
+                            target_deltas:
+                              health: -10
                   venator:
                     seek_factions: [separatist]
                     self_factions: [republic, player]
