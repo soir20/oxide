@@ -555,13 +555,10 @@ impl Channel {
         pending: SequenceNumber,
     ) -> bool {
         let min_sequence_number = next_server_sequence.wrapping_sub(recency_limit);
+        let window_span = max.wrapping_sub(min_sequence_number) as i32;
+        let pending_offset = pending.wrapping_sub(min_sequence_number) as i32;
 
-        // If the max is smaller, the sequence numbers wrapped around
-        if min_sequence_number < max {
-            min_sequence_number <= pending && pending <= max
-        } else {
-            min_sequence_number <= pending || pending <= max
-        }
+        pending_offset >= 0 && pending_offset <= window_span
     }
 
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
