@@ -874,7 +874,6 @@ fn disconnect(
             );
         }
     });
-    channel_handle.process_all(server_options);
 
     let disconnect_reason = reason_override
         .or(channel_handle.disconnect_reason)

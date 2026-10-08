@@ -377,16 +377,6 @@ impl Channel {
         packets
     }
 
-    pub fn process_all(&mut self, server_options: &ServerOptions) -> Vec<Vec<u8>> {
-        let mut packets = Vec::new();
-
-        while !self.receive_queue.is_empty() {
-            packets.append(&mut self.process_next(u8::MAX, server_options));
-        }
-
-        packets
-    }
-
     pub fn prepare_to_send_data(&mut self, data: Vec<u8>, server_options: &ServerOptions) {
         if !self.connected() {
             return;
