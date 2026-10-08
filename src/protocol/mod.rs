@@ -691,17 +691,16 @@ impl Channel {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
-                let SendTime::Instant(first_send) = packet.first_send else {
-                    panic!("Packet was marked as sent but has no timing statistics");
-                };
+                // Check that packets have a send time in case the client is acking incorrect sequence numbers
+                if let SendTime::Instant(first_send) = packet.first_send {
+                    self.last_round_trip_times[self.next_round_trip_index] =
+                        Instant::now().saturating_duration_since(first_send);
+                    self.next_round_trip_index += 1;
 
-                self.last_round_trip_times[self.next_round_trip_index] =
-                    Instant::now().saturating_duration_since(first_send);
-                self.next_round_trip_index += 1;
-
-                if self.next_round_trip_index == self.last_round_trip_times.len() {
-                    self.next_round_trip_index = 0;
-                    ready_to_update = true;
+                    if self.next_round_trip_index == self.last_round_trip_times.len() {
+                        self.next_round_trip_index = 0;
+                        ready_to_update = true;
+                    }
                 }
             }
         }
