@@ -218,6 +218,7 @@ pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
+    max_reordered_packets_queued: usize,
     time_until_resend: Duration,
     last_round_trip_times: Vec<Duration>,
     next_round_trip_index: usize,
@@ -238,6 +239,7 @@ impl Channel {
         addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
+        max_reordered_packets_queued: usize,
         time_until_resend: Duration,
         max_round_trip_entries: usize,
         desired_resend_pct: u8,
@@ -253,6 +255,7 @@ impl Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
+            max_reordered_packets_queued,
             time_until_resend,
             last_round_trip_times: vec![Duration::default(); max_round_trip_entries],
             next_round_trip_index: 0,
@@ -541,11 +544,17 @@ impl Channel {
         let max_sequence_number = self.next_client_sequence.wrapping_add(self.recency_limit);
 
         // If the max is smaller, the sequence numbers wrapped around
-        if max_sequence_number > self.next_client_sequence {
-            sequence_number <= max_sequence_number && sequence_number > self.next_client_sequence
-        } else {
-            sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
-        }
+        let should_reorder = match max_sequence_number > self.next_client_sequence {
+            true => {
+                sequence_number <= max_sequence_number
+                    && sequence_number > self.next_client_sequence
+            }
+            false => {
+                sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
+            }
+        };
+
+        should_reorder && self.reordered_packets.len() < self.max_reordered_packets_queued
     }
 
     fn should_client_ack(
