@@ -669,7 +669,6 @@ impl MinigameStopwatch {
 }
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
-const GROUP_LINK_NAME: &str = "group";
 
 #[derive(Clone, Copy, Deserialize)]
 enum DailyGameType {
@@ -994,6 +993,10 @@ const fn default_matchmaking_timeout_millis() -> u32 {
     10000
 }
 
+fn default_stage_group_link_name() -> String {
+    "group".to_string()
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigameStageGroupConfig {
@@ -1007,6 +1010,8 @@ struct MinigameStageGroupConfig {
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
+    #[serde(default = "default_stage_group_link_name")]
+    pub link_name: String,
     #[serde(default)]
     pub short_name: String,
     #[serde(default)]
@@ -1068,7 +1073,7 @@ impl MinigameStageGroupConfig {
                         parent_stage_definition_guid: 0,
                         child_stage_definition_guid: 0,
                         icon_id: 0,
-                        link_name: GROUP_LINK_NAME.to_string(),
+                        link_name: stage_group.link_name.clone(),
                         short_name: stage_group.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: stage_group.guid,
@@ -1165,7 +1170,7 @@ impl MinigameStageGroupConfig {
                     stage_instances.push(MinigameStageInstance {
                         stage_instance_guid: 0,
                         portal_entry_guid,
-                        link_name: GROUP_LINK_NAME.to_string(),
+                        link_name: stage_group.link_name.clone(),
                         short_name: stage_group.short_name.clone(),
                         unlocked,
                         unknown6: 0,
