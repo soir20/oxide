@@ -998,10 +998,17 @@ impl TickableStep {
     }
 
     pub fn min_duration_millis(&self, removal_duration_millis: u64) -> u64 {
-        let effect_delay =
-            (self.animation_delay_millis as u64).max(self.composite_effect_delay_millis as u64);
+        let effect_delay = self
+            .animation_delay_millis
+            .max(self.composite_effect_delay_millis);
 
-        self.min_duration_millis + effect_delay + removal_duration_millis
+        let extra_duration = if matches!(self.spawned_state, SpawnedState::Despawn) {
+            (effect_delay as u64).max(removal_duration_millis)
+        } else {
+            effect_delay as u64
+        };
+
+        self.min_duration_millis.saturating_add(extra_duration)
     }
 
     pub fn apply(
@@ -1417,12 +1424,28 @@ impl TickableProcedure {
         all_procedures: &HashMap<String, TickableProcedureConfig>,
         removal_duration_millis: u64,
     ) -> Self {
-        if removal_duration_millis > 0 {
-            for (step_index, step) in config.steps.iter().enumerate() {
-                if !matches!(step.spawned_state, SpawnedState::Despawn) {
-                    continue;
-                }
+        for (step_index, step) in config.steps.iter().enumerate() {
+            if step.animation_delay_millis > 0 {
+                assert!(
+                step.animation_id == Some(0),
+                "Procedure {} has an animation delay of {}ms but no animation id at step index {}",
+                procedure_name,
+                step.animation_delay_millis,
+                step_index,
+            );
+            }
 
+            if step.composite_effect_delay_millis > 0 {
+                assert!(
+                step.composite_effect_id == Some(0),
+                "Procedure {} has a composite effect delay of {}ms but no composite effect id at step index {}",
+                procedure_name,
+                step.composite_effect_delay_millis,
+                step_index,
+            );
+            }
+
+            if removal_duration_millis > 0 && matches!(step.spawned_state, SpawnedState::Despawn) {
                 let animation_delay = step.animation_delay_millis as u64;
                 let composite_effect_delay = step.composite_effect_delay_millis as u64;
 
