@@ -251,6 +251,7 @@ pub struct ServerOptions {
     pub process_packets_per_cycle: u8,
     pub send_packets_per_cycle: u8,
     pub packet_recency_limit: u16,
+    pub max_reordered_packets_queued: usize,
     pub max_received_packets_queued: usize,
     pub max_unacknowledged_packets_queued: usize,
     pub max_defragmented_packet_bytes: u32,
@@ -358,6 +359,7 @@ fn receive_once(
                     src,
                     initial_buffer_size,
                     server_options.packet_recency_limit,
+                    server_options.max_reordered_packets_queued,
                     Duration::from_millis(server_options.default_millis_until_resend),
                     server_options.max_round_trip_entries,
                     server_options.desired_resend_pct,
@@ -872,7 +874,6 @@ fn disconnect(
             );
         }
     });
-    channel_handle.process_all(server_options);
 
     let disconnect_reason = reason_override
         .or(channel_handle.disconnect_reason)
