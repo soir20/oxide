@@ -3269,6 +3269,7 @@ categories:
                     z: -1999.0
                   radius_x: 1100.0
                   radius_z: 850.0
+                  half_height: 50.0
                   warning_radius_ratio: 0.9
                   warning_message_id: 13628
                   warning_millis: 5000

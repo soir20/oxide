@@ -1975,6 +1975,7 @@ struct AttackCruiserPlayfieldConfig {
     center: Pos3,
     radius_x: f32,
     radius_z: f32,
+    half_height: f32,
     warning_radius_ratio: f32,
     warning_message_id: u32,
     warning_millis: u32,
@@ -2173,6 +2174,7 @@ struct AttackCruiserProjectileSpawn {
     pub speed: Pos3,
     pub yaw: f32,
     pub pitch: f32,
+    pub lifetime: Duration,
 }
 
 #[derive(Clone, Debug)]
@@ -2198,6 +2200,7 @@ impl AttackCruiserProjectilePool {
         actor_origin: Pos3,
         direction: Pos3,
         projectile: &Arc<AttackCruiserProjectileConfig>,
+        playfield: &AttackCruiserPlayfieldConfig,
         now: Instant,
     ) -> Result<Vec<AttackCruiserProjectileSpawn>, ProcessPacketError> {
         let mut launched_projectiles = Vec::new();
@@ -2216,16 +2219,24 @@ impl AttackCruiserProjectilePool {
                 projectile.launch_height,
             );
 
+            let distance_to_boundary = playfield.center.y
+                + playfield.half_height * launch_location.speed.y.signum()
+                - launch_location.origin.y;
+            let lifetime_secs = (distance_to_boundary / launch_location.speed.y)
+                .max(0.0)
+                .min(f32::from(projectile.lifetime_millis) / 1000.0);
+            let lifetime = Duration::from_secs_f32(lifetime_secs);
+
             let expiry_time = self
                 .global_time
                 .elapsed(now)
-                .checked_add(Duration::from_millis(projectile.lifetime_millis.into()))
+                .checked_add(lifetime)
                 .ok_or_else(|| {
                     ProcessPacketError::new(
                         ProcessPacketErrorType::ConstraintViolated,
                         format!(
-                            "Tried to launch a projectile, but {now:?} + {}ms would overflow",
-                            projectile.lifetime_millis
+                            "Tried to launch a projectile, but {now:?} + {}s would overflow",
+                            lifetime_secs
                         ),
                     )
                 })?;
@@ -2248,6 +2259,7 @@ impl AttackCruiserProjectilePool {
                 speed: launch_location.speed,
                 yaw: launch_location.yaw,
                 pitch: launch_location.pitch,
+                lifetime,
             });
         }
 
@@ -3923,7 +3935,15 @@ impl AttackCruiserGame {
         for (projectile, direction) in projectiles {
             packets.extend(
                 projectile_pool
-                    .launch(rng, actor_id, actor_pos, direction, projectile, now)?
+                    .launch(
+                        rng,
+                        actor_id,
+                        actor_pos,
+                        direction,
+                        projectile,
+                        &config.playfield,
+                        now,
+                    )?
                     .into_iter()
                     .filter_map(|launched_projectile| {
                         Some(GamePacket::serialize(&TunneledPacket {
@@ -3938,7 +3958,7 @@ impl AttackCruiserGame {
                                 unknown2: 0,
                                 effect_id: projectile.composite_effect_id?,
                                 despawn_effect_id: 0,
-                                lifetime_seconds: f32::from(projectile.lifetime_millis) / 1000.0,
+                                lifetime_seconds: launched_projectile.lifetime.as_secs_f32(),
                                 origin: launched_projectile.origin,
                                 speed: launched_projectile.speed,
                                 unknown8: Pos3::default(),
