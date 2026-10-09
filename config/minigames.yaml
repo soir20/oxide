@@ -3278,7 +3278,6 @@ categories:
                     max_alive: 50
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 200.0
                     acceleration: 25.0
                     deceleration: 50.0
@@ -3287,11 +3286,13 @@ categories:
                     angular_deceleration: !Degrees 120
                     max_health: 20
                     overhead_health_scale: 0.5
-                    thruster_effect_id: 1689
-                    stunned_effect_id: 1736
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
                     despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1689
+                      stunned_effect_id: 1736
                     animations:
                       - animation_type: Death1
                         animation_id: 3001
@@ -3334,7 +3335,6 @@ categories:
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 400.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3344,9 +3344,10 @@ categories:
                     max_health: 1
                     stunnable: false
                     overhead_health_scale: 0.0
-                    thruster_effect_id: 1532
+                    effect_id: 1532
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3377,7 +3378,6 @@ categories:
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 400.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3387,9 +3387,10 @@ categories:
                     max_health: 100
                     stunnable: false
                     overhead_health_scale: 0.0
-                    thruster_effect_id: 1297
+                    effect_id: 1297
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3419,7 +3420,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3431,6 +3431,7 @@ categories:
                     effect_id: 1545
                     death_end_effect_id: 1774
                     despawn_effect_id: 1774
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3452,7 +3453,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3464,6 +3464,7 @@ categories:
                     effect_id: 1541
                     death_end_effect_id: 1777
                     despawn_effect_id: 1777
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3485,7 +3486,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3497,6 +3497,7 @@ categories:
                     effect_id: 1538
                     death_end_effect_id: 1772
                     despawn_effect_id: 1772
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3518,7 +3519,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3530,6 +3530,7 @@ categories:
                     effect_id: 1540
                     death_end_effect_id: 1775
                     despawn_effect_id: 1775
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3553,7 +3554,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3565,6 +3565,7 @@ categories:
                     effect_id: 1539
                     death_end_effect_id: 1779
                     despawn_effect_id: 1779
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3588,7 +3589,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3600,6 +3600,7 @@ categories:
                     effect_id: 1537
                     death_end_effect_id: 1773
                     despawn_effect_id: 1773
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3623,7 +3624,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3635,6 +3635,7 @@ categories:
                     effect_id: 1543
                     death_end_effect_id: 1778
                     despawn_effect_id: 1778
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3658,7 +3659,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
-                    max_roll: !Degrees 15
                     max_speed: 15.0
                     acceleration: 50.0
                     deceleration: 50.0
@@ -3670,6 +3670,7 @@ categories:
                     effect_id: 1542
                     death_end_effect_id: 1776
                     despawn_effect_id: 1776
+                    mobility: !Static
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3694,7 +3695,6 @@ categories:
                     max_alive: 50
                     model_id: 241
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 400.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3703,8 +3703,10 @@ categories:
                     angular_deceleration: !Degrees 120
                     max_health: 20
                     overhead_health_scale: 0.0
-                    thruster_effect_id: 1827
                     despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1827
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3724,7 +3726,6 @@ categories:
                     show_arrow_to_player: false
                     max_alive: 20
                     model_id: 572
-                    max_roll: !Degrees 15
                     max_speed: 0.0
                     acceleration: 0.0
                     deceleration: 0.0
@@ -3735,6 +3736,8 @@ categories:
                     overhead_health_scale: 0.0
                     death_end_effect_id: 1836
                     despawn_effect_id: 1836
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
                     ai_states:
                       - condition:
                           LifetimeMillis: [GreaterThan, 3000]
@@ -3753,7 +3756,6 @@ categories:
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 300.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3763,9 +3765,10 @@ categories:
                     max_health: 100
                     stunnable: false
                     overhead_health_scale: 0.0
-                    thruster_effect_id: 1725
+                    effect_id: 1725
                     death_end_effect_id: 1724
                     despawn_effect_id: 1724
+                    mobility: !Static
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
@@ -3795,7 +3798,6 @@ categories:
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
-                    max_roll: !Degrees 15
                     max_speed: 300.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3805,9 +3807,10 @@ categories:
                     max_health: 100
                     stunnable: false
                     overhead_health_scale: 0.0
-                    thruster_effect_id: 1726
+                    effect_id: 1726
                     death_end_effect_id: 1724
                     despawn_effect_id: 1724
+                    mobility: !Static
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
@@ -3827,7 +3830,6 @@ categories:
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     enable_collision: true
-                    max_roll: !Degrees 15
                     max_speed: 100.0
                     acceleration: 25.0
                     deceleration: 25.0
@@ -3836,8 +3838,10 @@ categories:
                     angular_deceleration: !Degrees 120
                     max_health: 100
                     overhead_health_scale: 0.5
-                    thruster_effect_id: 1707
-                    invulnerable_effect_id: 1744
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1707
+                      invulnerable_effect_id: 1744
                     animations:
                       - animation_type: Death1
                         animation_id: 3001

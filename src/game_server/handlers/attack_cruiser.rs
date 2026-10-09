@@ -1849,6 +1849,29 @@ struct AttackCruiserShipAiStateRule {
     behavior: Arc<AttackCruiserShipAiBehavior>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+enum AttackCruiserShipMobilityConfig {
+    Static,
+    Dynamic {
+        thruster_effect_id: Option<u32>,
+        invulnerable_effect_id: Option<u32>,
+        stunned_effect_id: Option<u32>,
+        max_roll: Angle,
+    },
+}
+
+impl Default for AttackCruiserShipMobilityConfig {
+    fn default() -> Self {
+        AttackCruiserShipMobilityConfig::Dynamic {
+            thruster_effect_id: Default::default(),
+            invulnerable_effect_id: Default::default(),
+            stunned_effect_id: Default::default(),
+            max_roll: Default::default(),
+        }
+    }
+}
+
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipConfig {
@@ -1861,7 +1884,6 @@ struct AttackCruiserShipConfig {
     asset_name: Option<String>,
     #[serde(default)]
     enable_collision: bool,
-    max_roll: Angle,
     max_speed: f32,
     acceleration: f32,
     deceleration: f32,
@@ -1875,12 +1897,10 @@ struct AttackCruiserShipConfig {
     stunnable: bool,
     overhead_health_scale: f32,
     effect_id: Option<u32>,
-    thruster_effect_id: Option<u32>,
-    invulnerable_effect_id: Option<u32>,
-    stunned_effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
+    mobility: AttackCruiserShipMobilityConfig,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
     #[serde(default)]
@@ -2246,7 +2266,12 @@ impl AttackCruiserProjectilePool {
 
             let delta_secs = delta.as_secs_f32();
             let ship_pos = Vec3::from(actor.pos);
-            let ship_roll = actor.ship.max_roll.to_radians() * actor.turn_multiplier;
+
+            let max_roll = match actor.ship.mobility {
+                AttackCruiserShipMobilityConfig::Static => Angle::Degrees(0.0),
+                AttackCruiserShipMobilityConfig::Dynamic { max_roll, .. } => max_roll,
+            };
+            let ship_roll = max_roll.to_radians() * actor.turn_multiplier;
             let ship_velocity = actor.speed * actor.forward_multiplier;
             let ship_angular_velocity = actor.angular_speed * actor.turn_multiplier;
 
@@ -2859,7 +2884,14 @@ impl AttackCruiserGame {
                                 .iter()
                                 .map(|(name, ship)| AttackCruiserActorPoolConfig {
                                     actor_config: AttackCruiserStartupConfigReference {
-                                        class: AttackCruiserStartupConfigClass::Ship,
+                                        class: match ship.mobility {
+                                            AttackCruiserShipMobilityConfig::Static => {
+                                                AttackCruiserStartupConfigClass::Actor
+                                            }
+                                            AttackCruiserShipMobilityConfig::Dynamic { .. } => {
+                                                AttackCruiserStartupConfigClass::Ship
+                                            }
+                                        },
                                         name: ship_startup_config_name(name),
                                     },
                                     size: ship.max_alive.into(),
@@ -2906,6 +2938,51 @@ impl AttackCruiserGame {
                     .ships
                     .iter()
                     .flat_map(|(name, ship)| {
+                        let actor_config = AttackCruiserActorConfig {
+                            model_id: ship.model_id,
+                            effect_id: ship.effect_id.unwrap_or_default(),
+                            death_effect_id: 0,
+                            despawn_effect_id: 0,
+                            explode_offset: 0.0,
+                            collision_asset_name: ship
+                                .asset_name
+                                .as_ref()
+                                .map(|asset_name| format!("{asset_name}.cdt",))
+                                .unwrap_or_default(),
+                            physics_config: AttackCruiserStartupConfigReference {
+                                class: AttackCruiserStartupConfigClass::ComplexPhysics,
+                                name: ship_physics_startup_config_name(name),
+                            },
+                            max_health: ship.max_health.into(),
+                            explosive_collision: AttackCruiserBool(false),
+                            collision_damage: 0,
+                            score: 0,
+                            bonus_score: 0,
+                            bonus_max_age_seconds: 0.0,
+                            overhead_offset_y: 0.0,
+                            overhead_health_scale: ship.overhead_health_scale,
+                            animations: AttackCruiserVec(
+                                "".to_string(),
+                                ship.animations
+                                    .iter()
+                                    .map(|animation| animation.into())
+                                    .collect(),
+                            ),
+                            cinematics: AttackCruiserVec(
+                                "".to_string(),
+                                ship.cinematics
+                                    .iter()
+                                    .map(|cinematic| cinematic.into())
+                                    .collect(),
+                            ),
+                            damage_states: AttackCruiserVec(
+                                "".to_string(),
+                                ship.damage_states
+                                    .iter()
+                                    .map(|damage_state| damage_state.into())
+                                    .collect(),
+                            ),
+                        };
                         iter::once(AttackCruiserStartupConfig::new(
                             ship_physics_startup_config_name(name),
                             AttackCruiserStartupConfigDefinition::ComplexPhysics(Box::new(
@@ -2953,72 +3030,36 @@ impl AttackCruiserGame {
                         .chain(iter::once(
                             AttackCruiserStartupConfig::new(
                                 ship_startup_config_name(name),
-                                AttackCruiserStartupConfigDefinition::Ship(Box::new(
-                                    AttackCruiserShipStartupConfig {
-                                        actor_config: AttackCruiserActorConfig {
-                                            model_id: ship.model_id,
-                                            effect_id: ship.effect_id.unwrap_or_default(),
-                                            death_effect_id: 0,
-                                            despawn_effect_id: 0,
-                                            explode_offset: 0.0,
-                                            collision_asset_name: ship
-                                                .asset_name
-                                                .as_ref()
-                                                .map(|asset_name| format!("{asset_name}.cdt",))
+                                match ship.mobility {
+                                    AttackCruiserShipMobilityConfig::Static => {
+                                        AttackCruiserStartupConfigDefinition::Actor(Box::new(
+                                            actor_config,
+                                        ))
+                                    }
+                                    AttackCruiserShipMobilityConfig::Dynamic {
+                                        thruster_effect_id,
+                                        invulnerable_effect_id,
+                                        stunned_effect_id,
+                                        max_roll,
+                                    } => AttackCruiserStartupConfigDefinition::Ship(Box::new(
+                                        AttackCruiserShipStartupConfig {
+                                            actor_config,
+                                            thruster_effect_id: thruster_effect_id
                                                 .unwrap_or_default(),
-                                            physics_config: AttackCruiserStartupConfigReference {
-                                                class:
-                                                    AttackCruiserStartupConfigClass::ComplexPhysics,
-                                                name: ship_physics_startup_config_name(name),
-                                            },
-                                            max_health: ship.max_health.into(),
-                                            explosive_collision: AttackCruiserBool(false),
-                                            collision_damage: 0,
-                                            score: 0,
-                                            bonus_score: 0,
-                                            bonus_max_age_seconds: 0.0,
-                                            overhead_offset_y: 0.0,
-                                            overhead_health_scale: ship.overhead_health_scale,
-                                            animations: AttackCruiserVec(
-                                                "".to_string(),
-                                                ship.animations
-                                                    .iter()
-                                                    .map(|animation| animation.into())
-                                                    .collect(),
-                                            ),
-                                            cinematics: AttackCruiserVec(
-                                                "".to_string(),
-                                                ship.cinematics
-                                                    .iter()
-                                                    .map(|cinematic| cinematic.into())
-                                                    .collect(),
-                                            ),
-                                            damage_states: AttackCruiserVec(
-                                                "".to_string(),
-                                                ship.damage_states
-                                                    .iter()
-                                                    .map(|damage_state| damage_state.into())
-                                                    .collect(),
-                                            ),
+                                            invulnerable_effect_id: invulnerable_effect_id
+                                                .unwrap_or_default(),
+                                            stunned_effect_id: stunned_effect_id
+                                                .unwrap_or_default(),
+                                            weapons: AttackCruiserVec::new(),
+                                            roll_max_angle: max_roll.to_degrees(),
+                                            pitch_max_angle: 0.0,
+                                            continuous_fire_seconds: 0.05,
+                                            fire_cooldown_seconds: f32::from(
+                                                ship.weapons.cooldown_millis(),
+                                            ) / 1000.0,
                                         },
-                                        thruster_effect_id: ship
-                                            .thruster_effect_id
-                                            .unwrap_or_default(),
-                                        invulnerable_effect_id: ship
-                                            .invulnerable_effect_id
-                                            .unwrap_or_default(),
-                                        stunned_effect_id: ship
-                                            .stunned_effect_id
-                                            .unwrap_or_default(),
-                                        weapons: AttackCruiserVec::new(),
-                                        roll_max_angle: ship.max_roll.to_degrees(),
-                                        pitch_max_angle: 0.0,
-                                        continuous_fire_seconds: 0.05,
-                                        fire_cooldown_seconds: f32::from(
-                                            ship.weapons.cooldown_millis(),
-                                        ) / 1000.0,
-                                    },
-                                )),
+                                    )),
+                                },
                             ),
                         ))
                     })
@@ -3497,7 +3538,14 @@ impl AttackCruiserGame {
                 hostility: actor.hostility(&self.config.factions),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
-                    class: AttackCruiserStartupConfigClass::Ship,
+                    class: match self.config.ship(ship_config).mobility {
+                        AttackCruiserShipMobilityConfig::Static => {
+                            AttackCruiserStartupConfigClass::Actor
+                        }
+                        AttackCruiserShipMobilityConfig::Dynamic { .. } => {
+                            AttackCruiserStartupConfigClass::Ship
+                        }
+                    },
                 },
                 pos: actor.pos,
                 speed: actor.speed,
