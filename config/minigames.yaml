@@ -3807,7 +3807,7 @@ categories:
                   venator:
                     seek_factions: [separatist]
                     self_factions: [republic, player]
-                    max_alive: 4
+                    max_alive: 20
                     model_id: 167
                     asset_name: Ship_RepublicDestroyer_bbe
                     enable_collision: true
