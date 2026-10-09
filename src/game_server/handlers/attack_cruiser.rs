@@ -1874,6 +1874,7 @@ struct AttackCruiserShipConfig {
     #[serde(default = "default_true")]
     stunnable: bool,
     overhead_health_scale: f32,
+    effect_id: Option<u32>,
     thruster_effect_id: Option<u32>,
     invulnerable_effect_id: Option<u32>,
     stunned_effect_id: Option<u32>,
@@ -2956,7 +2957,7 @@ impl AttackCruiserGame {
                                     AttackCruiserShipStartupConfig {
                                         actor_config: AttackCruiserActorConfig {
                                             model_id: ship.model_id,
-                                            effect_id: 0,
+                                            effect_id: ship.effect_id.unwrap_or_default(),
                                             death_effect_id: 0,
                                             despawn_effect_id: 0,
                                             explode_offset: 0.0,
