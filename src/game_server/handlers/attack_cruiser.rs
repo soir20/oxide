@@ -647,7 +647,13 @@ impl AttackCruiserActor {
         &self,
         faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
     ) -> AttackCruiserHostility {
-        if !self.ship.show_arrow_to_player {
+        if !matches!(
+            self.ship.mobility,
+            AttackCruiserShipMobilityConfig::Dynamic {
+                show_arrow_to_player: true,
+                ..
+            }
+        ) {
             return AttackCruiserHostility::Neutral;
         }
 
@@ -1855,9 +1861,12 @@ struct AttackCruiserShipAiStateRule {
 enum AttackCruiserShipMobilityConfig {
     Static,
     Dynamic {
+        #[serde(default = "default_true")]
+        show_arrow_to_player: bool,
         thruster_effect_id: Option<u32>,
         invulnerable_effect_id: Option<u32>,
         stunned_effect_id: Option<u32>,
+        #[serde(default)]
         max_roll: Angle,
     },
 }
@@ -1865,6 +1874,7 @@ enum AttackCruiserShipMobilityConfig {
 impl Default for AttackCruiserShipMobilityConfig {
     fn default() -> Self {
         AttackCruiserShipMobilityConfig::Dynamic {
+            show_arrow_to_player: true,
             thruster_effect_id: Default::default(),
             invulnerable_effect_id: Default::default(),
             stunned_effect_id: Default::default(),
@@ -1878,8 +1888,6 @@ impl Default for AttackCruiserShipMobilityConfig {
 struct AttackCruiserShipConfig {
     self_factions: HashSet<String>,
     seek_factions: HashSet<String>,
-    #[serde(default = "default_true")]
-    show_arrow_to_player: bool,
     max_alive: u16,
     model_id: u32,
     asset_name: Option<String>,
@@ -2991,9 +2999,14 @@ impl AttackCruiserGame {
                                 AttackCruiserComplexPhysicsConfig {
                                     base_config: AttackCruiserBasePhysicsConfig {
                                         contact_response: AttackCruiserBool(true),
-                                        mass: match ship.show_arrow_to_player {
-                                            true => 1.0,
-                                            false => 0.1,
+                                        mass: match ship.mobility {
+                                            AttackCruiserShipMobilityConfig::Static
+                                            | AttackCruiserShipMobilityConfig::Dynamic {
+                                                show_arrow_to_player: true,
+                                                ..
+                                            } => 1.0,
+
+                                            AttackCruiserShipMobilityConfig::Dynamic { .. } => 0.1,
                                         },
                                         length: 1.0,
                                         width: 1.0,
@@ -3046,6 +3059,7 @@ impl AttackCruiserGame {
                                         invulnerable_effect_id,
                                         stunned_effect_id,
                                         max_roll,
+                                        ..
                                     } => AttackCruiserStartupConfigDefinition::Ship(Box::new(
                                         AttackCruiserShipStartupConfig {
                                             actor_config,

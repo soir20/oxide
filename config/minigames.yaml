@@ -3331,7 +3331,6 @@ categories:
                   separatist_missile:
                     seek_factions: [republic]
                     self_factions: [separatist_missile]
-                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3347,6 +3346,8 @@ categories:
                     effect_id: 1532
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3373,7 +3374,6 @@ categories:
                   republic_missile:
                     seek_factions: [separatist]
                     self_factions: [republic_missile]
-                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3389,6 +3389,8 @@ categories:
                     effect_id: 1297
                     death_end_effect_id: 1450
                     despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
                     weapons:
                       primary_tiers:
                         - projectiles:
@@ -3681,7 +3683,6 @@ categories:
                   v19:
                     seek_factions: [separatist]
                     self_factions: [republic]
-                    show_arrow_to_player: false
                     max_alive: 50
                     model_id: 241
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3695,6 +3696,7 @@ categories:
                     overhead_health_scale: 0.0
                     despawn_effect_id: 1718
                     mobility: !Dynamic
+                      show_arrow_to_player: false
                       max_roll: !Degrees 15
                       thruster_effect_id: 1827
                     weapons:
@@ -3713,7 +3715,6 @@ categories:
                   mine:
                     seek_factions: []
                     self_factions: [player_powerup]
-                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 572
                     max_speed: 0.0
@@ -3727,6 +3728,7 @@ categories:
                     death_end_effect_id: 1836
                     despawn_effect_id: 1836
                     mobility: !Dynamic
+                      show_arrow_to_player: false
                       max_roll: !Degrees 15
                     ai_states:
                       - condition:
@@ -3742,7 +3744,6 @@ categories:
                   jerico_missile1:
                     seek_factions: [separatist]
                     self_factions: [republic_missile]
-                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3758,6 +3759,8 @@ categories:
                     effect_id: 1725
                     death_end_effect_id: 1724
                     despawn_effect_id: 1724
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
@@ -3783,7 +3786,6 @@ categories:
                   jerico_missile2:
                     seek_factions: [separatist]
                     self_factions: [republic_missile]
-                    show_arrow_to_player: false
                     max_alive: 20
                     model_id: 45
                     asset_name: Ship_RepublicDestroyer_bbe
@@ -3799,6 +3801,8 @@ categories:
                     effect_id: 1726
                     death_end_effect_id: 1724
                     despawn_effect_id: 1724
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
