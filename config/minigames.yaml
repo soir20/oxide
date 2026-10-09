@@ -3300,25 +3300,24 @@ categories:
                       - animation_type: Death2
                         animation_id: 3002
                         duration_seconds: 6.0
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - composite_effect_id: 1557
-                              hit_composite_effect_id: 1315
-                              count: 1
-                              target_factions: [republic, republic_missile]
-                              target_deltas:
-                                health: -1
-                              length: 25
-                              cooldown_millis: 500
-                              min_launch_angle: !Degrees -60
-                              max_launch_angle: !Degrees 60
-                          ships:
-                            - count: 3
-                              ship: separatist_missile
-                              cooldown_millis: 20000
-                              min_launch_angle: !Degrees -60
-                              max_launch_angle: !Degrees 60
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1557
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 500
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                        ships:
+                          - count: 3
+                            ship: separatist_missile
+                            cooldown_millis: 20000
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
                     ai_states:
                       - condition:
                           And:
@@ -3348,23 +3347,22 @@ categories:
                     despawn_effect_id: 1718
                     mobility: !Dynamic
                       show_arrow_to_player: false
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1315
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [republic, republic_missile]
-                              target_deltas:
-                                health: -2
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
-                              min_launch_angle: !Degrees -90
-                              max_launch_angle: !Degrees 90
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1315
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -2
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                            min_launch_angle: !Degrees -90
+                            max_launch_angle: !Degrees 90
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
@@ -3391,23 +3389,22 @@ categories:
                     despawn_effect_id: 1718
                     mobility: !Dynamic
                       show_arrow_to_player: false
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1315
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -2
-                              self_deltas:
-                                health: -100
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
-                              min_launch_angle: !Degrees -90
-                              max_launch_angle: !Degrees 90
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1315
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -2
+                            self_deltas:
+                              health: -100
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                            min_launch_angle: !Degrees -90
+                            max_launch_angle: !Degrees 90
                     ai_behavior_randomization_interval_millis: 1000
                     ai_states:
                       - condition:
@@ -3431,21 +3428,20 @@ categories:
                     death_end_effect_id: 1774
                     despawn_effect_id: 1774
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1774
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                health: 20
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1774
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              health: 20
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   life_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3463,21 +3459,20 @@ categories:
                     death_end_effect_id: 1777
                     despawn_effect_id: 1777
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1777
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                player_lives: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1777
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_lives: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   weapon_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3495,21 +3490,20 @@ categories:
                     death_end_effect_id: 1772
                     despawn_effect_id: 1772
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1772
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                primary_tiers: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1772
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              primary_tiers: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   invulnerability_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3527,23 +3521,22 @@ categories:
                     death_end_effect_id: 1775
                     despawn_effect_id: 1775
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1775
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                secondary_item:
-                                  name: invulnerability
-                                  count: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1775
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              secondary_item:
+                                name: invulnerability
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   torrent_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3561,23 +3554,22 @@ categories:
                     death_end_effect_id: 1779
                     despawn_effect_id: 1779
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1779
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                secondary_item:
-                                  name: torrent
-                                  count: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1779
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              secondary_item:
+                                name: torrent
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   emp_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3595,23 +3587,22 @@ categories:
                     death_end_effect_id: 1773
                     despawn_effect_id: 1773
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1773
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                secondary_item:
-                                  name: emp
-                                  count: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1773
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              secondary_item:
+                                name: emp
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   mine_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3629,23 +3620,22 @@ categories:
                     death_end_effect_id: 1778
                     despawn_effect_id: 1778
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1778
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                secondary_item:
-                                  name: mine
-                                  count: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1778
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              secondary_item:
+                                name: mine
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   jerico_powerup:
                     seek_factions: [player]
                     self_factions: [player_powerup]
@@ -3663,23 +3653,22 @@ categories:
                     death_end_effect_id: 1776
                     despawn_effect_id: 1776
                     mobility: !Static
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - hit_composite_effect_id: 1776
-                              speed: 0
-                              wobble: !Degrees 0
-                              target_factions: [player]
-                              target_deltas:
-                                secondary_item:
-                                  name: jerico
-                                  count: 1
-                              self_deltas:
-                                health: -1
-                              length: 100
-                              cooldown_millis: 50
-                              max_cooldown_error_millis: 0
-                              lifetime_millis: 50
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1776
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              secondary_item:
+                                name: jerico
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
                   v19:
                     seek_factions: [separatist]
                     self_factions: [republic]
@@ -3699,19 +3688,18 @@ categories:
                       show_arrow_to_player: false
                       max_roll: !Degrees 15
                       thruster_effect_id: 1827
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - composite_effect_id: 1761
-                              hit_composite_effect_id: 1315
-                              count: 1
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 25
-                              cooldown_millis: 500
-                              min_launch_angle: !Degrees -60
-                              max_launch_angle: !Degrees 60
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1761
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 500
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
                   mine:
                     seek_factions: []
                     self_factions: [player_powerup]
@@ -3947,65 +3935,64 @@ categories:
                               x: 1.69803
                               y: 4.46827
                               z: -45.8687
-                    weapons:
-                      primary_tiers:
-                        - projectiles:
-                            - composite_effect_id: 1558
-                              hit_composite_effect_id: 1315
-                              count: 2
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 25
-                              cooldown_millis: 250
-                            - composite_effect_id: 1763
-                              hit_composite_effect_id: 1315
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 75
-                              cooldown_millis: 250
-                        - projectiles:
-                            - composite_effect_id: 1558
-                              hit_composite_effect_id: 1315
-                              count: 2
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 25
-                              cooldown_millis: 250
-                            - composite_effect_id: 1763
-                              hit_composite_effect_id: 1315
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 75
-                              cooldown_millis: 250
-                            - composite_effect_id: 1762
-                              hit_composite_effect_id: 1315
-                              yaw: !Degrees 5
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 75
-                              cooldown_millis: 250
-                            - composite_effect_id: 1762
-                              hit_composite_effect_id: 1315
-                              yaw: !Degrees -5
-                              target_factions: [separatist, separatist_missile]
-                              target_deltas:
-                                health: -1
-                              length: 75
-                              cooldown_millis: 250
-                          ships:
-                            - count: 1
-                              ship: republic_missile
-                              cooldown_millis: 4000
-                              yaw: !Degrees -5
-                            - count: 1
-                              ship: republic_missile
-                              cooldown_millis: 4000
-                              yaw: !Degrees 5
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 250
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 250
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw: !Degrees 5
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw: !Degrees -5
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                        ships:
+                          - count: 1
+                            ship: republic_missile
+                            cooldown_millis: 4000
+                            yaw: !Degrees -5
+                          - count: 1
+                            ship: republic_missile
+                            cooldown_millis: 4000
+                            yaw: !Degrees 5
                 sound_id: 2413
               zone_template_guid: 250
               score_to_credits_expression: x / 129

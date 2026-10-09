@@ -455,7 +455,7 @@ impl AttackCruiserActor {
         self.set_primary_weapon_tier(
             self.primary_weapon_tier
                 .saturating_add_signed(tiers.into())
-                .min(self.ship.weapons.primary_tiers.len().saturating_sub(1)),
+                .min(self.ship.primary_weapon_tiers.len().saturating_sub(1)),
         );
     }
 
@@ -694,8 +694,7 @@ impl AttackCruiserActor {
 
         let projectiles_opt = self
             .ship
-            .weapons
-            .primary_tiers
+            .primary_weapon_tiers
             .get(self.primary_weapon_tier)
             .map(|weapon| &weapon.projectiles);
 
@@ -786,8 +785,7 @@ impl AttackCruiserActor {
 
         let actors_opt = self
             .ship
-            .weapons
-            .primary_tiers
+            .primary_weapon_tiers
             .get(self.primary_weapon_tier)
             .map(|weapon| &weapon.ships);
 
@@ -1685,27 +1683,6 @@ struct AttackCruiserPrimaryWeaponConfig {
     ships: Vec<AttackCruiserLaunchedShipConfig>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct AttackCruiserWeaponConfig {
-    primary_tiers: Vec<AttackCruiserPrimaryWeaponConfig>,
-}
-
-impl AttackCruiserWeaponConfig {
-    pub fn cooldown_millis(&self) -> u16 {
-        self.primary_tiers
-            .iter()
-            .flat_map(|tier| {
-                tier.projectiles
-                    .iter()
-                    .map(|projectile| projectile.cooldown_millis)
-                    .chain(tier.ships.iter().map(|actor| actor.cooldown_millis))
-            })
-            .reduce(gcd_u16)
-            .unwrap_or_default()
-    }
-}
-
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAnimationConfig {
@@ -1918,13 +1895,28 @@ struct AttackCruiserShipConfig {
     #[serde(default)]
     damage_states: Vec<AttackCruiserShipDamageStateConfig>,
     #[serde(default)]
-    weapons: AttackCruiserWeaponConfig,
+    primary_weapon_tiers: Vec<AttackCruiserPrimaryWeaponConfig>,
     #[serde(default)]
     ai_states: Vec<AttackCruiserShipAiStateRule>,
     #[serde(default)]
     default_ai_behavior: Arc<AttackCruiserShipAiBehavior>,
     #[serde(default = "ai_randomization_interval_millis")]
     ai_behavior_randomization_interval_millis: u32,
+}
+
+impl AttackCruiserShipConfig {
+    pub fn primary_cooldown_millis(&self) -> u16 {
+        self.primary_weapon_tiers
+            .iter()
+            .flat_map(|tier| {
+                tier.projectiles
+                    .iter()
+                    .map(|projectile| projectile.cooldown_millis)
+                    .chain(tier.ships.iter().map(|actor| actor.cooldown_millis))
+            })
+            .reduce(gcd_u16)
+            .unwrap_or_default()
+    }
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -2049,7 +2041,7 @@ impl AttackCruiserConfig {
                 }
             });
 
-            ship.weapons.primary_tiers.iter().for_each(|tier| tier.projectiles.iter().for_each(|projectile| {
+            ship.primary_weapon_tiers.iter().for_each(|tier| tier.projectiles.iter().for_each(|projectile| {
                 if let Some(secondary_item) = &projectile.self_deltas.secondary_item {
                     if !self.player.secondary_items.contains_key(&secondary_item.name) {
                         info!("Attack Cruiser ship projectile self_deltas references unknown secondary item {}", secondary_item.name);
@@ -3073,7 +3065,7 @@ impl AttackCruiserGame {
                                             pitch_max_angle: 0.0,
                                             continuous_fire_seconds: 0.05,
                                             fire_cooldown_seconds: f32::from(
-                                                ship.weapons.cooldown_millis(),
+                                                ship.primary_cooldown_millis(),
                                             ) / 1000.0,
                                         },
                                     )),
