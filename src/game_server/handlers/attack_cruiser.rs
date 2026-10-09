@@ -1957,6 +1957,7 @@ struct AttackCruiserPlayerConfig {
     damage_alarm_health_percent: f32,
     damage_alarm_interval_millis: u32,
     post_respawn_invulnerability_millis: u32,
+    primary_tiers_on_death: i16,
     out_of_bounds_warp_millis: u32,
     out_of_bounds_warp_delay_millis: u32,
     #[serde(default)]
@@ -4251,6 +4252,7 @@ impl AttackCruiserGame {
                 }
 
                 if player_state.dead() {
+                    player_state.add_primary_tiers(self.config.player.primary_tiers_on_death);
                     let mut death_packets = Self::spawn_client_effect(
                         player_state.actor.ship.death_start_effect_id,
                         player_state.actor.pos,

@@ -3207,6 +3207,7 @@ categories:
                   damage_alarm_health_percent: 21.0
                   damage_alarm_interval_millis: 2500
                   post_respawn_invulnerability_millis: 3000
+                  primary_tiers_on_death: -1
                   out_of_bounds_warp_millis: 3000
                   out_of_bounds_warp_delay_millis: 250
                   secondary_items:
