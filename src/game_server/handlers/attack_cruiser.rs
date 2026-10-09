@@ -2266,8 +2266,8 @@ impl AttackCruiserProjectilePool {
         actors: impl IntoIterator<Item = &'a AttackCruiserActor>,
         now: Instant,
         delta: Duration,
-    ) -> BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> {
-        let mut projectile_closest: BTreeMap<i32, (i32, f32)> = BTreeMap::new();
+    ) -> HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> {
+        let mut projectile_closest: HashMap<i32, (i32, f32)> = HashMap::new();
 
         for actor in actors {
             let Some(ship_bvh) = &actor.bvh else {
@@ -2398,8 +2398,7 @@ impl AttackCruiserProjectilePool {
             }
         }
 
-        let mut results: BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> =
-            BTreeMap::new();
+        let mut results: HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>> = HashMap::new();
         for (projectile_id, (actor_id, _)) in projectile_closest {
             let projectile = self.remove_unchecked(projectile_id);
 
@@ -4123,7 +4122,7 @@ impl AttackCruiserGame {
         &mut self,
         now: Instant,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        hits: &HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
         aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
     ) {
@@ -4337,7 +4336,7 @@ impl AttackCruiserGame {
         now: Instant,
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
-        hits: &BTreeMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
+        hits: &HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
         aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
