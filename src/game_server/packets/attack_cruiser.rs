@@ -365,6 +365,12 @@ pub struct AttackCruiserTorpedoBayConfig {
 }
 
 #[derive(SerializePacket)]
+pub struct AttackCruiserPickupStartupConfig {
+    pub actor_config: AttackCruiserActorConfig,
+    pub pickup_type: u32,
+}
+
+#[derive(SerializePacket)]
 pub struct AttackCruiserShipWeaponConfig {
     pub weapon_bay_config: AttackCruiserStartupConfigReference,
     pub group: u32,
@@ -700,6 +706,7 @@ pub enum AttackCruiserStartupConfigDefinition {
     DeathSpawn(Box<AttackCruiserDeathSpawnConfig>),
     Game(Box<AttackCruiserGameConfig>),
     Global(Box<AttackCruiserGlobalConfig>),
+    Pickup(Box<AttackCruiserPickupStartupConfig>),
     Ship(Box<AttackCruiserShipStartupConfig>),
     SimplePhysics(Box<AttackCruiserSimplePhysicsConfig>),
     Wave(Box<AttackCruiserWaveConfig>),
@@ -731,6 +738,9 @@ impl AttackCruiserStartupConfigDefinition {
             AttackCruiserStartupConfigDefinition::Global(_) => {
                 AttackCruiserStartupConfigClass::Global
             }
+            AttackCruiserStartupConfigDefinition::Pickup(_) => {
+                AttackCruiserStartupConfigClass::Pickup
+            }
             AttackCruiserStartupConfigDefinition::Ship(_) => AttackCruiserStartupConfigClass::Ship,
             AttackCruiserStartupConfigDefinition::SimplePhysics(_) => {
                 AttackCruiserStartupConfigClass::SimplePhysics
@@ -756,6 +766,7 @@ impl SerializePacket for AttackCruiserStartupConfigDefinition {
             AttackCruiserStartupConfigDefinition::DeathSpawn(config) => config.serialize(buffer),
             AttackCruiserStartupConfigDefinition::Game(config) => config.serialize(buffer),
             AttackCruiserStartupConfigDefinition::Global(config) => config.serialize(buffer),
+            AttackCruiserStartupConfigDefinition::Pickup(config) => config.serialize(buffer),
             AttackCruiserStartupConfigDefinition::Ship(config) => config.serialize(buffer),
             AttackCruiserStartupConfigDefinition::SimplePhysics(config) => config.serialize(buffer),
             AttackCruiserStartupConfigDefinition::Wave(config) => config.serialize(buffer),

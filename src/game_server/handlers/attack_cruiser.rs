@@ -46,18 +46,19 @@ use crate::{
                 AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
                 AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
                 AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-                AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
-                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
-                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
-                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
-                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
-                AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile,
-                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
-                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
-                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
-                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
-                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
-                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+                AttackCruiserPickupStartupConfig, AttackCruiserPlanetStartupConfig,
+                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
+                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
+                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
+                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
+                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
+                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
+                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
+                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
+                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
+                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
+                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
+                AttackCruiserUpdateServerActors, AttackCruiserVec,
             },
             command::PlaySoundIdOnTarget,
             minigame::MinigameHeader,
@@ -1900,6 +1901,7 @@ struct AttackCruiserShipConfig {
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
     despawn_effect_id: Option<u32>,
+    #[serde(default)]
     mobility: AttackCruiserShipMobilityConfig,
     #[serde(default)]
     animations: Vec<AttackCruiserShipAnimationConfig>,
@@ -2886,7 +2888,7 @@ impl AttackCruiserGame {
                                     actor_config: AttackCruiserStartupConfigReference {
                                         class: match ship.mobility {
                                             AttackCruiserShipMobilityConfig::Static => {
-                                                AttackCruiserStartupConfigClass::Actor
+                                                AttackCruiserStartupConfigClass::Pickup
                                             }
                                             AttackCruiserShipMobilityConfig::Dynamic { .. } => {
                                                 AttackCruiserStartupConfigClass::Ship
@@ -3032,8 +3034,11 @@ impl AttackCruiserGame {
                                 ship_startup_config_name(name),
                                 match ship.mobility {
                                     AttackCruiserShipMobilityConfig::Static => {
-                                        AttackCruiserStartupConfigDefinition::Actor(Box::new(
-                                            actor_config,
+                                        AttackCruiserStartupConfigDefinition::Pickup(Box::new(
+                                            AttackCruiserPickupStartupConfig {
+                                                actor_config,
+                                                pickup_type: 0,
+                                            },
                                         ))
                                     }
                                     AttackCruiserShipMobilityConfig::Dynamic {
@@ -3540,7 +3545,7 @@ impl AttackCruiserGame {
                     name: ship_startup_config_name(ship_config),
                     class: match self.config.ship(ship_config).mobility {
                         AttackCruiserShipMobilityConfig::Static => {
-                            AttackCruiserStartupConfigClass::Actor
+                            AttackCruiserStartupConfigClass::Pickup
                         }
                         AttackCruiserShipMobilityConfig::Dynamic { .. } => {
                             AttackCruiserStartupConfigClass::Ship
