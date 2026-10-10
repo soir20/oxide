@@ -10,6 +10,8 @@ use serde::Deserialize;
 
 use crate::ConfigError;
 
+use super::character::CharacterStats;
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum Attackability {
@@ -17,7 +19,6 @@ pub enum Attackability {
     Unattackable,
 }
 
-#[allow(dead_code)]
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct AttackDecisionNode {
@@ -27,13 +28,20 @@ pub struct AttackDecisionNode {
     pub else_result: Attackability,
 }
 
-#[allow(dead_code)]
-pub fn player_can_attack(node: &AttackDecisionNode, enemy_types: &[String]) -> bool {
+pub fn player_can_attack(
+    target_stats: &CharacterStats,
+    caster_stats: &CharacterStats,
+    node: &AttackDecisionNode,
+) -> bool {
+    if !target_stats.is_spawned() || target_stats.instance_guid != caster_stats.instance_guid {
+        return false;
+    }
+
     let mut result = matches!(node.else_result, Attackability::Attackable);
 
-    for enemy_type in enemy_types {
+    for enemy_type in &target_stats.enemy_types {
         if let Some(next_node) = node.if_branches.get(enemy_type) {
-            if !player_can_attack(next_node, enemy_types) {
+            if !player_can_attack(target_stats, caster_stats, next_node) {
                 return false;
             }
             result = true;
