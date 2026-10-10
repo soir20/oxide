@@ -115,7 +115,7 @@ pub struct CastAndLand {
     pub unknown10: u32,
     pub unknown11: Pos,
     pub cast_composite_effect_seconds: f32,
-    pub unknown13: f32,
+    pub impact_composite_effect_seconds: f32,
     pub unknown14: u32,
     pub action_bar_type: ActionBarType,
     pub slot_index: i32,
