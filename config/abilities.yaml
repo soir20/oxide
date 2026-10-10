@@ -483,6 +483,10 @@ zatt_lightsaber:
 pink_gaffi_stick:
   icon_set_id: 518
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 blinged_out_trooper_rifle:
   icon_set_id: 239
@@ -503,6 +507,10 @@ naboo_security_blaster_pistol:
 gaffi_stick:
   icon_set_id: 253
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 clone_trooper_blaster_rifle:
   icon_set_id: 240
@@ -555,10 +563,18 @@ assassin_aurra_sing_right_blaster:
 satine_royal_guard_staff:
   icon_set_id: 251
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 gungan_double_headed_spear:
   icon_set_id: 2337
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 spring_fever:
   icon_set_id: 1935
@@ -575,6 +591,10 @@ nightsister_bow:
 savage_opress_pike:
   icon_set_id: 1632
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 cupid_clone_bow:
   icon_set_id: 1674
@@ -583,30 +603,58 @@ cupid_clone_bow:
 blue_sparkler:
   icon_set_id: 2001
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 green_sparkler:
   icon_set_id: 2002
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 orange_sparkler:
   icon_set_id: 2003
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 purple_sparkler:
   icon_set_id: 2004
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 red_sparkler:
   icon_set_id: 2005
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 white_sparkler:
   icon_set_id: 2006
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 yellow_sparkler:
   icon_set_id: 2007
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 vigilance:
   icon_set_id: 2312
@@ -615,6 +663,10 @@ vigilance:
 skeletal_clone_trooper_scythe:
   icon_set_id: 2399
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 umbaran_blaster_rifle:
   icon_set_id: 2448
@@ -627,6 +679,10 @@ zygerrian_blaster_rifle:
 captain_rex_zygerrian_electrostaff:
   icon_set_id: 2518
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 shadow_tech_rifle:
   icon_set_id: 2571
@@ -755,6 +811,10 @@ onderon_blaster_pistol:
 ig_113_electrostaff:
   icon_set_id: 3002
   name_id: 60026
+  target_limit: Infinite
+  use_cooldown_millis: 500
+  cast_animation_id: 1501
+  impact_composite_effect_id: 2622
 
 renegade_heavy_blaster_pistol_right:
   icon_set_id: 3792
