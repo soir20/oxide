@@ -1,0 +1,580 @@
+---
+# Ryloth Republic base - NPCs. Positions/facings measured in game with ./loc on 9 Oct 2026.
+# Models and text IDs are from the 2014 client (Models.txt / en_us locale).
+ryloth:
+  ambient_npcs:
+    arf_arc_1:
+      key: arf_arc_1
+      model_id: 1336  # Grp_HumanMale_cloneTrauma - ARF helmet, pauldron + kama, no gun
+      show_name: false
+      pos:
+        x: 573.0281
+        y: 9.831306
+        z: 642.3272
+        w: 1
+      rot:
+        x: -0.8663511
+        y: 0
+        z: -0.49943528
+        w: 0
+      stand_animation_id: 1   # loc_stand between holocalls
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Holocall with Commander Cody: holoprojector emote on a loop.
+      tickable_procedures:
+        holocall:
+          steps:
+            - one_shot_animation_id: 3501   # Emo_Holoprojector_Cody
+              min_duration_millis: 8000
+            - min_duration_millis: 2000
+    mace_windu:
+      key: mace_windu
+      model_id: 46  # Grp_MaceWindu - Republic Defender minigame host (minigame not wired yet)
+      name_id: 32005
+      show_name: true
+      pos:
+        x: 550.6549
+        y: 9.821304
+        z: 627.1341
+        w: 1
+      rot:
+        x: -0.7483317
+        y: 0
+        z: -0.6633247
+        w: 0
+      stand_animation_id: 2599   # Amb_StandingAroundA - relaxed, casual
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_1:
+      key: arc_trooper_1
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow) - same as the Umbara ARCs
+      show_name: false
+      pos:
+        x: 549.1147
+        y: 9.821304
+        z: 628.4636
+        w: 1
+      rot:
+        x: -0.6013329
+        y: 0
+        z: -0.7989985
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    jedi_gear_vendor:
+      key: jedi_gear_vendor
+      model_id: 891          # Char_ShopKeeperDroid - Jedi gear vendor (shop not wired yet)
+      show_name: false
+      pos:
+        x: 544.8762
+        y: 9.821304
+        z: 632.44684
+        w: 1
+      rot:
+        x: 0.54569197
+        y: 0
+        z: -0.83798575
+        w: 0
+      stand_animation_id: 1
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Idle loop: the shopkeeper droid only has protocol-droid stands/fidgets.
+      tickable_procedures:
+        idle:
+          steps:
+            - animation_id: 1         # loc_stand
+              min_duration_millis: 6000
+            - animation_id: 21        # Loc_Fidget1
+              min_duration_millis: 3000
+            - animation_id: 25        # loc_stand2
+              min_duration_millis: 6000
+            - animation_id: 22        # Loc_Fidget2
+              min_duration_millis: 3000
+            - animation_id: 26        # loc_stand3
+              min_duration_millis: 5000
+    clone_gear_vendor:
+      key: clone_gear_vendor
+      model_id: 891          # Char_ShopKeeperDroid - clone gear vendor (shop not wired yet)
+      show_name: false
+      pos:
+        x: 540.2947
+        y: 9.821304
+        z: 628.225
+        w: 1
+      rot:
+        x: 0.6315274
+        y: 0
+        z: -0.77535355
+        w: 0
+      stand_animation_id: 1
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Idle loop: the shopkeeper droid only has protocol-droid stands/fidgets.
+      tickable_procedures:
+        idle:
+          steps:
+            - animation_id: 25        # loc_stand2
+              min_duration_millis: 4000
+            - animation_id: 22        # Loc_Fidget2
+              min_duration_millis: 3000
+            - animation_id: 1         # loc_stand
+              min_duration_millis: 7000
+            - animation_id: 21        # Loc_Fidget1
+              min_duration_millis: 3000
+            - animation_id: 26        # loc_stand3
+              min_duration_millis: 6000
+    arc_trooper_2:
+      key: arc_trooper_2
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 532.8729
+        y: 9.591429
+        z: 620.8512
+        w: 1
+      rot:
+        x: 0.24757421
+        y: 0
+        z: -0.96886885
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_3:
+      key: arc_trooper_3
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 551.2017
+        y: 9.707989
+        z: 601.22455
+        w: 1
+      rot:
+        x: -0.9985271
+        y: 0
+        z: 0.054255884
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_4:
+      key: arc_trooper_4
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 522.92926
+        y: 3.599029
+        z: 574.83185
+        w: 1
+      rot:
+        x: -0.7243875
+        y: 0
+        z: 0.6893929
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_5:
+      key: arc_trooper_5
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 507.34317
+        y: 3.4921374
+        z: 590.25006
+        w: 1
+      rot:
+        x: 0.7257518
+        y: 0
+        z: -0.6879565
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    obi_wan_kenobi:
+      key: obi_wan_kenobi
+      model_id: 105  # Grp_ObiwanKenobi - Lightsaber Duel host (minigame not wired yet)
+      name_id: 31945
+      show_name: true
+      pos:
+        x: 510.41205
+        y: 3.6512246
+        z: 590.2147
+        w: 1
+      rot:
+        x: -0.8672042
+        y: 0
+        z: -0.4979528
+        w: 0
+      stand_animation_id: 2201   # Amb_DialogIdle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    anakin_skywalker:
+      key: anakin_skywalker
+      model_id: 52          # Grp_Anakin - Starfighter host (minigame launch not wired yet)
+      name_id: 31927
+      show_name: true
+      pos:
+        x: 501.68436
+        y: 1.6238085
+        z: 562.23016
+        w: 1
+      rot:
+        x: -0.9598943
+        y: 0
+        z: 0.28036225
+        w: 0
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    r2_d2:
+      key: r2_d2
+      model_id: 31          # Char_AstroMechR2
+      name_id: 2482
+      show_name: true
+      pos:
+        x: 508.051
+        y: 1.6488527
+        z: 565.7204
+        w: 1
+      rot:
+        x: 0.15647173
+        y: 0
+        z: 0.9876824
+        w: 0
+      stand_animation_id: 1
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    captain_rex:
+      key: captain_rex
+      model_id: 2056  # Grp_HumanMale_cloneRexHelmetv2 - same Rex as Umbara
+      name_id: 6331
+      show_name: true
+      pos:
+        x: 406.1591
+        y: 1.2682096
+        z: 465.1832
+        w: 1
+      rot:
+        x: -0.70063066
+        y: 0
+        z: -0.71352404
+        w: 0
+      stand_animation_id: 2505   # Amb_CloneGuardStand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_6:
+      key: arc_trooper_6
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 390.75125
+        y: 5.533417
+        z: 428.81354
+        w: 1
+      rot:
+        x: 0.73748547
+        y: 0
+        z: 0.675363
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_7:
+      key: arc_trooper_7
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 390.8172
+        y: 5.499522
+        z: 426.54492
+        w: 1
+      rot:
+        x: 0.70096654
+        y: 0
+        z: 0.71319413
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_8:
+      key: arc_trooper_8
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 393.0939
+        y: 5.5854807
+        z: 427.5135
+        w: 1
+      rot:
+        x: 0.5080893
+        y: 0
+        z: 0.8613044
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_9:
+      key: arc_trooper_9
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 393.4288
+        y: 5.5765495
+        z: 425.7873
+        w: 1
+      rot:
+        x: 0.5790021
+        y: 0
+        z: 0.815326
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_10:
+      key: arc_trooper_10
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 395.3909
+        y: 5.6957345
+        z: 426.99374
+        w: 1
+      rot:
+        x: 0.5314968
+        y: 0
+        z: 0.8470603
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    twilek_jedi:
+      key: twilek_jedi
+      model_id: 2014          # Grp_TwilekMale_AmbientJedi05 - orange Twi'lek, blue clothes
+      show_name: false
+      pos:
+        x: 394.48788
+        y: 5.6139607
+        z: 430.60132
+        w: 1
+      rot:
+        x: -0.4804885
+        y: 0
+        z: -0.87700105
+        w: 0
+      stand_animation_id: 1   # loc_stand (his Jedi body has no looping talk pose)
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Briefing the ARC squad. Only gestures his body type (Char_MaleJediNPC) actually has:
+      tickable_procedures:
+        briefing:
+          steps:
+            - one_shot_animation_id: 2202   # Amb_DialogTalk
+              min_duration_millis: 4000
+            - one_shot_animation_id: 3009   # Emo_Point - points out the objective
+              min_duration_millis: 3000
+            - min_duration_millis: 3000
+    clone_nohelmet_1:
+      key: clone_nohelmet_1
+      model_id: 2032  # Grp_HumanMale_cloneBasic - white armour, no helmet, no gun
+      show_name: false
+      pos:
+        x: 584.4826
+        y: 10.01764
+        z: 679.8454
+        w: 1
+      rot:
+        x: -0.12928808
+        y: 0
+        z: 0.99160707
+        w: 0
+      stand_animation_id: 2599   # Amb_StandingAroundA
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    clone_nohelmet_2:
+      key: clone_nohelmet_2
+      model_id: 2032  # Grp_HumanMale_cloneBasic - white armour, no helmet, no gun
+      show_name: false
+      pos:
+        x: 585.8355
+        y: 10.01764
+        z: 680.9734
+        w: 1
+      rot:
+        x: -0.943864
+        y: 0
+        z: 0.33033422
+        w: 0
+      stand_animation_id: 2600   # Amb_StandingAroundB
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    walking_clone_1:
+      key: walking_clone_1
+      model_id: 2032          # Grp_HumanMale_cloneBasic - standard white armour, no helmet, no gun
+      show_name: false
+      pos:
+        x: 597.606
+        y: 9.930433
+        z: 667.7215
+        w: 1
+      rot:
+        x: -0.75346
+        y: 0
+        z: -0.6575
+        w: 0
+      stand_animation_id: 1
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      tickable_procedures:
+        patrol:
+          steps:
+            # walk mark A -> mark B (35.6 units), pause, turn, walk back, pause, turn
+            - speed: 2.5
+              animation_id: 2          # loc_walk
+              new_pos_offset_x: -26.80730
+              new_pos_offset_y: -0.09913
+              new_pos_offset_z: -23.39325
+              new_rot_x: -0.75346
+              new_rot_y: 0
+              new_rot_z: -0.6575
+              min_duration_millis: 0
+            - animation_id: 1          # loc_stand
+              new_rot_x: 0.75346
+              new_rot_y: 0
+              new_rot_z: 0.6575
+              min_duration_millis: 2500
+            - speed: 2.5
+              animation_id: 2          # loc_walk
+              new_pos_offset_x: 26.80730
+              new_pos_offset_y: 0.09913
+              new_pos_offset_z: 23.39325
+              new_rot_x: 0.75346
+              new_rot_y: 0
+              new_rot_z: 0.6575
+              min_duration_millis: 0
+            - animation_id: 1          # loc_stand
+              new_rot_x: -0.75346
+              new_rot_y: 0
+              new_rot_z: -0.6575
+              min_duration_millis: 2500
+    arf_arc_2:
+      key: arf_arc_2
+      model_id: 1336  # Grp_HumanMale_cloneTrauma - ARF helmet, pauldron + kama, no gun
+      show_name: false
+      pos:
+        x: 413.3032
+        y: 2.4760234
+        z: 449.73346
+        w: 1
+      rot:
+        x: -0.19994472
+        y: 0
+        z: 0.9798071
+        w: 0
+      stand_animation_id: 1   # loc_stand between holocalls
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Holocall with Commander Cody: holoprojector emote on a loop.
+      tickable_procedures:
+        holocall:
+          steps:
+            - one_shot_animation_id: 3501   # Emo_Holoprojector_Cody
+              min_duration_millis: 8000
+            - min_duration_millis: 2000
+    running_arc_trooper_1:
+      key: running_arc_trooper_1
+      model_id: 1397          # Char_CloneArcTrooperNPC (yellow) - same as the other ARCs
+      show_name: false
+      pos:
+        x: 548.44763
+        y: 9.821304
+        z: 623.8792
+        w: 1
+      rot:
+        x: -0.58949
+        y: 0
+        z: -0.80778
+        w: 0
+      stand_animation_id: 1607   # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      tickable_procedures:
+        run:
+          steps:
+            # run mark A -> mark B (67.7 units), catch breath, turn, run back, turn
+            - speed: 6
+              animation_id: 243        # Loc_BlasterRifle_Run - running with the rifle
+              new_pos_offset_x: -39.89111
+              new_pos_offset_y: -8.08220
+              new_pos_offset_z: -54.66314
+              new_rot_x: -0.58949
+              new_rot_y: 0
+              new_rot_z: -0.80778
+              min_duration_millis: 0
+            - animation_id: 261  # Loc_LongRifle_Stand - same set as the run, stops it
+              new_rot_x: 0.58949
+              new_rot_y: 0
+              new_rot_z: 0.80778
+              min_duration_millis: 3000
+            - speed: 6
+              animation_id: 243
+              new_pos_offset_x: 39.89111
+              new_pos_offset_y: 8.08220
+              new_pos_offset_z: 54.66314
+              new_rot_x: 0.58949
+              new_rot_y: 0
+              new_rot_z: 0.80778
+              min_duration_millis: 0
+            - animation_id: 261        # Loc_LongRifle_Stand
+              new_rot_x: -0.58949
+              new_rot_y: 0
+              new_rot_z: -0.80778
+              min_duration_millis: 3000
