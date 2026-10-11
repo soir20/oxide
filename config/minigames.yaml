@@ -857,6 +857,1245 @@ categories:
                   zone_template_guid: 200
                   score_to_credits_expression: x / 129
 
+      # Republic Defender
+      - guid: 1002
+        name_id: 61
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1246
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 2
+        tutorial_swf: HowtoRepublicDefender.swf
+        stage_group:
+          # Republic Defender
+          guid: 1
+          name_id: 61
+          description_id: 0
+          icon_id: 375
+          stage_icon_id: 375
+          members_only: false
+          stage_select_map_name: towerDefense
+          stages:
+            # Defense of Maridun
+            - !Stage
+              guid: 50
+              name_id: 5618
+              description_id: 15145
+              stage_icon_id: 621
+              start_screen_icon_id: 825
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1504
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td1s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 126
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 127
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Lok Durd Strikes Back
+            - !Stage
+              guid: 51
+              name_id: 5635
+              description_id: 15146
+              stage_icon_id: 622
+              start_screen_icon_id: 826
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1505
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td1s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 128
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 129
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 130
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Defenders of the Peace
+            - !Stage
+              guid: 57
+              name_id: 6356
+              description_id: 15147
+              stage_icon_id: 623
+              start_screen_icon_id: 827
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1506
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td1s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 131
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 132
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 133
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Foothold on Felucia
+            - !Stage
+              guid: 53
+              name_id: 6189
+              description_id: 15148
+              stage_icon_id: 624
+              start_screen_icon_id: 828
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2228
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td2s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 134
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 135
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 136
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Canyon Ambush
+            - !Stage
+              guid: 71
+              name_id: 6285
+              description_id: 15149
+              stage_icon_id: 625
+              start_screen_icon_id: 829
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2229
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td2s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 137
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 138
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 139
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Republic Withdrawal
+            - !Stage
+              guid: 86
+              name_id: 6437
+              description_id: 15150
+              stage_icon_id: 626
+              start_screen_icon_id: 830
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2230
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td2s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 140
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 141
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 142
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Mustafar Crash Site
+            - !Stage
+              guid: 64
+              name_id: 6121
+              description_id: 15151
+              stage_icon_id: 627
+              start_screen_icon_id: 831
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2231
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td3s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 143
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 144
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 145
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Prisoners of Mustafar
+            - !Stage
+              guid: 90
+              name_id: 7091
+              description_id: 15152
+              stage_icon_id: 628
+              start_screen_icon_id: 832
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2232
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td3s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 146
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 147
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 148
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Deception on Mustafar
+            - !Stage
+              guid: 91
+              name_id: 7096
+              description_id: 15153
+              stage_icon_id: 629
+              start_screen_icon_id: 833
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2233
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td3s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 149
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 150
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 151
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Touchdown on Christophsis
+            - !Stage
+              guid: 119
+              name_id: 7229
+              description_id: 15154
+              stage_icon_id: 630
+              start_screen_icon_id: 834
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2234
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td4s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 152
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 153
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 154
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Refugee Rescue
+            - !Stage
+              guid: 120
+              name_id: 7230
+              description_id: 15155
+              stage_icon_id: 631
+              start_screen_icon_id: 835
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2235
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td4s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 155
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 156
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 157
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Fork in the Road
+            - !Stage
+              guid: 121
+              name_id: 7231
+              description_id: 15156
+              stage_icon_id: 632
+              start_screen_icon_id: 836
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2236
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td4s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 158
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 159
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 160
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Trouble in Deep Space
+            - !Stage
+              guid: 122
+              name_id: 7232
+              description_id: 15157
+              stage_icon_id: 633
+              start_screen_icon_id: 837
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2237
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td5s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 161
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 162
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 163
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Adrift
+            - !Stage
+              guid: 123
+              name_id: 7233
+              description_id: 15158
+              stage_icon_id: 634
+              start_screen_icon_id: 838
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2239
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td5s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 164
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 165
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 166
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # More Trouble in Deep Space
+            - !Stage
+              guid: 124
+              name_id: 7234
+              description_id: 15159
+              stage_icon_id: 635
+              start_screen_icon_id: 839
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2238
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td5s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 167
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 168
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 169
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Ruins
+            - !Stage
+              guid: 125
+              name_id: 7235
+              description_id: 15160
+              stage_icon_id: 636
+              start_screen_icon_id: 840
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2240
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td5s4
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 170
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 171
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 172
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Kamino Invasion
+            - !Stage
+              guid: 190
+              name_id: 17938
+              description_id: 17935
+              stage_icon_id: 2116
+              start_screen_icon_id: 2110
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3334
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td6s1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 173
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 174
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 175
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Ocean Assault
+            - !Stage
+              guid: 191
+              name_id: 17939
+              description_id: 17936
+              stage_icon_id: 2117
+              start_screen_icon_id: 2111
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3335
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td6s2
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 176
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 177
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 178
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Perfect Storm
+            - !Stage
+              guid: 188
+              name_id: 17940
+              description_id: 17937
+              stage_icon_id: 2118
+              start_screen_icon_id: 2112
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3336
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: td6s3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Sudden Death
+                # Use base level's credit ratio as a placeholder
+                - guid: 179
+                  name_id: 11900
+                  description_id: 11910
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3326
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Mega Droids
+                # Use base level's credit ratio as a placeholder
+                - guid: 180
+                  name_id: 11901
+                  description_id: 11911
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3327
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Traditional
+                # Use base level's credit ratio as a placeholder
+                - guid: 181
+                  name_id: 11902
+                  description_id: 11912
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3330
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Republic Defender
+            - !StageGroup
+              guid: 76
+              name_id: 61
+              description_id: 0
+              icon_id: 375
+              stage_icon_id: 375
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: towerDefense
+              stages:
+                # Grievous Steals Life Day
+                - !Stage
+                  guid: 32018
+                  name_id: 20150
+                  description_id: 20151
+                  stage_icon_id: 0
+                  start_screen_icon_id: 2563
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 3
+                  start_sound_id: 4511
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ''
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+
       # Lightsaber Duel
       - guid: 1005
         name_id: 6393
