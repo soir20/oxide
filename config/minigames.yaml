@@ -1,17 +1,863 @@
 ---
 categories:
-  # Popular
+  # Popular Games
   - guid: 1
     name_id: 51596
     icon_id: 5808
     sort_order: 1
     portal_entries: []
-  # Action
+
+  # Action Games
   - guid: 2
     name_id: 51597
     icon_id: 5805
     sort_order: 2
     portal_entries:
+      # Starfighter
+      - guid: 1001
+        name_id: 1030
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1251
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 1
+        tutorial_swf: HowtoStarfighter.swf
+        stage_group:
+          # Starfighter
+          guid: 3
+          name_id: 1030
+          description_id: 0
+          icon_id: 374
+          stage_icon_id: 374
+          members_only: false
+          stage_select_map_name: starFighter
+          stages:
+            # Evacuation of Excarga
+            - !Stage
+              guid: 68
+              name_id: 6207
+              description_id: 6366
+              stage_icon_id: 200
+              start_screen_icon_id: 654
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1513
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageExcarga
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2047
+                  name_id: 11701
+                  description_id: 11702
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2048
+                  name_id: 11703
+                  description_id: 11704
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2049
+                  name_id: 11705
+                  description_id: 11706
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Sky Battle of Quell
+            - !Stage
+              guid: 92
+              name_id: 7109
+              description_id: 7110
+              stage_icon_id: 201
+              start_screen_icon_id: 660
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2216
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageQuell
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 112
+                  name_id: 9050
+                  description_id: 9135
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 113
+                  name_id: 9051
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 114
+                  name_id: 9052
+                  description_id: 9136
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Ambush Over Ord Mantell
+            - !Stage
+              guid: 98
+              name_id: 5260
+              description_id: 6286
+              stage_icon_id: 203
+              start_screen_icon_id: 650
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2221
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageAmbush
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2050
+                  name_id: 11713
+                  description_id: 11714
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2051
+                  name_id: 11715
+                  description_id: 11716
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2052
+                  name_id: 11717
+                  description_id: 11718
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Mission to Mustafar
+            - !Stage
+              guid: 93
+              name_id: 7111
+              description_id: 7112
+              stage_icon_id: 209
+              start_screen_icon_id: 658
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2219
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageMustafar
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2071
+                  name_id: 11719
+                  description_id: 11722
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2072
+                  name_id: 11720
+                  description_id: 11723
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2073
+                  name_id: 11721
+                  description_id: 11724
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Battle of Kamino
+            - !Stage
+              guid: 9
+              name_id: 17596
+              description_id: 17598
+              stage_icon_id: 2115
+              start_screen_icon_id: 2109
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3015
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: sfkamino
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2080
+                  name_id: 11725
+                  description_id: 11728
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2081
+                  name_id: 11726
+                  description_id: 11729
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2082
+                  name_id: 11727
+                  description_id: 11730
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Assault at Christophsis
+            - !Stage
+              guid: 116
+              name_id: 7236
+              description_id: 7237
+              stage_icon_id: 211
+              start_screen_icon_id: 652
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2223
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageChristophsis
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2074
+                  name_id: 11731
+                  description_id: 11734
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2075
+                  name_id: 11732
+                  description_id: 11735
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2076
+                  name_id: 11733
+                  description_id: 11736
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Battle of Dorin
+            - !Stage
+              guid: 60
+              name_id: 5607
+              description_id: 5608
+              stage_icon_id: 205
+              start_screen_icon_id: 653
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2217
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageDorin
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2059
+                  name_id: 11737
+                  description_id: 11740
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2060
+                  name_id: 11738
+                  description_id: 11741
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2061
+                  name_id: 11739
+                  description_id: 11742
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Rescue on Felucia
+            - !Stage
+              guid: 62
+              name_id: 6363
+              description_id: 6364
+              stage_icon_id: 206
+              start_screen_icon_id: 655
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2215
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageFeluciaGround
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2062
+                  name_id: 11743
+                  description_id: 11746
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2063
+                  name_id: 11744
+                  description_id: 11747
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2064
+                  name_id: 11745
+                  description_id: 11748
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Blockade of Felucia
+            - !Stage
+              guid: 59
+              name_id: 5634
+              description_id: 6365
+              stage_icon_id: 207
+              start_screen_icon_id: 656
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2214
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageFeluciaSpace
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2044
+                  name_id: 11751
+                  description_id: 11754
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2045
+                  name_id: 11752
+                  description_id: 11755
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2046
+                  name_id: 11753
+                  description_id: 11756
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Skirmish at the Austan Cluster
+            - !Stage
+              guid: 115
+              name_id: 7226
+              description_id: 7227
+              stage_icon_id: 208
+              start_screen_icon_id: 651
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2220
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageAustan
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2065
+                  name_id: 11758
+                  description_id: 11761
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2066
+                  name_id: 11759
+                  description_id: 11762
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2067
+                  name_id: 11760
+                  description_id: 11763
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Battle of Saleucami
+            - !Stage
+              guid: 117
+              name_id: 7238
+              description_id: 7239
+              stage_icon_id: 204
+              start_screen_icon_id: 661
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2222
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageSaleucami
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2056
+                  name_id: 11764
+                  description_id: 11767
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2057
+                  name_id: 11765
+                  description_id: 11768
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2058
+                  name_id: 11766
+                  description_id: 11769
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Destroy the Malevolence
+            - !Stage
+              guid: 41
+              name_id: 5057
+              description_id: 5058
+              stage_icon_id: 210
+              start_screen_icon_id: 657
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3013
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageMalevolence
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2068
+                  name_id: 11770
+                  description_id: 11773
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2069
+                  name_id: 11771
+                  description_id: 11774
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2070
+                  name_id: 11772
+                  description_id: 11775
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Defense of Orto Plutonia
+            - !Stage
+              guid: 94
+              name_id: 7113
+              description_id: 7114
+              stage_icon_id: 202
+              start_screen_icon_id: 659
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2218
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stageOrtoPlutonia
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # High Score
+                # Use base level's credit ratio as a placeholder
+                - guid: 2053
+                  name_id: 19648
+                  description_id: 19645
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4457
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Megadroids
+                # Use base level's credit ratio as a placeholder
+                - guid: 2054
+                  name_id: 19649
+                  description_id: 19646
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4458
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Weaker Shields
+                # Use base level's credit ratio as a placeholder
+                - guid: 2055
+                  name_id: 19650
+                  description_id: 19647
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 4459
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+
+      # Lightsaber Duel
       - guid: 1005
         name_id: 6393
         description_id: 6394
@@ -26,7 +872,8 @@ categories:
         sort_order: 4000
         tutorial_swf: HowtoDueling.swf
         stage_group:
-          guid: 31000
+          # Lightsaber Duel
+          guid: 52
           name_id: 6393
           description_id: 6394
           icon_id: 368
@@ -34,8 +881,9 @@ categories:
           members_only: false
           stage_select_map_name: lsDuelPortal
           stages:
+            # Campaign
             - !StageGroup
-              guid: 31001
+              guid: 67
               name_id: 19814
               description_id: 43799
               icon_id: 368
@@ -45,8 +893,9 @@ categories:
               stage_select_map_name: lsDuel
               short_name: sp
               stages:
+                # vs. Obi-Wan Kenobi
                 - !Stage
-                  guid: 31003
+                  guid: 73
                   name_id: 6370
                   description_id: 6371
                   stage_icon_id: 130
@@ -148,8 +997,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 168
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31023
+                    - guid: 2008
                       name_id: &saber_duel_memory_name_id 9379
                       description_id: &saber_duel_memory_description_id 9380
                       min_players: 1
@@ -187,8 +1037,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 168
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31024
+                    - guid: 2009
                       name_id: &saber_duel_10_key_name_id 9382
                       description_id: &saber_duel_10_key_description_id 9381
                       min_players: 1
@@ -226,8 +1077,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 168
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31025
+                    - guid: 2010
                       name_id: &saber_duel_accuracy_name_id 9365
                       description_id: &saber_duel_accuracy_description_id 9366
                       min_players: 1
@@ -265,8 +1117,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 168
+                # vs. Ahsoka Tano
                 - !Stage
-                  guid: 31004
+                  guid: 74
                   name_id: 6372
                   description_id: 6382
                   stage_icon_id: 123
@@ -325,8 +1178,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 117.5
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31026
+                    - guid: 2011
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -364,8 +1218,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 117.5
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31027
+                    - guid: 2012
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -403,8 +1258,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 117.5
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31028
+                    - guid: 2013
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -442,8 +1298,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 117.5
+                # vs. Barriss Offee
                 - !Stage
-                  guid: 31005
+                  guid: 75
                   name_id: 6373
                   description_id: 6383
                   stage_icon_id: 125
@@ -502,8 +1359,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 115.5
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31029
+                    - guid: 2014
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -541,8 +1399,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 115.5
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31030
+                    - guid: 2015
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -580,8 +1439,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 115.5
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31031
+                    - guid: 2016
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -619,8 +1479,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 115.5
+                # vs. Ki-Adi-Mundi
                 - !Stage
-                  guid: 31006
+                  guid: 76
                   name_id: 6374
                   description_id: 6384
                   stage_icon_id: 126
@@ -679,8 +1540,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 107
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31032
+                    - guid: 2017
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -718,8 +1580,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31033
+                    - guid: 2018
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -757,8 +1620,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31034
+                    - guid: 2019
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -796,8 +1660,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107
+                # vs. Kit Fisto
                 - !Stage
-                  guid: 31007
+                  guid: 77
                   name_id: 6375
                   description_id: 6385
                   stage_icon_id: 127
@@ -856,8 +1721,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 114.5
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31035
+                    - guid: 2020
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -895,8 +1761,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 114.5
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31036
+                    - guid: 2021
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -934,8 +1801,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 114.5
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31037
+                    - guid: 2022
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -973,8 +1841,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 114.5
+                # vs. Aayla Secura
                 - !Stage
-                  guid: 31008
+                  guid: 78
                   name_id: 6376
                   description_id: 6386
                   stage_icon_id: 122
@@ -1037,8 +1906,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 138
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31038
+                    - guid: 2023
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1076,8 +1946,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 138
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31039
+                    - guid: 2024
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -1115,8 +1986,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 138
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31040
+                    - guid: 2025
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -1154,8 +2026,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 138
+                # vs. Luminara Unduli
                 - !Stage
-                  guid: 31009
+                  guid: 79
                   name_id: 6377
                   description_id: 6387
                   stage_icon_id: 128
@@ -1214,8 +2087,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 125
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31041
+                    - guid: 2026
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1253,8 +2127,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 125
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31042
+                    - guid: 2027
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -1292,8 +2167,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 125
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31043
+                    - guid: 2028
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -1331,8 +2207,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 125
+                # vs. Adi Gallia
                 - !Stage
-                  guid: 31010
+                  guid: 2003
                   name_id: 9369
                   description_id: 9370
                   stage_icon_id: 360
@@ -1391,8 +2268,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 108
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31044
+                    - guid: 2035
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1430,8 +2308,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 108
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31045
+                    - guid: 2036
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -1469,8 +2348,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 108
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31046
+                    - guid: 2037
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -1508,8 +2388,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 108
+                # vs. Obi-Wan Kenobi
                 - !Stage
-                  guid: 31011
+                  guid: 81
                   name_id: 6370
                   description_id: 6389
                   stage_icon_id: 130
@@ -1568,8 +2449,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 133
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31047
+                    - guid: 2041
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1607,8 +2489,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 133
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31048
+                    - guid: 2042
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -1646,8 +2529,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 133
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31049
+                    - guid: 2043
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -1685,8 +2569,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 133
+                # vs. Eeth Koth
                 - !Stage
-                  guid: 31012
+                  guid: 2004
                   name_id: 9371
                   description_id: 9372
                   stage_icon_id: 361
@@ -1745,8 +2630,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 146.5
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31050
+                    - guid: 2038
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1784,8 +2670,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 146.5
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31051
+                    - guid: 2039
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -1823,8 +2710,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 146.5
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31052
+                    - guid: 2040
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -1862,8 +2750,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 146.5
+                # vs. Plo Koon
                 - !Stage
-                  guid: 31013
+                  guid: 80
                   name_id: 6378
                   description_id: 6388
                   stage_icon_id: 131
@@ -1922,8 +2811,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 107.25
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31053
+                    - guid: 2029
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -1961,8 +2851,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107.25
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31054
+                    - guid: 2030
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -2000,8 +2891,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107.25
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31055
+                    - guid: 2031
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -2039,8 +2931,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 107.25
+                # vs. Mace Windu
                 - !Stage
-                  guid: 31014
+                  guid: 83
                   name_id: 6380
                   description_id: 6391
                   stage_icon_id: 129
@@ -2099,8 +2992,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 109
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31056
+                    - guid: 2007
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -2138,8 +3032,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 109
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31057
+                    - guid: 2001
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -2177,8 +3072,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 109
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31058
+                    - guid: 2002
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -2216,8 +3112,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 109
+                # vs. Shaak Ti
                 - !Stage
-                  guid: 31015
+                  guid: 2078
                   name_id: 17234
                   description_id: 17235
                   stage_icon_id: 1801
@@ -2276,8 +3173,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 111
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31059
+                    - guid: 2118
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -2315,8 +3213,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 111
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31060
+                    - guid: 2119
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -2354,8 +3253,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 111
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31061
+                    - guid: 2120
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -2393,8 +3293,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 111
+                # vs. Anakin Skywalker
                 - !Stage
-                  guid: 31016
+                  guid: 82
                   name_id: 6379
                   description_id: 6390
                   stage_icon_id: 124
@@ -2453,8 +3354,9 @@ categories:
                   zone_template_guid: 202
                   score_to_credits_expression: x / 89.75
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31062
+                    - guid: 2032
                       name_id: *saber_duel_memory_name_id
                       description_id: *saber_duel_memory_description_id
                       min_players: 1
@@ -2492,8 +3394,9 @@ categories:
                         challenge: Memory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 89.75
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31063
+                    - guid: 2033
                       name_id: *saber_duel_10_key_name_id
                       description_id: *saber_duel_10_key_description_id
                       min_players: 1
@@ -2531,8 +3434,9 @@ categories:
                         challenge: Victory
                       zone_template_guid: 202
                       score_to_credits_expression: x / 89.75
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
-                    - guid: 31064
+                    - guid: 2034
                       name_id: *saber_duel_accuracy_name_id
                       description_id: *saber_duel_accuracy_description_id
                       min_players: 1
@@ -2570,6 +3474,7 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 202
                       score_to_credits_expression: x / 89.75
+                # vs. Quinlan Vos
                 - !Stage
                   guid: 31018
                   name_id: 53054
@@ -2584,7 +3489,7 @@ categories:
                   require_previous_completed: false
                   link_name: stage
                   short_name: ldscvos
-                  display_stage_group_guid: 31017
+                  display_stage_group_guid: 68
                   minigame_type:
                     !SaberDuel
                     camera_rot: &saber_duel_hangar_camera_rot 1.57
@@ -2631,6 +3536,7 @@ categories:
                   zone_template_guid: 204
                   score_to_credits_expression: x / 93
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
                     - guid: 31065
                       name_id: *saber_duel_memory_name_id
@@ -2670,6 +3576,7 @@ categories:
                         challenge: Memory
                       zone_template_guid: 204
                       score_to_credits_expression: x / 93
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
                     - guid: 31066
                       name_id: *saber_duel_10_key_name_id
@@ -2709,6 +3616,7 @@ categories:
                         challenge: Victory
                       zone_template_guid: 204
                       score_to_credits_expression: x / 93
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
                     - guid: 31067
                       name_id: *saber_duel_accuracy_name_id
@@ -2748,6 +3656,7 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 204
                       score_to_credits_expression: x / 93
+                # vs. Master Yoda
                 - !Stage
                   guid: 31019
                   name_id: 6381
@@ -2762,7 +3671,7 @@ categories:
                   require_previous_completed: false
                   link_name: stage
                   short_name: ldscyoda
-                  display_stage_group_guid: 31017
+                  display_stage_group_guid: 68
                   minigame_type:
                     !SaberDuel
                     camera_rot: &saber_duel_construction_chamber_camera_rot 3.98
@@ -2817,6 +3726,7 @@ categories:
                   zone_template_guid: 205
                   score_to_credits_expression: x / 108.5
                   challenges:
+                    # Memory
                     # Use base level's credit ratio as a placeholder
                     - guid: 31068
                       name_id: *saber_duel_memory_name_id
@@ -2856,6 +3766,7 @@ categories:
                         challenge: Memory
                       zone_template_guid: 205
                       score_to_credits_expression: x / 108.5
+                    # 10-Key
                     # Use base level's credit ratio as a placeholder
                     - guid: 31069
                       name_id: *saber_duel_10_key_name_id
@@ -2895,6 +3806,7 @@ categories:
                         challenge: Victory
                       zone_template_guid: 205
                       score_to_credits_expression: x / 108.5
+                    # Accuracy
                     # Use base level's credit ratio as a placeholder
                     - guid: 31070
                       name_id: *saber_duel_accuracy_name_id
@@ -2934,8 +3846,9 @@ categories:
                         challenge: PerfectAccuracy
                       zone_template_guid: 205
                       score_to_credits_expression: x / 108.5
+            # Multiplayer
             - !StageGroup
-              guid: 31002
+              guid: 68
               name_id: 19815
               description_id: 43799
               icon_id: 368
@@ -2945,8 +3858,9 @@ categories:
               stage_select_map_name: RepublicGunship
               short_name: mp
               stages:
+                # Easy Multiplayer Match
                 - !Stage
-                  guid: 31020
+                  guid: 1005
                   name_id: 9162
                   description_id: 9163
                   stage_icon_id: 1410
@@ -2998,8 +3912,9 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 203
                   score_to_credits_expression: x / 103
+                # Medium Multiplayer Match
                 - !Stage
-                  guid: 31021
+                  guid: 2005
                   name_id: 9373
                   description_id: 9163
                   stage_icon_id: 1412
@@ -3051,8 +3966,9 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 203
                   score_to_credits_expression: x / 112.5
+                # Hard Multiplayer Match
                 - !Stage
-                  guid: 31022
+                  guid: 2006
                   name_id: 9374
                   description_id: 9163
                   stage_icon_id: 1411
@@ -3104,6 +4020,7 @@ categories:
                     default_primary_saber: *saber_duel_default_primary_saber
                   zone_template_guid: 203
                   score_to_credits_expression: x / 122.5
+            # Ataru Mastery Pack
             - !StageGroup
               guid: 31017
               name_id: 53511
@@ -3115,6 +4032,8 @@ categories:
               stage_select_map_name: ''
               short_name: ''
               stages: []
+
+      # Dark Side Duel
       - guid: 1027
         name_id: 33128
         description_id: 6394
@@ -3129,6 +4048,7 @@ categories:
         sort_order: 7000
         tutorial_swf: HowtoDarksideDuel.swf
         stage_group:
+          # Dark Side Duel
           guid: 92
           name_id: 33128
           description_id: 6394
@@ -3137,6 +4057,7 @@ categories:
           members_only: true
           stage_select_map_name: lsDuelPortal
           stages:
+            # Campaign
             - !StageGroup
               guid: 32001
               name_id: 19814
@@ -3148,8 +4069,9 @@ categories:
               stage_select_map_name: darksideDuel
               short_name: sp
               stages:
+                # Force Slow Tutorial
                 - !Stage
-                  guid: 32003
+                  guid: 2112
                   name_id: 33129
                   description_id: 44382
                   stage_icon_id: 2731
@@ -3227,8 +4149,9 @@ categories:
                         apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
+                # Force Persuasion Tutorial
                 - !Stage
-                  guid: 32004
+                  guid: 2113
                   name_id: 33130
                   description_id: 44383
                   stage_icon_id: 2732
@@ -3307,8 +4230,9 @@ categories:
                         apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
+                # Force Confusion Tutorial
                 - !Stage
-                  guid: 32005
+                  guid: 2114
                   name_id: 33131
                   description_id: 44384
                   stage_icon_id: 2733
@@ -3388,8 +4312,9 @@ categories:
                         apply_animation_id: 5007
                   zone_template_guid: 206
                   score_to_credits_expression: x / 104.5
+                # vs. General Grievous
                 - !Stage
-                  guid: 32006
+                  guid: 2109
                   name_id: 44693
                   description_id: 32961
                   stage_icon_id: 2728
@@ -3469,8 +4394,9 @@ categories:
                       Opposite: *saber_duel_opposite_definition
                   zone_template_guid: 207
                   score_to_credits_expression: x / 108.5
+                # vs. Asajj Ventress
                 - !Stage
-                  guid: 32007
+                  guid: 2108
                   name_id: 32957
                   description_id: 32958
                   stage_icon_id: 2730
@@ -3543,8 +4469,9 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 208
                   score_to_credits_expression: x / 117
+                # vs. Count Dooku
                 - !Stage
-                  guid: 32008
+                  guid: 2110
                   name_id: 32962
                   description_id: 32963
                   stage_icon_id: 2727
@@ -3613,8 +4540,9 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 209
                   score_to_credits_expression: x / 134.5
+                # vs. Savage Opress
                 - !Stage
-                  guid: 32009
+                  guid: 2111
                   name_id: 33011
                   description_id: 33012
                   stage_icon_id: 2729
@@ -3692,6 +4620,7 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 209
                   score_to_credits_expression: x / 108
+                # vs. Darth Maul
                 - !Stage
                   guid: 32010
                   name_id: 51099
@@ -3770,6 +4699,7 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 210
                   score_to_credits_expression: x / 108.5
+            # Multiplayer
             - !StageGroup
               guid: 32002
               name_id: 19815
@@ -3781,8 +4711,9 @@ categories:
               stage_select_map_name: RepublicGunship
               short_name: mp
               stages:
+                # Easy Multiplayer Match
                 - !Stage
-                  guid: 32011
+                  guid: 2115
                   name_id: 9162
                   description_id: 33021
                   stage_icon_id: 2745
@@ -3845,8 +4776,9 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 211
                   score_to_credits_expression: x / 103
+                # Medium Multiplayer Match
                 - !Stage
-                  guid: 32012
+                  guid: 2116
                   name_id: 9373
                   description_id: 33021
                   stage_icon_id: 2746
@@ -3913,8 +4845,9 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 212
                   score_to_credits_expression: x / 112.5
+                # Hard Multiplayer Match
                 - !Stage
-                  guid: 32013
+                  guid: 2117
                   name_id: 9374
                   description_id: 33021
                   stage_icon_id: 2747
@@ -3977,6 +4910,7 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 213
                   score_to_credits_expression: x / 122.5
+            # Dark Side Duel
             - !StageGroup
               guid: 123
               name_id: 33128
@@ -3987,6 +4921,7 @@ categories:
               require_previous_completed: false
               stage_select_map_name: darksideDuel
               stages:
+                # vs. Count Dooku
                 - !Stage
                   guid: 32015
                   name_id: 32962
@@ -4057,7 +4992,9 @@ categories:
                     force_powers: *saber_duel_force_power_definitions
                   zone_template_guid: 214
                   score_to_credits_expression: x / 122.5
-      - guid: 9000
+
+      # Hasbro Attack Shuttle
+      - guid: 1032
         name_id: 45187
         description_id: 45193
         members_only: true
@@ -4071,6 +5008,7 @@ categories:
         sort_order: 9000
         tutorial_swf: HowtoHasbroAttackShip.swf
         stage_group:
+          # Hasbro Attack Shuttle
           guid: 9000
           name_id: 45187
           description_id: 45193
@@ -4079,8 +5017,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Hasbro Attack Shuttle - Easy
             - !Stage
-              guid: 9001
+              guid: 2124
               name_id: 45254
               description_id: 45193
               stage_icon_id: 4906
@@ -4098,8 +5037,9 @@ categories:
                 game_swf_name: HasbroAttackShip.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 177
+            # Hasbro Attack Shuttle - Medium
             - !Stage
-              guid: 9002
+              guid: 2125
               name_id: 45255
               description_id: 45193
               stage_icon_id: 4907
@@ -4117,8 +5057,9 @@ categories:
                 game_swf_name: HasbroAttackShip.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 208
+            # Hasbro Attack Shuttle - Hard
             - !Stage
-              guid: 9003
+              guid: 2126
               name_id: 45256
               description_id: 45193
               stage_icon_id: 4908
@@ -4136,7 +5077,9 @@ categories:
                 game_swf_name: HasbroAttackShip.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 219
-      - guid: 10000
+
+      # Stunt Gungan
+      - guid: 1011
         name_id: 7103
         description_id: 9754
         members_only: false
@@ -4150,7 +5093,8 @@ categories:
         sort_order: 10000
         tutorial_swf: HowtoStuntGungan.swf
         stage_group:
-          guid: 10000
+          # Stunt Gungan
+          guid: 14
           name_id: 7103
           description_id: 9754
           icon_id: 542
@@ -4158,8 +5102,9 @@ categories:
           members_only: false
           stage_select_map_name: ''
           stages:
+            # Stunt Gungan
             - !Stage
-              guid: 10001
+              guid: 224
               name_id: 7103
               description_id: 9754
               stage_icon_id: 1253
@@ -4177,7 +5122,9 @@ categories:
                 game_swf_name: StuntGungan.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 29
-      - guid: 11000
+
+      # Crisis Ziro
+      - guid: 1015
         name_id: 19700
         description_id: 14960
         members_only: true
@@ -4191,7 +5138,8 @@ categories:
         sort_order: 11000
         tutorial_swf: HowtoCrisisZiro.swf
         stage_group:
-          guid: 11000
+          # Crisis Ziro
+          guid: 56
           name_id: 19700
           description_id: 14960
           icon_id: 2391
@@ -4199,8 +5147,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Crisis Ziro - Easy
             - !Stage
-              guid: 11001
+              guid: 8
               name_id: 19701
               description_id: 14960
               stage_icon_id: 2377
@@ -4218,8 +5167,9 @@ categories:
                 game_swf_name: CrisisZiro.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 160
+            # Crisis Ziro - Medium
             - !Stage
-              guid: 11002
+              guid: 1009
               name_id: 19702
               description_id: 14960
               stage_icon_id: 2378
@@ -4237,8 +5187,9 @@ categories:
                 game_swf_name: CrisisZiro.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 180
+            # Crisis Ziro - Hard
             - !Stage
-              guid: 11003
+              guid: 1010
               name_id: 19703
               description_id: 14960
               stage_icon_id: 2379
@@ -4256,7 +5207,9 @@ categories:
                 game_swf_name: CrisisZiro.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 180
-      - guid: 22
+
+      # Rocket Rescue
+      - guid: 1014
         name_id: 12200
         description_id: 11921
         members_only: false
@@ -4270,6 +5223,7 @@ categories:
         sort_order: 12000
         tutorial_swf: HowtoRocketRescue.swf
         stage_group:
+          # Rocket Rescue
           guid: 22
           name_id: 12200
           description_id: 11921
@@ -4278,8 +5232,9 @@ categories:
           members_only: false
           stage_select_map_name: r2
           stages:
+            # Follow the Arrow
             - !Stage
-              guid: 12001
+              guid: 630
               name_id: 11920
               description_id: 11921
               stage_icon_id: 376
@@ -4297,8 +5252,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 15.25
+            # Bounce
             - !Stage
-              guid: 12002
+              guid: 631
               name_id: 11922
               description_id: 11923
               stage_icon_id: 376
@@ -4316,8 +5272,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 14
+            # Probe Droids
             - !Stage
-              guid: 12003
+              guid: 632
               name_id: 11924
               description_id: 11925
               stage_icon_id: 376
@@ -4335,8 +5292,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 14.45
+            # Shocking
             - !Stage
-              guid: 12004
+              guid: 633
               name_id: 11926
               description_id: 11927
               stage_icon_id: 376
@@ -4354,8 +5312,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 19.4
+            # Force Field
             - !Stage
-              guid: 12005
+              guid: 634
               name_id: 11928
               description_id: 11929
               stage_icon_id: 376
@@ -4373,8 +5332,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 13.9
+            # The Path
             - !Stage
-              guid: 12006
+              guid: 635
               name_id: 11930
               description_id: 11931
               stage_icon_id: 376
@@ -4392,8 +5352,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 14.7
+            # Goldie
             - !Stage
-              guid: 12007
+              guid: 636
               name_id: 11932
               description_id: 11933
               stage_icon_id: 376
@@ -4411,8 +5372,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 19.8
+            # Bounce Back
             - !Stage
-              guid: 12008
+              guid: 637
               name_id: 11934
               description_id: 11935
               stage_icon_id: 376
@@ -4430,8 +5392,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 11.55
+            # Special Case
             - !Stage
-              guid: 12009
+              guid: 638
               name_id: 11936
               description_id: 11937
               stage_icon_id: 376
@@ -4449,8 +5412,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 12.55
+            # Coasting
             - !Stage
-              guid: 12010
+              guid: 639
               name_id: 11938
               description_id: 11939
               stage_icon_id: 376
@@ -4468,8 +5432,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 22.7
+            # Magnets
             - !Stage
-              guid: 12011
+              guid: 800
               name_id: 11940
               description_id: 11941
               stage_icon_id: 378
@@ -4487,8 +5452,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 17
+            # Defense Turrets
             - !Stage
-              guid: 12012
+              guid: 801
               name_id: 11942
               description_id: 11943
               stage_icon_id: 378
@@ -4506,8 +5472,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 17
+            # Protected Fuel
             - !Stage
-              guid: 12013
+              guid: 802
               name_id: 11944
               description_id: 11945
               stage_icon_id: 378
@@ -4525,8 +5492,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 11
+            # Speed Lanes
             - !Stage
-              guid: 12014
+              guid: 803
               name_id: 11946
               description_id: 11947
               stage_icon_id: 378
@@ -4544,8 +5512,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 17
+            # Empty Tank
             - !Stage
-              guid: 12015
+              guid: 804
               name_id: 11948
               description_id: 11949
               stage_icon_id: 378
@@ -4563,8 +5532,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 18
+            # The Bonus Pool
             - !Stage
-              guid: 12016
+              guid: 805
               name_id: 11950
               description_id: 11951
               stage_icon_id: 378
@@ -4582,8 +5552,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 25
+            # Bad Motivator
             - !Stage
-              guid: 12017
+              guid: 806
               name_id: 11952
               description_id: 11953
               stage_icon_id: 378
@@ -4601,8 +5572,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 17
+            # Conservation
             - !Stage
-              guid: 12018
+              guid: 807
               name_id: 11954
               description_id: 11955
               stage_icon_id: 378
@@ -4620,8 +5592,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 39
+            # Square Route
             - !Stage
-              guid: 12019
+              guid: 808
               name_id: 11956
               description_id: 11957
               stage_icon_id: 378
@@ -4639,8 +5612,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 18
+            # Return Flight
             - !Stage
-              guid: 12020
+              guid: 809
               name_id: 11958
               description_id: 11959
               stage_icon_id: 378
@@ -4658,8 +5632,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 24
+            # Droids
             - !Stage
-              guid: 12021
+              guid: 810
               name_id: 11960
               description_id: 11961
               stage_icon_id: 377
@@ -4677,8 +5652,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 20
+            # Stop the Refuel
             - !Stage
-              guid: 12022
+              guid: 811
               name_id: 11962
               description_id: 11963
               stage_icon_id: 377
@@ -4696,8 +5672,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 22
+            # So Defiant
             - !Stage
-              guid: 12023
+              guid: 812
               name_id: 11964
               description_id: 11965
               stage_icon_id: 377
@@ -4715,8 +5692,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 12
+            # Spotlight
             - !Stage
-              guid: 12024
+              guid: 813
               name_id: 11966
               description_id: 11967
               stage_icon_id: 377
@@ -4734,8 +5712,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 18
+            # Mind the Gap
             - !Stage
-              guid: 12025
+              guid: 814
               name_id: 11968
               description_id: 11969
               stage_icon_id: 377
@@ -4753,8 +5732,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 18
+            # Advanced Gunnery
             - !Stage
-              guid: 12026
+              guid: 815
               name_id: 11970
               description_id: 11971
               stage_icon_id: 377
@@ -4772,8 +5752,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 15
+            # Power Couplings
             - !Stage
-              guid: 12027
+              guid: 816
               name_id: 11972
               description_id: 11973
               stage_icon_id: 377
@@ -4791,8 +5772,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 19
+            # Repulsor Maze
             - !Stage
-              guid: 12028
+              guid: 817
               name_id: 11974
               description_id: 11975
               stage_icon_id: 377
@@ -4810,8 +5792,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 21
+            # The Plans
             - !Stage
-              guid: 12029
+              guid: 818
               name_id: 11976
               description_id: 11977
               stage_icon_id: 377
@@ -4829,8 +5812,9 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 15
+            # Chance of Survival
             - !Stage
-              guid: 12030
+              guid: 819
               name_id: 11978
               description_id: 11979
               stage_icon_id: 377
@@ -4848,6 +5832,7 @@ categories:
                 game_swf_name: r2.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 20
+            # Rocket Rescue
             - !StageGroup
               guid: 69
               name_id: 12200
@@ -4858,6 +5843,7 @@ categories:
               require_previous_completed: false
               stage_select_map_name: r2
               stages:
+                # Fright Flight
                 - !Stage
                   guid: 12031
                   name_id: 19202
@@ -4877,7 +5863,9 @@ categories:
                     game_swf_name: r2halloween.swf
                   zone_template_guid: 200
                   score_to_credits_expression: x / 6.62
-      - guid: 13000
+
+      # Republic Gunship
+      - guid: 1016
         name_id: 14051
         description_id: 14964
         members_only: true
@@ -4891,7 +5879,8 @@ categories:
         sort_order: 13000
         tutorial_swf: HowtoGunship.swf
         stage_group:
-          guid: 13000
+          # Republic Gunship
+          guid: 55
           name_id: 14051
           description_id: 14964
           icon_id: 887
@@ -4899,8 +5888,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Republic Gunship - Easy
             - !Stage
-              guid: 13001
+              guid: 623
               name_id: 14961
               description_id: 14964
               stage_icon_id: 1261
@@ -4918,8 +5908,9 @@ categories:
                 game_swf_name: RepublicGunship.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 115
+            # Republic Gunship - Medium
             - !Stage
-              guid: 13002
+              guid: 624
               name_id: 14962
               description_id: 14964
               stage_icon_id: 1263
@@ -4937,8 +5928,9 @@ categories:
                 game_swf_name: RepublicGunship.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 167
+            # Republic Gunship - Hard
             - !Stage
-              guid: 13003
+              guid: 625
               name_id: 14963
               description_id: 14964
               stage_icon_id: 1262
@@ -4956,7 +5948,30 @@ categories:
                 game_swf_name: RepublicGunship.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 201
-      - guid: 14000
+            # Destroy The Relay
+            - !Stage
+              guid: 2090
+              name_id: 32670
+              description_id: 32681
+              stage_icon_id: 2578
+              start_screen_icon_id: 1255
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: ''
+              display_stage_group_guid: 10001
+              minigame_type:
+                !Flash
+                game_swf_name: RepublicGunship_Geonosian.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 115
+
+      # Aquatic Assault
+      - guid: 1033
         name_id: 45898
         description_id: 45897
         members_only: true
@@ -4970,6 +5985,7 @@ categories:
         sort_order: 14000
         tutorial_swf: HowToAquaticAssault.swf
         stage_group:
+          # Aquatic Assault
           guid: 14000
           name_id: 45898
           description_id: 45897
@@ -4978,8 +5994,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Aquatic Assault - Easy
             - !Stage
-              guid: 14001
+              guid: 2127
               name_id: 45892
               description_id: 45897
               stage_icon_id: 5153
@@ -4997,8 +6014,9 @@ categories:
                 game_swf_name: AquaticAssault.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 102.5
+            # Aquatic Assault - Medium
             - !Stage
-              guid: 14002
+              guid: 2128
               name_id: 45893
               description_id: 45897
               stage_icon_id: 5154
@@ -5016,8 +6034,9 @@ categories:
                 game_swf_name: AquaticAssault.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 108
+            # Aquatic Assault - Hard
             - !Stage
-              guid: 14003
+              guid: 2129
               name_id: 45894
               description_id: 45897
               stage_icon_id: 5155
@@ -5035,8 +6054,10 @@ categories:
                 game_swf_name: AquaticAssault.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 168
+
+      # Blaster Training
       # Medium and Hard currently use Easy's ratio as a placeholder
-      - guid: 11
+      - guid: 1013
         name_id: 6237
         description_id: 9755
         members_only: true
@@ -5050,6 +6071,7 @@ categories:
         sort_order: 14000
         tutorial_swf: HowtoBlasterTraining.swf
         stage_group:
+          # Blaster Training
           guid: 11
           name_id: 6237
           description_id: 9755
@@ -5058,8 +6080,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Blaster Training - Easy
             - !Stage
-              guid: 15001
+              guid: 230
               name_id: 13950
               description_id: 9755
               stage_icon_id: 315
@@ -5077,8 +6100,9 @@ categories:
                 game_swf_name: BlasterTraining.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 180
+            # Blaster Training - Medium
             - !Stage
-              guid: 15002
+              guid: 220
               name_id: 13951
               description_id: 9755
               stage_icon_id: 317
@@ -5096,8 +6120,9 @@ categories:
                 game_swf_name: BlasterTraining.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 180
+            # Blaster Training - Hard
             - !Stage
-              guid: 15003
+              guid: 231
               name_id: 13952
               description_id: 9755
               stage_icon_id: 316
@@ -5115,7 +6140,9 @@ categories:
                 game_swf_name: BlasterTraining.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 180
-      - guid: 26000
+
+      # Turret Tactics
+      - guid: 1030
         name_id: 43960
         description_id: 44217
         members_only: false
@@ -5129,6 +6156,7 @@ categories:
         sort_order: 26000
         tutorial_swf: HowtoTurretTactics.swf
         stage_group:
+          # Turret Tactics
           guid: 26000
           name_id: 43960
           description_id: 44217
@@ -5137,8 +6165,9 @@ categories:
           members_only: false
           stage_select_map_name: ''
           stages:
+            # Turret Tactics
             - !Stage
-              guid: 26001
+              guid: 2122
               name_id: 43960
               description_id: 44217
               stage_icon_id: 4597
@@ -5156,12 +6185,14 @@ categories:
                 game_swf_name: TurretTactics.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 69.5
-  # Puzzle
+
+  # Puzzle Games
   - guid: 3
     name_id: 51598
     icon_id: 5809
     sort_order: 3
     portal_entries:
+      # Saber Strike
       - guid: 1004
         name_id: 7040
         description_id: 7041
@@ -5176,6 +6207,7 @@ categories:
         sort_order: 15000
         tutorial_swf: HowtoSaberStrike.swf
         stage_group:
+          # Saber Strike
           guid: 13
           name_id: 7040
           description_id: 7041
@@ -5184,8 +6216,9 @@ categories:
           members_only: false
           stage_select_map_name: saberStrike
           stages:
+            # Basic Formations
             - !Stage
-              guid: 27001
+              guid: 401
               name_id: 7270
               description_id: 9000
               stage_icon_id: 247
@@ -5204,8 +6237,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 129
               challenges:
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27100
+                - guid: 437
                   name_id: 9050
                   description_id: 9135
                   min_players: 1
@@ -5217,8 +6251,9 @@ categories:
                     saber_strike_stage_id: 54
                   zone_template_guid: 200
                   score_to_credits_expression: x / 129
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27101
+                - guid: 438
                   name_id: 9051
                   description_id: 9136
                   min_players: 1
@@ -5230,8 +6265,9 @@ categories:
                     saber_strike_stage_id: 55
                   zone_template_guid: 200
                   score_to_credits_expression: x / 129
+            # Bouncy Walls
             - !Stage
-              guid: 27002
+              guid: 402
               name_id: 7271
               description_id: 9001
               stage_icon_id: 248
@@ -5250,8 +6286,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 94
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27102
+                - guid: 439
                   name_id: 9052
                   description_id: 9137
                   min_players: 1
@@ -5263,8 +6300,9 @@ categories:
                     saber_strike_stage_id: 56
                   zone_template_guid: 200
                   score_to_credits_expression: x / 94
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27103
+                - guid: 440
                   name_id: 9053
                   description_id: 9138
                   min_players: 1
@@ -5276,8 +6314,9 @@ categories:
                     saber_strike_stage_id: 57
                   zone_template_guid: 200
                   score_to_credits_expression: x / 94
+            # Trick Shot
             - !Stage
-              guid: 27003
+              guid: 403
               name_id: 7272
               description_id: 9002
               stage_icon_id: 249
@@ -5296,8 +6335,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 160
               challenges:
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27104
+                - guid: 441
                   name_id: 9054
                   description_id: 9138
                   min_players: 1
@@ -5309,8 +6349,9 @@ categories:
                     saber_strike_stage_id: 58
                   zone_template_guid: 200
                   score_to_credits_expression: x / 160
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27105
+                - guid: 442
                   name_id: 9055
                   description_id: 9135
                   min_players: 1
@@ -5322,8 +6363,9 @@ categories:
                     saber_strike_stage_id: 59
                   zone_template_guid: 200
                   score_to_credits_expression: x / 160
+            # Shock Troops
             - !Stage
-              guid: 27004
+              guid: 404
               name_id: 7273
               description_id: 9003
               stage_icon_id: 250
@@ -5342,8 +6384,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 143
               challenges:
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27106
+                - guid: 443
                   name_id: 9056
                   description_id: 9136
                   min_players: 1
@@ -5355,8 +6398,9 @@ categories:
                     saber_strike_stage_id: 60
                   zone_template_guid: 200
                   score_to_credits_expression: x / 143
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27107
+                - guid: 444
                   name_id: 9057
                   description_id: 9138
                   min_players: 1
@@ -5368,8 +6412,9 @@ categories:
                     saber_strike_stage_id: 61
                   zone_template_guid: 200
                   score_to_credits_expression: x / 143
+            # Behind Cover
             - !Stage
-              guid: 27005
+              guid: 405
               name_id: 7274
               description_id: 9004
               stage_icon_id: 251
@@ -5388,8 +6433,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 157
               challenges:
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27108
+                - guid: 445
                   name_id: 9058
                   description_id: 9136
                   min_players: 1
@@ -5401,8 +6447,9 @@ categories:
                     saber_strike_stage_id: 62
                   zone_template_guid: 200
                   score_to_credits_expression: x / 157
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27109
+                - guid: 446
                   name_id: 9059
                   description_id: 9139
                   min_players: 1
@@ -5414,8 +6461,9 @@ categories:
                     saber_strike_stage_id: 63
                   zone_template_guid: 200
                   score_to_credits_expression: x / 157
+            # Bunker Busting
             - !Stage
-              guid: 27006
+              guid: 406
               name_id: 7275
               description_id: 9005
               stage_icon_id: 252
@@ -5434,8 +6482,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 120
               challenges:
+                # Mega Droids
                 # Use base level's credit ratio as a placeholder
-                - guid: 27110
+                - guid: 447
                   name_id: 9060
                   description_id: 9140
                   min_players: 1
@@ -5447,8 +6496,9 @@ categories:
                     saber_strike_stage_id: 64
                   zone_template_guid: 200
                   score_to_credits_expression: x / 120
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27111
+                - guid: 448
                   name_id: 9061
                   description_id: 9135
                   min_players: 1
@@ -5460,8 +6510,9 @@ categories:
                     saber_strike_stage_id: 65
                   zone_template_guid: 200
                   score_to_credits_expression: x / 120
+            # Fireworks Display
             - !Stage
-              guid: 27007
+              guid: 407
               name_id: 7276
               description_id: 9006
               stage_icon_id: 253
@@ -5480,8 +6531,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 244
               challenges:
+                # Mega Droids
                 # Use base level's credit ratio as a placeholder
-                - guid: 27112
+                - guid: 449
                   name_id: 9062
                   description_id: 9140
                   min_players: 1
@@ -5493,8 +6545,9 @@ categories:
                     saber_strike_stage_id: 66
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27113
+                - guid: 450
                   name_id: 9063
                   description_id: 9138
                   min_players: 1
@@ -5506,8 +6559,9 @@ categories:
                     saber_strike_stage_id: 67
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
+            # Domino Droids
             - !Stage
-              guid: 27008
+              guid: 408
               name_id: 7277
               description_id: 9007
               stage_icon_id: 254
@@ -5526,8 +6580,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 1148
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27114
+                - guid: 451
                   name_id: 9064
                   description_id: 9139
                   min_players: 1
@@ -5539,8 +6594,9 @@ categories:
                     saber_strike_stage_id: 68
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1148
+                # Hard Mode
                 # Use base level's credit ratio as a placeholder
-                - guid: 27115
+                - guid: 452
                   name_id: 9065
                   description_id: 9142
                   min_players: 1
@@ -5552,8 +6608,9 @@ categories:
                     saber_strike_stage_id: 69
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1148
+            # Chain Lightning
             - !Stage
-              guid: 27009
+              guid: 409
               name_id: 8421
               description_id: 9008
               stage_icon_id: 255
@@ -5572,8 +6629,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 1014
               challenges:
+                # Hard Mode
                 # Use base level's credit ratio as a placeholder
-                - guid: 27116
+                - guid: 453
                   name_id: 9066
                   description_id: 9142
                   min_players: 1
@@ -5585,8 +6643,9 @@ categories:
                     saber_strike_stage_id: 134
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1014
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27117
+                - guid: 454
                   name_id: 9067
                   description_id: 9136
                   min_players: 1
@@ -5598,8 +6657,9 @@ categories:
                     saber_strike_stage_id: 135
                   zone_template_guid: 200
                   score_to_credits_expression: x / 1014
+            # Rogue Turret
             - !Stage
-              guid: 27010
+              guid: 410
               name_id: 7278
               description_id: 9009
               stage_icon_id: 256
@@ -5618,8 +6678,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 114
               challenges:
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27118
+                - guid: 456
                   name_id: 9068
                   description_id: 9136
                   min_players: 1
@@ -5631,8 +6692,9 @@ categories:
                     saber_strike_stage_id: 71
                   zone_template_guid: 200
                   score_to_credits_expression: x / 114
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27119
+                - guid: 455
                   name_id: 9069
                   description_id: 9137
                   min_players: 1
@@ -5644,8 +6706,9 @@ categories:
                     saber_strike_stage_id: 72
                   zone_template_guid: 200
                   score_to_credits_expression: x / 114
+            # Reprogramming
             - !Stage
-              guid: 27011
+              guid: 411
               name_id: 7279
               description_id: 9010
               stage_icon_id: 257
@@ -5664,8 +6727,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 93
               challenges:
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27120
+                - guid: 457
                   name_id: 9070
                   description_id: 9135
                   min_players: 1
@@ -5677,8 +6741,9 @@ categories:
                     saber_strike_stage_id: 73
                   zone_template_guid: 200
                   score_to_credits_expression: x / 93
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27121
+                - guid: 458
                   name_id: 9071
                   description_id: 9138
                   min_players: 1
@@ -5690,8 +6755,9 @@ categories:
                     saber_strike_stage_id: 74
                   zone_template_guid: 200
                   score_to_credits_expression: x / 93
+            # Force Field Fort
             - !Stage
-              guid: 27012
+              guid: 412
               name_id: 7280
               description_id: 9011
               stage_icon_id: 258
@@ -5710,8 +6776,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 170
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27122
+                - guid: 459
                   name_id: 9072
                   description_id: 9139
                   min_players: 1
@@ -5723,8 +6790,9 @@ categories:
                     saber_strike_stage_id: 75
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27123
+                - guid: 460
                   name_id: 9073
                   description_id: 9135
                   min_players: 1
@@ -5736,8 +6804,9 @@ categories:
                     saber_strike_stage_id: 76
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
+            # Force Field Frenzy
             - !Stage
-              guid: 27013
+              guid: 413
               name_id: 7281
               description_id: 9012
               stage_icon_id: 259
@@ -5756,8 +6825,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27124
+                - guid: 461
                   name_id: 9074
                   description_id: 9137
                   min_players: 1
@@ -5769,8 +6839,9 @@ categories:
                     saber_strike_stage_id: 77
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27125
+                - guid: 462
                   name_id: 9075
                   description_id: 9138
                   min_players: 1
@@ -5782,8 +6853,9 @@ categories:
                     saber_strike_stage_id: 78
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+            # Magnetic Appeal
             - !Stage
-              guid: 27014
+              guid: 414
               name_id: 7282
               description_id: 9013
               stage_icon_id: 260
@@ -5802,8 +6874,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 147
               challenges:
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27126
+                - guid: 463
                   name_id: 9076
                   description_id: 9135
                   min_players: 1
@@ -5815,8 +6888,9 @@ categories:
                     saber_strike_stage_id: 79
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27127
+                - guid: 464
                   name_id: 9077
                   description_id: 9139
                   min_players: 1
@@ -5828,8 +6902,9 @@ categories:
                     saber_strike_stage_id: 80
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
+            # Bunker Blasting
             - !Stage
-              guid: 27015
+              guid: 415
               name_id: 7283
               description_id: 9014
               stage_icon_id: 261
@@ -5848,8 +6923,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 237
               challenges:
+                # No Power-ups
                 # Use base level's credit ratio as a placeholder
-                - guid: 27128
+                - guid: 465
                   name_id: 9078
                   description_id: 9141
                   min_players: 1
@@ -5861,8 +6937,9 @@ categories:
                     saber_strike_stage_id: 81
                   zone_template_guid: 200
                   score_to_credits_expression: x / 237
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27129
+                - guid: 466
                   name_id: 9079
                   description_id: 9139
                   min_players: 1
@@ -5874,8 +6951,9 @@ categories:
                     saber_strike_stage_id: 82
                   zone_template_guid: 200
                   score_to_credits_expression: x / 237
+            # Garbage Day
             - !Stage
-              guid: 27016
+              guid: 416
               name_id: 7284
               description_id: 9015
               stage_icon_id: 262
@@ -5894,8 +6972,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27130
+                - guid: 467
                   name_id: 9080
                   description_id: 9135
                   min_players: 1
@@ -5907,8 +6986,9 @@ categories:
                     saber_strike_stage_id: 83
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27131
+                - guid: 468
                   name_id: 9081
                   description_id: 9137
                   min_players: 1
@@ -5920,8 +7000,9 @@ categories:
                     saber_strike_stage_id: 84
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+            # Recycling with Power-Ups
             - !Stage
-              guid: 27017
+              guid: 417
               name_id: 7285
               description_id: 9016
               stage_icon_id: 263
@@ -5940,8 +7021,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 141
               challenges:
+                # No Power-ups
                 # Use base level's credit ratio as a placeholder
-                - guid: 27132
+                - guid: 469
                   name_id: 9082
                   description_id: 9141
                   min_players: 1
@@ -5953,8 +7035,9 @@ categories:
                     saber_strike_stage_id: 85
                   zone_template_guid: 200
                   score_to_credits_expression: x / 141
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27133
+                - guid: 470
                   name_id: 9083
                   description_id: 9138
                   min_players: 1
@@ -5966,8 +7049,9 @@ categories:
                     saber_strike_stage_id: 86
                   zone_template_guid: 200
                   score_to_credits_expression: x / 141
+            # Chain of Command
             - !Stage
-              guid: 27018
+              guid: 418
               name_id: 8422
               description_id: 9017
               stage_icon_id: 264
@@ -5986,8 +7070,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 159
               challenges:
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27134
+                - guid: 471
                   name_id: 9084
                   description_id: 9136
                   min_players: 1
@@ -5999,8 +7084,9 @@ categories:
                     saber_strike_stage_id: 137
                   zone_template_guid: 200
                   score_to_credits_expression: x / 159
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27135
+                - guid: 472
                   name_id: 9085
                   description_id: 9137
                   min_players: 1
@@ -6012,8 +7098,9 @@ categories:
                     saber_strike_stage_id: 138
                   zone_template_guid: 200
                   score_to_credits_expression: x / 159
+            # Droideka
             - !Stage
-              guid: 27019
+              guid: 419
               name_id: 7286
               description_id: 9018
               stage_icon_id: 265
@@ -6032,8 +7119,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 140
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27136
+                - guid: 473
                   name_id: 9086
                   description_id: 9139
                   min_players: 1
@@ -6044,9 +7132,10 @@ categories:
                     !SaberStrike
                     saber_strike_stage_id: 87
                   zone_template_guid: 200
-                  score_to_credits_expression: x / 140
+                  score_to_credits_expression: x / 140\
+                # Magnetized
                 # Use base level's credit ratio as a placeholder
-                - guid: 27137
+                - guid: 474
                   name_id: 9087
                   description_id: 9143
                   min_players: 1
@@ -6058,8 +7147,9 @@ categories:
                     saber_strike_stage_id: 88
                   zone_template_guid: 200
                   score_to_credits_expression: x / 140
+            # Gorgger
             - !Stage
-              guid: 27020
+              guid: 420
               name_id: 7287
               description_id: 9019
               stage_icon_id: 266
@@ -6078,8 +7168,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 191
               challenges:
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27138
+                - guid: 475
                   name_id: 9088
                   description_id: 9138
                   min_players: 1
@@ -6091,8 +7182,9 @@ categories:
                     saber_strike_stage_id: 89
                   zone_template_guid: 200
                   score_to_credits_expression: x / 191
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27139
+                - guid: 476
                   name_id: 9089
                   description_id: 9137
                   min_players: 1
@@ -6104,8 +7196,9 @@ categories:
                     saber_strike_stage_id: 90
                   zone_template_guid: 200
                   score_to_credits_expression: x / 191
+            # Jedi Mind Tricks
             - !Stage
-              guid: 27021
+              guid: 421
               name_id: 7288
               description_id: 9020
               stage_icon_id: 267
@@ -6124,8 +7217,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 116
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27140
+                - guid: 477
                   name_id: 9090
                   description_id: 9137
                   min_players: 1
@@ -6137,8 +7231,9 @@ categories:
                     saber_strike_stage_id: 91
                   zone_template_guid: 200
                   score_to_credits_expression: x / 116
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27141
+                - guid: 478
                   name_id: 9091
                   description_id: 9139
                   min_players: 1
@@ -6150,8 +7245,9 @@ categories:
                     saber_strike_stage_id: 92
                   zone_template_guid: 200
                   score_to_credits_expression: x / 116
+            # Friendly Fire
             - !Stage
-              guid: 27022
+              guid: 422
               name_id: 7289
               description_id: 9021
               stage_icon_id: 268
@@ -6170,8 +7266,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 289
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27142
+                - guid: 479
                   name_id: 9092
                   description_id: 9137
                   min_players: 1
@@ -6183,8 +7280,9 @@ categories:
                     saber_strike_stage_id: 93
                   zone_template_guid: 200
                   score_to_credits_expression: x / 289
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27143
+                - guid: 480
                   name_id: 9093
                   description_id: 9136
                   min_players: 1
@@ -6196,8 +7294,9 @@ categories:
                     saber_strike_stage_id: 94
                   zone_template_guid: 200
                   score_to_credits_expression: x / 289
+            # Heavy Security
             - !Stage
-              guid: 27023
+              guid: 423
               name_id: 7290
               description_id: 9022
               stage_icon_id: 269
@@ -6216,8 +7315,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 214
               challenges:
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27144
+                - guid: 481
                   name_id: 9094
                   description_id: 9135
                   min_players: 1
@@ -6229,8 +7329,9 @@ categories:
                     saber_strike_stage_id: 95
                   zone_template_guid: 200
                   score_to_credits_expression: x / 214
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27145
+                - guid: 482
                   name_id: 9095
                   description_id: 9139
                   min_players: 1
@@ -6242,8 +7343,9 @@ categories:
                     saber_strike_stage_id: 96
                   zone_template_guid: 200
                   score_to_credits_expression: x / 214
+            # Gorgger II
             - !Stage
-              guid: 27024
+              guid: 424
               name_id: 7291
               description_id: 9023
               stage_icon_id: 270
@@ -6262,8 +7364,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 594
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27146
+                - guid: 483
                   name_id: 9096
                   description_id: 9137
                   min_players: 1
@@ -6275,8 +7378,9 @@ categories:
                     saber_strike_stage_id: 97
                   zone_template_guid: 200
                   score_to_credits_expression: x / 594
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27147
+                - guid: 484
                   name_id: 9097
                   description_id: 9138
                   min_players: 1
@@ -6288,8 +7392,9 @@ categories:
                     saber_strike_stage_id: 98
                   zone_template_guid: 200
                   score_to_credits_expression: x / 594
+            # Force Field Face-Off
             - !Stage
-              guid: 27025
+              guid: 425
               name_id: 7292
               description_id: 9024
               stage_icon_id: 271
@@ -6308,8 +7413,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 432
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27148
+                - guid: 485
                   name_id: 9098
                   description_id: 9139
                   min_players: 1
@@ -6321,8 +7427,9 @@ categories:
                     saber_strike_stage_id: 99
                   zone_template_guid: 200
                   score_to_credits_expression: x / 432
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27149
+                - guid: 486
                   name_id: 9099
                   description_id: 9137
                   min_players: 1
@@ -6334,8 +7441,9 @@ categories:
                     saber_strike_stage_id: 100
                   zone_template_guid: 200
                   score_to_credits_expression: x / 432
+            # Tricky Maneuvers
             - !Stage
-              guid: 27026
+              guid: 426
               name_id: 7293
               description_id: 9025
               stage_icon_id: 272
@@ -6354,8 +7462,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 144
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27150
+                - guid: 487
                   name_id: 9100
                   description_id: 9137
                   min_players: 1
@@ -6367,8 +7476,9 @@ categories:
                     saber_strike_stage_id: 101
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27151
+                - guid: 488
                   name_id: 9101
                   description_id: 9138
                   min_players: 1
@@ -6380,8 +7490,9 @@ categories:
                     saber_strike_stage_id: 102
                   zone_template_guid: 200
                   score_to_credits_expression: x / 144
+            # Womptrap
             - !Stage
-              guid: 27027
+              guid: 427
               name_id: 8423
               description_id: 9026
               stage_icon_id: 273
@@ -6400,8 +7511,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 173
               challenges:
+                # Sudden Death
                 # Use base level's credit ratio as a placeholder
-                - guid: 27152
+                - guid: 489
                   name_id: 9102
                   description_id: 9136
                   min_players: 1
@@ -6413,8 +7525,9 @@ categories:
                     saber_strike_stage_id: 103
                   zone_template_guid: 200
                   score_to_credits_expression: x / 173
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27153
+                - guid: 490
                   name_id: 9103
                   description_id: 9139
                   min_players: 1
@@ -6426,8 +7539,9 @@ categories:
                     saber_strike_stage_id: 104
                   zone_template_guid: 200
                   score_to_credits_expression: x / 173
+            # Plan of Attack
             - !Stage
-              guid: 27028
+              guid: 428
               name_id: 7294
               description_id: 9027
               stage_icon_id: 274
@@ -6446,8 +7560,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 110
               challenges:
+                # Mega Droids
                 # Use base level's credit ratio as a placeholder
-                - guid: 27154
+                - guid: 491
                   name_id: 9104
                   description_id: 9140
                   min_players: 1
@@ -6459,8 +7574,9 @@ categories:
                     saber_strike_stage_id: 105
                   zone_template_guid: 200
                   score_to_credits_expression: x / 110
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27155
+                - guid: 492
                   name_id: 9105
                   description_id: 9138
                   min_players: 1
@@ -6472,8 +7588,9 @@ categories:
                     saber_strike_stage_id: 106
                   zone_template_guid: 200
                   score_to_credits_expression: x / 110
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27156
+                - guid: 493
                   name_id: 9106
                   description_id: 9137
                   min_players: 1
@@ -6485,8 +7602,9 @@ categories:
                     saber_strike_stage_id: 107
                   zone_template_guid: 200
                   score_to_credits_expression: x / 110
+            # Hazardous Halls
             - !Stage
-              guid: 27029
+              guid: 429
               name_id: 7295
               description_id: 9028
               stage_icon_id: 275
@@ -6505,8 +7623,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 153
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27157
+                - guid: 494
                   name_id: 9107
                   description_id: 9137
                   min_players: 1
@@ -6518,8 +7637,9 @@ categories:
                     saber_strike_stage_id: 108
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27158
+                - guid: 495
                   name_id: 9108
                   description_id: 9135
                   min_players: 1
@@ -6531,8 +7651,9 @@ categories:
                     saber_strike_stage_id: 109
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27159
+                - guid: 496
                   name_id: 9109
                   description_id: 9139
                   min_players: 1
@@ -6544,8 +7665,9 @@ categories:
                     saber_strike_stage_id: 110
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
+            # Magnet Madness
             - !Stage
-              guid: 27030
+              guid: 430
               name_id: 7296
               description_id: 9029
               stage_icon_id: 276
@@ -6564,8 +7686,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 244
               challenges:
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27160
+                - guid: 497
                   name_id: 9110
                   description_id: 9138
                   min_players: 1
@@ -6577,8 +7700,9 @@ categories:
                     saber_strike_stage_id: 111
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27161
+                - guid: 498
                   name_id: 9111
                   description_id: 9139
                   min_players: 1
@@ -6590,8 +7714,9 @@ categories:
                     saber_strike_stage_id: 112
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
+                # Magnetized
                 # Use base level's credit ratio as a placeholder
-                - guid: 27162
+                - guid: 499
                   name_id: 9112
                   description_id: 9143
                   min_players: 1
@@ -6603,8 +7728,9 @@ categories:
                     saber_strike_stage_id: 113
                   zone_template_guid: 200
                   score_to_credits_expression: x / 244
+            # Pipe Cleaner
             - !Stage
-              guid: 27031
+              guid: 431
               name_id: 7297
               description_id: 9030
               stage_icon_id: 277
@@ -6623,8 +7749,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 221
               challenges:
+                # Hard Mode
                 # Use base level's credit ratio as a placeholder
-                - guid: 27163
+                - guid: 500
                   name_id: 9128
                   description_id: 9142
                   min_players: 1
@@ -6636,8 +7763,9 @@ categories:
                     saber_strike_stage_id: 142
                   zone_template_guid: 200
                   score_to_credits_expression: x / 221
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27164
+                - guid: 501
                   name_id: 9114
                   description_id: 9139
                   min_players: 1
@@ -6649,8 +7777,9 @@ categories:
                     saber_strike_stage_id: 143
                   zone_template_guid: 200
                   score_to_credits_expression: x / 221
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27165
+                - guid: 502
                   name_id: 9130
                   description_id: 9137
                   min_players: 1
@@ -6662,8 +7791,9 @@ categories:
                     saber_strike_stage_id: 144
                   zone_template_guid: 200
                   score_to_credits_expression: x / 221
+            # Interlace Droids
             - !Stage
-              guid: 27032
+              guid: 432
               name_id: 7298
               description_id: 9032
               stage_icon_id: 278
@@ -6682,8 +7812,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 170
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27166
+                - guid: 506
                   name_id: 9119
                   description_id: 9137
                   min_players: 1
@@ -6695,8 +7826,9 @@ categories:
                     saber_strike_stage_id: 120
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
+                # Magnetized
                 # Use base level's credit ratio as a placeholder
-                - guid: 27167
+                - guid: 507
                   name_id: 9120
                   description_id: 9143
                   min_players: 1
@@ -6708,8 +7840,9 @@ categories:
                     saber_strike_stage_id: 121
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27168
+                - guid: 508
                   name_id: 9121
                   description_id: 9139
                   min_players: 1
@@ -6721,8 +7854,9 @@ categories:
                     saber_strike_stage_id: 122
                   zone_template_guid: 200
                   score_to_credits_expression: x / 170
+            # Clanker Covers
             - !Stage
-              guid: 27033
+              guid: 433
               name_id: 7299
               description_id: 9031
               stage_icon_id: 279
@@ -6741,8 +7875,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 147
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27169
+                - guid: 503
                   name_id: 9116
                   description_id: 9139
                   min_players: 1
@@ -6754,8 +7889,9 @@ categories:
                     saber_strike_stage_id: 117
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
+                # Annihilation
                 # Use base level's credit ratio as a placeholder
-                - guid: 27170
+                - guid: 504
                   name_id: 9117
                   description_id: 9135
                   min_players: 1
@@ -6767,8 +7903,9 @@ categories:
                     saber_strike_stage_id: 118
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27171
+                - guid: 505
                   name_id: 9118
                   description_id: 9138
                   min_players: 1
@@ -6780,8 +7917,9 @@ categories:
                     saber_strike_stage_id: 119
                   zone_template_guid: 200
                   score_to_credits_expression: x / 147
+            # Order of Operations
             - !Stage
-              guid: 27034
+              guid: 434
               name_id: 7300
               description_id: 9033
               stage_icon_id: 280
@@ -6800,8 +7938,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 126
               challenges:
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27172
+                - guid: 509
                   name_id: 9122
                   description_id: 9137
                   min_players: 1
@@ -6813,8 +7952,9 @@ categories:
                     saber_strike_stage_id: 123
                   zone_template_guid: 200
                   score_to_credits_expression: x / 126
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27173
+                - guid: 510
                   name_id: 9123
                   description_id: 9138
                   min_players: 1
@@ -6826,8 +7966,9 @@ categories:
                     saber_strike_stage_id: 124
                   zone_template_guid: 200
                   score_to_credits_expression: x / 126
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27174
+                - guid: 511
                   name_id: 9124
                   description_id: 9139
                   min_players: 1
@@ -6839,8 +7980,9 @@ categories:
                     saber_strike_stage_id: 125
                   zone_template_guid: 200
                   score_to_credits_expression: x / 126
+            # H Marks the Spot
             - !Stage
-              guid: 27035
+              guid: 435
               name_id: 7301
               description_id: 9034
               stage_icon_id: 281
@@ -6859,8 +8001,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 152
               challenges:
+                # Padawan
                 # Use base level's credit ratio as a placeholder
-                - guid: 27175
+                - guid: 512
                   name_id: 9125
                   description_id: 9139
                   min_players: 1
@@ -6872,8 +8015,9 @@ categories:
                     saber_strike_stage_id: 126
                   zone_template_guid: 200
                   score_to_credits_expression: x / 152
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27176
+                - guid: 513
                   name_id: 9126
                   description_id: 9137
                   min_players: 1
@@ -6885,8 +8029,9 @@ categories:
                     saber_strike_stage_id: 127
                   zone_template_guid: 200
                   score_to_credits_expression: x / 152
+                # Magnetized
                 # Use base level's credit ratio as a placeholder
-                - guid: 27177
+                - guid: 514
                   name_id: 9127
                   description_id: 9143
                   min_players: 1
@@ -6898,8 +8043,9 @@ categories:
                     saber_strike_stage_id: 128
                   zone_template_guid: 200
                   score_to_credits_expression: x / 152
+            # The Big Finale
             - !Stage
-              guid: 27036
+              guid: 436
               name_id: 8424
               description_id: 9035
               stage_icon_id: 282
@@ -6918,8 +8064,9 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 153
               challenges:
+                # Hard Mode
                 # Use base level's credit ratio as a placeholder
-                - guid: 27178
+                - guid: 515
                   name_id: 9128
                   description_id: 9142
                   min_players: 1
@@ -6931,8 +8078,9 @@ categories:
                     saber_strike_stage_id: 129
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
+                # High Score
                 # Use base level's credit ratio as a placeholder
-                - guid: 27179
+                - guid: 516
                   name_id: 9129
                   description_id: 9138
                   min_players: 1
@@ -6944,8 +8092,9 @@ categories:
                     saber_strike_stage_id: 130
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
+                # Against the Clock
                 # Use base level's credit ratio as a placeholder
-                - guid: 27180
+                - guid: 517
                   name_id: 9130
                   description_id: 9137
                   min_players: 1
@@ -6957,7 +8106,114 @@ categories:
                     saber_strike_stage_id: 131
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-      - guid: 16000
+            # Weapon of Choice
+            - !Stage
+              guid: 520
+              name_id: 18150
+              description_id: 18157
+              stage_icon_id: 2579
+              start_screen_icon_id: 2573
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4463
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis5
+              display_stage_group_guid: 10004
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 151
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Forced Entry
+            - !Stage
+              guid: 521
+              name_id: 18151
+              description_id: 18158
+              stage_icon_id: 2580
+              start_screen_icon_id: 2574
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4464
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis6
+              display_stage_group_guid: 10005
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 152
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Overkill
+            - !Stage
+              guid: 522
+              name_id: 18152
+              description_id: 18159
+              stage_icon_id: 2581
+              start_screen_icon_id: 2575
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4465
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis7
+              display_stage_group_guid: 10006
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 153
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # B2 Breakthrough
+            - !Stage
+              guid: 523
+              name_id: 18153
+              description_id: 18160
+              stage_icon_id: 2582
+              start_screen_icon_id: 2576
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis8
+              display_stage_group_guid: 10007
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 154
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Timing Belt
+            - !Stage
+              guid: 524
+              name_id: 18154
+              description_id: 18161
+              stage_icon_id: 2583
+              start_screen_icon_id: 2577
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis9
+              display_stage_group_guid: 10008
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 155
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+
+      # Crystal Attunement
+      - guid: 1012
         name_id: 5555
         description_id: 9757
         members_only: false
@@ -6971,7 +8227,8 @@ categories:
         sort_order: 16000
         tutorial_swf: HowtoCrystalAttunement.swf
         stage_group:
-          guid: 16000
+          # Crystal Attunement
+          guid: 9
           name_id: 5555
           description_id: 9757
           icon_id: 529
@@ -6979,8 +8236,9 @@ categories:
           members_only: false
           stage_select_map_name: RepublicGunship
           stages:
+            # Crystal Attunement - Easy
             - !Stage
-              guid: 16001
+              guid: 550
               name_id: 13953
               description_id: 9757
               stage_icon_id: 362
@@ -6998,8 +8256,9 @@ categories:
                 game_swf_name: CrystalAttunement.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 153
+            # Crystal Attunement - Medium
             - !Stage
-              guid: 16002
+              guid: 551
               name_id: 13954
               description_id: 9757
               stage_icon_id: 364
@@ -7017,8 +8276,9 @@ categories:
                 game_swf_name: CrystalAttunement.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 153
+            # Crystal Attunement - Hard
             - !Stage
-              guid: 16003
+              guid: 552
               name_id: 13955
               description_id: 9757
               stage_icon_id: 363
@@ -7036,7 +8296,9 @@ categories:
                 game_swf_name: CrystalAttunement.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 153
-      - guid: 8
+
+      # Infiltration
+      - guid: 1008
         name_id: 5557
         description_id: 14128
         members_only: false
@@ -7050,6 +8312,7 @@ categories:
         sort_order: 17000
         tutorial_swf: HowtoInfiltration.swf
         stage_group:
+          # Infiltration
           # Levels 23-28 use level 22's credit ratio as a placeholder
           guid: 8
           name_id: 5557
@@ -7059,8 +8322,9 @@ categories:
           members_only: false
           stage_select_map_name: infiltration
           stages:
+            # The Magic Number
             - !Stage
-              guid: 17001
+              guid: 700
               name_id: 14100
               description_id: 14128
               stage_icon_id: 332
@@ -7078,8 +8342,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 40
+            # The More the Merrier
             - !Stage
-              guid: 17002
+              guid: 701
               name_id: 14101
               description_id: 14129
               stage_icon_id: 333
@@ -7097,8 +8362,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 65
+            # The Rest Will Follow
             - !Stage
-              guid: 17003
+              guid: 702
               name_id: 14102
               description_id: 14130
               stage_icon_id: 334
@@ -7116,8 +8382,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 71
+            # Symmetry Says
             - !Stage
-              guid: 17004
+              guid: 703
               name_id: 14103
               description_id: 14131
               stage_icon_id: 335
@@ -7135,8 +8402,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 57
+            # Cracked Orb Defense
             - !Stage
-              guid: 17005
+              guid: 704
               name_id: 14104
               description_id: 14132
               stage_icon_id: 336
@@ -7154,8 +8422,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 70
+            # The More You Know
             - !Stage
-              guid: 17006
+              guid: 705
               name_id: 14105
               description_id: 14133
               stage_icon_id: 337
@@ -7173,8 +8442,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 76
+            # The Weakness
             - !Stage
-              guid: 17007
+              guid: 706
               name_id: 14106
               description_id: 14134
               stage_icon_id: 338
@@ -7192,8 +8462,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 120
+            # Topped By Malfunction
             - !Stage
-              guid: 17008
+              guid: 707
               name_id: 14107
               description_id: 14135
               stage_icon_id: 339
@@ -7211,8 +8482,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 71
+            # It Takes Two
             - !Stage
-              guid: 17009
+              guid: 708
               name_id: 14108
               description_id: 14136
               stage_icon_id: 340
@@ -7230,8 +8502,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 140
+            # Dodging Destruction
             - !Stage
-              guid: 17010
+              guid: 709
               name_id: 14109
               description_id: 14137
               stage_icon_id: 341
@@ -7249,8 +8522,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 76
+            # Raze the Roof
             - !Stage
-              guid: 17011
+              guid: 710
               name_id: 14110
               description_id: 14138
               stage_icon_id: 342
@@ -7268,8 +8542,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 114
+            # Trifecta
             - !Stage
-              guid: 17012
+              guid: 711
               name_id: 14111
               description_id: 14139
               stage_icon_id: 343
@@ -7287,8 +8562,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 267
+            # The Catch
             - !Stage
-              guid: 17013
+              guid: 712
               name_id: 14112
               description_id: 14140
               stage_icon_id: 344
@@ -7306,8 +8582,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 87
+            # Natural Selection
             - !Stage
-              guid: 17014
+              guid: 713
               name_id: 14113
               description_id: 14141
               stage_icon_id: 345
@@ -7325,8 +8602,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 160
+            # Hammers and Anvils
             - !Stage
-              guid: 17015
+              guid: 714
               name_id: 14114
               description_id: 14142
               stage_icon_id: 346
@@ -7344,8 +8622,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 120
+            # Hooks
             - !Stage
-              guid: 17016
+              guid: 715
               name_id: 14115
               description_id: 14143
               stage_icon_id: 347
@@ -7363,8 +8642,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 159
+            # Around the Spokes
             - !Stage
-              guid: 17017
+              guid: 716
               name_id: 14116
               description_id: 14144
               stage_icon_id: 348
@@ -7382,8 +8662,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 90
+            # The Pendulum
             - !Stage
-              guid: 17018
+              guid: 717
               name_id: 14117
               description_id: 14145
               stage_icon_id: 349
@@ -7401,8 +8682,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 94
+            # Secondary Defense
             - !Stage
-              guid: 17019
+              guid: 718
               name_id: 14118
               description_id: 14146
               stage_icon_id: 350
@@ -7420,8 +8702,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 85
+            #Geyser Gears
             - !Stage
-              guid: 17020
+              guid: 719
               name_id: 14119
               description_id: 14147
               stage_icon_id: 351
@@ -7439,8 +8722,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 90.5
+            # Spin to Win
             - !Stage
-              guid: 17021
+              guid: 720
               name_id: 14120
               description_id: 14148
               stage_icon_id: 352
@@ -7458,8 +8742,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 125
+            # Troubling Torton
             - !Stage
-              guid: 17022
+              guid: 721
               name_id: 14121
               description_id: 14149
               stage_icon_id: 353
@@ -7477,8 +8762,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # Boxed Out
             - !Stage
-              guid: 17023
+              guid: 722
               name_id: 14122
               description_id: 14150
               stage_icon_id: 354
@@ -7496,8 +8782,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # At the Brink
             - !Stage
-              guid: 17024
+              guid: 723
               name_id: 14123
               description_id: 14151
               stage_icon_id: 355
@@ -7515,8 +8802,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # Poppy Panic
             - !Stage
-              guid: 17025
+              guid: 724
               name_id: 14124
               description_id: 14152
               stage_icon_id: 356
@@ -7534,8 +8822,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # Freefall
             - !Stage
-              guid: 17026
+              guid: 725
               name_id: 14125
               description_id: 14153
               stage_icon_id: 357
@@ -7553,8 +8842,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # Careful Planning
             - !Stage
-              guid: 17027
+              guid: 726
               name_id: 14126
               description_id: 14154
               stage_icon_id: 358
@@ -7572,8 +8862,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
+            # The Windmill
             - !Stage
-              guid: 17028
+              guid: 727
               name_id: 14127
               description_id: 14155
               stage_icon_id: 359
@@ -7591,7 +8882,9 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 91
-      - guid: 10
+
+      # Force Perception
+      - guid: 1009
         name_id: 5559
         description_id: 9756
         members_only: true
@@ -7604,6 +8897,7 @@ categories:
         is_game_of_day: false
         sort_order: 18000
         tutorial_swf: HowtoForcePerception.swf
+        # Force Perception
         stage_group:
           guid: 10
           name_id: 5559
@@ -7613,8 +8907,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Force Perception - Easy
             - !Stage
-              guid: 18001
+              guid: 201
               name_id: 13959
               description_id: 9756
               stage_icon_id: 321
@@ -7632,8 +8927,9 @@ categories:
                 game_swf_name: ForcePerception.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 437
+            # Force Perception - Medium
             - !Stage
-              guid: 18002
+              guid: 202
               name_id: 13960
               description_id: 9756
               stage_icon_id: 323
@@ -7651,8 +8947,9 @@ categories:
                 game_swf_name: ForcePerception.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 439
+            # Force Perception - Hard
             - !Stage
-              guid: 18003
+              guid: 200
               name_id: 13961
               description_id: 9756
               stage_icon_id: 322
@@ -7670,7 +8967,9 @@ categories:
                 game_swf_name: ForcePerception.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 446
-      - guid: 15
+
+      # Droid Programming
+      - guid: 1007
         name_id: 7133
         description_id: 11468
         members_only: false
@@ -7684,6 +8983,7 @@ categories:
         sort_order: 19000
         tutorial_swf: HowtoDroidProgramming.swf
         stage_group:
+          # Droid Programming
           # Levels 26-30 use level 25's credit ratio as a placeholder
           guid: 15
           name_id: 7133
@@ -7693,8 +8993,9 @@ categories:
           members_only: false
           stage_select_map_name: DroidProgramming
           stages:
+            # Programming 101
             - !Stage
-              guid: 19001
+              guid: 640
               name_id: 11469
               description_id: 11468
               stage_icon_id: 318
@@ -7712,8 +9013,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 243
+            # Code Breakers
             - !Stage
-              guid: 19002
+              guid: 641
               name_id: 11470
               description_id: 11471
               stage_icon_id: 318
@@ -7731,8 +9033,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 225
+            # Scan Row
             - !Stage
-              guid: 19003
+              guid: 642
               name_id: 11472
               description_id: 11473
               stage_icon_id: 318
@@ -7750,8 +9053,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 215
+            # Backup
             - !Stage
-              guid: 19004
+              guid: 643
               name_id: 11474
               description_id: 11475
               stage_icon_id: 318
@@ -7769,8 +9073,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 224
+            # Diagnostics
             - !Stage
-              guid: 19005
+              guid: 644
               name_id: 11476
               description_id: 11477
               stage_icon_id: 318
@@ -7788,8 +9093,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 218
+            # Formatting Speed
             - !Stage
-              guid: 19006
+              guid: 645
               name_id: 11182
               description_id: 11183
               stage_icon_id: 318
@@ -7807,8 +9113,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 217
+            # Four Way Clear
             - !Stage
-              guid: 19007
+              guid: 646
               name_id: 11478
               description_id: 11479
               stage_icon_id: 318
@@ -7826,8 +9133,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 214
+            # System Check
             - !Stage
-              guid: 19008
+              guid: 647
               name_id: 11480
               description_id: 11481
               stage_icon_id: 318
@@ -7845,8 +9153,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 220
+            # Bad Memory
             - !Stage
-              guid: 19009
+              guid: 648
               name_id: 11482
               description_id: 11483
               stage_icon_id: 318
@@ -7864,8 +9173,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 217
+            # Super Wipe
             - !Stage
-              guid: 19010
+              guid: 649
               name_id: 11484
               description_id: 11485
               stage_icon_id: 318
@@ -7883,8 +9193,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 211.5
+            # Reboot
             - !Stage
-              guid: 19011
+              guid: 650
               name_id: 11486
               description_id: 11487
               stage_icon_id: 320
@@ -7902,8 +9213,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 247
+            # Delete Type
             - !Stage
-              guid: 19012
+              guid: 651
               name_id: 11488
               description_id: 11489
               stage_icon_id: 320
@@ -7921,8 +9233,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 241
+            # Block Adds
             - !Stage
-              guid: 19013
+              guid: 652
               name_id: 11490
               description_id: 11491
               stage_icon_id: 320
@@ -7940,8 +9253,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 278
+            # Very Bad Memory
             - !Stage
-              guid: 19014
+              guid: 653
               name_id: 11492
               description_id: 11493
               stage_icon_id: 320
@@ -7959,8 +9273,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 238
+            # Charger
             - !Stage
-              guid: 19015
+              guid: 654
               name_id: 11494
               description_id: 11495
               stage_icon_id: 320
@@ -7978,8 +9293,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 270
+            # Recharge
             - !Stage
-              guid: 19016
+              guid: 655
               name_id: 11496
               description_id: 11497
               stage_icon_id: 320
@@ -7997,8 +9313,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 242
+            # The Worst Memory
             - !Stage
-              guid: 19017
+              guid: 656
               name_id: 11498
               description_id: 11499
               stage_icon_id: 320
@@ -8016,8 +9333,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 234
+            # Virus!
             - !Stage
-              guid: 19018
+              guid: 657
               name_id: 11500
               description_id: 11501
               stage_icon_id: 320
@@ -8035,8 +9353,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 232
+            # Infected
             - !Stage
-              guid: 19019
+              guid: 658
               name_id: 11502
               description_id: 11503
               stage_icon_id: 320
@@ -8054,8 +9373,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 285
+            # System Slowdown
             - !Stage
-              guid: 19020
+              guid: 659
               name_id: 11504
               description_id: 11505
               stage_icon_id: 320
@@ -8073,8 +9393,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 225
+            # Hard Reboot
             - !Stage
-              guid: 19021
+              guid: 660
               name_id: 11506
               description_id: 11507
               stage_icon_id: 319
@@ -8092,8 +9413,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 235
+            # Compiler
             - !Stage
-              guid: 19022
+              guid: 661
               name_id: 11508
               description_id: 11509
               stage_icon_id: 319
@@ -8111,8 +9433,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 249
+            # Recompile
             - !Stage
-              guid: 19023
+              guid: 662
               name_id: 11510
               description_id: 11511
               stage_icon_id: 319
@@ -8130,8 +9453,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 251
+            # Memory Leak
             - !Stage
-              guid: 19024
+              guid: 663
               name_id: 11512
               description_id: 11513
               stage_icon_id: 319
@@ -8149,8 +9473,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 189
+            # Error Error Error
             - !Stage
-              guid: 19025
+              guid: 664
               name_id: 11514
               description_id: 11515
               stage_icon_id: 319
@@ -8168,8 +9493,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
+            # Circuit Breaker
             - !Stage
-              guid: 19026
+              guid: 665
               name_id: 11516
               description_id: 11517
               stage_icon_id: 319
@@ -8187,8 +9513,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
+            # Fast Crash
             - !Stage
-              guid: 19027
+              guid: 666
               name_id: 11518
               description_id: 11519
               stage_icon_id: 319
@@ -8206,8 +9533,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
+            # Memory Wipe
             - !Stage
-              guid: 19028
+              guid: 667
               name_id: 11520
               description_id: 11521
               stage_icon_id: 319
@@ -8225,8 +9553,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
+            # Complete Outbreak
             - !Stage
-              guid: 19029
+              guid: 668
               name_id: 11522
               description_id: 11523
               stage_icon_id: 319
@@ -8244,8 +9573,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
+            # Full Reformat
             - !Stage
-              guid: 19030
+              guid: 669
               name_id: 11524
               description_id: 11525
               stage_icon_id: 319
@@ -8263,7 +9593,9 @@ categories:
                 game_swf_name: DroidProgramming.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 229
-      - guid: 20000
+
+      # Fleet Commander
+      - guid: 1026
         name_id: 32802
         description_id: 43676
         members_only: true
@@ -8277,6 +9609,7 @@ categories:
         sort_order: 20000
         tutorial_swf: HowtoFleetCommander.swf
         stage_group:
+          # Fleet Commander
           guid: 20000
           name_id: 32802
           description_id: 43676
@@ -8285,6 +9618,7 @@ categories:
           members_only: true
           stage_select_map_name: FleetCommanderPortal
           stages:
+            # Fleet Commander Single Player
             - !StageGroup
               guid: 20001
               name_id: 43796
@@ -8296,8 +9630,9 @@ categories:
               stage_select_map_name: RepublicGunship
               short_name: sp
               stages:
+                # Fleet Commander - Easy
                 - !Stage
-                  guid: 20002
+                  guid: 2104
                   name_id: 43672
                   description_id: 43676
                   stage_icon_id: 4454
@@ -8316,8 +9651,9 @@ categories:
                     game_type: FleetCommander
                   zone_template_guid: 200
                   score_to_credits_expression: x / 80.5
+                # Fleet Commander - Medium
                 - !Stage
-                  guid: 20003
+                  guid: 2105
                   name_id: 43673
                   description_id: 43676
                   stage_icon_id: 4455
@@ -8336,8 +9672,9 @@ categories:
                     game_type: FleetCommander
                   zone_template_guid: 200
                   score_to_credits_expression: x / 72.75
+                # Fleet Commander - Hard
                 - !Stage
-                  guid: 20004
+                  guid: 2106
                   name_id: 43674
                   description_id: 43676
                   stage_icon_id: 4456
@@ -8356,6 +9693,7 @@ categories:
                     game_type: FleetCommander
                   zone_template_guid: 200
                   score_to_credits_expression: x / 79.5
+            # Fleet Commander Multiplayer
             - !StageGroup
               guid: 20005
               name_id: 43797
@@ -8368,8 +9706,9 @@ categories:
               short_name: mp
               default_stage_instance: 20006
               stages:
+                # Fleet Commander - Multiplayer
                 - !Stage
-                  guid: 20006
+                  guid: 2107
                   name_id: 43675
                   description_id: 43676
                   stage_icon_id: 4457
@@ -8388,7 +9727,9 @@ categories:
                     game_type: FleetCommander
                   zone_template_guid: 201
                   score_to_credits_expression: x / 72.75
-      - guid: 21000
+
+      # Mine Buster
+      - guid: 1020
         name_id: 14050
         description_id: 14955
         members_only: true
@@ -8402,7 +9743,8 @@ categories:
         sort_order: 21000
         tutorial_swf: HowtoMineBuster.swf
         stage_group:
-          guid: 21000
+          # Mine Buster
+          guid: 54
           name_id: 14050
           description_id: 14955
           icon_id: 885
@@ -8410,8 +9752,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Mine Buster - Easy
             - !Stage
-              guid: 21001
+              guid: 620
               name_id: 14956
               description_id: 14955
               stage_icon_id: 1258
@@ -8429,8 +9772,9 @@ categories:
                 game_swf_name: MineBuster.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 139
+            # Mine Buster - Medium
             - !Stage
-              guid: 21002
+              guid: 621
               name_id: 14957
               description_id: 14955
               stage_icon_id: 1260
@@ -8448,8 +9792,9 @@ categories:
                 game_swf_name: MineBuster.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 169.25
+            # Mine Buster - Hard
             - !Stage
-              guid: 21003
+              guid: 622
               name_id: 14958
               description_id: 14955
               stage_icon_id: 1259
@@ -8467,7 +9812,9 @@ categories:
                 game_swf_name: MineBuster.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 71.5
-      - guid: 22000
+
+      # Force Connection
+      - guid: 1029
         name_id: 33611
         description_id: 33612
         members_only: true
@@ -8481,6 +9828,7 @@ categories:
         sort_order: 22000
         tutorial_swf: HowtoForceConnection.swf
         stage_group:
+          # Force Connection
           guid: 22000
           name_id: 33611
           description_id: 33612
@@ -8489,6 +9837,7 @@ categories:
           members_only: true
           stage_select_map_name: FleetCommanderPortal
           stages:
+            # Single Player
             - !Stage
               guid: 22001
               name_id: 44433
@@ -8509,8 +9858,9 @@ categories:
                 game_type: ForceConnection
               zone_template_guid: 200
               score_to_credits_expression: x / 18.55
+            # Multiplayer
             - !Stage
-              guid: 22002
+              guid: 2121
               name_id: 19815
               description_id: 33612
               stage_icon_id: 1413
@@ -8532,7 +9882,9 @@ categories:
               single_player_stage:
                 stage_group_guid: 22000
                 stage_guid: 22001
-      - guid: 23000
+
+      # Holo-Scramble
+      - guid: 1034
         name_id: 50473
         description_id: 50472
         members_only: true
@@ -8546,6 +9898,7 @@ categories:
         sort_order: 23000
         tutorial_swf: HowtoHoloScramble.swf
         stage_group:
+          # Holo-Scramble
           guid: 23000
           name_id: 50473
           description_id: 50472
@@ -8554,8 +9907,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Holo-Scramble - Easy
             - !Stage
-              guid: 23001
+              guid: 2130
               name_id: 50467
               description_id: 50472
               stage_icon_id: 5346
@@ -8573,8 +9927,9 @@ categories:
                 game_swf_name: HoloScramble.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 200
+            # Holo-Scramble  - Medium
             - !Stage
-              guid: 23002
+              guid: 2131
               name_id: 50468
               description_id: 50472
               stage_icon_id: 5347
@@ -8592,8 +9947,9 @@ categories:
                 game_swf_name: HoloScramble.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 200
+            # Holo-Scramble - Hard
             - !Stage
-              guid: 23003
+              guid: 2132
               name_id: 50469
               description_id: 50472
               stage_icon_id: 5348
@@ -8611,7 +9967,9 @@ categories:
                 game_swf_name: HoloScramble.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 200
-      - guid: 12
+
+      # Star Typer
+      - guid: 1010
         name_id: 6171
         description_id: 9753
         members_only: true
@@ -8625,6 +9983,7 @@ categories:
         sort_order: 25000
         tutorial_swf: HowtoStarTyper.swf
         stage_group:
+          # Star Typer
           guid: 12
           name_id: 6171
           description_id: 9753
@@ -8633,8 +9992,9 @@ categories:
           members_only: true
           stage_select_map_name: RepublicGunship
           stages:
+            # Star Typer - Easy
             - !Stage
-              guid: 25001
+              guid: 221
               name_id: 13956
               description_id: 9753
               stage_icon_id: 324
@@ -8652,8 +10012,9 @@ categories:
                 game_swf_name: startyper.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 40.9
+            # Star Typer - Medium
             - !Stage
-              guid: 25002
+              guid: 222
               name_id: 13957
               description_id: 9753
               stage_icon_id: 326
@@ -8671,8 +10032,9 @@ categories:
                 game_swf_name: startyper.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 80
+            # Star Typer - Hard
             - !Stage
-              guid: 25003
+              guid: 223
               name_id: 13958
               description_id: 9753
               stage_icon_id: 325
@@ -8690,18 +10052,311 @@ categories:
                 game_swf_name: startyper.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 81
+
   # Campaigns
   - guid: 4
     name_id: 51599
     icon_id: 5804
     sort_order: 4
-    portal_entries: []
+    portal_entries:
+      # Geonosis Saga
+      - guid: 1000000
+        name_id: 51599
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 2636
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 1
+        tutorial_swf: ""
+        stage_group:
+          # Geonosis Saga
+          guid: 74
+          name_id: 30405
+          description_id: 20372
+          icon_id: 3920
+          stage_icon_id: 2636
+          members_only: true
+          stage_select_map_name: GeonosisCampaign
+          stages:
+            # Push for Point Rain
+            - !Stage
+              guid: 2079
+              name_id: 32352
+              description_id: 20038
+              stage_icon_id: 2559
+              start_screen_icon_id: 2547
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4453
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Destroy the Relay
+            - !StageGroup
+              guid: 10001
+              name_id: 32670
+              description_id: 0
+              icon_id: 887
+              stage_icon_id: 2578
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis2
+              stages: []
+            # Second Battle of Geonosis
+            - !Stage
+              guid: 12
+              name_id: 19224
+              description_id: 19225
+              stage_icon_id: 2558
+              start_screen_icon_id: 2546
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 3017
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Point Rain Defense
+            - !Stage
+              guid: 194
+              name_id: 19204
+              description_id: 19206
+              stage_icon_id: 2560
+              start_screen_icon_id: 2548
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4500
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis4
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Weapon of Choice
+            - !StageGroup
+              guid: 10004
+              name_id: 18150
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 2579
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis5
+              stages: []
+            # Forced Entry
+            - !StageGroup
+              guid: 10005
+              name_id: 18151
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 2580
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis6
+              stages: []
+            # Overkill
+            - !StageGroup
+              guid: 10006
+              name_id: 18152
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 2581
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis7
+              stages: []
+            # B2 Breakthrough
+            - !StageGroup
+              guid: 10007
+              name_id: 18153
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 2582
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis8
+              stages: []
+            # Timing Belt
+            - !StageGroup
+              guid: 10008
+              name_id: 18154
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 2583
+              members_only: true
+              require_previous_completed: false
+              stage_select_map_name: ''
+              link_name: stage
+              short_name: geonosis9
+              stages: []
+            # Ray Shield Attack
+            - !Stage
+              guid: 195
+              name_id: 19205
+              description_id: 19207
+              stage_icon_id: 2561
+              start_screen_icon_id: 2549
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4501
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis10
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Foundry Flank
+            - !Stage
+              guid: 196
+              name_id: 19651
+              description_id: 19652
+              stage_icon_id: 2562
+              start_screen_icon_id: 2550
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4502
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: geonosis11
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+      # Biggest Battles: Ryloth
+      - guid: 1000001
+        name_id: 51599
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 3826
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 2
+        tutorial_swf: HowtoGunship.swf
+        stage_group:
+          # Biggest Battles: Ryloth
+          guid: 1000001
+          name_id: 33034
+          description_id: 33035
+          icon_id: 3920
+          stage_icon_id: 3826
+          members_only: true
+          stage_select_map_name: rylothCampaign
+          stages:
+            # Battle of Ryloth
+            - !Stage
+              guid: 11
+              name_id: 18079
+              description_id: 18080
+              stage_icon_id: 4240
+              start_screen_icon_id: 4240
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga01
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            #
+            - !Stage
+              guid: 534
+              name_id: 32670
+              description_id: 32681
+              stage_icon_id: 1261
+              start_screen_icon_id: 1255
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 2242
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga02
+              minigame_type:
+                !Flash
+                game_swf_name: RepublicGunship_Geonosian.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 115
+      # Mission on Iceberg Three
+      - guid: 1000002
+        name_id: 44221
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 4623
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 3
+        tutorial_swf: HowtoGunship.swf
+        stage_group:
+          # Mission on Iceberg Three
+          guid: 75
+          name_id: 44221
+          description_id: 0
+          icon_id: 3920
+          stage_icon_id: 4623
+          members_only: true
+          stage_select_map_name: monCalCampaignMap
+          stages: []
+
   # Dailies
   - guid: 5
     name_id: 51600
     icon_id: 5806
     sort_order: 5
     portal_entries:
+      # Daily Spin
       - guid: 28000
         name_id: 14053
         description_id: 9148
@@ -8759,6 +10414,7 @@ categories:
                       end: 10000
                       weight: 1
               score_to_credits_expression: x
+      # Daily Trivia
       - guid: 29000
         name_id: 14055
         description_id: 14163
@@ -10337,6 +11993,7 @@ categories:
                       correct_answer_id: 52268
                       incorrect_answer_ids: [52356, 52444, 52532]
               score_to_credits_expression: x
+      # Daily Holocron
       - guid: 30000
         name_id: 14054
         description_id: 14161
