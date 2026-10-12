@@ -2223,8 +2223,7 @@ impl AttackCruiserProjectilePool {
                 + playfield.half_height * launch_location.speed.y.signum()
                 - launch_location.origin.y;
             let lifetime_secs = (distance_to_boundary / launch_location.speed.y)
-                .max(0.0)
-                .min(f32::from(projectile.lifetime_millis) / 1000.0);
+                .clamp(0.0, f32::from(projectile.lifetime_millis) / 1000.0);
             let lifetime = Duration::from_secs_f32(lifetime_secs);
 
             let expiry_time = self
