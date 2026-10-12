@@ -12113,7 +12113,87 @@ categories:
           stage_icon_id: 4623
           members_only: true
           stage_select_map_name: monCalCampaignMap
-          stages: []
+          stages:
+            # Iceberg Approach
+            - !Stage
+              guid: 2089
+              name_id: 44354
+              description_id: 44355
+              stage_icon_id: 4653
+              start_screen_icon_id: 4657
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5495
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: moncala01
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Race to the Tower
+            - !Stage
+              guid: 2123
+              name_id: 44356
+              description_id: 44357
+              stage_icon_id: 4651
+              start_screen_icon_id: 4656
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5496
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: moncala02
+              minigame_type:
+                !Flash
+                game_swf_name: RepublicGunship_Calamari.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 115
+            # Emergency Evacuation
+            - !Stage
+              guid: 198
+              name_id: 44358
+              description_id: 44359
+              stage_icon_id: 4652
+              start_screen_icon_id: 4658
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5497
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: moncala03
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Frozen Showdown
+            - !Stage
+              guid: 2102
+              name_id: 32960
+              description_id: 44369
+              stage_icon_id: 4650
+              start_screen_icon_id: 4655
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 5498
+              members_only: true
+              require_previous_completed: false
+              link_name: stage
+              short_name: moncala04
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
 
   # Dailies
   - guid: 5
