@@ -176,7 +176,7 @@ fn compute_ability_damage(config: &AbilityConfig, ability_key: &str) -> Result<(
         evaluate_damage_expression(&config.damage_expression, config.base_damage, ability_key)?;
 
     let mut rng = thread_rng();
-    let is_critical = rng.gen_range(0..100) < config.critical_chance;
+    let is_critical = rng.gen_bool(config.critical_chance.min(100) as f64 / 100.0);
 
     let final_damage = if is_critical {
         let bonus_percent = config.critical_bonus_percent.unwrap_or(0);
