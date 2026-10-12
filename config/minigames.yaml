@@ -3163,7 +3163,7 @@ categories:
                   link_name: stage
                   short_name: ldlearnpower1
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: &saber_duel_venator_hangar_camera_rot 4.71
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 4
@@ -3242,7 +3242,7 @@ categories:
                   link_name: stage
                   short_name: ldlearnpower2
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_venator_hangar_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 4
@@ -3322,7 +3322,7 @@ categories:
                   link_name: stage
                   short_name: ldlearnpower3
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_venator_hangar_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 4
@@ -3403,7 +3403,7 @@ categories:
                   link_name: stage
                   short_name: ldgrievous
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_venator_hangar_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 6
@@ -3484,7 +3484,7 @@ categories:
                   link_name: stage
                   short_name: ldventress
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: &saber_duel_dathomir_arena_camera_rot 3.14
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 8
@@ -3558,7 +3558,7 @@ categories:
                   link_name: stage
                   short_name: lddooku
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_dathomir_arena_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 10
@@ -3628,7 +3628,7 @@ categories:
                   link_name: stage
                   short_name: ldopress
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_dathomir_arena_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 10
@@ -3707,7 +3707,7 @@ categories:
                   link_name: stage
                   short_name: ldmaul
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: &saber_duel_sith_temple_camera_rot 0
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 10
@@ -3795,7 +3795,7 @@ categories:
                   link_name: stage
                   short_name: stage01
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_venator_hangar_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 6
@@ -3859,7 +3859,7 @@ categories:
                   link_name: stage
                   short_name: stage02
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_dathomir_arena_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 8
@@ -3927,7 +3927,7 @@ categories:
                   link_name: stage
                   short_name: stage03
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: *saber_duel_dathomir_arena_camera_rot
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 10
@@ -4002,7 +4002,7 @@ categories:
                   link_name: stage
                   short_name: lddooku
                   minigame_type:
-                    !DarkSaberDuel
+                    !SaberDuel
                     camera_rot: 0.0
                     rounds_to_win: *saber_duel_rounds_to_win
                     points_to_win_round: 8
