@@ -42,7 +42,7 @@ const fn default_base_damage() -> i16 {
     100
 }
 
-const fn default_critical_chance() -> u32 {
+const fn default_critical_percent() -> u32 {
     5
 }
 
@@ -134,8 +134,8 @@ pub struct AbilityConfig {
     pub base_damage: i16,
     #[serde(default = "default_damage_expression")]
     pub damage_expression: String,
-    #[serde(default = "default_critical_chance")]
-    pub critical_chance: u32,
+    #[serde(default = "default_critical_percent")]
+    pub critical_percent: u32,
     pub critical_bonus_percent: Option<u32>,
     #[serde(default)]
     pub target_limit: TargetLimit,
