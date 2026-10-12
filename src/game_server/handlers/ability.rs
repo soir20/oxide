@@ -3,6 +3,7 @@ use std::{
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
     path::Path,
+    time::Instant,
 };
 
 use evalexpr::{context_map, eval_with_context, Value};
@@ -222,7 +223,7 @@ fn deal_ability_damage(
     )];
 
     if current_health > 0 && new_health == 0 {
-        broadcasts.extend(target.knock_out(nearby_player_guids));
+        broadcasts.extend(target.knock_out(nearby_player_guids, Instant::now()));
     }
 
     Ok(broadcasts)

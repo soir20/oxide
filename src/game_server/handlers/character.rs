@@ -2860,11 +2860,11 @@ impl
 }
 
 impl Character {
-    pub fn knock_out(&mut self, nearby_player_guids: &[u32]) -> Vec<Broadcast> {
+    pub fn knock_out(&mut self, nearby_player_guids: &[u32], instant: Instant) -> Vec<Broadcast> {
         match &self.stats.character_type {
             CharacterType::AmbientNpc(_) | CharacterType::Fixture(_, _) => {
                 if let Some(death_procedure) = self.procedure_on_death.clone() {
-                    self.set_tickable_procedure_if_exists(death_procedure, Instant::now());
+                    self.set_tickable_procedure_if_exists(death_procedure, instant);
                     Vec::new()
                 } else {
                     vec![Broadcast::Multi(
