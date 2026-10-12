@@ -251,6 +251,7 @@ pub enum MinigameType {
         saber_strike_stage_id: u32,
     },
     SaberDuel(Box<SaberDuelConfig>),
+    DarkSaberDuel(Box<SaberDuelConfig>),
 }
 
 impl MinigameType {
@@ -305,6 +306,16 @@ impl MinigameType {
                 obfuscated_score: 0,
             },
             _ => MinigameTypeData::default(),
+        }
+    }
+
+    pub fn client_portal_entry_guid(&self) -> Option<u32> {
+        // Client requires hard-coded portal entry GUIDs for certain minigames to function
+        match self {
+            MinigameType::Flash { .. } => None,
+            MinigameType::SaberStrike { .. } => Some(1004),
+            MinigameType::SaberDuel(..) => Some(1005),
+            MinigameType::DarkSaberDuel(..) => Some(1027),
         }
     }
 }
@@ -494,15 +505,17 @@ impl SharedMinigameTypeData {
                 _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
-            MinigameType::SaberDuel(config) => SharedMinigameTypeData::SaberDuel {
-                game: Box::new(SaberDuelGame::new(
-                    *config.to_owned(),
-                    player1,
-                    player2,
-                    group,
-                    start_pos,
-                )),
-            },
+            MinigameType::SaberDuel(config) | MinigameType::DarkSaberDuel(config) => {
+                SharedMinigameTypeData::SaberDuel {
+                    game: Box::new(SaberDuelGame::new(
+                        *config.to_owned(),
+                        player1,
+                        player2,
+                        group,
+                        start_pos,
+                    )),
+                }
+            }
         }
     }
 
@@ -2628,7 +2641,7 @@ fn handle_request_start_active_minigame(
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
                             packets.append(&mut start_saber_strike(*saber_strike_stage_id, player, minigame_status, game_server));
                         },
-                        MinigameType::SaberDuel { .. } => {
+                        MinigameType::SaberDuel { .. } | MinigameType::DarkSaberDuel { .. } => {
                             if let SharedMinigameTypeData::SaberDuel { game } = &shared_minigame_data.data {
                                 packets.append(&mut game.start(sender)?)
                             }
@@ -3661,7 +3674,10 @@ pub fn create_active_minigame_if_uncreated(
                     description_id: stage_config.description_id(),
                     difficulty: stage_config.difficulty(),
                     battle_class_type: 0,
-                    portal_entry_guid,
+                    portal_entry_guid: stage_config
+                        .minigame_type()
+                        .client_portal_entry_guid()
+                        .unwrap_or(portal_entry_guid),
                     unknown7: false,
                     unknown8: false,
                     reward_bundle1: RewardBundle::default(),
