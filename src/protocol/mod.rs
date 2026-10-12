@@ -218,6 +218,7 @@ pub struct Channel {
     session: Option<Session>,
     buffer_size: BufferSize,
     recency_limit: SequenceNumber,
+    max_reordered_packets_queued: usize,
     time_until_resend: Duration,
     last_round_trip_times: Vec<Duration>,
     next_round_trip_index: usize,
@@ -238,6 +239,7 @@ impl Channel {
         addr: SocketAddr,
         initial_buffer_size: BufferSize,
         recency_limit: SequenceNumber,
+        max_reordered_packets_queued: usize,
         time_until_resend: Duration,
         max_round_trip_entries: usize,
         desired_resend_pct: u8,
@@ -253,6 +255,7 @@ impl Channel {
             session: None,
             buffer_size: initial_buffer_size,
             recency_limit,
+            max_reordered_packets_queued,
             time_until_resend,
             last_round_trip_times: vec![Duration::default(); max_round_trip_entries],
             next_round_trip_index: 0,
@@ -369,16 +372,6 @@ impl Channel {
                     info!("Bad bundled packet");
                 }
             }
-        }
-
-        packets
-    }
-
-    pub fn process_all(&mut self, server_options: &ServerOptions) -> Vec<Vec<u8>> {
-        let mut packets = Vec::new();
-
-        while !self.receive_queue.is_empty() {
-            packets.append(&mut self.process_next(u8::MAX, server_options));
         }
 
         packets
@@ -541,11 +534,17 @@ impl Channel {
         let max_sequence_number = self.next_client_sequence.wrapping_add(self.recency_limit);
 
         // If the max is smaller, the sequence numbers wrapped around
-        if max_sequence_number > self.next_client_sequence {
-            sequence_number <= max_sequence_number && sequence_number > self.next_client_sequence
-        } else {
-            sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
-        }
+        let should_reorder = match max_sequence_number > self.next_client_sequence {
+            true => {
+                sequence_number <= max_sequence_number
+                    && sequence_number > self.next_client_sequence
+            }
+            false => {
+                sequence_number > self.next_client_sequence || sequence_number < max_sequence_number
+            }
+        };
+
+        should_reorder && self.reordered_packets.len() < self.max_reordered_packets_queued
     }
 
     fn should_client_ack(
@@ -555,13 +554,10 @@ impl Channel {
         pending: SequenceNumber,
     ) -> bool {
         let min_sequence_number = next_server_sequence.wrapping_sub(recency_limit);
+        let window_span = max.wrapping_sub(min_sequence_number) as i32;
+        let pending_offset = pending.wrapping_sub(min_sequence_number) as i32;
 
-        // If the max is smaller, the sequence numbers wrapped around
-        if min_sequence_number < max {
-            min_sequence_number <= pending && pending <= max
-        } else {
-            min_sequence_number <= pending || pending <= max
-        }
+        pending_offset >= 0 && pending_offset <= window_span
     }
 
     fn process_packet(&mut self, packet: &Packet, server_options: &ServerOptions) {
@@ -691,17 +687,16 @@ impl Channel {
         let mut ready_to_update = false;
         for packet in self.send_queue.iter() {
             if !packet.needs_send && packet.is_reliable() {
-                let SendTime::Instant(first_send) = packet.first_send else {
-                    panic!("Packet was marked as sent but has no timing statistics");
-                };
+                // Check that packets have a send time in case the client is acking incorrect sequence numbers
+                if let SendTime::Instant(first_send) = packet.first_send {
+                    self.last_round_trip_times[self.next_round_trip_index] =
+                        Instant::now().saturating_duration_since(first_send);
+                    self.next_round_trip_index += 1;
 
-                self.last_round_trip_times[self.next_round_trip_index] =
-                    Instant::now().saturating_duration_since(first_send);
-                self.next_round_trip_index += 1;
-
-                if self.next_round_trip_index == self.last_round_trip_times.len() {
-                    self.next_round_trip_index = 0;
-                    ready_to_update = true;
+                    if self.next_round_trip_index == self.last_round_trip_times.len() {
+                        self.next_round_trip_index = 0;
+                        ready_to_update = true;
+                    }
                 }
             }
         }
