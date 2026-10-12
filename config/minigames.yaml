@@ -2108,7 +2108,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 4000
+        sort_order: 3
         tutorial_swf: HowtoDueling.swf
         stage_group:
           # Lightsaber Duel
@@ -5272,6 +5272,494 @@ categories:
               short_name: ''
               stages: []
 
+      # Speeder Bike Racing
+      - guid: 1003
+        name_id: 6368
+        description_id: 6369
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1250
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 4
+        tutorial_swf: HowtoSpeederbike.swf
+        stage_group:
+          # Speeder Bike Racing
+          guid: 4
+          name_id: 6368
+          description_id: 6369
+          icon_id: 371
+          stage_icon_id: 371
+          members_only: false
+          stage_select_map_name: speeders
+          stages:
+            # Orto Plutonia - Easy
+            - !Stage
+              guid: 103
+              name_id: 7024
+              description_id: 15125
+              stage_icon_id: 233
+              start_screen_icon_id: 1795
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1508
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage02
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 44
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 102
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Orto Plutonia - Medium
+            - !Stage
+              guid: 109
+              name_id: 7025
+              description_id: 15125
+              stage_icon_id: 234
+              start_screen_icon_id: 1796
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1508
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage05
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 47
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 108
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Orto Plutonia - Hard
+            - !Stage
+              guid: 111
+              name_id: 7026
+              description_id: 15125
+              stage_icon_id: 1919
+              start_screen_icon_id: 1797
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1508
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage06
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 48
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 110
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Coruscant - Easy
+            - !Stage
+              guid: 101
+              name_id: 7021
+              description_id: 15124
+              stage_icon_id: 230
+              start_screen_icon_id: 1792
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1507
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage01
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 43
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 100
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Coruscant - Medium
+            - !Stage
+              guid: 105
+              name_id: 7022
+              description_id: 15124
+              stage_icon_id: 231
+              start_screen_icon_id: 1793
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1507
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 45
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 104
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Coruscant - Hard
+            - !Stage
+              guid: 107
+              name_id: 7023
+              description_id: 15124
+              stage_icon_id: 232
+              start_screen_icon_id: 1794
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 1507
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage04
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 129
+              challenges:
+                # Combo
+                # Use base level's credit ratio as a placeholder
+                - guid: 46
+                  name_id: 15121
+                  description_id: 33906
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3024
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Slow-mo
+                # Use base level's credit ratio as a placeholder
+                - guid: 106
+                  name_id: 15120
+                  description_id: 33907
+                  min_players: 1
+                  max_players: 1
+                  start_sound_id: 3025
+                  members_only: false
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+
+      # Galactic Forces
+      - guid: 1023
+        name_id: 44045
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 4592
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 5
+        tutorial_swf: HowtoBaseCommander.swf
+        stage_group:
+          # Galactic Forces
+          guid: 105
+          name_id: 44434
+          description_id: 6369
+          icon_id: 4590
+          stage_icon_id: 4590
+          members_only: false
+          stage_select_map_name: FleetCommanderPortal
+          stages:
+            # Single Player
+            - !StageGroup
+              guid: 10019
+              name_id: 44433
+              description_id: 14
+              icon_id: 4590
+              stage_icon_id: 4621
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: baseCommander
+              short_name: sp
+              stages:
+                # Orto Plutonia
+                - !Stage
+                  guid: 906
+                  name_id: 44001
+                  description_id: 44205
+                  stage_icon_id: 4547
+                  start_screen_icon_id: 4550
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5494
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcortoplutonia1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Felucia
+                - !Stage
+                  guid: 905
+                  name_id: 43206
+                  description_id: 44204
+                  stage_icon_id: 4546
+                  start_screen_icon_id: 4549
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5492
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcfelucia1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Outer Rim
+                - !Stage
+                  guid: 907
+                  name_id: 44002
+                  description_id: 44206
+                  stage_icon_id: 4548
+                  start_screen_icon_id: 4551
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5493
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcasteroid1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+            # Multiplayer
+            - !StageGroup # 44439
+              guid: 10020
+              name_id: 44439
+              description_id: 14
+              icon_id: 4590
+              stage_icon_id: 4620
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: baseCommander
+              short_name: mp
+              stages:
+                # Orto Plutonia
+                - !Stage
+                  guid: 903
+                  name_id: 44460
+                  description_id: 44205
+                  stage_icon_id: 4547
+                  start_screen_icon_id: 4550
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5494
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcortoplutonia1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Felucia
+                - !Stage
+                  guid: 902
+                  name_id: 44459
+                  description_id: 44204
+                  stage_icon_id: 4546
+                  start_screen_icon_id: 4549
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5492
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcfelucia1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+                # Outer Rim
+                - !Stage
+                  guid: 904
+                  name_id: 44461
+                  description_id: 44206
+                  stage_icon_id: 4548
+                  start_screen_icon_id: 4551
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 5493
+                  members_only: true
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: bcasteroid1
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 129
+
       # Dark Side Duel
       - guid: 1027
         name_id: 33128
@@ -5284,7 +5772,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 7000
+        sort_order: 6
         tutorial_swf: HowtoDarksideDuel.swf
         stage_group:
           # Dark Side Duel
@@ -6244,7 +6732,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 9000
+        sort_order: 8
         tutorial_swf: HowtoHasbroAttackShip.swf
         stage_group:
           # Hasbro Attack Shuttle
@@ -6329,7 +6817,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 10000
+        sort_order: 9
         tutorial_swf: HowtoStuntGungan.swf
         stage_group:
           # Stunt Gungan
@@ -6374,7 +6862,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 11000
+        sort_order: 10
         tutorial_swf: HowtoCrisisZiro.swf
         stage_group:
           # Crisis Ziro
@@ -6459,7 +6947,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 12000
+        sort_order: 11
         tutorial_swf: HowtoRocketRescue.swf
         stage_group:
           # Rocket Rescue
@@ -7115,7 +7603,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 13000
+        sort_order: 12
         tutorial_swf: HowtoGunship.swf
         stage_group:
           # Republic Gunship
@@ -7187,27 +7675,6 @@ categories:
                 game_swf_name: RepublicGunship.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 201
-            # Destroy The Relay
-            - !Stage
-              guid: 2090
-              name_id: 32670
-              description_id: 32681
-              stage_icon_id: 2578
-              start_screen_icon_id: 1255
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 0
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: ''
-              display_stage_group_guid: 10001
-              minigame_type:
-                !Flash
-                game_swf_name: RepublicGunship_Geonosian.swf
-              zone_template_guid: 200
-              score_to_credits_expression: x / 115
 
       # Aquatic Assault
       - guid: 1033
@@ -7221,7 +7688,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 14000
+        sort_order: 13
         tutorial_swf: HowToAquaticAssault.swf
         stage_group:
           # Aquatic Assault
@@ -7307,7 +7774,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 14000
+        sort_order: 14
         tutorial_swf: HowtoBlasterTraining.swf
         stage_group:
           # Blaster Training
@@ -7392,7 +7859,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 26000
+        sort_order: 15
         tutorial_swf: HowtoTurretTactics.swf
         stage_group:
           # Turret Tactics
@@ -9345,111 +9812,6 @@ categories:
                     saber_strike_stage_id: 131
                   zone_template_guid: 200
                   score_to_credits_expression: x / 153
-            # Weapon of Choice
-            - !Stage
-              guid: 520
-              name_id: 18150
-              description_id: 18157
-              stage_icon_id: 2579
-              start_screen_icon_id: 2573
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 4463
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: geonosis5
-              display_stage_group_guid: 10004
-              minigame_type:
-                !SaberStrike
-                saber_strike_stage_id: 151
-              zone_template_guid: 200
-              score_to_credits_expression: x / 81
-            # Forced Entry
-            - !Stage
-              guid: 521
-              name_id: 18151
-              description_id: 18158
-              stage_icon_id: 2580
-              start_screen_icon_id: 2574
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 4464
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: geonosis6
-              display_stage_group_guid: 10005
-              minigame_type:
-                !SaberStrike
-                saber_strike_stage_id: 152
-              zone_template_guid: 200
-              score_to_credits_expression: x / 81
-            # Overkill
-            - !Stage
-              guid: 522
-              name_id: 18152
-              description_id: 18159
-              stage_icon_id: 2581
-              start_screen_icon_id: 2575
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 4465
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: geonosis7
-              display_stage_group_guid: 10006
-              minigame_type:
-                !SaberStrike
-                saber_strike_stage_id: 153
-              zone_template_guid: 200
-              score_to_credits_expression: x / 81
-            # B2 Breakthrough
-            - !Stage
-              guid: 523
-              name_id: 18153
-              description_id: 18160
-              stage_icon_id: 2582
-              start_screen_icon_id: 2576
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 0
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: geonosis8
-              display_stage_group_guid: 10007
-              minigame_type:
-                !SaberStrike
-                saber_strike_stage_id: 154
-              zone_template_guid: 200
-              score_to_credits_expression: x / 81
-            # Timing Belt
-            - !Stage
-              guid: 524
-              name_id: 18154
-              description_id: 18161
-              stage_icon_id: 2583
-              start_screen_icon_id: 2577
-              min_players: 1
-              max_players: 1
-              difficulty: 1
-              start_sound_id: 0
-              members_only: true
-              require_previous_completed: false
-              link_name: stage
-              short_name: geonosis9
-              display_stage_group_guid: 10008
-              minigame_type:
-                !SaberStrike
-                saber_strike_stage_id: 155
-              zone_template_guid: 200
-              score_to_credits_expression: x / 81
 
       # Crystal Attunement
       - guid: 1012
@@ -10849,7 +11211,7 @@ categories:
         tutorial_swf: HowtoFleetCommander.swf
         stage_group:
           # Fleet Commander
-          guid: 20000
+          guid: 89
           name_id: 32802
           description_id: 43676
           icon_id: 4459
@@ -11311,7 +11673,7 @@ categories:
         is_popular: true
         is_game_of_day: false
         sort_order: 1
-        tutorial_swf: ""
+        tutorial_swf: HowtoGunship.swf
         stage_group:
           # Geonosis Saga
           guid: 74
@@ -11342,19 +11704,26 @@ categories:
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
-            # Destroy the Relay
-            - !StageGroup
-              guid: 10001
+            # Destroy The Relay
+            - !Stage
+              guid: 2090
               name_id: 32670
-              description_id: 0
-              icon_id: 887
+              description_id: 32681
               stage_icon_id: 2578
+              start_screen_icon_id: 1255
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis2
-              stages: []
+              minigame_type:
+                !Flash
+                game_swf_name: RepublicGunship_Geonosian.swf
+              zone_template_guid: 200
+              score_to_credits_expression: x / 115
             # Second Battle of Geonosis
             - !Stage
               guid: 12
@@ -11396,70 +11765,105 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Weapon of Choice
-            - !StageGroup
-              guid: 10004
+            - !Stage
+              guid: 520
               name_id: 18150
-              description_id: 0
-              icon_id: 369
+              description_id: 18157
               stage_icon_id: 2579
+              start_screen_icon_id: 2573
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4463
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis5
-              stages: []
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 151
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
             # Forced Entry
-            - !StageGroup
-              guid: 10005
+            - !Stage
+              guid: 521
               name_id: 18151
-              description_id: 0
-              icon_id: 369
+              description_id: 18158
               stage_icon_id: 2580
+              start_screen_icon_id: 2574
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4464
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis6
-              stages: []
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 152
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
             # Overkill
-            - !StageGroup
-              guid: 10006
+            - !Stage
+              guid: 522
               name_id: 18152
-              description_id: 0
-              icon_id: 369
+              description_id: 18159
               stage_icon_id: 2581
+              start_screen_icon_id: 2575
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4465
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis7
-              stages: []
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 153
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
             # B2 Breakthrough
-            - !StageGroup
-              guid: 10007
+            - !Stage
+              guid: 523
               name_id: 18153
-              description_id: 0
-              icon_id: 369
+              description_id: 18160
               stage_icon_id: 2582
+              start_screen_icon_id: 2576
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis8
-              stages: []
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 154
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
             # Timing Belt
-            - !StageGroup
-              guid: 10008
+            - !Stage
+              guid: 524
               name_id: 18154
-              description_id: 0
-              icon_id: 369
+              description_id: 18161
               stage_icon_id: 2583
+              start_screen_icon_id: 2577
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
               members_only: true
               require_previous_completed: false
-              stage_select_map_name: ''
               link_name: stage
               short_name: geonosis9
-              stages: []
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 155
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
             # Ray Shield Attack
             - !Stage
               guid: 195
@@ -11500,6 +11904,7 @@ categories:
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
+
       # Biggest Battles: Ryloth
       - guid: 1000001
         name_id: 51599
@@ -11529,13 +11934,13 @@ categories:
               guid: 11
               name_id: 18079
               description_id: 18080
-              stage_icon_id: 4240
+              stage_icon_id: 4251
               start_screen_icon_id: 4240
               min_players: 1
               max_players: 1
               difficulty: 1
-              start_sound_id: 2242
-              members_only: true
+              start_sound_id: 3019
+              members_only: false
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga01
@@ -11544,26 +11949,147 @@ categories:
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
-            #
+            # Mobile Walls
             - !Stage
               guid: 534
-              name_id: 32670
-              description_id: 32681
-              stage_icon_id: 1261
-              start_screen_icon_id: 1255
+              name_id: 19130
+              description_id: 19135
+              stage_icon_id: 4252
+              start_screen_icon_id: 4235
               min_players: 1
               max_players: 1
               difficulty: 1
-              start_sound_id: 2242
-              members_only: true
+              start_sound_id: 4485
+              members_only: false
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga02
               minigame_type:
-                !Flash
-                game_swf_name: RepublicGunship_Geonosian.swf
+                !SaberStrike
+                saber_strike_stage_id: 1
               zone_template_guid: 200
-              score_to_credits_expression: x / 115
+              score_to_credits_expression: x / 81
+            # Heavy Defenses
+            - !Stage
+              guid: 535
+              name_id: 19133
+              description_id: 19138
+              stage_icon_id: 4253
+              start_screen_icon_id: 4236
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4489
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga03
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Droid Labyrinth
+            - !Stage
+              guid: 536
+              name_id: 19131
+              description_id: 19136
+              stage_icon_id: 4254
+              start_screen_icon_id: 4237
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4486
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga04
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Line of Fire
+            - !Stage
+              guid: 537
+              name_id: 19132
+              description_id: 19137
+              stage_icon_id: 4255
+              start_screen_icon_id: 4238
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4488
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga05
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Wild Droidekas
+            - !Stage
+              guid: 538
+              name_id: 19134
+              description_id: 19139
+              stage_icon_id: 4256
+              start_screen_icon_id: 4239
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4490
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga06
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Separatist Wrath
+            - !Stage
+              guid: 193
+              name_id: 18190
+              description_id: 18191
+              stage_icon_id: 4257
+              start_screen_icon_id: 4234
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4503
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga07
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+            # Venator Skirmish
+            - !Stage
+              guid: 599
+              name_id: 33127
+              description_id: 33132
+              stage_icon_id: 4231
+              start_screen_icon_id: 4233
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 4513
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: rylothsaga08
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 81
+
       # Mission on Iceberg Three
       - guid: 1000002
         name_id: 44221
@@ -11653,6 +12179,7 @@ categories:
                       end: 10000
                       weight: 1
               score_to_credits_expression: x
+
       # Daily Trivia
       - guid: 29000
         name_id: 14055
@@ -13232,6 +13759,7 @@ categories:
                       correct_answer_id: 52268
                       incorrect_answer_ids: [52356, 52444, 52532]
               score_to_credits_expression: x
+
       # Daily Holocron
       - guid: 30000
         name_id: 14054
