@@ -251,7 +251,6 @@ pub enum MinigameType {
         saber_strike_stage_id: u32,
     },
     SaberDuel(Box<SaberDuelConfig>),
-    DarkSaberDuel(Box<SaberDuelConfig>),
 }
 
 impl MinigameType {
@@ -306,16 +305,6 @@ impl MinigameType {
                 obfuscated_score: 0,
             },
             _ => MinigameTypeData::default(),
-        }
-    }
-
-    pub fn client_portal_entry_guid(&self) -> Option<u32> {
-        // Client requires hard-coded portal entry GUIDs for certain minigames to function
-        match self {
-            MinigameType::Flash { .. } => None,
-            MinigameType::SaberStrike { .. } => Some(1004),
-            MinigameType::SaberDuel(..) => Some(1005),
-            MinigameType::DarkSaberDuel(..) => Some(1027),
         }
     }
 }
@@ -505,17 +494,15 @@ impl SharedMinigameTypeData {
                 _ => SharedMinigameTypeData::default(),
             },
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
-            MinigameType::SaberDuel(config) | MinigameType::DarkSaberDuel(config) => {
-                SharedMinigameTypeData::SaberDuel {
-                    game: Box::new(SaberDuelGame::new(
-                        *config.to_owned(),
-                        player1,
-                        player2,
-                        group,
-                        start_pos,
-                    )),
-                }
-            }
+            MinigameType::SaberDuel(config) => SharedMinigameTypeData::SaberDuel {
+                game: Box::new(SaberDuelGame::new(
+                    *config.to_owned(),
+                    player1,
+                    player2,
+                    group,
+                    start_pos,
+                )),
+            },
         }
     }
 
@@ -759,6 +746,7 @@ pub struct MinigameChallengeConfig {
     pub start_sound_id: Option<u32>,
     pub required_item_guid: Option<i32>,
     pub members_only: bool,
+    pub inherit_from_portal_entry_guid: Option<u32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -815,7 +803,9 @@ impl MinigameChallengeConfig {
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
-            portal_entry_guid,
+            portal_entry_guid: self
+                .inherit_from_portal_entry_guid
+                .unwrap_or(portal_entry_guid),
             link_name: CHALLENGE_LINK_NAME.to_string(),
             short_name: "".to_string(),
             unlocked: self.unlocked(player, base_stage.completed),
@@ -859,6 +849,7 @@ pub struct MinigameCampaignStageConfig {
     pub link_name: String,
     pub short_name: String,
     pub display_stage_group_guid: Option<i32>,
+    pub inherit_from_portal_entry_guid: Option<u32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -914,7 +905,9 @@ impl MinigameCampaignStageConfig {
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
-            portal_entry_guid,
+            portal_entry_guid: self
+                .inherit_from_portal_entry_guid
+                .unwrap_or(portal_entry_guid),
             link_name: self.link_name.clone(),
             short_name: self.short_name.clone(),
             unlocked: self.unlocked(player, previous_completed),
@@ -1550,6 +1543,15 @@ impl MinigameStageConfig<'_> {
         match self {
             MinigameStageConfig::CampaignStage(stage) => stage.difficulty,
             MinigameStageConfig::Challenge(_, base_stage) => base_stage.difficulty,
+        }
+    }
+
+    pub fn inherit_from_portal_entry_guid(&self) -> Option<u32> {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.inherit_from_portal_entry_guid,
+            MinigameStageConfig::Challenge(challenge, ..) => {
+                challenge.inherit_from_portal_entry_guid
+            }
         }
     }
 
@@ -2641,7 +2643,7 @@ fn handle_request_start_active_minigame(
                         MinigameType::SaberStrike { saber_strike_stage_id } => {
                             packets.append(&mut start_saber_strike(*saber_strike_stage_id, player, minigame_status, game_server));
                         },
-                        MinigameType::SaberDuel { .. } | MinigameType::DarkSaberDuel { .. } => {
+                        MinigameType::SaberDuel { .. } => {
                             if let SharedMinigameTypeData::SaberDuel { game } = &shared_minigame_data.data {
                                 packets.append(&mut game.start(sender)?)
                             }
@@ -3675,8 +3677,7 @@ pub fn create_active_minigame_if_uncreated(
                     difficulty: stage_config.difficulty(),
                     battle_class_type: 0,
                     portal_entry_guid: stage_config
-                        .minigame_type()
-                        .client_portal_entry_guid()
+                        .inherit_from_portal_entry_guid()
                         .unwrap_or(portal_entry_guid),
                     unknown7: false,
                     unknown8: false,
