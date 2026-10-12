@@ -1102,8 +1102,8 @@ impl MinigameStageGroupConfig {
                             parent_stage_definition_guid: 0,
                             child_stage_definition_guid: stage.guid,
                             icon_id: 0,
-                            link_name: "".to_string(),
-                            short_name: "".to_string(),
+                            link_name: stage.link_name.clone(),
+                            short_name: stage.short_name.clone(),
                             stage_number,
                             child_stage_group_definition_guid: 0,
                         });
