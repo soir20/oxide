@@ -11966,7 +11966,7 @@ categories:
               short_name: rylothsaga02
               minigame_type:
                 !SaberStrike
-                saber_strike_stage_id: 1
+                saber_strike_stage_id: 310
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Heavy Defenses
@@ -11986,7 +11986,7 @@ categories:
               short_name: rylothsaga03
               minigame_type:
                 !SaberStrike
-                saber_strike_stage_id: 1
+                saber_strike_stage_id: 311
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Droid Labyrinth
@@ -12006,7 +12006,7 @@ categories:
               short_name: rylothsaga04
               minigame_type:
                 !SaberStrike
-                saber_strike_stage_id: 1
+                saber_strike_stage_id: 312
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Line of Fire
@@ -12026,7 +12026,7 @@ categories:
               short_name: rylothsaga05
               minigame_type:
                 !SaberStrike
-                saber_strike_stage_id: 1
+                saber_strike_stage_id: 313
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Wild Droidekas
@@ -12046,7 +12046,7 @@ categories:
               short_name: rylothsaga06
               minigame_type:
                 !SaberStrike
-                saber_strike_stage_id: 1
+                saber_strike_stage_id: 314
               zone_template_guid: 200
               score_to_credits_expression: x / 81
             # Separatist Wrath
