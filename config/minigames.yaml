@@ -5688,7 +5688,7 @@ categories:
                   zone_template_guid: 200
                   score_to_credits_expression: x / 129
             # Multiplayer
-            - !StageGroup # 44439
+            - !StageGroup
               guid: 10020
               name_id: 44439
               description_id: 14
@@ -6988,7 +6988,7 @@ categories:
                       zone_template_guid: 200
                       score_to_credits_expression: x / 129
             # Multiplayer
-            - !StageGroup # 44439
+            - !StageGroup
               guid: 10022
               name_id: 19815
               description_id: 14
@@ -10643,7 +10643,7 @@ categories:
                 game_swf_name: Infiltration.swf
               zone_template_guid: 200
               score_to_credits_expression: x / 85
-            #Geyser Gears
+            # Geyser Gears
             - !Stage
               guid: 719
               name_id: 14119
