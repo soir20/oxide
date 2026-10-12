@@ -702,7 +702,6 @@ impl MinigameStopwatch {
 }
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
-const GROUP_LINK_NAME: &str = "group";
 const WILDCARD_STAGE_ID: i32 = -1;
 
 #[derive(Clone, Copy, Deserialize)]
@@ -781,6 +780,7 @@ pub struct MinigameChallengeConfig {
     pub start_sound_id: Option<u32>,
     pub required_item_guid: Option<i32>,
     pub members_only: bool,
+    pub inherit_from_portal_entry_guid: Option<u32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -837,7 +837,9 @@ impl MinigameChallengeConfig {
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
-            portal_entry_guid,
+            portal_entry_guid: self
+                .inherit_from_portal_entry_guid
+                .unwrap_or(portal_entry_guid),
             link_name: CHALLENGE_LINK_NAME.to_string(),
             short_name: "".to_string(),
             unlocked: self.unlocked(player, base_stage.completed),
@@ -881,6 +883,7 @@ pub struct MinigameCampaignStageConfig {
     pub link_name: String,
     pub short_name: String,
     pub display_stage_group_guid: Option<i32>,
+    pub inherit_from_portal_entry_guid: Option<u32>,
     pub minigame_type: MinigameType,
     pub zone_template_guid: Option<u8>,
     pub start_pos: Option<Pos>,
@@ -936,7 +939,9 @@ impl MinigameCampaignStageConfig {
     ) -> MinigameStageInstance {
         MinigameStageInstance {
             stage_instance_guid: self.guid,
-            portal_entry_guid,
+            portal_entry_guid: self
+                .inherit_from_portal_entry_guid
+                .unwrap_or(portal_entry_guid),
             link_name: self.link_name.clone(),
             short_name: self.short_name.clone(),
             unlocked: self.unlocked(player, previous_completed),
@@ -1028,6 +1033,10 @@ const fn default_matchmaking_timeout_millis() -> u32 {
     10000
 }
 
+fn default_stage_group_link_name() -> String {
+    "group".to_string()
+}
+
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct MinigameStageGroupConfig {
@@ -1041,6 +1050,8 @@ struct MinigameStageGroupConfig {
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
+    #[serde(default = "default_stage_group_link_name")]
+    pub link_name: String,
     #[serde(default)]
     pub short_name: String,
     #[serde(default)]
@@ -1102,7 +1113,7 @@ impl MinigameStageGroupConfig {
                         parent_stage_definition_guid: 0,
                         child_stage_definition_guid: 0,
                         icon_id: 0,
-                        link_name: GROUP_LINK_NAME.to_string(),
+                        link_name: stage_group.link_name.clone(),
                         short_name: stage_group.short_name.clone(),
                         stage_number,
                         child_stage_group_definition_guid: stage_group.guid,
@@ -1131,8 +1142,8 @@ impl MinigameStageGroupConfig {
                             parent_stage_definition_guid: 0,
                             child_stage_definition_guid: stage.guid,
                             icon_id: 0,
-                            link_name: "".to_string(),
-                            short_name: "".to_string(),
+                            link_name: stage.link_name.clone(),
+                            short_name: stage.short_name.clone(),
                             stage_number,
                             child_stage_group_definition_guid: 0,
                         });
@@ -1199,7 +1210,7 @@ impl MinigameStageGroupConfig {
                     stage_instances.push(MinigameStageInstance {
                         stage_instance_guid: 0,
                         portal_entry_guid,
-                        link_name: GROUP_LINK_NAME.to_string(),
+                        link_name: stage_group.link_name.clone(),
                         short_name: stage_group.short_name.clone(),
                         unlocked,
                         unknown6: 0,
@@ -1566,6 +1577,15 @@ impl MinigameStageConfig<'_> {
         match self {
             MinigameStageConfig::CampaignStage(stage) => stage.difficulty,
             MinigameStageConfig::Challenge(_, base_stage) => base_stage.difficulty,
+        }
+    }
+
+    pub fn inherit_from_portal_entry_guid(&self) -> Option<u32> {
+        match self {
+            MinigameStageConfig::CampaignStage(stage) => stage.inherit_from_portal_entry_guid,
+            MinigameStageConfig::Challenge(challenge, ..) => {
+                challenge.inherit_from_portal_entry_guid
+            }
         }
     }
 
@@ -3703,7 +3723,9 @@ pub fn create_active_minigame_if_uncreated(
                     description_id: stage_config.description_id(),
                     difficulty: stage_config.difficulty(),
                     battle_class_type: 0,
-                    portal_entry_guid,
+                    portal_entry_guid: stage_config
+                        .inherit_from_portal_entry_guid()
+                        .unwrap_or(portal_entry_guid),
                     unknown7: false,
                     unknown8: false,
                     reward_bundle1: RewardBundle::default(),
