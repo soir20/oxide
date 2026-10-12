@@ -33,7 +33,7 @@ pub fn player_can_attack(
     caster_stats: &CharacterStats,
     node: &AttackDecisionNode,
 ) -> bool {
-    if !target_stats.is_spawned() || target_stats.instance_guid != caster_stats.instance_guid {
+    if !target_stats.is_spawned() {
         return false;
     }
 
