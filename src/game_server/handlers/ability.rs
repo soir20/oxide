@@ -46,6 +46,10 @@ const fn default_critical_percent() -> u32 {
     5
 }
 
+const fn default_critical_multiplier() -> f32 {
+    1.0
+}
+
 const fn default_max_distance_from_player() -> f32 {
     3.0
 }
@@ -136,7 +140,8 @@ pub struct AbilityConfig {
     pub damage_expression: String,
     #[serde(default = "default_critical_percent")]
     pub critical_percent: u32,
-    pub critical_bonus_percent: Option<u32>,
+    #[serde(default = "default_critical_multiplier")]
+    pub critical_multiplier: f32,
     #[serde(default)]
     pub target_limit: TargetLimit,
     pub cast_animation_id: Option<u32>,
@@ -179,10 +184,8 @@ fn compute_ability_damage(config: &AbilityConfig, ability_key: &str) -> Result<(
     let is_critical = rng.gen_bool(config.critical_percent.min(100) as f64 / 100.0);
 
     let final_damage = if is_critical {
-        let bonus_percent = config.critical_bonus_percent.unwrap_or(0);
-        let multiplier = 1.0 + (bonus_percent as f64 / 100.0);
-
-        let crit_damage = (evaluated_damage as f64) * multiplier;
+        let multiplier = config.critical_multiplier as f64;
+        let crit_damage = evaluated_damage as f64 * multiplier;
         i16::try_from(crit_damage.round() as i64).unwrap_or(evaluated_damage)
     } else {
         evaluated_damage
