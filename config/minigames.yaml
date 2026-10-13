@@ -12488,6 +12488,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis1
+              inherit_from_portal_entry_guid: 1001
               display_stage_group_guid: 10000
               minigame_type:
                 !SaberStrike
@@ -12509,6 +12510,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis2
+              inherit_from_portal_entry_guid: 1016
               display_stage_group_guid: 10001
               minigame_type:
                 !Flash
@@ -12530,6 +12532,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis3
+              inherit_from_portal_entry_guid: 1001
               display_stage_group_guid: 10000
               minigame_type:
                 !SaberStrike
@@ -12551,6 +12554,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis4
+              inherit_from_portal_entry_guid: 1002
               display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
@@ -12572,6 +12576,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis5
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
@@ -12593,6 +12598,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis6
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
@@ -12614,6 +12620,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis7
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
@@ -12635,6 +12642,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis8
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
@@ -12656,6 +12664,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis9
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
@@ -12677,6 +12686,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis10
+              inherit_from_portal_entry_guid: 1002
               display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
@@ -12698,6 +12708,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis11
+              inherit_from_portal_entry_guid: 1002
               display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
@@ -12792,6 +12803,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga01
+              inherit_from_portal_entry_guid: 1001
               display_stage_group_guid: 10004
               minigame_type:
                 !SaberStrike
@@ -12813,6 +12825,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga02
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
@@ -12834,6 +12847,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga03
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
@@ -12855,6 +12869,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga04
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
@@ -12876,6 +12891,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga05
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
@@ -12897,6 +12913,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga06
+              inherit_from_portal_entry_guid: 1004
               display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
@@ -12918,6 +12935,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga07
+              inherit_from_portal_entry_guid: 1002
               display_stage_group_guid: 10006
               minigame_type:
                 !SaberStrike
@@ -12939,6 +12957,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga08
+              inherit_from_portal_entry_guid: 1006
               display_stage_group_guid: 10007
               minigame_type:
                 !SaberStrike
@@ -13033,6 +13052,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala01
+              inherit_from_portal_entry_guid: 1001
               display_stage_group_guid: 10008
               minigame_type:
                 !SaberStrike
@@ -13054,6 +13074,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala02
+              inherit_from_portal_entry_guid: 1016
               display_stage_group_guid: 10009
               minigame_type:
                 !Flash
@@ -13075,6 +13096,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala03
+              inherit_from_portal_entry_guid: 1002
               display_stage_group_guid: 10010
               minigame_type:
                 !SaberStrike
@@ -13096,6 +13118,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala04
+              inherit_from_portal_entry_guid: 1027
               display_stage_group_guid: 10011
               minigame_type:
                 !SaberStrike
