@@ -1711,10 +1711,7 @@ impl AllMinigameConfigs {
                         MinigameStageGroupChild::Stage(stage) => Some((index, stage)),
                     })
                     .flat_map(move |(index, stage)| {
-                        let stage_number = match stage_group.show_stage_numbers {
-                            true => index as u32 + 1,
-                            false => 0,
-                        };
+                        let stage_number = index as u32 + 1;
                         iter::once(StageConfigRef {
                             stage_config: MinigameStageConfig::CampaignStage(stage),
                             stage_number,
@@ -1750,10 +1747,7 @@ impl AllMinigameConfigs {
                             return None;
                         };
 
-                        let stage_number = match stage_group.show_stage_numbers {
-                            true => index as u32 + 1,
-                            false => 0,
-                        };
+                        let stage_number = index as u32 + 1;
                         if stage.guid == stage_guid {
                             return Some(StageConfigRef {
                                 stage_config: MinigameStageConfig::CampaignStage(stage),
