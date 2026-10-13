@@ -5595,7 +5595,7 @@ categories:
       - guid: 1023
         name_id: 44045
         description_id: 0
-        members_only: false
+        members_only: true
         is_flash: false
         is_active: true
         param1: 0
@@ -5624,6 +5624,7 @@ categories:
               stage_icon_id: 4621
               members_only: false
               require_previous_completed: false
+              show_stage_numbers: false
               stage_select_map_name: baseCommander
               short_name: sp
               stages:
@@ -5696,6 +5697,7 @@ categories:
               stage_icon_id: 4620
               members_only: false
               require_previous_completed: false
+              show_stage_numbers: false
               stage_select_map_name: baseCommander
               short_name: mp
               stages:
@@ -6753,6 +6755,7 @@ categories:
               stage_icon_id: 4502
               members_only: false
               require_previous_completed: false
+              show_stage_numbers: false
               stage_select_map_name: starDestroyer
               short_name: sp
               stages:
@@ -6996,6 +6999,7 @@ categories:
               stage_icon_id: 4503
               members_only: false
               require_previous_completed: false
+              show_stage_numbers: false
               stage_select_map_name: starDestroyer
               short_name: mp
               stages:
@@ -8250,7 +8254,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 15000
+        sort_order: 2
         tutorial_swf: HowtoSaberStrike.swf
         stage_group:
           # Saber Strike
@@ -10165,7 +10169,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 16000
+        sort_order: 3
         tutorial_swf: HowtoCrystalAttunement.swf
         stage_group:
           # Crystal Attunement
@@ -10250,7 +10254,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 17000
+        sort_order: 4
         tutorial_swf: HowtoInfiltration.swf
         stage_group:
           # Infiltration
@@ -10836,7 +10840,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 18000
+        sort_order: 5
         tutorial_swf: HowtoForcePerception.swf
         # Force Perception
         stage_group:
@@ -10921,7 +10925,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 19000
+        sort_order: 6
         tutorial_swf: HowtoDroidProgramming.swf
         stage_group:
           # Droid Programming
@@ -11547,7 +11551,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 20000
+        sort_order: 7
         tutorial_swf: HowtoFleetCommander.swf
         stage_group:
           # Fleet Commander
@@ -11681,7 +11685,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 21000
+        sort_order: 8
         tutorial_swf: HowtoMineBuster.swf
         stage_group:
           # Mine Buster
@@ -11766,7 +11770,7 @@ categories:
         background_icon_id: 0
         is_popular: true
         is_game_of_day: false
-        sort_order: 22000
+        sort_order: 9
         tutorial_swf: HowtoForceConnection.swf
         stage_group:
           # Force Connection
@@ -11836,7 +11840,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 23000
+        sort_order: 10
         tutorial_swf: HowtoHoloScramble.swf
         stage_group:
           # Holo-Scramble
@@ -11909,6 +11913,451 @@ categories:
               zone_template_guid: 200
               score_to_credits_expression: x / 200
 
+      # Card Commander
+      - guid: 1021
+        name_id: 15454
+        description_id: 0
+        members_only: false
+        is_flash: true
+        is_active: true
+        param1: 0
+        icon_id: 1234
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 11
+        tutorial_swf: HowtoCardCommander.swf
+        stage_group:
+          # Portal
+          guid: 57
+          name_id: 15454
+          description_id: 0
+          icon_id: 2159
+          stage_icon_id: 2159
+          members_only: false
+          stage_select_map_name: Tcgportal
+          stages:
+            - !StageGroup
+              guid: 10030
+              name_id: 15455
+              description_id: 0
+              icon_id: 2159
+              stage_icon_id: 0
+              members_only: false
+              require_previous_completed: false
+              show_stage_numbers: false
+              stage_select_map_name: Tcgcampaign
+              short_name: lbCampaign
+              stages:
+                # Quick Play
+                - !Stage
+                  guid: 1175
+                  name_id: 16479
+                  description_id: 0
+                  stage_icon_id: 0
+                  start_screen_icon_id: 1998
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: lbQuickPlay
+                  minigame_type:
+                    !SaberStrike
+                    saber_strike_stage_id: 1
+                  zone_template_guid: 200
+                  score_to_credits_expression: x / 40.9
+            - !StageGroup
+              guid: 58
+              name_id: 15455
+              description_id: 0
+              icon_id: 2159
+              stage_icon_id: 0
+              members_only: false
+              require_previous_completed: false
+              show_stage_numbers: false
+              stage_select_map_name: Tcgcampaign
+              short_name: lbCampaign
+              stages:
+                # The Sith Acolyte
+                - !StageGroup
+                  guid: 59
+                  name_id: 16842
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1396
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg1
+                  short_name: campaign1
+                  stages:
+                    # Track the Assassin - Ryloth
+                    - !Stage
+                      guid: 1101
+                      name_id: 16479
+                      description_id: 17500
+                      stage_icon_id: 1399
+                      start_screen_icon_id: 1998
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3359
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Question the Captain - Tatooine
+                    - !Stage
+                      guid: 1102
+                      name_id: 16480
+                      description_id: 17501
+                      stage_icon_id: 1401
+                      start_screen_icon_id: 2004
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3360
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Find the Commander - Cato Neimoidia
+                    - !Stage
+                      guid: 1103
+                      name_id: 16481
+                      description_id: 17502
+                      stage_icon_id: 1404
+                      start_screen_icon_id: 2011
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3361
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # The Sith Lord attacks - Cato Neimoidia
+                    - !Stage
+                      guid: 1104
+                      name_id: 16482
+                      description_id: 17503
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3362
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Meet the Assassin - Cato Neimoidia
+                    - !Stage
+                      guid: 1105
+                      name_id: 16483
+                      description_id: 17504
+                      stage_icon_id: 1396
+                      start_screen_icon_id: 1992
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3363
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Contact the Pirate - Florrum
+                    - !Stage
+                      guid: 1106
+                      name_id: 16484
+                      description_id: 17505
+                      stage_icon_id: 1403
+                      start_screen_icon_id: 2005
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3364
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Talk to the Hunter - Duro
+                    - !Stage
+                      guid: 1107
+                      name_id: 16485
+                      description_id: 17506
+                      stage_icon_id: 1398
+                      start_screen_icon_id: 1997
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3365
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Convince the Commando - Coruscant
+                    - !Stage
+                      guid: 1108
+                      name_id: 16486
+                      description_id: 17507
+                      stage_icon_id: 1405
+                      start_screen_icon_id: 2016
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3366
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Rescue the Senator - Coruscant
+                    - !Stage
+                      guid: 1109
+                      name_id: 16487
+                      description_id: 17508
+                      stage_icon_id: 1396
+                      start_screen_icon_id: 1992
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3367
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Stop the Assassin - Coruscant
+                    - !Stage
+                      guid: 1110
+                      name_id: 16488
+                      description_id: 17509
+                      stage_icon_id: 1396
+                      start_screen_icon_id: 1992
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3368
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                # The Crime Lord
+                - !StageGroup
+                  guid: 60
+                  name_id: 16843
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1407
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg2
+                  short_name: campaign2
+                  stages: []
+                # The Dark Lord
+                - !StageGroup
+                  guid: 61
+                  name_id: 16844
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1400
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg3
+                  short_name: campaign3
+                  stages: []
+                # The Supreme Commander
+                - !StageGroup
+                  guid: 62
+                  name_id: 16845
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1402
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg4
+                  short_name: campaign4
+                  stages: []
+                # The Pirate Captain
+                - !StageGroup
+                  guid: 63
+                  name_id: 16846
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1403
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg5
+                  short_name: campaign5
+                  stages: []
+                # The Techno Union
+                - !StageGroup
+                  guid: 64
+                  name_id: 16847
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1406
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg6
+                  short_name: campaign6
+                  stages: []
+                # The Bounty Hunter
+                - !StageGroup
+                  guid: 65
+                  name_id: 16848
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1398
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg7
+                  short_name: campaign7
+                  stages: []
+                # Secret Missions
+                - !StageGroup
+                  guid: 66
+                  name_id: 16849
+                  description_id: 0
+                  icon_id: 2159
+                  stage_icon_id: 1397
+                  members_only: false
+                  require_previous_completed: false
+                  stage_select_map_name: tcg8
+                  short_name: campaign8
+                  stages:
+                    # Anakin Skywalker
+                    - !Stage
+                      guid: 1171
+                      name_id: 16550
+                      description_id: 17570
+                      stage_icon_id: 2179
+                      start_screen_icon_id: 2175
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3430
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: boss1
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Obi-Wan Kenobi
+                    - !Stage
+                      guid: 1172
+                      name_id: 16551
+                      description_id: 17571
+                      stage_icon_id: 2181
+                      start_screen_icon_id: 2177
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3431
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: boss2
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Mace Windu
+                    - !Stage
+                      guid: 1173
+                      name_id: 16552
+                      description_id: 17572
+                      stage_icon_id: 2180
+                      start_screen_icon_id: 2176
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3432
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: boss3
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Yoda
+                    - !Stage
+                      guid: 1174
+                      name_id: 16553
+                      description_id: 17573
+                      stage_icon_id: 2182
+                      start_screen_icon_id: 2178
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3433
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: boss4
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+
       # Star Typer
       - guid: 1010
         name_id: 6171
@@ -11921,7 +12370,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 25000
+        sort_order: 12
         tutorial_swf: HowtoStarTyper.swf
         stage_group:
           # Star Typer
@@ -12013,7 +12462,7 @@ categories:
         is_popular: true
         is_game_of_day: false
         sort_order: 1
-        tutorial_swf: HowtoGunship.swf
+        tutorial_swf: ''
         stage_group:
           # Geonosis Saga
           guid: 74
@@ -12039,6 +12488,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis1
+              display_stage_group_guid: 10000
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12054,11 +12504,12 @@ categories:
               min_players: 1
               max_players: 1
               difficulty: 1
-              start_sound_id: 0
+              start_sound_id: 4512
               members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: geonosis2
+              display_stage_group_guid: 10001
               minigame_type:
                 !Flash
                 game_swf_name: RepublicGunship_Geonosian.swf
@@ -12079,6 +12530,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis3
+              display_stage_group_guid: 10000
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12099,6 +12551,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis4
+              display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12119,6 +12572,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis5
+              display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 151
@@ -12139,6 +12593,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis6
+              display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 152
@@ -12159,6 +12614,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis7
+              display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 153
@@ -12174,11 +12630,12 @@ categories:
               min_players: 1
               max_players: 1
               difficulty: 1
-              start_sound_id: 0
+              start_sound_id: 4483
               members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: geonosis8
+              display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 154
@@ -12194,11 +12651,12 @@ categories:
               min_players: 1
               max_players: 1
               difficulty: 1
-              start_sound_id: 0
+              start_sound_id: 4478
               members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: geonosis9
+              display_stage_group_guid: 10003
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 155
@@ -12219,6 +12677,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis10
+              display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12239,11 +12698,60 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: geonosis11
+              display_stage_group_guid: 10002
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
+            # Geonosis Saga Display Starfighter
+            - !StageGroup
+              guid: 10000
+              name_id: 30405
+              description_id: 0
+              icon_id: 374
+              stage_icon_id: 374
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Geonosis Saga Display Republic Gunship
+            - !StageGroup
+              guid: 10001
+              name_id: 30405
+              description_id: 0
+              icon_id: 887
+              stage_icon_id: 887
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Geonosis Saga Display Republic Defender
+            - !StageGroup
+              guid: 10002
+              name_id: 30405
+              description_id: 0
+              icon_id: 375
+              stage_icon_id: 375
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Geonosis Saga Display Saber Strike
+            - !StageGroup
+              guid: 10003
+              name_id: 30405
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 369
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
 
       # Biggest Battles: Ryloth
       - guid: 1000001
@@ -12284,6 +12792,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga01
+              display_stage_group_guid: 10004
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12304,6 +12813,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga02
+              display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 310
@@ -12324,6 +12834,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga03
+              display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 311
@@ -12344,6 +12855,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga04
+              display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 312
@@ -12364,6 +12876,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga05
+              display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 313
@@ -12384,6 +12897,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga06
+              display_stage_group_guid: 10005
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 314
@@ -12404,6 +12918,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga07
+              display_stage_group_guid: 10006
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12424,11 +12939,60 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: rylothsaga08
+              display_stage_group_guid: 10007
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
+            # Biggest Battles: Ryloth Display Starfighter
+            - !StageGroup
+              guid: 10004
+              name_id: 33034
+              description_id: 0
+              icon_id: 374
+              stage_icon_id: 374
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Biggest Battles: Ryloth Display Saber Strike
+            - !StageGroup
+              guid: 10005
+              name_id: 33034
+              description_id: 0
+              icon_id: 369
+              stage_icon_id: 369
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Biggest Battles: Ryloth Display Republic Defender
+            - !StageGroup
+              guid: 10006
+              name_id: 33034
+              description_id: 0
+              icon_id: 375
+              stage_icon_id: 375
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Biggest Battles: Ryloth Display Attack Cruiser
+            - !StageGroup
+              guid: 10007
+              name_id: 33034
+              description_id: 0
+              icon_id: 373
+              stage_icon_id: 373
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
 
       # Mission on Iceberg Three
       - guid: 1000002
@@ -12469,6 +13033,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala01
+              display_stage_group_guid: 10008
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12489,6 +13054,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala02
+              display_stage_group_guid: 10009
               minigame_type:
                 !Flash
                 game_swf_name: RepublicGunship_Calamari.swf
@@ -12509,6 +13075,7 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala03
+              display_stage_group_guid: 10010
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
@@ -12529,11 +13096,60 @@ categories:
               require_previous_completed: false
               link_name: stage
               short_name: moncala04
+              display_stage_group_guid: 10011
               minigame_type:
                 !SaberStrike
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 81
+            # Mission on Iceberg Three Display Starfighter
+            - !StageGroup
+              guid: 10008
+              name_id: 44221
+              description_id: 0
+              icon_id: 374
+              stage_icon_id: 374
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Mission on Iceberg Three Display Republic Gunship
+            - !StageGroup
+              guid: 10009
+              name_id: 44221
+              description_id: 0
+              icon_id: 887
+              stage_icon_id: 887
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Mission on Iceberg Three Display Republic Defender
+            - !StageGroup
+              guid: 10010
+              name_id: 44221
+              description_id: 0
+              icon_id: 375
+              stage_icon_id: 375
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
+            # Mission on Iceberg Three Display Dark Side Duel
+            - !StageGroup
+              guid: 10011
+              name_id: 44221
+              description_id: 0
+              icon_id: 2734
+              stage_icon_id: 2734
+              members_only: false
+              require_previous_completed: false
+              stage_select_map_name: ''
+              short_name: ''
+              stages: []
 
   # Dailies
   - guid: 5
@@ -12541,6 +13157,30 @@ categories:
     icon_id: 5806
     sort_order: 5
     portal_entries:
+      # Event Calendar
+      - guid: 27000
+        name_id: 31850
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 5817
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 1
+        tutorial_swf: ''
+        stage_group:
+          guid: 9999
+          name_id: 0
+          description_id: 0
+          icon_id: 0
+          stage_icon_id: 0
+          members_only: false
+          stage_select_map_name: ''
+          stages: []
+
       # Daily Spin
       - guid: 28000
         name_id: 14053
@@ -12553,7 +13193,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 28000
+        sort_order: 2
         tutorial_swf: HowtoSpin.swf
         daily_type: Spin
         stage_group:
@@ -12612,7 +13252,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 29000
+        sort_order: 3
         tutorial_swf: HowtoQuiz.swf
         daily_type: Trivia
         stage_group:
@@ -14192,7 +14832,7 @@ categories:
         background_icon_id: 0
         is_popular: false
         is_game_of_day: false
-        sort_order: 30000
+        sort_order: 4
         tutorial_swf: 'HowtoHolocron.swf'
         daily_type: Holocron
         stage_group:
