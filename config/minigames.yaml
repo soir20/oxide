@@ -5356,7 +5356,7 @@ categories:
               max_players: 1
               difficulty: 1
               start_sound_id: 1508
-              members_only: false
+              members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: stage05
@@ -5374,7 +5374,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3024
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5388,7 +5388,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3025
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5405,7 +5405,7 @@ categories:
               max_players: 1
               difficulty: 1
               start_sound_id: 1508
-              members_only: false
+              members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: stage06
@@ -5423,7 +5423,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3024
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5437,7 +5437,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3025
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5503,7 +5503,7 @@ categories:
               max_players: 1
               difficulty: 1
               start_sound_id: 1507
-              members_only: false
+              members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: stage03
@@ -5521,7 +5521,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3024
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5535,7 +5535,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3025
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5552,7 +5552,7 @@ categories:
               max_players: 1
               difficulty: 1
               start_sound_id: 1507
-              members_only: false
+              members_only: true
               require_previous_completed: false
               link_name: stage
               short_name: stage04
@@ -5570,7 +5570,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3024
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
@@ -5584,7 +5584,7 @@ categories:
                   min_players: 1
                   max_players: 1
                   start_sound_id: 3025
-                  members_only: false
+                  members_only: true
                   minigame_type:
                     !SaberStrike
                     saber_strike_stage_id: 1
