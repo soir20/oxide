@@ -1016,6 +1016,8 @@ struct MinigameStageGroupConfig {
     pub members_only: bool,
     #[serde(default = "default_true")]
     pub require_previous_completed: bool,
+    #[serde(default = "default_true")]
+    pub show_stage_numbers: bool,
     #[serde(default = "default_stage_group_link_name")]
     pub link_name: String,
     #[serde(default)]
@@ -1061,7 +1063,10 @@ impl MinigameStageGroupConfig {
         let mut group_played_today = false;
 
         for (index, child) in self.stages.iter().enumerate() {
-            let stage_number = index as u32 + 1;
+            let stage_number = match self.show_stage_numbers {
+                true => index as u32 + 1,
+                false => 0,
+            };
             match child {
                 MinigameStageGroupChild::StageGroup(stage_group) => {
                     let (mut stage_group_definitions, mut stage_definitions, played_today) =
@@ -1167,7 +1172,10 @@ impl MinigameStageGroupConfig {
         let mut previous_completed = true;
 
         for (index, child) in self.stages.iter().enumerate() {
-            let stage_number = index as u32 + 1;
+            let stage_number = match self.show_stage_numbers {
+                true => index as u32 + 1,
+                false => 0,
+            };
             match child {
                 MinigameStageGroupChild::StageGroup(stage_group) => {
                     let unlocked = stage_group.unlocked(player, previous_completed);
@@ -1703,7 +1711,10 @@ impl AllMinigameConfigs {
                         MinigameStageGroupChild::Stage(stage) => Some((index, stage)),
                     })
                     .flat_map(move |(index, stage)| {
-                        let stage_number = index as u32 + 1;
+                        let stage_number = match stage_group.show_stage_numbers {
+                            true => index as u32 + 1,
+                            false => 0,
+                        };
                         iter::once(StageConfigRef {
                             stage_config: MinigameStageConfig::CampaignStage(stage),
                             stage_number,
@@ -1739,7 +1750,10 @@ impl AllMinigameConfigs {
                             return None;
                         };
 
-                        let stage_number = index as u32 + 1;
+                        let stage_number = match stage_group.show_stage_numbers {
+                            true => index as u32 + 1,
+                            false => 0,
+                        };
                         if stage.guid == stage_guid {
                             return Some(StageConfigRef {
                                 stage_config: MinigameStageConfig::CampaignStage(stage),
