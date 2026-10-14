@@ -36,9 +36,9 @@ use super::{
     WriteLockingBroadcastSupplier,
 };
 
-const DEFAULT_DAMAGE_EXPRESSION: &str = "x * (0.84 + random() * (1.15 - 0.84))";
+const DEFAULT_DELTA_HEALTH_EXPRESSION: &str = "x * (0.84 + random() * (1.15 - 0.84))";
 
-const fn default_base_damage() -> i16 {
+const fn default_base_delta_health() -> i32 {
     100
 }
 
@@ -70,43 +70,43 @@ const fn default_ability_sub_type() -> AbilitySubType {
     AbilitySubType::InstantSingleTarget
 }
 
-fn default_damage_expression() -> String {
-    DEFAULT_DAMAGE_EXPRESSION.to_string()
+fn default_delta_health_expression() -> String {
+    DEFAULT_DELTA_HEALTH_EXPRESSION.to_string()
 }
 
-fn evaluate_damage_expression(
-    damage_expression: &str,
-    damage: i16,
+fn evaluate_delta_health_expression(
+    delta_health_expression: &str,
+    base_delta_health: i32,
     ability_key: &str,
-) -> Result<i16, Error> {
+) -> Result<i32, Error> {
     let context = context_map! {
-        "x" => evalexpr::Value::Float(damage as f64),
+        "x" => evalexpr::Value::Float(base_delta_health as f64),
     }
     .unwrap_or_else(|_| {
-        panic!("Couldn't build expression evaluation context for ability {ability_key}")
+        panic!("Couldn't build delta expression evaluation context for ability {ability_key}")
     });
 
-    let result = eval_with_context(damage_expression, &context).map_err(|err| {
+    let result = eval_with_context(delta_health_expression, &context).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
-            format!("Unable to evaluate damage expression for ability {ability_key}: {err}"),
+            format!("Unable to evaluate delta health expression for ability {ability_key}: {err}"),
         )
     })?;
 
-    let Value::Float(damage) = result else {
+    let Value::Float(delta) = result else {
         return Err(Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Damage expression did not return an integer for ability {ability_key}, returned: {result}"
+                "Delta health expression did not return a float for ability {ability_key}, returned: {result}"
             ),
         ));
     };
 
-    i16::try_from(damage.round() as i64).map_err(|err| {
+    i32::try_from(delta.round() as i64).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Damage expression returned float that could not be converted to an integer for ability {ability_key}: {damage}, {err}"
+                "Delta health expression returned float that could not be converted to an integer for ability {ability_key}: {delta}, {err}"
             ),
         )
     })
@@ -134,10 +134,10 @@ pub struct AbilityConfig {
     pub area_of_effect_radius: f32,
     #[serde(default = "default_max_distance_from_player")]
     pub max_distance_from_player: f32,
-    #[serde(default = "default_base_damage")]
-    pub base_damage: i16,
-    #[serde(default = "default_damage_expression")]
-    pub damage_expression: String,
+    #[serde(default = "default_base_delta_health")]
+    pub base_delta_health: i32,
+    #[serde(default = "default_delta_health_expression")]
+    pub delta_health_expression: String,
     #[serde(default = "default_critical_percent")]
     pub critical_percent: u32,
     #[serde(default = "default_critical_multiplier")]
@@ -176,39 +176,42 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
     Ok(abilities)
 }
 
-fn compute_ability_damage(config: &AbilityConfig, ability_key: &str) -> Result<(i16, bool), Error> {
-    let evaluated_damage =
-        evaluate_damage_expression(&config.damage_expression, config.base_damage, ability_key)?;
+fn compute_ability_delta_health(
+    config: &AbilityConfig,
+    ability_key: &str,
+) -> Result<(i32, bool), Error> {
+    let evaluated_delta_health = evaluate_delta_health_expression(
+        &config.delta_health_expression,
+        config.base_delta_health,
+        ability_key,
+    )?;
 
     let mut rng = thread_rng();
     let is_critical = rng.gen_bool(config.critical_percent.min(100) as f64 / 100.0);
 
-    let final_damage = if is_critical {
-        let multiplier = config.critical_multiplier as f64;
-        let crit_damage = evaluated_damage as f64 * multiplier;
-        // clamp to i16 max probably use .min() avoid try_from
-        // crit_damage.round().min(i16::MAX as f64) as i16
-        i16::try_from(crit_damage.round() as i64).unwrap_or(evaluated_damage)
+    let delta = if is_critical {
+        (evaluated_delta_health as f64 * config.critical_multiplier as f64).round() as i32
     } else {
-        evaluated_damage
+        evaluated_delta_health
     };
 
-    Ok((final_damage, is_critical))
+    Ok((delta.saturating_neg(), is_critical))
 }
 
-fn deal_ability_damage(
+fn deal_ability_delta_health(
     caster: u64,
     target: &mut Character,
     nearby_player_guids: &[u32],
     ability_key: &str,
     ability_config: &AbilityConfig,
 ) -> Result<Vec<Broadcast>, Error> {
-    let (damage_dealt, critical) = compute_ability_damage(ability_config, ability_key)?;
+    let (hp_delta, critical) = compute_ability_delta_health(ability_config, ability_key)?;
 
     let current_health = target.stats.health as i32;
     let max_health = target.stats.max_health as i32;
 
-    let new_health = (current_health - damage_dealt as i32).clamp(0, max_health) as u16;
+    let new_health = current_health.saturating_add(hp_delta).clamp(0, max_health) as u16;
+
     target.stats.health = new_health;
 
     let mut broadcasts = vec![Broadcast::Multi(
@@ -221,7 +224,7 @@ fn deal_ability_damage(
                 show_hp_delta: true,
                 max_hp: max_health,
                 new_hp: new_health as i32,
-                hp_delta: -(damage_dealt as i32),
+                hp_delta,
                 critical,
             },
         })],
@@ -380,7 +383,7 @@ pub fn handle_targeted_cast(
 
     for &target in &selected_targets {
         if let Some(target_write_handle) = nearby_characters.get_mut(&target) {
-            broadcasts.extend(deal_ability_damage(
+            broadcasts.extend(deal_ability_delta_health(
                 caster_guid,
                 target_write_handle,
                 nearby_player_guids,
@@ -405,7 +408,7 @@ pub fn handle_targeted_cast(
 
                 if distance3_pos(impacted_pos, aoe_pos) <= aoe_radius {
                     if let Some(target_write_handle) = nearby_characters.get_mut(&aoe_target) {
-                        broadcasts.extend(deal_ability_damage(
+                        broadcasts.extend(deal_ability_delta_health(
                             caster_guid,
                             target_write_handle,
                             nearby_player_guids,
