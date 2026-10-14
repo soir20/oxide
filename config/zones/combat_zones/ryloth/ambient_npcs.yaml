@@ -196,14 +196,14 @@ ryloth:
       model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
       show_name: false
       pos:
-        x: 507.34317
-        y: 3.4921374
-        z: 590.25006
+        x: 507.05252
+        y: 3.9232383
+        z: 588.122
         w: 1
       rot:
-        x: 0.7257518
+        x: -0.8795524
         y: 0
-        z: -0.6879565
+        z: -0.47580203
         w: 0
       stand_animation_id: 1607   # Com_BlasterRifle_Stand
       hostility: "Friendly"
@@ -216,14 +216,14 @@ ryloth:
       name_id: 31945
       show_name: true
       pos:
-        x: 510.41205
-        y: 3.6512246
-        z: 590.2147
+        x: 512.7839
+        y: 3.867073
+        z: 588.08344
         w: 1
       rot:
-        x: -0.8672042
+        x: -0.8483086
         y: 0
-        z: -0.4979528
+        z: -0.529502
         w: 0
       stand_animation_id: 2201   # Amb_DialogIdle
       hostility: "Friendly"
@@ -236,14 +236,14 @@ ryloth:
       name_id: 31927
       show_name: true
       pos:
-        x: 501.68436
-        y: 1.6238085
-        z: 562.23016
+        x: 502.43835
+        y: 1.7099935
+        z: 560.8015
         w: 1
       rot:
-        x: -0.9598943
+        x: -0.99841005
         y: 0
-        z: 0.28036225
+        z: -0.05636826
         w: 0
       hostility: "Friendly"
       cursor: 54
@@ -269,6 +269,19 @@ ryloth:
       cursor: 54
       clickable: false
       enable_interact_popup: false
+      # Potters around a small 1.5 m box (kept clear of the running ARC's turn-around point).
+      tickable_procedures:
+        wander:
+          steps:
+            - speed: 1.5
+              animation_id: 3  # loc_run - R2's rolling movement (he has no walk)
+              wander:
+                radius: 1.5
+                min_offset: 0.5
+                origin: {x: 508.051, y: 1.6488527, z: 565.7204, w: 1}
+              min_duration_millis: 0
+            - animation_id: 1  # loc_stand
+              min_duration_millis: 5000
     captain_rex:
       key: captain_rex
       model_id: 2056  # Grp_HumanMale_cloneRexHelmetv2 - same Rex as Umbara
@@ -412,21 +425,21 @@ ryloth:
             - one_shot_animation_id: 3009   # Emo_Point - points out the objective
               min_duration_millis: 3000
             - min_duration_millis: 3000
-    clone_nohelmet_1:
-      key: clone_nohelmet_1
-      model_id: 2032  # Grp_HumanMale_cloneBasic - white armour, no helmet, no gun
+    phase1_clone_2:
+      key: phase1_clone_2
+      model_id: 624  # Char_CloneNPC - Phase I clone, white armour + helmet, no weapon
       show_name: false
       pos:
-        x: 584.4826
+        x: 584.4494
         y: 10.01764
-        z: 679.8454
+        z: 679.8473
         w: 1
       rot:
-        x: -0.12928808
+        x: -0.157272
         y: 0
-        z: 0.99160707
+        z: 0.98755527
         w: 0
-      stand_animation_id: 2599   # Amb_StandingAroundA
+      stand_animation_id: 1  # loc_stand (this body has no 'standing around' poses)
       hostility: "Friendly"
       cursor: 54
       clickable: false
@@ -578,3 +591,231 @@ ryloth:
               new_rot_y: 0
               new_rot_z: -0.80778
               min_duration_millis: 3000
+    phase1_clone_1:
+      key: phase1_clone_1
+      model_id: 624  # Char_CloneNPC - Phase I clone, white armour + helmet, no weapon
+      show_name: false
+      pos:
+        x: 592.0322
+        y: 9.930433
+        z: 674.564
+        w: 1
+      rot:
+        x: 0.6567751
+        y: 0
+        z: -0.75408643
+        w: 0
+      stand_animation_id: 1  # loc_stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_11:
+      key: arc_trooper_11
+      model_id: 1397  # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 497.91107
+        y: 1.8684169
+        z: 569.40454
+        w: 1
+      rot:
+        x: -0.95735705
+        y: 0
+        z: -0.2889074
+        w: 0
+      stand_animation_id: 1607  # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_12:
+      key: arc_trooper_12
+      model_id: 1397  # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 425.243
+        y: 2.4922397
+        z: 461.2281
+        w: 1
+      rot:
+        x: 0.15652844
+        y: 0
+        z: 0.9876735
+        w: 0
+      stand_animation_id: 1607  # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_13:
+      key: arc_trooper_13
+      model_id: 1397  # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 412.7435
+        y: 2.719603
+        z: 465.87375
+        w: 1
+      rot:
+        x: 0.36232793
+        y: 0
+        z: 0.9320507
+        w: 0
+      stand_animation_id: 1607  # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_14:
+      key: arc_trooper_14
+      model_id: 1397  # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 404.31036
+        y: 1.1948254
+        z: 470.81598
+        w: 1
+      rot:
+        x: 0.50956345
+        y: 0
+        z: 0.8604331
+        w: 0
+      stand_animation_id: 1607  # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    arc_trooper_15:
+      key: arc_trooper_15
+      model_id: 1397  # Char_CloneArcTrooperNPC (yellow)
+      show_name: false
+      pos:
+        x: 393.37753
+        y: 4.9497747
+        z: 442.93866
+        w: 1
+      rot:
+        x: 0.41560453
+        y: 0
+        z: 0.90954536
+        w: 0
+      stand_animation_id: 1607  # Com_BlasterRifle_Stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_clone_nohelmet_1:
+      key: snow_clone_nohelmet_1
+      model_id: 1877  # Grp_Clone_Ambient03 - snow armour, no helmet, goatee
+      show_name: false
+      pos:
+        x: 601.83215
+        y: 9.930433
+        z: 670.58984
+        w: 1
+      rot:
+        x: 0.763126
+        y: 0
+        z: 0.6462496
+        w: 0
+      stand_animation_id: 2599  # Amb_StandingAroundA
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    zabrak_jedi_white_1:
+      key: zabrak_jedi_white_1
+      model_id: 2016  # Grp_ZabrakFemale_AmbientJedi01 - female Zabrak Jedi, white robe
+      show_name: false
+      pos:
+        x: 601.7456
+        y: 9.930433
+        z: 672.5898
+        w: 1
+      rot:
+        x: 0.5430445
+        y: 0
+        z: -0.83970386
+        w: 0
+      stand_animation_id: 1  # loc_stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    phase1_clone_nohelmet_1:
+      key: phase1_clone_nohelmet_1
+      model_id: 2032  # Grp_HumanMale_cloneBasic - Phase I white armour, no helmet, no gun
+      show_name: false
+      pos:
+        x: 604.4867
+        y: 10.017641
+        z: 665.29987
+        w: 1
+      rot:
+        x: 0.69363767
+        y: 0
+        z: -0.720324
+        w: 0
+      stand_animation_id: 1  # loc_stand - no pose
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    phase1_clone_nohelmet_2:
+      key: phase1_clone_nohelmet_2
+      model_id: 2032  # Grp_HumanMale_cloneBasic - Phase I white armour, no helmet, no gun
+      show_name: false
+      pos:
+        x: 600.67145
+        y: 10.017641
+        z: 663.1194
+        w: 1
+      rot:
+        x: -0.38872257
+        y: 0
+        z: -0.9213548
+        w: 0
+      stand_animation_id: 2600  # Amb_StandingAroundB
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    phase1_clone_3:
+      key: phase1_clone_3
+      model_id: 624  # Char_CloneNPC - Phase I clone, white armour + helmet, no weapon
+      show_name: false
+      pos:
+        x: 598.60754
+        y: 10.017641
+        z: 661.05035
+        w: 1
+      rot:
+        x: 0.90629244
+        y: 0
+        z: -0.4226509
+        w: 0
+      stand_animation_id: 1  # loc_stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    clone_officer_1:
+      key: clone_officer_1
+      model_id: 1267  # Grp_Clone_uniform03 - clone officer, grey uniform + officer cap
+      show_name: false
+      pos:
+        x: 595.1935
+        y: 9.930433
+        z: 675.4514
+        w: 1
+      rot:
+        x: -0.56591094
+        y: 0
+        z: -0.8244662
+        w: 0
+      stand_animation_id: 1  # loc_stand
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
