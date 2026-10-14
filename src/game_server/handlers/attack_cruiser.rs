@@ -320,6 +320,7 @@ struct AttackCruiserActor {
     pub turn_multiplier: f32,
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
+    pub launched_by_player_index: Option<u8>,
     invulnerability: AttackCruiserActorInvulnerability,
     stun: AttackCruiserActorStun,
     primary_weapon_tier: usize,
@@ -342,6 +343,7 @@ impl AttackCruiserActor {
         speed: f32,
         angular_speed: f32,
         bvh: Option<Arc<Bvh>>,
+        launched_by_player_index: Option<u8>,
         ship: Arc<AttackCruiserShipConfig>,
         now: Instant,
         rng: &mut SmallRng,
@@ -360,6 +362,7 @@ impl AttackCruiserActor {
             turn_multiplier: zero_nan(angular_speed / ship.max_angular_speed.to_radians()),
             health: ship.max_health,
             bvh,
+            launched_by_player_index,
             invulnerability: AttackCruiserActorInvulnerability::default(),
             stun: AttackCruiserActorStun::default(),
             primary_weapon_tier: 0,
@@ -1097,13 +1100,25 @@ impl AttackCruiserPendingActor {
         speed: f32,
         angular_speed: f32,
         bvh: Option<Arc<Bvh>>,
+        launched_by_player_index: Option<u8>,
         ship: Arc<AttackCruiserShipConfig>,
         ship_name: String,
         now: Instant,
         rng: &mut SmallRng,
     ) -> Self {
         AttackCruiserPendingActor {
-            actor: AttackCruiserActor::new(0, pos, yaw, speed, angular_speed, bvh, ship, now, rng),
+            actor: AttackCruiserActor::new(
+                0,
+                pos,
+                yaw,
+                speed,
+                angular_speed,
+                bvh,
+                launched_by_player_index,
+                ship,
+                now,
+                rng,
+            ),
             ship_name,
         }
     }
@@ -1198,6 +1213,7 @@ struct AttackCruiserPlayer {
 impl AttackCruiserPlayer {
     pub fn new(
         guid: u32,
+        index: u8,
         actor_id: i32,
         ship: Arc<AttackCruiserShipConfig>,
         lives: u8,
@@ -1211,7 +1227,18 @@ impl AttackCruiserPlayer {
         AttackCruiserPlayer {
             guid,
             ready: false,
-            actor: AttackCruiserActor::new(actor_id, pos, yaw, 0.0, 0.0, bvh, ship, now, rng),
+            actor: AttackCruiserActor::new(
+                actor_id,
+                pos,
+                yaw,
+                0.0,
+                0.0,
+                bvh,
+                Some(index),
+                ship,
+                now,
+                rng,
+            ),
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier: 1,
@@ -1882,6 +1909,7 @@ struct AttackCruiserShipConfig {
     #[serde(default = "default_true")]
     stunnable: bool,
     overhead_health_scale: f32,
+    score: i32,
     effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
@@ -2153,6 +2181,7 @@ pub fn process_attack_cruiser_packet(
 #[derive(Clone, Debug)]
 struct AttackCruiserProjectileInstance {
     launched_by_actor_id: i32,
+    launched_by_player_index: Option<u8>,
     direction: Pos3,
     speed: Pos3,
     origin: Pos3,
@@ -2197,6 +2226,7 @@ impl AttackCruiserProjectilePool {
         &mut self,
         rng: &mut SmallRng,
         launched_by_actor_id: i32,
+        launched_by_player_index: Option<u8>,
         actor_origin: Pos3,
         direction: Pos3,
         projectile: &Arc<AttackCruiserProjectileConfig>,
@@ -2243,6 +2273,7 @@ impl AttackCruiserProjectilePool {
                 projectile_id,
                 AttackCruiserProjectileInstance {
                     launched_by_actor_id,
+                    launched_by_player_index,
                     direction: launch_location.direction,
                     speed: launch_location.speed,
                     origin: launch_location.origin,
@@ -2570,6 +2601,7 @@ impl AttackCruiserGame {
         let mut player_states = ArrayVec::new();
         player_states.push(AttackCruiserPlayer::new(
             player1,
+            0,
             actor_id_pool
                 .next(
                     &[],
@@ -2593,6 +2625,7 @@ impl AttackCruiserGame {
             players.push(player2);
             player_states.push(AttackCruiserPlayer::new(
                 player2,
+                1,
                 actor_id_pool
                     .next(
                         &[player_states[0].actor.id],
@@ -2643,6 +2676,7 @@ impl AttackCruiserGame {
                 test_npc_ship.max_speed,
                 0.0,
                 player_bvh.clone(),
+                None,
                 test_npc_ship.clone(),
                 now,
                 rng,
@@ -2671,6 +2705,7 @@ impl AttackCruiserGame {
                 test_npc_ship.max_speed,
                 0.0,
                 player_bvh.clone(),
+                None,
                 test_npc_ship.clone(),
                 now,
                 rng,
@@ -2699,6 +2734,7 @@ impl AttackCruiserGame {
                 test_npc_ship.max_speed,
                 0.0,
                 player_bvh,
+                None,
                 test_npc_ship.clone(),
                 now,
                 rng,
@@ -3454,6 +3490,7 @@ impl AttackCruiserGame {
                     player_state.actor.pos,
                     (click.clicked_pos.x - player_state.actor.pos.x)
                         .atan2(click.clicked_pos.y - player_state.actor.pos.z),
+                    Some(player_index),
                     &secondary_item.ships,
                     now,
                     &self.config,
@@ -3531,6 +3568,7 @@ impl AttackCruiserGame {
         let player_state = &mut self.player_states[player_index as usize];
         let (mut broadcasts, pending_npcs) = Self::actor_attack_primary(
             &mut player_state.actor,
+            Some(player_index),
             target_pos,
             Pos3::default(),
             now,
@@ -3910,6 +3948,7 @@ impl AttackCruiserGame {
 
     fn actor_attack_primary<'a>(
         actor: &'a mut AttackCruiserActor,
+        player_index: Option<u8>,
         target_pos: Pos3,
         target_speed: Pos3,
         now: Instant,
@@ -3937,6 +3976,7 @@ impl AttackCruiserGame {
                     .launch(
                         rng,
                         actor_id,
+                        player_index,
                         actor_pos,
                         direction,
                         projectile,
@@ -3994,6 +4034,7 @@ impl AttackCruiserGame {
                     ship.max_speed,
                     0.0,
                     bvh.clone(),
+                    player_index,
                     ship.clone(),
                     launched_actor.ship.clone(),
                     now,
@@ -4301,6 +4342,7 @@ impl AttackCruiserGame {
                     pending_npcs.append(&mut Self::launch_actors_from_actor(
                         player_state.actor.pos,
                         player_state.actor.yaw,
+                        Some(player_index as u8),
                         &self.config.player.ships_on_death,
                         now,
                         &self.config,
@@ -4401,6 +4443,7 @@ impl AttackCruiserGame {
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     npc.pos,
                     (target_pos.x - npc.pos.x).atan2(target_pos.z - npc.pos.z),
+                    None,
                     &ai_result.behavior.ships,
                     now,
                     &self.config,
@@ -4448,6 +4491,7 @@ impl AttackCruiserGame {
             if is_real_target && !npc.disabled() {
                 let attack_result = Self::actor_attack_primary(
                     npc,
+                    None,
                     target_pos,
                     target_speed,
                     now,
@@ -4530,6 +4574,7 @@ impl AttackCruiserGame {
     fn launch_actors_from_actor(
         origin: Pos3,
         yaw: f32,
+        player_index: Option<u8>,
         new_ships: &[AttackCruiserSpawnedShipConfig],
         now: Instant,
         config: &AttackCruiserConfig,
@@ -4565,6 +4610,7 @@ impl AttackCruiserGame {
                     ship.max_speed,
                     0.0,
                     bvh.clone(),
+                    player_index,
                     ship.clone(),
                     launched_actor.ship.clone(),
                     now,
