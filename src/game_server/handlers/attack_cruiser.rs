@@ -2554,7 +2554,15 @@ impl AttackCruiserActorIdPool {
 struct AttackCruiserPendingAoe {
     config: Arc<AttackCruiserAoeConfig>,
     launched_by_actor_id: i32,
+    launched_by_player_index: Option<u8>,
     pos: Pos3,
+}
+
+#[derive(Clone, Debug)]
+struct AttackCruiserAoeHit {
+    config: Arc<AttackCruiserAoeConfig>,
+    launched_by_actor_id: i32,
+    launched_by_player_index: Option<u8>,
 }
 
 #[derive(Clone, Debug)]
@@ -3166,7 +3174,7 @@ impl AttackCruiserGame {
         self.projectiles.expire(now);
 
         let mut aoe_effect_packets = Vec::new();
-        let mut aoes: HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>> = HashMap::new();
+        let mut aoes: HashMap<i32, Vec<AttackCruiserAoeHit>> = HashMap::new();
         for aoe in self.pending_aoes.drain(..) {
             aoe_effect_packets.append(&mut Self::spawn_client_effect(
                 aoe.config.composite_effect_id,
@@ -3199,7 +3207,11 @@ impl AttackCruiserGame {
 
                     aoes.entry(target.id)
                         .or_default()
-                        .push((aoe.launched_by_actor_id, aoe.config.clone()))
+                        .push(AttackCruiserAoeHit {
+                            config: aoe.config.clone(),
+                            launched_by_actor_id: aoe.launched_by_actor_id,
+                            launched_by_player_index: aoe.launched_by_player_index,
+                        })
                 })
         }
         broadcasts.push(Broadcast::Multi(
@@ -3501,6 +3513,7 @@ impl AttackCruiserGame {
                     self.pending_aoes.push(AttackCruiserPendingAoe {
                         config: config.clone(),
                         launched_by_actor_id: player_state.actor.id,
+                        launched_by_player_index: Some(player_index),
                         pos: player_state.actor.pos,
                     });
                 }
@@ -3568,7 +3581,6 @@ impl AttackCruiserGame {
         let player_state = &mut self.player_states[player_index as usize];
         let (mut broadcasts, pending_npcs) = Self::actor_attack_primary(
             &mut player_state.actor,
-            Some(player_index),
             target_pos,
             Pos3::default(),
             now,
@@ -3948,7 +3960,6 @@ impl AttackCruiserGame {
 
     fn actor_attack_primary<'a>(
         actor: &'a mut AttackCruiserActor,
-        player_index: Option<u8>,
         target_pos: Pos3,
         target_speed: Pos3,
         now: Instant,
@@ -3964,6 +3975,7 @@ impl AttackCruiserGame {
 
         let actor_id = actor.id;
         let actor_pos = actor.pos;
+        let launched_by_player_index = actor.launched_by_player_index;
         let (projectiles, actors) = actor.attack_primary(
             now,
             Duration::from_millis(max_cooldown_error_millis.into()),
@@ -3976,7 +3988,7 @@ impl AttackCruiserGame {
                     .launch(
                         rng,
                         actor_id,
-                        player_index,
+                        launched_by_player_index,
                         actor_pos,
                         direction,
                         projectile,
@@ -4034,7 +4046,7 @@ impl AttackCruiserGame {
                     ship.max_speed,
                     0.0,
                     bvh.clone(),
-                    player_index,
+                    launched_by_player_index,
                     ship.clone(),
                     launched_actor.ship.clone(),
                     now,
@@ -4144,31 +4156,59 @@ impl AttackCruiserGame {
     fn total_actor_deltas(
         hit_actor_id: i32,
         projectiles: &[(i32, AttackCruiserProjectileInstance)],
-        aoes: &[(i32, Arc<AttackCruiserAoeConfig>)],
-    ) -> AttackCruiserActorDeltas {
-        projectiles
-            .iter()
-            .map(|(_, projectile)| {
-                (
-                    projectile.launched_by_actor_id,
-                    &projectile.config.self_deltas,
-                    &projectile.config.target_deltas,
-                )
-            })
-            .chain(aoes.iter().map(|(launched_by_actor_id, aoe)| {
-                (*launched_by_actor_id, &aoe.self_deltas, &aoe.target_deltas)
-            }))
-            .fold(
-                AttackCruiserActorDeltas::default(),
-                |total_deltas, (launched_by_actor_id, self_deltas, target_deltas)| {
-                    let deltas = match hit_actor_id == launched_by_actor_id {
-                        true => self_deltas,
-                        false => target_deltas,
-                    };
+        aoes: &[AttackCruiserAoeHit],
+    ) -> (AttackCruiserActorDeltas, Option<u8>) {
+        let mut health_deltas_from_player: [i16; 2] = [0, 0];
+        (
+            projectiles
+                .iter()
+                .map(|(_, projectile)| {
+                    (
+                        projectile.launched_by_actor_id,
+                        projectile.launched_by_player_index,
+                        &projectile.config.self_deltas,
+                        &projectile.config.target_deltas,
+                    )
+                })
+                .chain(aoes.iter().map(|aoe| {
+                    (
+                        aoe.launched_by_actor_id,
+                        aoe.launched_by_player_index,
+                        &aoe.config.self_deltas,
+                        &aoe.config.target_deltas,
+                    )
+                }))
+                .fold(
+                    AttackCruiserActorDeltas::default(),
+                    |total_deltas,
+                     (
+                        launched_by_actor_id,
+                        launched_by_player_index,
+                        self_deltas,
+                        target_deltas,
+                    )| {
+                        let deltas = match hit_actor_id == launched_by_actor_id {
+                            true => self_deltas,
+                            false => {
+                                if let Some(player_index) = launched_by_player_index {
+                                    health_deltas_from_player[player_index as usize] =
+                                        health_deltas_from_player[player_index as usize]
+                                            .saturating_add(target_deltas.health);
+                                }
+                                target_deltas
+                            }
+                        };
 
-                    total_deltas.saturating_add(deltas)
-                },
-            )
+                        total_deltas.saturating_add(deltas)
+                    },
+                ),
+            health_deltas_from_player
+                .into_iter()
+                .enumerate()
+                .filter(|(_, health)| *health != 0)
+                .min_by_key(|(_, health)| *health)
+                .map(|(player_index, _)| player_index as u8),
+        )
     }
 
     fn tick_players(
@@ -4176,7 +4216,7 @@ impl AttackCruiserGame {
         now: Instant,
         broadcasts: &mut Vec<Broadcast>,
         hits: &HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
-        aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
+        aoes: &HashMap<i32, Vec<AttackCruiserAoeHit>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
@@ -4298,7 +4338,7 @@ impl AttackCruiserGame {
             let player_state = &mut self.player_states[player_index];
             if !player_state.dead() {
                 let actor = &mut player_state.actor;
-                let total_deltas = Self::total_actor_deltas(
+                let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
                     actor.id,
                     hits.get(&actor.id).map(|v| v.as_slice()).unwrap_or(&[]),
                     aoes.get(&actor.id).map(|v| v.as_slice()).unwrap_or(&[]),
@@ -4392,7 +4432,7 @@ impl AttackCruiserGame {
         tick_duration: Duration,
         broadcasts: &mut Vec<Broadcast>,
         hits: &HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
-        aoes: &HashMap<i32, Vec<(i32, Arc<AttackCruiserAoeConfig>)>>,
+        aoes: &HashMap<i32, Vec<AttackCruiserAoeHit>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) {
@@ -4437,13 +4477,14 @@ impl AttackCruiserGame {
                     self.pending_aoes.push(AttackCruiserPendingAoe {
                         config: config.clone(),
                         launched_by_actor_id: npc.id,
+                        launched_by_player_index: npc.launched_by_player_index,
                         pos: npc.pos,
                     });
                 }
                 pending_npcs.append(&mut Self::launch_actors_from_actor(
                     npc.pos,
                     (target_pos.x - npc.pos.x).atan2(target_pos.z - npc.pos.z),
-                    None,
+                    npc.launched_by_player_index,
                     &ai_result.behavior.ships,
                     now,
                     &self.config,
@@ -4467,7 +4508,7 @@ impl AttackCruiserGame {
             npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
 
             if !npc.dead() {
-                let total_deltas = Self::total_actor_deltas(
+                let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
                     npc.id,
                     hits.get(&npc.id).map(|v| v.as_slice()).unwrap_or(&[]),
                     aoes.get(&npc.id).map(|v| v.as_slice()).unwrap_or(&[]),
@@ -4491,7 +4532,6 @@ impl AttackCruiserGame {
             if is_real_target && !npc.disabled() {
                 let attack_result = Self::actor_attack_primary(
                     npc,
-                    None,
                     target_pos,
                     target_speed,
                     now,
