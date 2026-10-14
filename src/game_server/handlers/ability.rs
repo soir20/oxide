@@ -186,6 +186,8 @@ fn compute_ability_damage(config: &AbilityConfig, ability_key: &str) -> Result<(
     let final_damage = if is_critical {
         let multiplier = config.critical_multiplier as f64;
         let crit_damage = evaluated_damage as f64 * multiplier;
+        // clamp to i16 max probably use .min() avoid try_from
+        // crit_damage.round().min(i16::MAX as f64) as i16
         i16::try_from(crit_damage.round() as i64).unwrap_or(evaluated_damage)
     } else {
         evaluated_damage
@@ -331,7 +333,7 @@ pub fn handle_targeted_cast(
     let caster_guid = Guid::guid(caster_stats);
     let max_attack_range = ability_config.max_distance_from_player;
 
-    let all_targets_nearby: Vec<(u64, Pos, f32)> = nearby_characters
+    let all_targets_nearby: HashMap<u64, (Pos, f32)> = nearby_characters
         .iter()
         .filter(|(_, target)| {
             player_can_attack(
@@ -343,26 +345,25 @@ pub fn handle_targeted_cast(
         .map(|(&guid, target)| {
             let target_pos = target.stats.pos;
             let distance_from_target = distance3_pos(caster_stats.pos, target_pos);
-            (guid, target_pos, distance_from_target)
+            (guid, (target_pos, distance_from_target))
         })
         .collect();
 
     let targets_in_range = all_targets_nearby
         .iter()
-        .copied()
-        .filter(|&(_, _, distance)| distance <= max_attack_range);
+        .filter(|(_, (_, distance))| *distance <= max_attack_range);
 
     let selected_targets: Vec<u64> = match ability_config.target_limit {
-        TargetLimit::Infinite => targets_in_range.map(|(guid, _, _)| guid).collect(),
+        TargetLimit::Infinite => targets_in_range.map(|(&guid, _)| guid).collect(),
         TargetLimit::Single => targets_in_range
             .clone()
-            .find(|&(guid, _, _)| guid == target_guid)
+            .find(|(&guid, _)| guid == target_guid)
             .or_else(|| {
-                targets_in_range.min_by(|&(_, _, distance_a), &(_, _, distance_b)| {
-                    distance_a.total_cmp(&distance_b)
+                targets_in_range.min_by(|(_, (_, distance_a)), (_, (_, distance_b))| {
+                    distance_a.total_cmp(distance_b)
                 })
             })
-            .map(|(guid, _, _)| vec![guid])
+            .map(|(&guid, _)| vec![guid])
             .unwrap_or_default(),
     };
 
@@ -393,14 +394,11 @@ pub fn handle_targeted_cast(
 
     if aoe_radius > 0.0 {
         for &selected_target in &selected_targets {
-            let Some(&(_, impacted_pos, _)) = all_targets_nearby
-                .iter()
-                .find(|&&(guid, _, _)| guid == selected_target)
-            else {
+            let Some(&(impacted_pos, _)) = all_targets_nearby.get(&selected_target) else {
                 continue;
             };
 
-            for &(aoe_target, aoe_pos, _) in &all_targets_nearby {
+            for (&aoe_target, &(aoe_pos, _)) in &all_targets_nearby {
                 if aoe_target == selected_target {
                     continue;
                 }
