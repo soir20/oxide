@@ -175,6 +175,30 @@ pub fn load_abilities(config_dir: &Path) -> Result<HashMap<String, AbilityConfig
     let file = File::open(config_dir.join("abilities.yaml"))?;
     let abilities: HashMap<String, AbilityConfig> = serde_yaml::from_reader(file)?;
 
+    for (ability_key, ability_config) in &abilities {
+        if ability_config.critical_percent > 100 {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Ability {ability_key} has a critical percent exceeding the maximum allowed of 100"
+            )));
+        }
+
+        if ability_config.cast_composite_effect_id.is_some()
+            != (ability_config.cast_composite_effect_seconds > 0.0)
+        {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Ability {ability_key} must have both a cast composite effect ID and a non-zero duration, or neither"
+            )));
+        }
+
+        if ability_config.impact_composite_effect_id.is_some()
+            != (ability_config.impact_composite_effect_seconds > 0.0)
+        {
+            return Err(ConfigError::ConstraintViolated(format!(
+                "Ability {ability_key} must have both an impact composite effect ID and a non-zero duration, or neither"
+            )));
+        }
+    }
+
     Ok(abilities)
 }
 
