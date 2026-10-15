@@ -3288,6 +3288,7 @@ categories:
                     angular_deceleration: !Degrees 120
                     max_health: 20
                     overhead_health_scale: 0.5
+                    score: 500
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
                     despawn_effect_id: 1718
@@ -3343,6 +3344,7 @@ categories:
                     angular_deceleration: !Degrees 240
                     max_health: 1
                     stunnable: false
+                    score: 25
                     overhead_health_scale: 0.0
                     effect_id: 1532
                     death_end_effect_id: 1450

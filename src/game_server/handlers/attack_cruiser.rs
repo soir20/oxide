@@ -1909,6 +1909,7 @@ struct AttackCruiserShipConfig {
     #[serde(default = "default_true")]
     stunnable: bool,
     overhead_health_scale: f32,
+    #[serde(default)]
     score: i32,
     effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
