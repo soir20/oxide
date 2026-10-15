@@ -4164,6 +4164,7 @@ impl AttackCruiserGame {
     fn player_score_update(
         player_state: &AttackCruiserPlayer,
         score: i32,
+        pos: Pos3,
         group: MinigameMatchmakingGroup,
     ) -> Vec<Broadcast> {
         vec![Broadcast::Single(
@@ -4178,7 +4179,7 @@ impl AttackCruiserGame {
                     },
                     score,
                     unknown: false,
-                    pos: player_state.actor.pos,
+                    pos,
                 },
             })],
         )]
@@ -4383,6 +4384,7 @@ impl AttackCruiserGame {
                     broadcasts.append(&mut Self::player_score_update(
                         player_state,
                         total_deltas.player_score,
+                        player_state.actor.pos,
                         self.group,
                     ));
                 }
@@ -4394,11 +4396,13 @@ impl AttackCruiserGame {
 
                 if player_state.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
+                        let pos = player_state.actor.pos;
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         self.player_states[killed_by_player_index as usize].add_score(delta_score);
                         broadcasts.append(&mut Self::player_score_update(
                             &self.player_states[killed_by_player_index as usize],
                             delta_score,
+                            pos,
                             self.group,
                         ));
                     }
@@ -4576,6 +4580,7 @@ impl AttackCruiserGame {
                         broadcasts.append(&mut Self::player_score_update(
                             &self.player_states[killed_by_player_index as usize],
                             delta_score,
+                            npc.pos,
                             self.group,
                         ));
                     }
