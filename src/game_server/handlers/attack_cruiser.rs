@@ -18,17 +18,58 @@ use serde::Deserialize;
 use smallvec::SmallVec;
 
 use crate::{
-    config::Angle, debug, game_server::{
-        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType, handlers::{
-            character::{MinigameMatchmakingGroup, MinigameStatus}, direction, distance3_pos, distance3_sq, minigame::{
-                MinigameCountdown, MinigameRemovePlayerResult, MinigameStopwatch, SharedMinigameTypeData, handle_minigame_packet_write,
-            }, unique_guid::player_guid,
-        }, packets::{
-            GamePacket, Pos, Pos3, Target, attack_cruiser::{
-                AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType, AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType, AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig, AttackCruiserActorDamageStateEffectConfig, AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate, AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile, AttackCruiserAddScore, AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserChallengeMode, AttackCruiserCinematicStyle, AttackCruiserClickType, AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand, AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear, AttackCruiserCompositeEffect, AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPickupStartupConfig, AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig, AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
-            }, command::PlaySoundIdOnTarget, minigame::MinigameHeader, player_update::HudMessage, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams,
+    config::Angle,
+    debug,
+    game_server::{
+        handlers::{
+            character::{MinigameMatchmakingGroup, MinigameStatus},
+            direction, distance3_pos, distance3_sq,
+            minigame::{
+                handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
+                MinigameStopwatch, SharedMinigameTypeData,
+            },
+            unique_guid::player_guid,
         },
-    }, info,
+        packets::{
+            attack_cruiser::{
+                AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType,
+                AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType,
+                AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
+                AttackCruiserActorDamageStateEffectConfig, AttackCruiserActorPoolConfig,
+                AttackCruiserActorState, AttackCruiserActorUpdate, AttackCruiserAddActor,
+                AttackCruiserAddPlayer, AttackCruiserAddProjectile, AttackCruiserAddScore,
+                AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
+                AttackCruiserChallengeMode, AttackCruiserCinematicStyle, AttackCruiserClickType,
+                AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState,
+                AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
+                AttackCruiserComplexPhysicsGear, AttackCruiserCompositeEffect,
+                AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
+                AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig,
+                AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
+                AttackCruiserOpCode, AttackCruiserPickupStartupConfig,
+                AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
+                AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
+                AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
+                AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate,
+                AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor,
+                AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile,
+                AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig,
+                AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig,
+                AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition,
+                AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
+                AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
+                AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+            },
+            command::PlaySoundIdOnTarget,
+            minigame::MinigameHeader,
+            player_update::HudMessage,
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithStringParams,
+            GamePacket, Pos, Pos3, Target,
+        },
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
+    },
+    info,
 };
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
@@ -4120,6 +4161,29 @@ impl AttackCruiserGame {
         }
     }
 
+    fn player_score_update(
+        player_state: &AttackCruiserPlayer,
+        score: i32,
+        group: MinigameMatchmakingGroup,
+    ) -> Vec<Broadcast> {
+        vec![Broadcast::Single(
+            player_state.guid,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserAddScore {
+                    minigame_header: MinigameHeader {
+                        stage_guid: group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::AddScore as i32,
+                        stage_group_guid: group.stage_group_guid,
+                    },
+                    score,
+                    unknown: false,
+                    pos: player_state.actor.pos,
+                },
+            })],
+        )]
+    }
+
     fn total_actor_deltas(
         hit_actor_id: i32,
         projectiles: &[(i32, AttackCruiserProjectileInstance)],
@@ -4313,24 +4377,13 @@ impl AttackCruiserGame {
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
-                
+
                 if total_deltas.player_score != 0 {
                     player_state.add_score(total_deltas.player_score);
-                    broadcasts.push(Broadcast::Single(
-                        player_state.guid,
-                        vec![GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: AttackCruiserAddScore {
-                                minigame_header: MinigameHeader {
-                                    stage_guid: self.group.stage_guid,
-                                    sub_op_code: AttackCruiserOpCode::AddScore as i32,
-                                    stage_group_guid: self.group.stage_group_guid,
-                                },
-                                score: total_deltas.player_score,
-                                unknown: false,
-                                pos: player_state.actor.pos,
-                            },
-                        })],
+                    broadcasts.append(&mut Self::player_score_update(
+                        player_state,
+                        total_deltas.player_score,
+                        self.group,
                     ));
                 }
 
@@ -4343,6 +4396,11 @@ impl AttackCruiserGame {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         self.player_states[killed_by_player_index as usize].add_score(delta_score);
+                        broadcasts.append(&mut Self::player_score_update(
+                            &self.player_states[killed_by_player_index as usize],
+                            delta_score,
+                            self.group,
+                        ));
                     }
 
                     let player_state = &mut self.player_states[player_index];
@@ -4513,8 +4571,13 @@ impl AttackCruiserGame {
 
                 if npc.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
-                        self.player_states[killed_by_player_index as usize]
-                            .add_score(npc.ship.score);
+                        let delta_score = npc.ship.score;
+                        self.player_states[killed_by_player_index as usize].add_score(delta_score);
+                        broadcasts.append(&mut Self::player_score_update(
+                            &self.player_states[killed_by_player_index as usize],
+                            delta_score,
+                            self.group,
+                        ));
                     }
 
                     broadcasts.push(Broadcast::Multi(
