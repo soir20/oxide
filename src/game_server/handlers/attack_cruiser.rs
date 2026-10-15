@@ -1320,6 +1320,10 @@ impl AttackCruiserPlayer {
         self.lives = lives.min(self.max_lives);
     }
 
+    pub fn add_score(&mut self, score: i32) {
+        self.score = self.score.saturating_add(score).max(0)
+    }
+
     pub fn add_primary_tiers(&mut self, tiers: i16) {
         self.actor.add_primary_weapon_tiers(tiers);
     }
@@ -1608,6 +1612,8 @@ struct AttackCruiserActorDeltas {
     primary_tiers: i16,
     #[serde(default)]
     player_lives: i8,
+    #[serde(default)]
+    player_score: i32,
     secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
     #[serde(default)]
     stun_millis: u32,
@@ -1619,6 +1625,7 @@ impl AttackCruiserActorDeltas {
             health: self.health.saturating_add(rhs.health),
             primary_tiers: self.primary_tiers.saturating_add(rhs.primary_tiers),
             player_lives: self.player_lives.saturating_add(rhs.player_lives),
+            player_score: self.player_score.saturating_add(rhs.player_score),
             secondary_item: match (&self.secondary_item, &rhs.secondary_item) {
                 (None, None) => None,
                 (None, Some(rhs_item)) => Some(rhs_item.clone()),
@@ -4347,6 +4354,7 @@ impl AttackCruiserGame {
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
+                player_state.add_score(total_deltas.player_score);
                 player_state.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
                 if let Some(secondary_item) = total_deltas.secondary_item {
                     player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
@@ -4354,10 +4362,8 @@ impl AttackCruiserGame {
 
                 if player_state.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
-                        self.player_states[killed_by_player_index as usize].score = self
-                            .player_states[killed_by_player_index as usize]
-                            .score
-                            .saturating_add(self.player_states[player_index].actor.ship.score);
+                        let delta_score = self.player_states[player_index].actor.ship.score;
+                        self.player_states[killed_by_player_index as usize].add_score(delta_score);
                     }
 
                     let player_state = &mut self.player_states[player_index];
@@ -4528,10 +4534,8 @@ impl AttackCruiserGame {
 
                 if npc.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
-                        self.player_states[killed_by_player_index as usize].score = self
-                            .player_states[killed_by_player_index as usize]
-                            .score
-                            .saturating_add(npc.ship.score);
+                        self.player_states[killed_by_player_index as usize]
+                            .add_score(npc.ship.score);
                     }
 
                     broadcasts.push(Broadcast::Multi(
