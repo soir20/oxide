@@ -4515,7 +4515,20 @@ impl AttackCruiserGame {
                     &self.config.playfield,
                 )
                 .map(|target| (true, target.pos, target.speed))
-                .unwrap_or((false, self.config.playfield.center, Pos3::default())),
+                .unwrap_or_else(|| {
+                    let pos_ahead = npc.pos + npc.speed * tick_duration.as_secs_f32();
+                    let fallback_target = match is_inside_oval(
+                        pos_ahead,
+                        self.config.playfield.center,
+                        self.config.playfield.radius_x,
+                        self.config.playfield.radius_z,
+                    ) {
+                        true => pos_ahead,
+                        false => self.config.playfield.center,
+                    };
+
+                    (false, fallback_target, Pos3::default())
+                }),
                 AttackCruiserShipAiMovement::RandomPos => (
                     false,
                     Self::random_pos_in_bounds(
