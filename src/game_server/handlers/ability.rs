@@ -146,10 +146,12 @@ pub struct AbilityConfig {
     pub target_limit: TargetLimit,
     pub cast_animation_id: Option<u32>,
     pub cast_composite_effect_id: Option<u32>,
-    pub cast_composite_effect_seconds: Option<f32>,
+    #[serde(default)]
+    pub cast_composite_effect_seconds: f32,
     pub impact_animation_id: Option<u32>,
     pub impact_composite_effect_id: Option<u32>,
-    pub impact_composite_effect_seconds: Option<f32>,
+    #[serde(default)]
+    pub impact_composite_effect_seconds: f32,
     pub projectile_adr_name: Option<String>,
     #[serde(default = "default_projectile_speed")]
     pub projectile_start_speed: f32,
