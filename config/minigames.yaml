@@ -3440,6 +3440,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               health: 20
+                              player_score: 100
                             self_deltas:
                               health: -1
                             length: 100
@@ -3471,6 +3472,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_lives: 1
+                              player_score: 100
                             self_deltas:
                               health: -1
                             length: 100
@@ -3502,6 +3504,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               primary_tiers: 1
+                              player_score: 500
                             self_deltas:
                               health: -1
                             length: 100
@@ -3532,6 +3535,7 @@ categories:
                             wobble: !Degrees 0
                             target_factions: [player]
                             target_deltas:
+                              player_score: 100
                               secondary_item:
                                 name: invulnerability
                                 count: 1
@@ -3565,6 +3569,7 @@ categories:
                             wobble: !Degrees 0
                             target_factions: [player]
                             target_deltas:
+                              player_score: 100
                               secondary_item:
                                 name: torrent
                                 count: 1
@@ -3598,6 +3603,7 @@ categories:
                             wobble: !Degrees 0
                             target_factions: [player]
                             target_deltas:
+                              player_score: 100
                               secondary_item:
                                 name: emp
                                 count: 1
@@ -3631,6 +3637,7 @@ categories:
                             wobble: !Degrees 0
                             target_factions: [player]
                             target_deltas:
+                              player_score: 100
                               secondary_item:
                                 name: mine
                                 count: 1
@@ -3664,6 +3671,7 @@ categories:
                             wobble: !Degrees 0
                             target_factions: [player]
                             target_deltas:
+                              player_score: 100
                               secondary_item:
                                 name: jerico
                                 count: 1
