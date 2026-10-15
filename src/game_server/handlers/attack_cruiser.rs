@@ -4352,6 +4352,14 @@ impl AttackCruiserGame {
                 }
 
                 if player_state.dead() {
+                    if let Some(killed_by_player_index) = most_damaged_by_player_index {
+                        self.player_states[killed_by_player_index as usize].score = self
+                            .player_states[killed_by_player_index as usize]
+                            .score
+                            .saturating_add(self.player_states[player_index].actor.ship.score);
+                    }
+
+                    let player_state = &mut self.player_states[player_index];
                     player_state.add_primary_tiers(self.config.player.primary_tiers_on_death);
                     let mut death_packets = Self::spawn_client_effect(
                         player_state.actor.ship.death_start_effect_id,
@@ -4518,6 +4526,13 @@ impl AttackCruiserGame {
                 npc.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
 
                 if npc.dead() {
+                    if let Some(killed_by_player_index) = most_damaged_by_player_index {
+                        self.player_states[killed_by_player_index as usize].score = self
+                            .player_states[killed_by_player_index as usize]
+                            .score
+                            .saturating_add(npc.ship.score);
+                    }
+
                     broadcasts.push(Broadcast::Multi(
                         self.active_players.to_vec(),
                         Self::spawn_client_effect(
