@@ -1377,6 +1377,20 @@ impl GamePacket for AttackCruiserCompositeEffect {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
+#[derive(SerializePacket)]
+pub struct AttackCruiserAddScore {
+    pub minigame_header: MinigameHeader,
+    pub score: i32,
+    pub unknown: bool,
+    pub pos: Pos3,
+}
+
+impl GamePacket for AttackCruiserAddScore {
+    type Header = MinigameOpCode;
+
+    const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
+}
+
 #[derive(SerializePacket, DeserializePacket)]
 pub struct AttackCruiserRoundTrip {
     pub minigame_header: MinigameHeader,

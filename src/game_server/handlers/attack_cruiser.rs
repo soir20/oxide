@@ -18,58 +18,17 @@ use serde::Deserialize;
 use smallvec::SmallVec;
 
 use crate::{
-    config::Angle,
-    debug,
-    game_server::{
-        handlers::{
-            character::{MinigameMatchmakingGroup, MinigameStatus},
-            direction, distance3_pos, distance3_sq,
-            minigame::{
-                handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
-                MinigameStopwatch, SharedMinigameTypeData,
-            },
-            unique_guid::player_guid,
+    config::Angle, debug, game_server::{
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType, handlers::{
+            character::{MinigameMatchmakingGroup, MinigameStatus}, direction, distance3_pos, distance3_sq, minigame::{
+                MinigameCountdown, MinigameRemovePlayerResult, MinigameStopwatch, SharedMinigameTypeData, handle_minigame_packet_write,
+            }, unique_guid::player_guid,
+        }, packets::{
+            GamePacket, Pos, Pos3, Target, attack_cruiser::{
+                AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType, AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType, AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig, AttackCruiserActorDamageStateEffectConfig, AttackCruiserActorPoolConfig, AttackCruiserActorState, AttackCruiserActorUpdate, AttackCruiserAddActor, AttackCruiserAddPlayer, AttackCruiserAddProjectile, AttackCruiserAddScore, AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserChallengeMode, AttackCruiserCinematicStyle, AttackCruiserClickType, AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand, AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear, AttackCruiserCompositeEffect, AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig, AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode, AttackCruiserPickupStartupConfig, AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3, AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate, AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer, AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers, AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig, AttackCruiserStartupConfig, AttackCruiserStartupConfigClass, AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
+            }, command::PlaySoundIdOnTarget, minigame::MinigameHeader, player_update::HudMessage, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams,
         },
-        packets::{
-            attack_cruiser::{
-                AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType,
-                AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType,
-                AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
-                AttackCruiserActorDamageStateEffectConfig, AttackCruiserActorPoolConfig,
-                AttackCruiserActorState, AttackCruiserActorUpdate, AttackCruiserAddActor,
-                AttackCruiserAddPlayer, AttackCruiserAddProjectile, AttackCruiserBasePhysicsConfig,
-                AttackCruiserBool, AttackCruiserBoolCommand, AttackCruiserChallengeMode,
-                AttackCruiserCinematicStyle, AttackCruiserClickType, AttackCruiserClickedLocation,
-                AttackCruiserClientConfig, AttackCruiserClientState, AttackCruiserCommand,
-                AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
-                AttackCruiserCompositeEffect, AttackCruiserEventActorConfig,
-                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
-                AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
-                AttackCruiserHostility, AttackCruiserHudMessageConfig, AttackCruiserOpCode,
-                AttackCruiserPickupStartupConfig, AttackCruiserPlanetStartupConfig,
-                AttackCruiserPlayerStateActorId, AttackCruiserPlayerStateIndex,
-                AttackCruiserPlayerStateInventory, AttackCruiserPlayerStateScore,
-                AttackCruiserPlayerStateType, AttackCruiserPlayerStateUnknown3,
-                AttackCruiserPlayerStateUpdate, AttackCruiserPlayerUpdate,
-                AttackCruiserQueueCommand, AttackCruiserRemoveActor, AttackCruiserRemovePlayer,
-                AttackCruiserRemoveProjectile, AttackCruiserRequestUpdatePlayers,
-                AttackCruiserShipStartupConfig, AttackCruiserStartupCameraConfig,
-                AttackCruiserStartupConfig, AttackCruiserStartupConfigClass,
-                AttackCruiserStartupConfigDefinition, AttackCruiserStartupConfigHash,
-                AttackCruiserStartupConfigReference, AttackCruiserUpdateClientActors,
-                AttackCruiserUpdateClientState, AttackCruiserUpdatePlayers,
-                AttackCruiserUpdateServerActors, AttackCruiserVec,
-            },
-            command::PlaySoundIdOnTarget,
-            minigame::MinigameHeader,
-            player_update::HudMessage,
-            tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, Pos3, Target,
-        },
-        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
-    },
-    info,
+    }, info,
 };
 
 const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
@@ -4354,7 +4313,27 @@ impl AttackCruiserGame {
                 player_state.add_health(total_deltas.health, now);
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
-                player_state.add_score(total_deltas.player_score);
+                
+                if total_deltas.player_score != 0 {
+                    player_state.add_score(total_deltas.player_score);
+                    broadcasts.push(Broadcast::Single(
+                        player_state.guid,
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AttackCruiserAddScore {
+                                minigame_header: MinigameHeader {
+                                    stage_guid: self.group.stage_guid,
+                                    sub_op_code: AttackCruiserOpCode::AddScore as i32,
+                                    stage_group_guid: self.group.stage_group_guid,
+                                },
+                                score: total_deltas.player_score,
+                                unknown: false,
+                                pos: player_state.actor.pos,
+                            },
+                        })],
+                    ));
+                }
+
                 player_state.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
                 if let Some(secondary_item) = total_deltas.secondary_item {
                     player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
