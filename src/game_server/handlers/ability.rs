@@ -297,6 +297,7 @@ fn make_cast_and_land_packet(
             unknown11: Pos::default(),
             cast_composite_effect_seconds: ability_config.cast_composite_effect_seconds,
             impact_composite_effect_seconds: ability_config.impact_composite_effect_seconds,
+            unknown14: 0,
             action_bar_type,
             slot_index: ability_slot_index,
             unknown17: 0,
