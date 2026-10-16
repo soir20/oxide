@@ -93,7 +93,7 @@ fn evaluate_delta_health_expression(
         )
     })?;
 
-    let Value::Float(delta) = result else {
+    let Value::Float(new_delta) = result else {
         return Err(Error::new(
             ErrorKind::InvalidData,
             format!(
@@ -102,11 +102,11 @@ fn evaluate_delta_health_expression(
         ));
     };
 
-    i32::try_from(delta.round() as i64).map_err(|err| {
+    i32::try_from(new_delta.round() as i64).map_err(|err| {
         Error::new(
             ErrorKind::InvalidData,
             format!(
-                "Delta health expression returned float that could not be converted to an integer for ability {ability_key}: {delta}, {err}"
+                "Delta health expression returned float that could not be converted to an integer for ability {ability_key}: {new_delta}, {err}"
             ),
         )
     })
