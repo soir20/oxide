@@ -11997,6 +11997,7 @@ categories:
                 saber_strike_stage_id: 1
               zone_template_guid: 200
               score_to_credits_expression: x / 40.9
+            # Card Commander > Campaign
             - !StageGroup
               guid: 58
               name_id: 15455
