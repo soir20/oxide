@@ -7,6 +7,7 @@ plo_koon_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 dahgee_jedi_lightsaber:
   icon_set_id: 1148
@@ -15,6 +16,7 @@ dahgee_jedi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ahsoka_tano_reverse_lightsaber:
   icon_set_id: 220
@@ -23,6 +25,7 @@ ahsoka_tano_reverse_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 anakin_skywalker_lightsaber:
   icon_set_id: 223
@@ -31,6 +34,7 @@ anakin_skywalker_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 zabrak_sith_lightsaber:
   icon_set_id: 219
@@ -39,6 +43,7 @@ zabrak_sith_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 adi_gallia_lightsaber:
   icon_set_id: 222
@@ -47,6 +52,7 @@ adi_gallia_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 pre_vizsla_darksaber:
   icon_set_id: 224
@@ -55,6 +61,7 @@ pre_vizsla_darksaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 count_dooku_lightsaber:
   icon_set_id: 225
@@ -63,6 +70,7 @@ count_dooku_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 kit_fisto_lightsaber:
   icon_set_id: 229
@@ -71,6 +79,7 @@ kit_fisto_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 luminara_unduli_lightsaber:
   icon_set_id: 231
@@ -79,6 +88,7 @@ luminara_unduli_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 mace_windu_lightsaber:
   icon_set_id: 233
@@ -87,6 +97,7 @@ mace_windu_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 obi_wan_kenobi_lightsaber:
   icon_set_id: 234
@@ -95,6 +106,7 @@ obi_wan_kenobi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 darth_sidious_lightsaber:
   icon_set_id: 235
@@ -103,6 +115,7 @@ darth_sidious_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 training_lightsaber:
   icon_set_id: 236
@@ -111,6 +124,7 @@ training_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 asajj_ventress_right_lightsaber:
   icon_set_id: 237
@@ -119,6 +133,7 @@ asajj_ventress_right_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 miko_jedi_lightsaber:
   icon_set_id: 509
@@ -127,6 +142,7 @@ miko_jedi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 mestare_lightsaber:
   icon_set_id: 510
@@ -135,6 +151,7 @@ mestare_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 shaak_ti_lightsaber:
   icon_set_id: 513
@@ -143,6 +160,7 @@ shaak_ti_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 savek_lightsaber:
   icon_set_id: 517
@@ -151,6 +169,7 @@ savek_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 kyle_katarn_lightsaber:
   icon_set_id: 511
@@ -159,6 +178,7 @@ kyle_katarn_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 shotem_jedi_lightsaber:
   icon_set_id: 512
@@ -167,6 +187,7 @@ shotem_jedi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 bravis_sith_lightsaber:
   icon_set_id: 514
@@ -175,6 +196,7 @@ bravis_sith_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ermi_jedi_lightsaber:
   icon_set_id: 515
@@ -183,6 +205,7 @@ ermi_jedi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ancient_cobal_lightsaber:
   icon_set_id: 516
@@ -191,6 +214,7 @@ ancient_cobal_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ultimate_fx_gungan_lightsaber:
   icon_set_id: 2136
@@ -199,6 +223,7 @@ ultimate_fx_gungan_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 quinlan_vos_lightsaber:
   icon_set_id: 1436
@@ -207,6 +232,7 @@ quinlan_vos_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ahsoka_tano_lightsaber:
   icon_set_id: 1459
@@ -215,6 +241,7 @@ ahsoka_tano_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 savage_opress_lightsaber:
   icon_set_id: 1656
@@ -223,6 +250,7 @@ savage_opress_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 saesee_tiin_lightsaber:
   icon_set_id: 1792
@@ -231,6 +259,7 @@ saesee_tiin_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 kashyyyk_lightsaber:
   icon_set_id: 1993
@@ -239,6 +268,7 @@ kashyyyk_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 sith_marauder_lightsaber:
   icon_set_id: 3044
@@ -247,6 +277,7 @@ sith_marauder_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 nelona_lightsaber:
   icon_set_id: 2838
@@ -255,6 +286,7 @@ nelona_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 sith_warrior_lightsaber:
   icon_set_id: 3118
@@ -263,6 +295,7 @@ sith_warrior_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 sith_inquisitor_lightsaber:
   icon_set_id: 2938
@@ -271,6 +304,7 @@ sith_inquisitor_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 forgotten_jedi_reverse_lightsaber:
   icon_set_id: 3735
@@ -279,6 +313,7 @@ forgotten_jedi_reverse_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 jedi_champion_reverse_lightsaber:
   icon_set_id: 3133
@@ -287,6 +322,7 @@ jedi_champion_reverse_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 kofun_lightsaber:
   icon_set_id: 2862
@@ -295,6 +331,7 @@ kofun_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 aayla_secura_lightsaber:
   icon_set_id: 221
@@ -303,6 +340,7 @@ aayla_secura_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 barriss_offee_lightsaber:
   icon_set_id: 508
@@ -311,6 +349,7 @@ barriss_offee_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 byph_lightsaber:
   icon_set_id: 3207
@@ -319,6 +358,7 @@ byph_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 sith_infiltrator_lightsaber:
   icon_set_id: 3045
@@ -327,6 +367,7 @@ sith_infiltrator_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 dolovite_darksaber:
   icon_set_id: 3829
@@ -335,6 +376,7 @@ dolovite_darksaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 phrik_darksaber:
   icon_set_id: 3791
@@ -343,6 +385,7 @@ phrik_darksaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 darth_maul_lightsaber:
   icon_set_id: 2764
@@ -351,6 +394,7 @@ darth_maul_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 eeth_koth_lightsaber:
   icon_set_id: 226
@@ -359,6 +403,7 @@ eeth_koth_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 jedi_exile_lightsaber:
   icon_set_id: 3835
@@ -367,6 +412,7 @@ jedi_exile_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 forked_lightsaber:
   icon_set_id: 3828
@@ -375,6 +421,7 @@ forked_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ganodi_lightsaber:
   icon_set_id: 3212
@@ -383,6 +430,7 @@ ganodi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 gungi_lightsaber:
   icon_set_id: 3208
@@ -391,6 +439,7 @@ gungi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 jocasta_nu_lightsaber:
   icon_set_id: 227
@@ -399,6 +448,7 @@ jocasta_nu_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 katooni_lightsaber:
   icon_set_id: 3213
@@ -407,6 +457,7 @@ katooni_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 ki_adi_mundi_lightsaber:
   icon_set_id: 228
@@ -415,6 +466,7 @@ ki_adi_mundi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 sulon_jedi_lightsaber:
   icon_set_id: 511
@@ -423,6 +475,7 @@ sulon_jedi_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 luke_skywalker_lightsaber:
   icon_set_id: 230
@@ -431,6 +484,7 @@ luke_skywalker_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 petro_lightsaber:
   icon_set_id: 3209
@@ -439,6 +493,7 @@ petro_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 shotem_master_lightsaber:
   icon_set_id: 3788
@@ -447,6 +502,7 @@ shotem_master_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 crimson_prowler_lightsaber:
   icon_set_id: 3721
@@ -455,6 +511,7 @@ crimson_prowler_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 talz_lightsaber:
   icon_set_id: 2863
@@ -463,6 +520,7 @@ talz_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 yoda_lightsaber:
   icon_set_id: 3169
@@ -471,6 +529,7 @@ yoda_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 zatt_lightsaber:
   icon_set_id: 3211
@@ -479,6 +538,7 @@ zatt_lightsaber:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 pink_gaffi_stick:
   icon_set_id: 518
@@ -487,6 +547,7 @@ pink_gaffi_stick:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 blinged_out_trooper_rifle:
   icon_set_id: 239
@@ -511,6 +572,7 @@ gaffi_stick:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 clone_trooper_blaster_rifle:
   icon_set_id: 240
@@ -567,6 +629,7 @@ satine_royal_guard_staff:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 gungan_double_headed_spear:
   icon_set_id: 2337
@@ -575,6 +638,7 @@ gungan_double_headed_spear:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 spring_fever:
   icon_set_id: 1935
@@ -595,6 +659,7 @@ savage_opress_pike:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 cupid_clone_bow:
   icon_set_id: 1674
@@ -607,6 +672,7 @@ blue_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 green_sparkler:
   icon_set_id: 2002
@@ -615,6 +681,7 @@ green_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 orange_sparkler:
   icon_set_id: 2003
@@ -623,6 +690,7 @@ orange_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 purple_sparkler:
   icon_set_id: 2004
@@ -631,6 +699,7 @@ purple_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 red_sparkler:
   icon_set_id: 2005
@@ -639,6 +708,7 @@ red_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 white_sparkler:
   icon_set_id: 2006
@@ -647,6 +717,7 @@ white_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 yellow_sparkler:
   icon_set_id: 2007
@@ -655,6 +726,7 @@ yellow_sparkler:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 vigilance:
   icon_set_id: 2312
@@ -667,6 +739,7 @@ skeletal_clone_trooper_scythe:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 umbaran_blaster_rifle:
   icon_set_id: 2448
@@ -683,6 +756,7 @@ captain_rex_zygerrian_electrostaff:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 shadow_tech_rifle:
   icon_set_id: 2571
@@ -815,6 +889,7 @@ ig_113_electrostaff:
   use_cooldown_millis: 500
   cast_animation_id: 1501
   impact_composite_effect_id: 2622
+  impact_composite_effect_seconds: 1.0
 
 renegade_heavy_blaster_pistol_right:
   icon_set_id: 3792
