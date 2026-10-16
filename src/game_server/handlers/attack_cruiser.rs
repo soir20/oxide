@@ -72,7 +72,6 @@ use crate::{
     info,
 };
 
-const SCORE_MULTIPLIER_TIERS: [u16; 5] = [100, 200, 300, 400, 500];
 const TIME_EPSILON: f32 = 1e-5;
 
 fn zero_nan(value: f32) -> f32 {
@@ -1199,8 +1198,10 @@ struct AttackCruiserPlayer {
     pub ready: bool,
     pub actor: AttackCruiserActor,
     pub score: i32,
-    pub score_multiplier_tier_progress: u16,
+    pub score_multiplier_tier_progress: i32,
+    pub score_multiplier_tier_goal: i32,
     pub score_multiplier_tier: u8,
+    pub score_multiplier_tier_max: u8,
     pub lives: u8,
     pub max_lives: u8,
     pub bounds: AttackCruiserPlayerBounds,
@@ -1220,6 +1221,8 @@ impl AttackCruiserPlayer {
         max_lives: u8,
         pos: Pos3,
         yaw: f32,
+        score_multiplier_goal_base: i32,
+        score_multiplier_tier_max: u8,
         bvh: Option<Arc<Bvh>>,
         now: Instant,
         rng: &mut SmallRng,
@@ -1241,7 +1244,9 @@ impl AttackCruiserPlayer {
             ),
             score: 0,
             score_multiplier_tier_progress: 0,
+            score_multiplier_tier_goal: score_multiplier_goal_base,
             score_multiplier_tier: 1,
+            score_multiplier_tier_max,
             lives,
             max_lives,
             bounds: AttackCruiserPlayerBounds::default(),
@@ -1320,8 +1325,26 @@ impl AttackCruiserPlayer {
         self.lives = lives.min(self.max_lives);
     }
 
-    pub fn add_score(&mut self, score: i32) {
-        self.score = self.score.saturating_add(score).max(0)
+    pub fn add_score(&mut self, base_score: i32) -> i32 {
+        let multiplied_score = base_score.saturating_mul(self.score_multiplier_tier.into());
+        self.score = self.score.saturating_add(multiplied_score).max(0);
+
+        if self.score_multiplier_tier < self.score_multiplier_tier_max {
+            self.score_multiplier_tier_progress = self
+                .score_multiplier_tier_progress
+                .saturating_add(multiplied_score);
+
+            if self.score_multiplier_tier_progress > self.score_multiplier_tier_goal {
+                self.score_multiplier_tier_progress = 0;
+                let base_goal =
+                    self.score_multiplier_tier_goal / i32::from(self.score_multiplier_tier);
+                self.score_multiplier_tier = self.score_multiplier_tier.saturating_add(1);
+                self.score_multiplier_tier_goal =
+                    base_goal.saturating_mul(self.score_multiplier_tier.into());
+            }
+        }
+
+        multiplied_score
     }
 
     pub fn add_primary_tiers(&mut self, tiers: i16) {
@@ -1996,6 +2019,10 @@ struct AttackCruiserPlayerConfig {
     primary_tiers_on_death: i16,
     out_of_bounds_warp_millis: u32,
     out_of_bounds_warp_delay_millis: u32,
+    score_multiplier_goal_base: i32,
+    score_multiplier_decay_base: i32,
+    score_multiplier_decay_millis: u32,
+    score_multiplier_tier_max: u8,
     #[serde(default)]
     secondary_items: HashMap<String, AttackCruiserPlayerSecondaryItemConfig>,
     #[serde(default)]
@@ -2632,6 +2659,8 @@ impl AttackCruiserGame {
             config.player.max_lives,
             config.player.spawn1.pos,
             config.player.spawn1.yaw.to_radians(),
+            config.player.score_multiplier_goal_base,
+            config.player.score_multiplier_tier_max,
             player_bvh.clone(),
             now,
             rng,
@@ -2656,6 +2685,8 @@ impl AttackCruiserGame {
                 config.player.max_lives,
                 config.player.spawn2.pos,
                 config.player.spawn2.yaw.to_radians(),
+                config.player.score_multiplier_goal_base,
+                config.player.score_multiplier_tier_max,
                 player_bvh.clone(),
                 now,
                 rng,
@@ -4113,12 +4144,8 @@ impl AttackCruiserGame {
             score: match update_type.score {
                 true => Some(AttackCruiserPlayerStateScore {
                     score: player_state.score,
-                    score_multiplier_tier_progress: player_state
-                        .score_multiplier_tier_progress
-                        .into(),
-                    score_multiplier_tier_goal: SCORE_MULTIPLIER_TIERS
-                        [player_state.score_multiplier_tier as usize]
-                        .into(),
+                    score_multiplier_tier_progress: player_state.score_multiplier_tier_progress,
+                    score_multiplier_tier_goal: player_state.score_multiplier_tier_goal,
                     score_multiplier_tier: player_state.score_multiplier_tier.into(),
                     pain: 0,
                     lives: player_state.lives.into(),
@@ -4162,9 +4189,9 @@ impl AttackCruiserGame {
     }
 
     fn player_score_update(
-        player_state: &AttackCruiserPlayer,
         score: i32,
         pos: Pos3,
+        player_state: &AttackCruiserPlayer,
         group: MinigameMatchmakingGroup,
     ) -> Vec<Broadcast> {
         vec![Broadcast::Single(
@@ -4380,11 +4407,10 @@ impl AttackCruiserGame {
                 player_state.add_lives(total_deltas.player_lives);
 
                 if total_deltas.player_score != 0 {
-                    player_state.add_score(total_deltas.player_score);
                     broadcasts.append(&mut Self::player_score_update(
-                        player_state,
-                        total_deltas.player_score,
+                        player_state.add_score(total_deltas.player_score),
                         player_state.actor.pos,
+                        player_state,
                         self.group,
                     ));
                 }
@@ -4398,11 +4424,11 @@ impl AttackCruiserGame {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let pos = player_state.actor.pos;
                         let delta_score = self.player_states[player_index].actor.ship.score;
-                        self.player_states[killed_by_player_index as usize].add_score(delta_score);
                         broadcasts.append(&mut Self::player_score_update(
-                            &self.player_states[killed_by_player_index as usize],
-                            delta_score,
+                            self.player_states[killed_by_player_index as usize]
+                                .add_score(delta_score),
                             pos,
+                            &self.player_states[killed_by_player_index as usize],
                             self.group,
                         ));
                     }
@@ -4589,11 +4615,11 @@ impl AttackCruiserGame {
                 if npc.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let delta_score = npc.ship.score;
-                        self.player_states[killed_by_player_index as usize].add_score(delta_score);
                         broadcasts.append(&mut Self::player_score_update(
-                            &self.player_states[killed_by_player_index as usize],
-                            delta_score,
+                            self.player_states[killed_by_player_index as usize]
+                                .add_score(delta_score),
                             npc.pos,
+                            &self.player_states[killed_by_player_index as usize],
                             self.group,
                         ));
                     }
