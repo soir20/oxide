@@ -11937,38 +11937,66 @@ categories:
           members_only: false
           stage_select_map_name: Tcgportal
           stages:
-            - !StageGroup
-              guid: 10030
-              name_id: 15455
+            # Quick Play
+            - !Stage
+              guid: 1175
+              name_id: 19851
               description_id: 0
-              icon_id: 2159
               stage_icon_id: 0
+              start_screen_icon_id: 0
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
               members_only: false
               require_previous_completed: false
-              show_stage_numbers: false
-              stage_select_map_name: Tcgcampaign
-              short_name: lbCampaign
-              stages:
-                # Quick Play
-                - !Stage
-                  guid: 1175
-                  name_id: 16479
-                  description_id: 0
-                  stage_icon_id: 0
-                  start_screen_icon_id: 1998
-                  min_players: 1
-                  max_players: 1
-                  difficulty: 1
-                  start_sound_id: 0
-                  members_only: false
-                  require_previous_completed: false
-                  link_name: stage
-                  short_name: lbQuickPlay
-                  minigame_type:
-                    !SaberStrike
-                    saber_strike_stage_id: 1
-                  zone_template_guid: 200
-                  score_to_credits_expression: x / 40.9
+              link_name: group
+              short_name: menu_1
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 40.9
+            # Tournament
+            - !Stage
+              guid: 1178
+              name_id: 19849
+              description_id: 0
+              stage_icon_id: 0
+              start_screen_icon_id: 0
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: false
+              require_previous_completed: false
+              link_name: group
+              short_name: menu_3
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 40.9
+            # Collection
+            - !Stage
+              guid: 1177
+              name_id: 19852
+              description_id: 0
+              stage_icon_id: 0
+              start_screen_icon_id: 0
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: false
+              require_previous_completed: false
+              link_name: group
+              short_name: menu_5
+              minigame_type:
+                !SaberStrike
+                saber_strike_stage_id: 1
+              zone_template_guid: 200
+              score_to_credits_expression: x / 40.9
             - !StageGroup
               guid: 58
               name_id: 15455
@@ -11979,13 +12007,13 @@ categories:
               require_previous_completed: false
               show_stage_numbers: false
               stage_select_map_name: Tcgcampaign
-              short_name: lbCampaign
+              short_name: menu_2
               stages:
                 # The Sith Acolyte
                 - !StageGroup
                   guid: 59
                   name_id: 16842
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1396
                   members_only: false
@@ -12197,83 +12225,1284 @@ categories:
                 - !StageGroup
                   guid: 60
                   name_id: 16843
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1407
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg2
                   short_name: campaign2
-                  stages: []
+                  stages:
+                    # Help the Padawan - Tatooine
+                    - !Stage
+                      guid: 1111
+                      name_id: 16489
+                      description_id: 17510
+                      stage_icon_id: 2060
+                      start_screen_icon_id: 2015
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3369
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Find the Farmer - Naboo
+                    - !Stage
+                      guid: 1112
+                      name_id: 16490
+                      description_id: 17511
+                      stage_icon_id: 2058
+                      start_screen_icon_id: 2013
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3370
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Audience with the Representative - Naboo
+                    - !Stage
+                      guid: 1113
+                      name_id: 16491
+                      description_id: 17512
+                      stage_icon_id: 2052
+                      start_screen_icon_id: 2006
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3371
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Stop the Freighter - Rodia
+                    - !Stage
+                      guid: 1114
+                      name_id: 16492
+                      description_id: 17513
+                      stage_icon_id: 2065
+                      start_screen_icon_id: 2021
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3372
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Question the Captain - Rodia
+                    - !Stage
+                      guid: 1115
+                      name_id: 16493
+                      description_id: 17514
+                      stage_icon_id: 1401
+                      start_screen_icon_id: 2004
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3373
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Disable the Frigate - Tatooine
+                    - !Stage
+                      guid: 1116
+                      name_id: 16494
+                      description_id: 17515
+                      stage_icon_id: 2046
+                      start_screen_icon_id: 1994
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3374
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Deal with the Commander - Tatooine
+                    - !Stage
+                      guid: 1117
+                      name_id: 16495
+                      description_id: 17516
+                      stage_icon_id: 1404
+                      start_screen_icon_id: 2011
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3375
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Ziro of the Black Sun - Coruscant
+                    - !Stage
+                      guid: 1118
+                      name_id: 16496
+                      description_id: 17517
+                      stage_icon_id: 1407
+                      start_screen_icon_id: 2023
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3376
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Captain of the Pirates - Coruscant
+                    - !Stage
+                      guid: 1119
+                      name_id: 16497
+                      description_id: 17518
+                      stage_icon_id: 1403
+                      start_screen_icon_id: 2005
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3377
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Apprehend the Hutt - Coruscant
+                    - !Stage
+                      guid: 1120
+                      name_id: 16498
+                      description_id: 17519
+                      stage_icon_id: 1407
+                      start_screen_icon_id: 2023
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3378
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # The Dark Lord
                 - !StageGroup
                   guid: 61
                   name_id: 16844
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1400
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg3
                   short_name: campaign3
-                  stages: []
+                  stages:
+                    # Meet the Tribal Leader - Orto Plutonia
+                    - !Stage
+                      guid: 1121
+                      name_id: 16499
+                      description_id: 17520
+                      stage_icon_id: 2064
+                      start_screen_icon_id: 2020
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3379
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Fight the Tactical Droid - Orto Plutonia
+                    - !Stage
+                      guid: 1122
+                      name_id: 16500
+                      description_id: 17521
+                      stage_icon_id: 2062
+                      start_screen_icon_id: 2018
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3380
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Battle the Foreman - Orto Plutonia
+                    - !Stage
+                      guid: 1123
+                      name_id: 16501
+                      description_id: 17522
+                      stage_icon_id: 1406
+                      start_screen_icon_id: 2022
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3381
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Challenge the Apprentice - Orto Plutonia
+                    - !Stage
+                      guid: 1124
+                      name_id: 16502
+                      description_id: 17523
+                      stage_icon_id: 1396
+                      start_screen_icon_id: 1992
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3382
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Convince the Chancellor - Coruscant
+                    - !Stage
+                      guid: 1125
+                      name_id: 16503
+                      description_id: 17524
+                      stage_icon_id: 2049
+                      start_screen_icon_id: 1999
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3383
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Break the Blockade - Tatooine
+                    - !Stage
+                      guid: 1126
+                      name_id: 16504
+                      description_id: 17525
+                      stage_icon_id: 2055
+                      start_screen_icon_id: 2009
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3384
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Defeat the Bodyguards - Tatooine
+                    - !Stage
+                      guid: 1127
+                      name_id: 16505
+                      description_id: 17526
+                      stage_icon_id: 2054
+                      start_screen_icon_id: 2008
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3385
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Confront the Count - Tatooine
+                    - !Stage
+                      guid: 1128
+                      name_id: 16506
+                      description_id: 17527
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3386
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Pursue the Sailer - Tatooine
+                    - !Stage
+                      guid: 1129
+                      name_id: 16507
+                      description_id: 17528
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3387
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Destroy the Evidence - Tatooine
+                    - !Stage
+                      guid: 1130
+                      name_id: 16508
+                      description_id: 17529
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3388
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # The Supreme Commander
                 - !StageGroup
                   guid: 62
                   name_id: 16845
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1402
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg4
                   short_name: campaign4
-                  stages: []
+                  stages:
+                    # Intercept the Firgate - Ryndellia
+                    - !Stage
+                      guid: 1131
+                      name_id: 16509
+                      description_id: 17530
+                      stage_icon_id: 2046
+                      start_screen_icon_id: 1994
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3389
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Locate the Survivors - Ryndellia
+                    - !Stage
+                      guid: 1132
+                      name_id: 16510
+                      description_id: 17531
+                      stage_icon_id: 2043
+                      start_screen_icon_id: 1990
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3390
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Follow the Droids - Ryndellia
+                    - !Stage
+                      guid: 1133
+                      name_id: 16511
+                      description_id: 17532
+                      stage_icon_id: 2061
+                      start_screen_icon_id: 2017
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3391
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Search the Crater - Ryndellia
+                    - !Stage
+                      guid: 1134
+                      name_id: 16512
+                      description_id: 17533
+                      stage_icon_id: 2054
+                      start_screen_icon_id: 2008
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3392
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Meet the General - Ryndellia
+                    - !Stage
+                      guid: 1135
+                      name_id: 16513
+                      description_id: 17534
+                      stage_icon_id: 1402
+                      start_screen_icon_id: 2002
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3393
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Pursue the General - Ryndellia
+                    - !Stage
+                      guid: 1136
+                      name_id: 16514
+                      description_id: 17535
+                      stage_icon_id: 2051
+                      start_screen_icon_id: 2003
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3394
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Journey to the Docks - Pammant
+                    - !Stage
+                      guid: 1137
+                      name_id: 16515
+                      description_id: 17536
+                      stage_icon_id: 2055
+                      start_screen_icon_id: 2009
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3395
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Encounter the Count - Pammant
+                    - !Stage
+                      guid: 1138
+                      name_id: 16516
+                      description_id: 17537
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3396
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Malevolence Reborn - Pammant
+                    - !Stage
+                      guid: 1139
+                      name_id: 16517
+                      description_id: 17538
+                      stage_icon_id: 2056
+                      start_screen_icon_id: 2010
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3397
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Board the Malevolence - Pammant
+                    - !Stage
+                      guid: 1140
+                      name_id: 16518
+                      description_id: 17539
+                      stage_icon_id: 1402
+                      start_screen_icon_id: 2002
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3398
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # The Pirate Captain
                 - !StageGroup
                   guid: 63
                   name_id: 16846
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1403
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg5
                   short_name: campaign5
-                  stages: []
+                  stages:
+                    # Find the Monkey - Tatooine
+                    - !Stage
+                      guid: 1141
+                      name_id: 16519
+                      description_id: 17540
+                      stage_icon_id: 2059
+                      start_screen_icon_id: 2014
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3399
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # The Freighter Captain - Tatooine
+                    - !Stage
+                      guid: 1142
+                      name_id: 16520
+                      description_id: 17541
+                      stage_icon_id: 1401
+                      start_screen_icon_id: 2004
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3400
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Pursue the Claw - Tatooine
+                    - !Stage
+                      guid: 1143
+                      name_id: 16521
+                      description_id: 17542
+                      stage_icon_id: 2065
+                      start_screen_icon_id: 2021
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3401
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Pirate Rescue - Tatooine
+                    - !Stage
+                      guid: 1144
+                      name_id: 16522
+                      description_id: 17543
+                      stage_icon_id: 2047
+                      start_screen_icon_id: 1995
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3402
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Talk to the Pirate - Tatooine
+                    - !Stage
+                      guid: 1145
+                      name_id: 16523
+                      description_id: 17544
+                      stage_icon_id: 1403
+                      start_screen_icon_id: 2005
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3403
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # A Hutt Visit - Tatooine
+                    - !Stage
+                      guid: 1146
+                      name_id: 16524
+                      description_id: 17545
+                      stage_icon_id: 1407
+                      start_screen_icon_id: 2023
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3404
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Desert Walkers - Tatooine
+                    - !Stage
+                      guid: 1147
+                      name_id: 16525
+                      description_id: 17546
+                      stage_icon_id: 2045
+                      start_screen_icon_id: 1993
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3405
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # The Bounty Hunter - Tatooine
+                    - !Stage
+                      guid: 1148
+                      name_id: 16526
+                      description_id: 17547
+                      stage_icon_id: 1398
+                      start_screen_icon_id: 1997
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3407
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Starship Escape - Tatooine
+                    - !Stage
+                      guid: 1149
+                      name_id: 16527
+                      description_id: 17548
+                      stage_icon_id: 2046
+                      start_screen_icon_id: 1994
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3408
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Seize the Shipment - Tatooine
+                    - !Stage
+                      guid: 1150
+                      name_id: 16528
+                      description_id: 17549
+                      stage_icon_id: 1403
+                      start_screen_icon_id: 2005
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3409
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # The Techno Union
                 - !StageGroup
                   guid: 64
                   name_id: 16847
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1406
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg6
                   short_name: campaign6
-                  stages: []
+                  stages:
+                    # Find the Tinkerer - Iego
+                    - !Stage
+                      guid: 1151
+                      name_id: 16529
+                      description_id: 17550
+                      stage_icon_id: 2053
+                      start_screen_icon_id: 2007
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3410
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Prominent Leader - Iego
+                    - !Stage
+                      guid: 1152
+                      name_id: 16530
+                      description_id: 17551
+                      stage_icon_id: 2044
+                      start_screen_icon_id: 1991
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3411
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Droid Attack - Iego
+                    - !Stage
+                      guid: 1153
+                      name_id: 16531
+                      description_id: 17552
+                      stage_icon_id: 2048
+                      start_screen_icon_id: 1996
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3412
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Super Attack - Iego
+                    - !Stage
+                      guid: 1154
+                      name_id: 16532
+                      description_id: 17553
+                      stage_icon_id: 2061
+                      start_screen_icon_id: 2017
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3413
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Meet the Foreman - Iego
+                    - !Stage
+                      guid: 1155
+                      name_id: 16533
+                      description_id: 17554
+                      stage_icon_id: 1406
+                      start_screen_icon_id: 2022
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3414
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Tactical Encounter - Iego
+                    - !Stage
+                      guid: 1156
+                      name_id: 16534
+                      description_id: 17555
+                      stage_icon_id: 2063
+                      start_screen_icon_id: 2019
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3415
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Catch that Frigate - Kessel
+                    - !Stage
+                      guid: 1157
+                      name_id: 16535
+                      description_id: 17556
+                      stage_icon_id: 2046
+                      start_screen_icon_id: 1994
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3416
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Assault the Moon - Kessel
+                    - !Stage
+                      guid: 1158
+                      name_id: 16536
+                      description_id: 17557
+                      stage_icon_id: 2062
+                      start_screen_icon_id: 2018
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3417
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Commando Conflict - Kessel
+                    - !Stage
+                      guid: 1159
+                      name_id: 16537
+                      description_id: 17558
+                      stage_icon_id: 2050
+                      start_screen_icon_id: 2000
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3418
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Apprehend the Emir - Kessel
+                    - !Stage
+                      guid: 1160
+                      name_id: 16538
+                      description_id: 17559
+                      stage_icon_id: 1406
+                      start_screen_icon_id: 2022
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3419
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # The Bounty Hunter
                 - !StageGroup
                   guid: 65
                   name_id: 16848
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1398
                   members_only: false
                   require_previous_completed: false
                   stage_select_map_name: tcg7
                   short_name: campaign7
-                  stages: []
+                  stages:
+                    # A Dangerous Deal - Coruscant
+                    - !Stage
+                      guid: 1161
+                      name_id: 16539
+                      description_id: 17560
+                      stage_icon_id: 1398
+                      start_screen_icon_id: 1997
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3420
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg01
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Prison Break - Coruscant
+                    - !Stage
+                      guid: 1162
+                      name_id: 16540
+                      description_id: 17561
+                      stage_icon_id: 2046
+                      start_screen_icon_id: 1994
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3421
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg02
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Question the Hostage - Tatooine
+                    - !Stage
+                      guid: 1163
+                      name_id: 16541
+                      description_id: 17562
+                      stage_icon_id: 1407
+                      start_screen_icon_id: 2023
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3422
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg03
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # The Ohnaka Gang - Florrum
+                    - !Stage
+                      guid: 1164
+                      name_id: 16542
+                      description_id: 17563
+                      stage_icon_id: 1403
+                      start_screen_icon_id: 2005
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3423
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg04
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Question the Captain - Cat Neimoidia
+                    - !Stage
+                      guid: 1165
+                      name_id: 16543
+                      description_id: 17564
+                      stage_icon_id: 1404
+                      start_screen_icon_id: 2011
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3424
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg05
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Convince the Kaminoan - Ryndellia
+                    - !Stage
+                      guid: 1166
+                      name_id: 16544
+                      description_id: 17565
+                      stage_icon_id: 2057
+                      start_screen_icon_id: 2012
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3425
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg06
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Hunt the Hunter - Ryndellia
+                    - !Stage
+                      guid: 1167
+                      name_id: 16545
+                      description_id: 17566
+                      stage_icon_id: 1398
+                      start_screen_icon_id: 1997
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3426
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg07
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Find the Separatists - Vassek
+                    - !Stage
+                      guid: 1168
+                      name_id: 16546
+                      description_id: 17567
+                      stage_icon_id: 1402
+                      start_screen_icon_id: 2002
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3427
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg08
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Battle the Sith Lord - Vassek
+                    - !Stage
+                      guid: 1169
+                      name_id: 16547
+                      description_id: 17568
+                      stage_icon_id: 1400
+                      start_screen_icon_id: 2001
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3428
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg09
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
+                    # Apprehend Bane - Vassek
+                    - !Stage
+                      guid: 1170
+                      name_id: 16548
+                      description_id: 17569
+                      stage_icon_id: 1398
+                      start_screen_icon_id: 1997
+                      min_players: 1
+                      max_players: 1
+                      difficulty: 1
+                      start_sound_id: 3429
+                      members_only: false
+                      require_previous_completed: false
+                      link_name: stage
+                      short_name: tcg10
+                      minigame_type:
+                        !SaberStrike
+                        saber_strike_stage_id: 1
+                      zone_template_guid: 200
+                      score_to_credits_expression: x / 40.9
                 # Secret Missions
                 - !StageGroup
                   guid: 66
                   name_id: 16849
-                  description_id: 0
+                  description_id: 14
                   icon_id: 2159
                   stage_icon_id: 1397
                   members_only: false
                   require_previous_completed: false
+                  show_stage_numbers: false
                   stage_select_map_name: tcg8
                   short_name: campaign8
                   stages:
