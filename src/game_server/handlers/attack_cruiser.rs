@@ -1200,6 +1200,8 @@ struct AttackCruiserPlayer {
     pub score: i32,
     pub score_multiplier_tier_progress: i32,
     pub score_multiplier_tier_goal: i32,
+    pub score_multiplier_delta_per_sec: i16,
+    pub last_score_multiplier_delta: MinigameStopwatch,
     pub score_multiplier_tier: u8,
     pub score_multiplier_tier_max: u8,
     pub lives: u8,
@@ -1222,6 +1224,7 @@ impl AttackCruiserPlayer {
         pos: Pos3,
         yaw: f32,
         score_multiplier_goal_base: i32,
+        score_multiplier_delta_per_sec_base: i16,
         score_multiplier_tier_max: u8,
         bvh: Option<Arc<Bvh>>,
         now: Instant,
@@ -1245,6 +1248,8 @@ impl AttackCruiserPlayer {
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier_goal: score_multiplier_goal_base,
+            score_multiplier_delta_per_sec: score_multiplier_delta_per_sec_base,
+            last_score_multiplier_delta: MinigameStopwatch::new(Some(now)),
             score_multiplier_tier: 1,
             score_multiplier_tier_max,
             lives,
@@ -1262,6 +1267,7 @@ impl AttackCruiserPlayer {
         self.bounds_warning_hud_timer.pause_or_resume(pause);
         self.damage_alarm_sound_timer.pause_or_resume(pause);
         self.bounds.pause_or_resume(pause);
+        self.last_score_multiplier_delta.pause_or_resume(pause);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
@@ -1325,8 +1331,9 @@ impl AttackCruiserPlayer {
         self.lives = lives.min(self.max_lives);
     }
 
-    pub fn add_score(&mut self, base_score: i32) -> i32 {
-        let multiplied_score = base_score.saturating_mul(self.score_multiplier_tier.into());
+    pub fn add_score(&mut self, base_score: u16) -> i32 {
+        let multiplied_score =
+            i32::from(base_score).saturating_mul(self.score_multiplier_tier.into());
         self.score = self.score.saturating_add(multiplied_score).max(0);
 
         if self.score_multiplier_tier < self.score_multiplier_tier_max {
@@ -1336,15 +1343,32 @@ impl AttackCruiserPlayer {
 
             if self.score_multiplier_tier_progress > self.score_multiplier_tier_goal {
                 self.score_multiplier_tier_progress = 0;
+
                 let base_goal =
                     self.score_multiplier_tier_goal / i32::from(self.score_multiplier_tier);
+                let base_delta =
+                    self.score_multiplier_delta_per_sec / i16::from(self.score_multiplier_tier);
+
                 self.score_multiplier_tier = self.score_multiplier_tier.saturating_add(1);
+
                 self.score_multiplier_tier_goal =
                     base_goal.saturating_mul(self.score_multiplier_tier.into());
+                self.score_multiplier_delta_per_sec =
+                    base_delta.saturating_mul(self.score_multiplier_tier.into());
             }
         }
 
         multiplied_score
+    }
+
+    pub fn tick_score_multiplier(&mut self, now: Instant) {
+        let elapsed_secs = self.last_score_multiplier_delta.elapsed(now).as_secs_f32();
+        self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
+        let delta: i32 = (self.score_multiplier_delta_per_sec as f32 * elapsed_secs) as i32;
+        self.score_multiplier_tier_progress = self
+            .score_multiplier_tier_progress
+            .saturating_add(delta)
+            .max(0);
     }
 
     pub fn add_primary_tiers(&mut self, tiers: i16) {
@@ -1636,7 +1660,7 @@ struct AttackCruiserActorDeltas {
     #[serde(default)]
     player_lives: i8,
     #[serde(default)]
-    player_score: i32,
+    player_score: u16,
     secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
     #[serde(default)]
     stun_millis: u32,
@@ -1940,7 +1964,7 @@ struct AttackCruiserShipConfig {
     stunnable: bool,
     overhead_health_scale: f32,
     #[serde(default)]
-    score: i32,
+    score: u16,
     effect_id: Option<u32>,
     death_start_effect_id: Option<u32>,
     death_end_effect_id: Option<u32>,
@@ -2020,8 +2044,7 @@ struct AttackCruiserPlayerConfig {
     out_of_bounds_warp_millis: u32,
     out_of_bounds_warp_delay_millis: u32,
     score_multiplier_goal_base: i32,
-    score_multiplier_decay_base: i32,
-    score_multiplier_decay_millis: u32,
+    score_multiplier_delta_per_sec_base: i16,
     score_multiplier_tier_max: u8,
     #[serde(default)]
     secondary_items: HashMap<String, AttackCruiserPlayerSecondaryItemConfig>,
@@ -2660,6 +2683,7 @@ impl AttackCruiserGame {
             config.player.spawn1.pos,
             config.player.spawn1.yaw.to_radians(),
             config.player.score_multiplier_goal_base,
+            config.player.score_multiplier_delta_per_sec_base,
             config.player.score_multiplier_tier_max,
             player_bvh.clone(),
             now,
@@ -2686,6 +2710,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.pos,
                 config.player.spawn2.yaw.to_radians(),
                 config.player.score_multiplier_goal_base,
+                config.player.score_multiplier_delta_per_sec_base,
                 config.player.score_multiplier_tier_max,
                 player_bvh.clone(),
                 now,
@@ -4341,6 +4366,8 @@ impl AttackCruiserGame {
             };
 
             let player_state = &mut self.player_states[player_index];
+            player_state.tick_score_multiplier(now);
+
             if player_state.completed_stun(now) {
                 player_state.remove_stun();
             }
