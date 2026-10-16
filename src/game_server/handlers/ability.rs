@@ -165,6 +165,7 @@ pub struct AbilityConfig {
     pub projectile_angular_speed: f32,
     #[serde(default = "default_missfire_travel_units")]
     pub missfire_travel_units: f32,
+    pub terrain_impact_composite_effect_id: Option<u32>,
     pub target_bone_name: Option<String>,
     pub origin_bone_name: Option<String>,
     #[serde(default = "default_ability_sub_type")]
@@ -292,7 +293,7 @@ fn make_cast_and_land_packet(
             disable_slot_cooldown: false,
             unknown7: false,
             impact_animation_id: ability_config.impact_animation_id.unwrap_or(0),
-            impact_composite_effect_id1: ability_config.impact_composite_effect_id.unwrap_or(0),
+            impact_composite_effect_id: ability_config.impact_composite_effect_id.unwrap_or(0),
             unknown10: 0,
             unknown11: Pos::default(),
             cast_composite_effect_seconds: ability_config.cast_composite_effect_seconds,
@@ -327,7 +328,9 @@ fn make_cast_and_land_packet(
             projectile_start_size: ability_config.projectile_start_size,
             projectile_end_size: ability_config.projectile_end_size,
             projectile_trail_composite_effect_id: 0,
-            impact_composite_effect_id2: ability_config.impact_composite_effect_id.unwrap_or(0),
+            terrain_impact_composite_effect_id: ability_config
+                .terrain_impact_composite_effect_id
+                .unwrap_or(0),
             unknown36: 0,
             unknown37: 0,
             unknown38: 0.0,
