@@ -649,16 +649,6 @@ impl AttackCruiserActor {
         &self,
         faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
     ) -> AttackCruiserHostility {
-        if !matches!(
-            self.ship.mobility,
-            AttackCruiserShipMobilityConfig::Dynamic {
-                show_arrow_to_player: true,
-                ..
-            }
-        ) {
-            return AttackCruiserHostility::Neutral;
-        }
-
         let mut hostility = AttackCruiserHostility::Neutral;
         for faction in self.ship.self_factions.iter() {
             let Some(faction_config) = faction_configs.get(faction) else {
@@ -679,6 +669,23 @@ impl AttackCruiserActor {
         }
 
         hostility
+    }
+
+    pub fn visual_hostility(
+        &self,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
+    ) -> AttackCruiserHostility {
+        if !matches!(
+            self.ship.mobility,
+            AttackCruiserShipMobilityConfig::Dynamic {
+                show_arrow_to_player: true,
+                ..
+            }
+        ) {
+            return AttackCruiserHostility::Neutral;
+        }
+
+        self.hostility(faction_configs)
     }
 
     pub fn attack_primary(
@@ -1201,6 +1208,7 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier_progress: i32,
     pub score_multiplier_tier_goal: i32,
     pub score_multiplier_delta_per_sec: i16,
+    pub last_score_multiplier_delta_force_pause: bool,
     pub last_score_multiplier_delta: MinigameStopwatch,
     pub score_multiplier_tier: u8,
     pub score_multiplier_tier_max: u8,
@@ -1249,6 +1257,7 @@ impl AttackCruiserPlayer {
             score_multiplier_tier_progress: 0,
             score_multiplier_tier_goal: score_multiplier_goal_base,
             score_multiplier_delta_per_sec: score_multiplier_delta_per_sec_base,
+            last_score_multiplier_delta_force_pause: false,
             last_score_multiplier_delta: MinigameStopwatch::new(Some(now)),
             score_multiplier_tier: 1,
             score_multiplier_tier_max,
@@ -1361,7 +1370,11 @@ impl AttackCruiserPlayer {
         multiplied_score
     }
 
-    pub fn tick_score_multiplier(&mut self, now: Instant) {
+    pub fn tick_score_multiplier(&mut self, now: Instant, pause: bool) {
+        self.last_score_multiplier_delta_force_pause = pause;
+        self.last_score_multiplier_delta
+            .pause_or_resume(pause || self.paused());
+
         let elapsed_secs = self.last_score_multiplier_delta.elapsed(now).as_secs_f32();
         self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
         let delta: i32 = (self.score_multiplier_delta_per_sec as f32 * elapsed_secs) as i32;
@@ -1560,6 +1573,8 @@ impl AttackCruiserChallengeConfig {
 #[serde(deny_unknown_fields)]
 struct AttackCruiserFactionConfig {
     hostility: AttackCruiserHostility,
+    #[serde(default = "default_true")]
+    unpause_player_score_multiplier: bool,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -3290,7 +3305,14 @@ impl AttackCruiserGame {
             |player| !player.permeable(),
             |npc| !npc.permeable(),
         );
-        self.tick_players(now, &mut broadcasts, &hits, &aoes, &mut pending_npcs);
+        self.tick_players(
+            now,
+            &mut broadcasts,
+            &hits,
+            &aoes,
+            &mut pending_npcs,
+            &actors_by_faction,
+        );
         self.tick_npcs(
             now,
             tick_duration,
@@ -3671,7 +3693,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: actor.hostility(&self.config.factions),
+                hostility: actor.visual_hostility(&self.config.factions),
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: match self.config.ship(ship_config).mobility {
@@ -4302,6 +4324,7 @@ impl AttackCruiserGame {
         hits: &HashMap<i32, Vec<(i32, AttackCruiserProjectileInstance)>>,
         aoes: &HashMap<i32, Vec<AttackCruiserAoeHit>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
+        actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) {
         for player_index in self.active_player_indices.clone().into_iter() {
             let player_index = player_index as usize;
@@ -4366,7 +4389,30 @@ impl AttackCruiserGame {
             };
 
             let player_state = &mut self.player_states[player_index];
-            player_state.tick_score_multiplier(now);
+            let player_hostility = player_state.actor.hostility(&self.config.factions);
+            let has_enemies = player_state.actor.ship.seek_factions.iter().any(|faction| {
+                let Some(actors) = actors_by_faction.get(faction) else {
+                    return false;
+                };
+
+                let Some(faction_config) = self.config.factions.get(faction) else {
+                    return false;
+                };
+
+                let not_allied = !matches!(
+                    (player_hostility, faction_config.hostility),
+                    (
+                        AttackCruiserHostility::Hostile,
+                        AttackCruiserHostility::Hostile
+                    ) | (
+                        AttackCruiserHostility::Friendly,
+                        AttackCruiserHostility::Friendly
+                    )
+                );
+
+                !actors.is_empty() && faction_config.unpause_player_score_multiplier && not_allied
+            });
+            player_state.tick_score_multiplier(now, has_enemies);
 
             if player_state.completed_stun(now) {
                 player_state.remove_stun();
