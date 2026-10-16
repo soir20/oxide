@@ -295,13 +295,8 @@ fn make_cast_and_land_packet(
             impact_composite_effect_id1: ability_config.impact_composite_effect_id.unwrap_or(0),
             unknown10: 0,
             unknown11: Pos::default(),
-            cast_composite_effect_seconds: ability_config
-                .cast_composite_effect_seconds
-                .unwrap_or(0.0),
-            impact_composite_effect_seconds: ability_config
-                .impact_composite_effect_seconds
-                .unwrap_or(0.0),
-            unknown14: 0,
+            cast_composite_effect_seconds: ability_config.cast_composite_effect_seconds,
+            impact_composite_effect_seconds: ability_config.impact_composite_effect_seconds,
             action_bar_type,
             slot_index: ability_slot_index,
             unknown17: 0,
@@ -367,7 +362,6 @@ pub fn handle_targeted_cast(
         .filter(|(_, target)| {
             player_can_attack(
                 &target.stats,
-                caster_stats,
                 &game_server.enemy_types.allowed_player_attacks,
             )
         })

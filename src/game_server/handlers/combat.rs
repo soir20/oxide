@@ -28,11 +28,7 @@ pub struct AttackDecisionNode {
     pub else_result: Attackability,
 }
 
-pub fn player_can_attack(
-    target_stats: &CharacterStats,
-    caster_stats: &CharacterStats,
-    node: &AttackDecisionNode,
-) -> bool {
+pub fn player_can_attack(target_stats: &CharacterStats, node: &AttackDecisionNode) -> bool {
     if !target_stats.is_spawned() {
         return false;
     }
@@ -41,7 +37,7 @@ pub fn player_can_attack(
 
     for enemy_type in &target_stats.enemy_types {
         if let Some(next_node) = node.if_branches.get(enemy_type) {
-            if !player_can_attack(target_stats, caster_stats, next_node) {
+            if !player_can_attack(target_stats, next_node) {
                 return false;
             }
             result = true;
