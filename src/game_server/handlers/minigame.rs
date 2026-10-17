@@ -682,7 +682,7 @@ impl MinigameStopwatch {
     }
 
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
-        if self.paused == pause {
+        if self.paused == pause && self.possible_resume_time.is_some() {
             return;
         }
 
@@ -4407,4 +4407,344 @@ fn evaluate_score_to_credits_expression(
             ),
         )
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn test_stopwatch_normal_flow() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(5)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_pause_and_resume() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let pause_time = start + Duration::from_secs(5);
+        stopwatch.pause_or_resume(true, pause_time);
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(pause_time + Duration::from_secs(10)),
+            Duration::from_secs(5)
+        );
+
+        let resume_time = pause_time + Duration::from_secs(10);
+        stopwatch.pause_or_resume(false, resume_time);
+        assert!(!stopwatch.paused());
+
+        let final_time = resume_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(final_time), Duration::from_secs(10));
+    }
+
+    #[test]
+    fn test_stopwatch_future_start_time_immediate_pause() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        stopwatch.pause_or_resume(true, now);
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(5)),
+            Duration::ZERO
+        );
+
+        stopwatch.pause_or_resume(false, now + Duration::from_secs(5));
+        assert!(!stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(8)),
+            Duration::ZERO
+        );
+
+        assert_eq!(
+            stopwatch.elapsed(future_start + Duration::from_secs(5)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_future_start_time_immediate_pause() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        stopwatch.pause_or_resume(true, now);
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(5)),
+            Duration::ZERO
+        );
+
+        let unpause_time = now + Duration::from_secs(15);
+        stopwatch.pause_or_resume(false, unpause_time);
+        assert!(!stopwatch.paused());
+
+        assert_eq!(
+            stopwatch.elapsed(unpause_time + Duration::from_secs(5)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_redundant_pause_calls() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
+        let total_time_after_first_pause = stopwatch.elapsed(start + Duration::from_secs(10));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(15));
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(20)),
+            total_time_after_first_pause
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_redundant_unpause_calls() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let intermediate_time = start + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, intermediate_time);
+
+        let final_time = intermediate_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(final_time), Duration::from_secs(10));
+    }
+
+    #[test]
+    fn test_stopwatch_exact_resume_boundary() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        assert_eq!(stopwatch.elapsed(start), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_stopwatch_historical_elapsed_call() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        let historical_query = start - Duration::from_secs(10);
+        assert_eq!(stopwatch.elapsed(historical_query), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_stopwatch_elapsed_while_paused() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(10)),
+            Duration::from_secs(5)
+        );
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(15)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_uninitialized_flow() {
+        let now = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(None);
+
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(10)),
+            Duration::ZERO
+        );
+
+        stopwatch.pause_or_resume(false, now);
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(10)),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_normal_flow() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let tick = now + Duration::from_secs(10);
+        assert_eq!(
+            countdown.time_until_next_event(tick),
+            Duration::from_secs(20)
+        );
+    }
+
+    #[test]
+    fn test_countdown_pause_and_resume() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let pause_time = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, pause_time);
+        assert!(countdown.paused());
+
+        let internal_paused_check = pause_time + Duration::from_secs(15);
+        assert_eq!(
+            countdown.time_until_next_event(internal_paused_check),
+            Duration::from_secs(20)
+        );
+
+        let resume_time = pause_time + Duration::from_secs(15);
+        countdown.pause_or_resume(false, resume_time);
+        assert!(!countdown.paused());
+
+        let final_check = resume_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(final_check),
+            Duration::from_secs(15)
+        );
+    }
+
+    #[test]
+    fn test_countdown_schedule_event() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new();
+
+        let schedule_time = now + Duration::from_secs(5);
+        let new_duration = Duration::from_secs(15);
+        countdown.schedule_event(new_duration, schedule_time);
+
+        let check_time = schedule_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(check_time),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_schedule_already_expired_event() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new();
+
+        let past_schedule_time = now - Duration::from_secs(20);
+        let short_duration = Duration::from_secs(5);
+        countdown.schedule_event(short_duration, past_schedule_time);
+
+        assert_eq!(countdown.time_until_next_event(now), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_countdown_future_start_time_immediate_pause() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, future_start);
+
+        countdown.pause_or_resume(true, now);
+        assert!(countdown.paused());
+        assert_eq!(
+            countdown.time_until_next_event(now + Duration::from_secs(5)),
+            Duration::from_secs(30)
+        );
+
+        let resume_time = now + Duration::from_secs(15);
+        countdown.pause_or_resume(false, resume_time);
+        assert!(!countdown.paused());
+
+        let check_before_future_anchor_passed = resume_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(check_before_future_anchor_passed),
+            Duration::from_secs(25)
+        );
+    }
+
+    #[test]
+    fn test_countdown_redundant_calls() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let first_pause = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, first_pause);
+        let remaining_after_first = countdown.time_until_next_event(first_pause);
+
+        let second_pause = first_pause + Duration::from_secs(5);
+        countdown.pause_or_resume(true, second_pause);
+        assert_eq!(
+            countdown.time_until_next_event(second_pause),
+            remaining_after_first
+        );
+    }
+
+    #[test]
+    fn test_countdown_retroactive_unpause() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let pause_time = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, pause_time);
+
+        let historical_unpause_time = pause_time - Duration::from_secs(5);
+        countdown.pause_or_resume(false, historical_unpause_time);
+
+        assert_eq!(
+            countdown.time_until_next_event(historical_unpause_time + Duration::from_secs(5)),
+            Duration::from_secs(15)
+        );
+    }
+
+    #[test]
+    fn test_countdown_exact_expiry_boundary() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let exact_expiry = now + Duration::from_secs(10);
+        assert_eq!(
+            countdown.time_until_next_event(exact_expiry),
+            Duration::ZERO
+        );
+    }
+
+    #[test]
+    fn test_countdown_saturating_underflow() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let past_expiry = now + Duration::from_secs(15);
+        assert_eq!(countdown.time_until_next_event(past_expiry), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_countdown_historical_query_before_anchor() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let historical_query = now - Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(historical_query),
+            Duration::from_secs(10)
+        );
+    }
+    #[test]
+    fn test_countdown_reschedule_while_running() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(30), now);
+        let intermediate_time = now + Duration::from_secs(10);
+        countdown.schedule_event(Duration::from_secs(15), intermediate_time);
+        assert_eq!(
+            countdown.time_until_next_event(intermediate_time + Duration::from_secs(5)),
+            Duration::from_secs(10)
+        );
+    }
 }
