@@ -1340,10 +1340,15 @@ impl AttackCruiserPlayer {
         self.lives = lives.min(self.max_lives);
     }
 
-    pub fn add_score(&mut self, base_score: u16) -> i32 {
+    pub fn add_score(&mut self, base_score: u16, now: Instant) -> i32 {
         let multiplied_score =
             i32::from(base_score).saturating_mul(self.score_multiplier_tier.into());
         self.score = self.score.saturating_add(multiplied_score).max(0);
+
+        // Reset the timer when we add score
+        self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
+        self.last_score_multiplier_delta
+            .pause_or_resume(self.last_score_multiplier_delta_force_pause || self.paused());
 
         if self.score_multiplier_tier < self.score_multiplier_tier_max {
             self.score_multiplier_tier_progress = self
@@ -1372,11 +1377,13 @@ impl AttackCruiserPlayer {
 
     pub fn tick_score_multiplier(&mut self, now: Instant, pause: bool) {
         self.last_score_multiplier_delta_force_pause = pause;
-        self.last_score_multiplier_delta
-            .pause_or_resume(pause || self.paused());
 
         let elapsed_secs = self.last_score_multiplier_delta.elapsed(now).as_secs_f32();
+
         self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
+        self.last_score_multiplier_delta
+            .pause_or_resume(self.last_score_multiplier_delta_force_pause || self.paused());
+
         let delta: i32 = (self.score_multiplier_delta_per_sec as f32 * elapsed_secs) as i32;
         self.score_multiplier_tier_progress = self
             .score_multiplier_tier_progress
@@ -4412,7 +4419,7 @@ impl AttackCruiserGame {
 
                 !actors.is_empty() && faction_config.unpause_player_score_multiplier && not_allied
             });
-            player_state.tick_score_multiplier(now, has_enemies);
+            player_state.tick_score_multiplier(now, !has_enemies);
 
             if player_state.completed_stun(now) {
                 player_state.remove_stun();
@@ -4481,7 +4488,7 @@ impl AttackCruiserGame {
 
                 if total_deltas.player_score != 0 {
                     broadcasts.append(&mut Self::player_score_update(
-                        player_state.add_score(total_deltas.player_score),
+                        player_state.add_score(total_deltas.player_score, now),
                         player_state.actor.pos,
                         player_state,
                         self.group,
@@ -4499,7 +4506,7 @@ impl AttackCruiserGame {
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
                             self.player_states[killed_by_player_index as usize]
-                                .add_score(delta_score),
+                                .add_score(delta_score, now),
                             pos,
                             &self.player_states[killed_by_player_index as usize],
                             self.group,
@@ -4690,7 +4697,7 @@ impl AttackCruiserGame {
                         let delta_score = npc.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
                             self.player_states[killed_by_player_index as usize]
-                                .add_score(delta_score),
+                                .add_score(delta_score, now),
                             npc.pos,
                             &self.player_states[killed_by_player_index as usize],
                             self.group,

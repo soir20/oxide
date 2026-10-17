@@ -3210,7 +3210,7 @@ categories:
                   primary_tiers_on_death: -1
                   out_of_bounds_warp_millis: 3000
                   out_of_bounds_warp_delay_millis: 250
-                  score_multiplier_goal_base: 500
+                  score_multiplier_goal_base: 1000
                   score_multiplier_delta_per_sec_base: -150
                   score_multiplier_tier_max: 3
                   secondary_items:
