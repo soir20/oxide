@@ -675,14 +675,14 @@ pub struct MinigameStopwatch {
 impl MinigameStopwatch {
     pub fn new(start_time: Option<Instant>) -> Self {
         MinigameStopwatch {
-            paused: false,
+            paused: start_time.is_none(),
             previous_total_time: Duration::ZERO,
             possible_resume_time: start_time,
         }
     }
 
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
-        if self.paused == pause && self.possible_resume_time.is_some() {
+        if self.paused == pause {
             return;
         }
 
@@ -4560,12 +4560,14 @@ mod tests {
         let now = Instant::now();
         let mut stopwatch = MinigameStopwatch::new(None);
 
+        assert!(stopwatch.paused());
         assert_eq!(
             stopwatch.elapsed(now + Duration::from_secs(10)),
             Duration::ZERO
         );
 
         stopwatch.pause_or_resume(false, now);
+        assert!(!stopwatch.paused());
         assert_eq!(
             stopwatch.elapsed(now + Duration::from_secs(10)),
             Duration::from_secs(10)
@@ -4729,7 +4731,6 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(10);
         let countdown = MinigameCountdown::new_with_event(duration, now);
-
         let historical_query = now - Duration::from_secs(5);
         assert_eq!(
             countdown.time_until_next_event(historical_query),
