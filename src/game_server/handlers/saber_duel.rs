@@ -1060,6 +1060,7 @@ impl SaberDuelGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.player_index(player)?;
 
@@ -1072,20 +1073,20 @@ impl SaberDuelGame {
                 timer,
                 ai_next_force_power,
             } => {
-                timer.pause_or_resume(pause);
-                ai_next_force_power.pause_or_resume(pause);
+                timer.pause_or_resume(pause, now);
+                ai_next_force_power.pause_or_resume(pause, now);
             }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
                 ai_next_key,
                 ..
             } => {
-                bout_time_remaining.pause_or_resume(pause);
-                ai_next_key.pause_or_resume(pause);
+                bout_time_remaining.pause_or_resume(pause, now);
+                ai_next_key.pause_or_resume(pause, now);
             }
-            SaberDuelGameState::WaitingForRoundEnd { timer } => timer.pause_or_resume(pause),
-            SaberDuelGameState::WaitingForRoundStart { timer } => timer.pause_or_resume(pause),
-            SaberDuelGameState::WaitingForGameOver { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::WaitingForRoundEnd { timer } => timer.pause_or_resume(pause, now),
+            SaberDuelGameState::WaitingForRoundStart { timer } => timer.pause_or_resume(pause, now),
+            SaberDuelGameState::WaitingForGameOver { timer } => timer.pause_or_resume(pause, now),
             _ => {}
         }
 
@@ -1096,7 +1097,7 @@ impl SaberDuelGame {
                 | SaberDuelGameState::WaitingForGameOver { .. }
                 | SaberDuelGameState::GameOver
         ) {
-            self.stopwatch.pause_or_resume(pause);
+            self.stopwatch.pause_or_resume(pause, now);
         }
 
         Ok(Vec::new())
@@ -1254,8 +1255,9 @@ impl SaberDuelGame {
 
         let mut broadcasts = Vec::new();
 
+        let now = Instant::now();
         if *game_start {
-            self.stopwatch.pause_or_resume(false);
+            self.stopwatch.pause_or_resume(false, now);
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -1278,7 +1280,6 @@ impl SaberDuelGame {
             };
         let leader_state = &mut self.player_states[leader_index as usize];
 
-        let now = Instant::now();
         if leader_state.round_points >= self.config.points_to_win_round {
             leader_state.win_round();
             self.bout = 0;
@@ -1705,7 +1706,7 @@ impl SaberDuelGame {
         self.state = SaberDuelGameState::WaitingForGameOver {
             timer: MinigameCountdown::new_with_event(GAME_END_DELAY, now),
         };
-        self.stopwatch.pause_or_resume(true);
+        self.stopwatch.pause_or_resume(true, now);
 
         let sound_id = match self.is_ai_match() {
             true => match leader_index == 0 {

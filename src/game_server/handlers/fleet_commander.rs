@@ -998,7 +998,6 @@ impl FleetCommanderGame {
                     return Vec::new();
                 }
 
-                timer.update_timer(now);
                 if !timer.time_until_next_event(now).is_zero() {
                     return Vec::new();
                 }
@@ -1013,6 +1012,7 @@ impl FleetCommanderGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
@@ -1030,11 +1030,11 @@ impl FleetCommanderGame {
                     if let FleetCommanderPlacementState::WaitingForPlacement { timer } =
                         placement_state
                     {
-                        timer.pause_or_resume(pause);
+                        timer.pause_or_resume(pause, now);
                     }
                 }
             }
-            FleetCommanderGameState::WaitingForMove { timer } => timer.pause_or_resume(pause),
+            FleetCommanderGameState::WaitingForMove { timer } => timer.pause_or_resume(pause, now),
             _ => (),
         }
 
@@ -1189,7 +1189,6 @@ impl FleetCommanderGame {
             return Vec::new();
         }
 
-        timer.update_timer(now);
         if timer.time_until_next_event(now).is_zero() {
             *placement_state = FleetCommanderPlacementState::Done;
             vec![Broadcast::Single(

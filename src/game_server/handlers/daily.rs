@@ -732,7 +732,8 @@ impl DailyTriviaGame {
                 ),
             ));
         };
-        bonus_timer.pause_or_resume(true);
+        let now = Instant::now();
+        bonus_timer.pause_or_resume(true, now);
 
         let question = &mut self.questions[*question_index as usize];
         question.selected_answers[selected_answer_index as usize] = true;
@@ -756,8 +757,7 @@ impl DailyTriviaGame {
             };
 
         let broadcasts = if question.correct_answer_index == selected_answer_index {
-            let seconds_remaining =
-                bonus_timer.time_until_next_event(Instant::now()).as_secs() as i32;
+            let seconds_remaining = bonus_timer.time_until_next_event(now).as_secs() as i32;
             let question_score = base_question_score
                 .saturating_add(
                     seconds_remaining.saturating_mul(self.score_per_bonus_second_remaining),
@@ -791,7 +791,7 @@ impl DailyTriviaGame {
                 })],
             )]
         } else {
-            bonus_timer.pause_or_resume(false);
+            bonus_timer.pause_or_resume(false, now);
             vec![Broadcast::Single(
                 sender,
                 vec![GamePacket::serialize(&TunneledPacket {

@@ -372,9 +372,10 @@ impl SharedMinigameData {
         pause: bool,
         stage_config: &MinigameStageConfig,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
         if stage_config.max_players() == 1 {
             if let MinigameReadiness::Ready(timer) = &mut self.readiness {
-                timer.pause_or_resume(pause);
+                timer.pause_or_resume(pause, now);
             }
         }
 
@@ -532,11 +533,18 @@ impl SharedMinigameTypeData {
         sender: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
         match self {
-            SharedMinigameTypeData::AttackCruiser { game } => game.pause_or_resume(sender, pause),
-            SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
-            SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
-            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::AttackCruiser { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::FleetCommander { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::ForceConnection { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause, now),
             _ => Ok(Vec::new()),
         }
     }
@@ -629,8 +637,11 @@ impl MinigameCountdown {
         self.paused
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        let now = Instant::now();
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        if self.paused == pause {
+            return;
+        }
+
         if pause {
             self.time_until_next_event = self.time_until_next_event(now);
         }
@@ -641,11 +652,6 @@ impl MinigameCountdown {
     pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
         self.last_timer_update = now;
         self.time_until_next_event = duration;
-    }
-
-    pub fn update_timer(&mut self, now: Instant) {
-        self.time_until_next_event = self.time_until_next_event(now);
-        self.last_timer_update = now;
     }
 
     pub fn time_until_next_event(&self, now: Instant) -> Duration {
@@ -675,17 +681,25 @@ impl MinigameStopwatch {
         }
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        let now = Instant::now();
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        if self.paused == pause {
+            return;
+        }
+
         if pause {
+            self.previous_total_time = self.elapsed(now);
             if let Some(resume_time) = self.possible_resume_time {
-                self.previous_total_time = self
-                    .previous_total_time
-                    .saturating_add(now.saturating_duration_since(resume_time));
-                self.possible_resume_time = None;
+                if now >= resume_time {
+                    self.possible_resume_time = None;
+                }
             }
         } else {
-            self.possible_resume_time = Some(now);
+            let needs_catchup = self
+                .possible_resume_time
+                .is_none_or(|resume_time| now >= resume_time);
+            if needs_catchup {
+                self.possible_resume_time = Some(now);
+            }
         }
 
         self.paused = pause;
@@ -696,8 +710,20 @@ impl MinigameStopwatch {
     }
 
     pub fn elapsed(&self, now: Instant) -> Duration {
-        self.previous_total_time
-            .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
+        if self.paused {
+            return self.previous_total_time;
+        }
+
+        if let Some(resume_time) = self.possible_resume_time {
+            if now < resume_time {
+                Duration::ZERO
+            } else {
+                self.previous_total_time
+                    .saturating_add(now.saturating_duration_since(resume_time))
+            }
+        } else {
+            self.previous_total_time
+        }
     }
 }
 

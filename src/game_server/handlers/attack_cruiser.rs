@@ -253,8 +253,8 @@ impl AttackCruiserActorInvulnerability {
         self.timer.paused()
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.timer.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.timer.pause_or_resume(pause, now);
     }
 }
 
@@ -296,8 +296,8 @@ impl AttackCruiserActorStun {
         self.timer.time_until_next_event(now)
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.timer.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.timer.pause_or_resume(pause, now);
     }
 }
 
@@ -404,25 +404,25 @@ impl AttackCruiserActor {
         self.invulnerability.paused()
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.invulnerability.pause_or_resume(pause);
-        self.stun.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.invulnerability.pause_or_resume(pause, now);
+        self.stun.pause_or_resume(pause, now);
         self.primary_weapon_projectile_last_used
             .iter_mut()
             .for_each(|timer_opt| {
                 if let Some(timer) = timer_opt {
-                    timer.pause_or_resume(pause);
+                    timer.pause_or_resume(pause, now);
                 }
             });
         self.primary_weapon_actor_last_used
             .iter_mut()
             .for_each(|timer_opt| {
                 if let Some(timer) = timer_opt {
-                    timer.pause_or_resume(pause);
+                    timer.pause_or_resume(pause, now);
                 }
             });
-        self.spawn_time.pause_or_resume(pause);
-        self.next_behavior_selection.pause_or_resume(pause);
+        self.spawn_time.pause_or_resume(pause, now);
+        self.next_behavior_selection.pause_or_resume(pause, now);
     }
 
     pub fn add_health(&mut self, delta_health: i16, now: Instant) {
@@ -1194,8 +1194,8 @@ impl AttackCruiserPlayerBounds {
         self.timer.schedule_event(Duration::ZERO, Instant::now());
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.timer.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.timer.pause_or_resume(pause, now);
     }
 }
 
@@ -1208,6 +1208,7 @@ struct AttackCruiserPlayer {
     pub score_multiplier_tier_progress: i32,
     pub score_multiplier_tier_goal: i32,
     pub score_multiplier_delta_per_sec: i16,
+    pub score_multiplier_grace_millis: u32,
     pub last_score_multiplier_delta_force_pause: bool,
     pub last_score_multiplier_delta: MinigameStopwatch,
     pub score_multiplier_tier: u8,
@@ -1233,6 +1234,7 @@ impl AttackCruiserPlayer {
         yaw: f32,
         score_multiplier_goal_base: i32,
         score_multiplier_delta_per_sec_base: i16,
+        score_multiplier_grace_millis: u32,
         score_multiplier_tier_max: u8,
         bvh: Option<Arc<Bvh>>,
         now: Instant,
@@ -1257,6 +1259,7 @@ impl AttackCruiserPlayer {
             score_multiplier_tier_progress: 0,
             score_multiplier_tier_goal: score_multiplier_goal_base,
             score_multiplier_delta_per_sec: score_multiplier_delta_per_sec_base,
+            score_multiplier_grace_millis,
             last_score_multiplier_delta_force_pause: false,
             last_score_multiplier_delta: MinigameStopwatch::new(Some(now)),
             score_multiplier_tier: 1,
@@ -1271,12 +1274,12 @@ impl AttackCruiserPlayer {
         }
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.actor.pause_or_resume(pause);
-        self.bounds_warning_hud_timer.pause_or_resume(pause);
-        self.damage_alarm_sound_timer.pause_or_resume(pause);
-        self.bounds.pause_or_resume(pause);
-        self.last_score_multiplier_delta.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.actor.pause_or_resume(pause, now);
+        self.bounds_warning_hud_timer.pause_or_resume(pause, now);
+        self.damage_alarm_sound_timer.pause_or_resume(pause, now);
+        self.bounds.pause_or_resume(pause, now);
+        self.last_score_multiplier_delta.pause_or_resume(pause, now);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
@@ -1346,9 +1349,13 @@ impl AttackCruiserPlayer {
         self.score = self.score.saturating_add(multiplied_score).max(0);
 
         // Reset the timer when we add score
-        self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
-        self.last_score_multiplier_delta
-            .pause_or_resume(self.last_score_multiplier_delta_force_pause || self.paused());
+        self.last_score_multiplier_delta = MinigameStopwatch::new(now.checked_add(
+            Duration::from_millis(self.score_multiplier_grace_millis.into()),
+        ));
+        self.last_score_multiplier_delta.pause_or_resume(
+            self.last_score_multiplier_delta_force_pause || self.paused(),
+            now,
+        );
 
         if self.score_multiplier_tier < self.score_multiplier_tier_max {
             self.score_multiplier_tier_progress = self
@@ -1381,8 +1388,10 @@ impl AttackCruiserPlayer {
         let elapsed_secs = self.last_score_multiplier_delta.elapsed(now).as_secs_f32();
 
         self.last_score_multiplier_delta = MinigameStopwatch::new(Some(now));
-        self.last_score_multiplier_delta
-            .pause_or_resume(self.last_score_multiplier_delta_force_pause || self.paused());
+        self.last_score_multiplier_delta.pause_or_resume(
+            self.last_score_multiplier_delta_force_pause || self.paused(),
+            now,
+        );
 
         let delta: i32 = (self.score_multiplier_delta_per_sec as f32 * elapsed_secs) as i32;
         self.score_multiplier_tier_progress = self
@@ -2067,6 +2076,7 @@ struct AttackCruiserPlayerConfig {
     out_of_bounds_warp_delay_millis: u32,
     score_multiplier_goal_base: i32,
     score_multiplier_delta_per_sec_base: i16,
+    score_multiplier_grace_millis: u32,
     score_multiplier_tier_max: u8,
     #[serde(default)]
     secondary_items: HashMap<String, AttackCruiserPlayerSecondaryItemConfig>,
@@ -2531,8 +2541,8 @@ impl AttackCruiserProjectilePool {
         results
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        self.global_time.pause_or_resume(pause);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        self.global_time.pause_or_resume(pause, now);
     }
 
     pub fn paused(&self) -> bool {
@@ -2706,6 +2716,7 @@ impl AttackCruiserGame {
             config.player.spawn1.yaw.to_radians(),
             config.player.score_multiplier_goal_base,
             config.player.score_multiplier_delta_per_sec_base,
+            config.player.score_multiplier_grace_millis,
             config.player.score_multiplier_tier_max,
             player_bvh.clone(),
             now,
@@ -2733,6 +2744,7 @@ impl AttackCruiserGame {
                 config.player.spawn2.yaw.to_radians(),
                 config.player.score_multiplier_goal_base,
                 config.player.score_multiplier_delta_per_sec_base,
+                config.player.score_multiplier_grace_millis,
                 config.player.score_multiplier_tier_max,
                 player_bvh.clone(),
                 now,
@@ -3379,6 +3391,7 @@ impl AttackCruiserGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.player_index(player)?;
 
@@ -3386,12 +3399,12 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
-        self.projectiles.pause_or_resume(pause);
+        self.projectiles.pause_or_resume(pause, now);
         self.player_states.iter_mut().for_each(|player_state| {
-            player_state.pause_or_resume(pause);
+            player_state.pause_or_resume(pause, now);
         });
         self.npcs.values_mut().for_each(|npc| {
-            npc.pause_or_resume(pause);
+            npc.pause_or_resume(pause, now);
         });
         Ok(Vec::new())
     }
