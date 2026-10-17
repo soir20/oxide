@@ -687,19 +687,23 @@ impl MinigameStopwatch {
         }
 
         if pause {
-            self.previous_total_time = self.elapsed(now);
             if let Some(resume_time) = self.possible_resume_time {
-                if now >= resume_time {
+                if now < resume_time {
+                    self.previous_total_time = resume_time.saturating_duration_since(now);
+                } else {
+                    self.previous_total_time = now.saturating_duration_since(resume_time);
                     self.possible_resume_time = None;
                 }
             }
         } else {
-            let needs_catchup = self
-                .possible_resume_time
-                .is_none_or(|resume_time| now >= resume_time);
-            if needs_catchup {
-                self.possible_resume_time = Some(now);
-            }
+            self.possible_resume_time = Some(
+                match self.possible_resume_time.is_some() {
+                    true => now.checked_add(self.previous_total_time),
+                    false => now.checked_sub(self.previous_total_time),
+                }
+                .unwrap_or(now),
+            );
+            self.previous_total_time = Duration::ZERO;
         }
 
         self.paused = pause;
@@ -711,18 +715,16 @@ impl MinigameStopwatch {
 
     pub fn elapsed(&self, now: Instant) -> Duration {
         if self.paused {
-            return self.previous_total_time;
+            return match self.possible_resume_time.is_some() {
+                true => Duration::ZERO,
+                false => self.previous_total_time,
+            };
         }
 
         if let Some(resume_time) = self.possible_resume_time {
-            if now < resume_time {
-                Duration::ZERO
-            } else {
-                self.previous_total_time
-                    .saturating_add(now.saturating_duration_since(resume_time))
-            }
+            now.saturating_duration_since(resume_time)
         } else {
-            self.previous_total_time
+            Duration::ZERO
         }
     }
 }
@@ -4426,7 +4428,7 @@ mod tests {
     }
 
     #[test]
-    fn test_stopwatch_pause_and_resume() {
+    fn test_stopwatch_pause_and_resume_running() {
         let start = Instant::now();
         let mut stopwatch = MinigameStopwatch::new(Some(start));
 
@@ -4447,27 +4449,33 @@ mod tests {
     }
 
     #[test]
-    fn test_stopwatch_future_start_time_immediate_pause() {
+    fn test_stopwatch_future_start_freeze_global_time() {
         let now = Instant::now();
         let future_start = now + Duration::from_secs(10);
         let mut stopwatch = MinigameStopwatch::new(Some(future_start));
 
-        stopwatch.pause_or_resume(true, now);
+        let pause_time = now + Duration::from_secs(4);
+        stopwatch.pause_or_resume(true, pause_time);
         assert!(stopwatch.paused());
         assert_eq!(
-            stopwatch.elapsed(now + Duration::from_secs(5)),
+            stopwatch.elapsed(pause_time + Duration::from_secs(100)),
             Duration::ZERO
         );
 
-        stopwatch.pause_or_resume(false, now + Duration::from_secs(5));
+        let resume_time = pause_time + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, resume_time);
         assert!(!stopwatch.paused());
-        assert_eq!(
-            stopwatch.elapsed(now + Duration::from_secs(8)),
-            Duration::ZERO
-        );
 
         assert_eq!(
-            stopwatch.elapsed(future_start + Duration::from_secs(5)),
+            stopwatch.elapsed(resume_time + Duration::from_secs(3)),
+            Duration::ZERO
+        );
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(6)),
+            Duration::ZERO
+        );
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(11)),
             Duration::from_secs(5)
         );
     }
@@ -4491,6 +4499,26 @@ mod tests {
 
         assert_eq!(
             stopwatch.elapsed(unpause_time + Duration::from_secs(5)),
+            Duration::ZERO
+        );
+        assert_eq!(
+            stopwatch.elapsed(unpause_time + Duration::from_secs(15)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_elapsed_while_paused() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(10)),
+            Duration::from_secs(5)
+        );
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(15)),
             Duration::from_secs(5)
         );
     }
@@ -4537,22 +4565,6 @@ mod tests {
 
         let historical_query = start - Duration::from_secs(10);
         assert_eq!(stopwatch.elapsed(historical_query), Duration::ZERO);
-    }
-
-    #[test]
-    fn test_stopwatch_elapsed_while_paused() {
-        let start = Instant::now();
-        let mut stopwatch = MinigameStopwatch::new(Some(start));
-
-        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
-        assert_eq!(
-            stopwatch.elapsed(start + Duration::from_secs(10)),
-            Duration::from_secs(5)
-        );
-        assert_eq!(
-            stopwatch.elapsed(start + Duration::from_secs(15)),
-            Duration::from_secs(5)
-        );
     }
 
     #[test]
@@ -4725,7 +4737,6 @@ mod tests {
         let past_expiry = now + Duration::from_secs(15);
         assert_eq!(countdown.time_until_next_event(past_expiry), Duration::ZERO);
     }
-
     #[test]
     fn test_countdown_historical_query_before_anchor() {
         let now = Instant::now();
