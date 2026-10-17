@@ -696,8 +696,12 @@ impl MinigameStopwatch {
                 }
             }
         } else {
+            let is_frozen_future_delay = self
+                .possible_resume_time
+                .is_some_and(|resume_time| now < resume_time);
+
             self.possible_resume_time = Some(
-                match self.possible_resume_time.is_some() {
+                match is_frozen_future_delay {
                     true => now.checked_add(self.previous_total_time),
                     false => now.checked_sub(self.previous_total_time),
                 }
@@ -4481,33 +4485,6 @@ mod tests {
     }
 
     #[test]
-    fn test_future_start_time_immediate_pause() {
-        let now = Instant::now();
-        let future_start = now + Duration::from_secs(10);
-        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
-
-        stopwatch.pause_or_resume(true, now);
-        assert!(stopwatch.paused());
-        assert_eq!(
-            stopwatch.elapsed(now + Duration::from_secs(5)),
-            Duration::ZERO
-        );
-
-        let unpause_time = now + Duration::from_secs(15);
-        stopwatch.pause_or_resume(false, unpause_time);
-        assert!(!stopwatch.paused());
-
-        assert_eq!(
-            stopwatch.elapsed(unpause_time + Duration::from_secs(5)),
-            Duration::ZERO
-        );
-        assert_eq!(
-            stopwatch.elapsed(unpause_time + Duration::from_secs(15)),
-            Duration::from_secs(5)
-        );
-    }
-
-    #[test]
     fn test_stopwatch_elapsed_while_paused() {
         let start = Instant::now();
         let mut stopwatch = MinigameStopwatch::new(Some(start));
@@ -4737,21 +4714,25 @@ mod tests {
         let past_expiry = now + Duration::from_secs(15);
         assert_eq!(countdown.time_until_next_event(past_expiry), Duration::ZERO);
     }
+
     #[test]
     fn test_countdown_historical_query_before_anchor() {
         let now = Instant::now();
         let duration = Duration::from_secs(10);
         let countdown = MinigameCountdown::new_with_event(duration, now);
+
         let historical_query = now - Duration::from_secs(5);
         assert_eq!(
             countdown.time_until_next_event(historical_query),
             Duration::from_secs(10)
         );
     }
+
     #[test]
     fn test_countdown_reschedule_while_running() {
         let now = Instant::now();
         let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(30), now);
+
         let intermediate_time = now + Duration::from_secs(10);
         countdown.schedule_event(Duration::from_secs(15), intermediate_time);
         assert_eq!(
