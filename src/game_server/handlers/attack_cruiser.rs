@@ -1279,7 +1279,8 @@ impl AttackCruiserPlayer {
         self.bounds_warning_hud_timer.pause_or_resume(pause, now);
         self.damage_alarm_sound_timer.pause_or_resume(pause, now);
         self.bounds.pause_or_resume(pause, now);
-        self.last_score_multiplier_delta.pause_or_resume(pause, now);
+        self.last_score_multiplier_delta
+            .pause_or_resume(self.last_score_multiplier_delta_force_pause || pause, now);
     }
 
     pub fn respawnable(&self, now: Instant) -> bool {
