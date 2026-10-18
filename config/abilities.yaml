@@ -546,8 +546,6 @@ pink_gaffi_stick:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 blinged_out_trooper_rifle:
   icon_set_id: 239
@@ -571,8 +569,6 @@ gaffi_stick:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 clone_trooper_blaster_rifle:
   icon_set_id: 240
@@ -628,8 +624,6 @@ satine_royal_guard_staff:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 gungan_double_headed_spear:
   icon_set_id: 2337
@@ -637,8 +631,6 @@ gungan_double_headed_spear:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 spring_fever:
   icon_set_id: 1935
@@ -658,8 +650,6 @@ savage_opress_pike:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 cupid_clone_bow:
   icon_set_id: 1674
@@ -738,8 +728,6 @@ skeletal_clone_trooper_scythe:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 umbaran_blaster_rifle:
   icon_set_id: 2448
@@ -755,8 +743,6 @@ captain_rex_zygerrian_electrostaff:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 shadow_tech_rifle:
   icon_set_id: 2571
@@ -888,8 +874,6 @@ ig_113_electrostaff:
   target_limit: Infinite
   use_cooldown_millis: 500
   cast_animation_id: 1501
-  impact_composite_effect_id: 2622
-  impact_composite_effect_seconds: 1.0
 
 renegade_heavy_blaster_pistol_right:
   icon_set_id: 3792
