@@ -643,22 +643,36 @@ impl MinigameCountdown {
         }
 
         if pause {
-            self.time_until_next_event = self.time_until_next_event(now);
+            if now < self.last_timer_update {
+                let mistaken_elapsed = self.last_timer_update.duration_since(now);
+                self.time_until_next_event =
+                    self.time_until_next_event.saturating_add(mistaken_elapsed);
+            } else {
+                self.time_until_next_event = self.time_until_next_event(now);
+            }
+            self.last_timer_update = now;
+        } else {
+            self.last_timer_update = now.max(self.last_timer_update);
         }
-        self.last_timer_update = now;
+
         self.paused = pause;
     }
 
     pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
         self.last_timer_update = now;
         self.time_until_next_event = duration;
+        self.paused = false;
     }
 
     pub fn time_until_next_event(&self, now: Instant) -> Duration {
         if self.paused {
             self.time_until_next_event
         } else {
-            let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
+            if now <= self.last_timer_update {
+                return self.time_until_next_event;
+            }
+
+            let time_since_last_tick = now.duration_since(self.last_timer_update);
             self.time_until_next_event
                 .saturating_sub(time_since_last_tick)
         }
@@ -4638,14 +4652,14 @@ mod tests {
         let duration = Duration::from_secs(30);
         let mut countdown = MinigameCountdown::new_with_event(duration, future_start);
 
-        countdown.pause_or_resume(true, now);
+        countdown.pause_or_resume(true, future_start);
         assert!(countdown.paused());
         assert_eq!(
-            countdown.time_until_next_event(now + Duration::from_secs(5)),
+            countdown.time_until_next_event(future_start + Duration::from_secs(5)),
             Duration::from_secs(30)
         );
 
-        let resume_time = now + Duration::from_secs(15);
+        let resume_time = future_start + Duration::from_secs(15);
         countdown.pause_or_resume(false, resume_time);
         assert!(!countdown.paused());
 
@@ -4688,7 +4702,7 @@ mod tests {
 
         assert_eq!(
             countdown.time_until_next_event(historical_unpause_time + Duration::from_secs(5)),
-            Duration::from_secs(15)
+            Duration::from_secs(20)
         );
     }
 
