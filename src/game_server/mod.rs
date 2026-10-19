@@ -210,6 +210,39 @@ pub struct GameServer {
     zone_templates: BTreeMap<u8, ZoneTemplate>,
 }
 
+/// What a client presents in its first game packet. Deliberately not `Debug`: the ticket is a credential.
+pub struct LoginCredentials {
+    pub guid: u32,
+    pub ticket: String,
+    pub version: String,
+}
+
+fn parse_login_request(data: Vec<u8>) -> Result<LoginCredentials, ProcessPacketError> {
+    let mut cursor = Cursor::new(&data[..]);
+    let raw_op_code: u16 = DeserializePacket::deserialize(&mut cursor)?;
+
+    match OpCode::try_from(raw_op_code) {
+        Ok(op_code) => match op_code {
+            OpCode::LoginRequest => {
+                let login_packet: LoginRequest = DeserializePacket::deserialize(&mut cursor)?;
+                Ok(LoginCredentials {
+                    guid: shorten_player_guid(login_packet.guid)?,
+                    ticket: login_packet.ticket,
+                    version: login_packet.version,
+                })
+            }
+            _ => Err(ProcessPacketError::new(
+                ProcessPacketErrorType::ConstraintViolated,
+                format!("Client tried to log in without a login request, data: {data:x?}"),
+            )),
+        },
+        Err(_) => Err(ProcessPacketError::new(
+            ProcessPacketErrorType::UnknownOpCode,
+            format!("Unknown op code at login: {raw_op_code}"),
+        )),
+    }
+}
+
 impl GameServer {
     pub fn new(config_dir: &Path, utc_offset: UtcOffset) -> Result<Self, ConfigError> {
         let abilities = load_abilities(config_dir)?;
@@ -244,26 +277,8 @@ impl GameServer {
         })
     }
 
-    pub fn authenticate(&self, data: Vec<u8>) -> Result<(u32, String), ProcessPacketError> {
-        let mut cursor = Cursor::new(&data[..]);
-        let raw_op_code: u16 = DeserializePacket::deserialize(&mut cursor)?;
-
-        match OpCode::try_from(raw_op_code) {
-            Ok(op_code) => match op_code {
-                OpCode::LoginRequest => {
-                    let login_packet: LoginRequest = DeserializePacket::deserialize(&mut cursor)?;
-                    shorten_player_guid(login_packet.guid).map(|guid| (guid, login_packet.version))
-                }
-                _ => Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::ConstraintViolated,
-                    format!("Client tried to log in without a login request, data: {data:x?}"),
-                )),
-            },
-            Err(_) => Err(ProcessPacketError::new(
-                ProcessPacketErrorType::UnknownOpCode,
-                format!("Unknown op code at login: {raw_op_code}"),
-            )),
-        }
+    pub fn authenticate(&self, data: Vec<u8>) -> Result<LoginCredentials, ProcessPacketError> {
+        parse_login_request(data)
     }
 
     pub fn log_in(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
@@ -1013,5 +1028,48 @@ impl GameServer {
         } else {
             Some(max + 1)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The byte layout the 0.179.1.529971 client sends (`PacketLogin::Write`, see CWA RE-001).
+    fn client_login_packet(ticket: &[u8], guid: u64, version: &[u8]) -> Vec<u8> {
+        let mut data = vec![0x01, 0x00];
+        data.extend_from_slice(&(ticket.len() as u32).to_le_bytes());
+        data.extend_from_slice(ticket);
+        data.extend_from_slice(&guid.to_le_bytes());
+        data.extend_from_slice(&(version.len() as u32).to_le_bytes());
+        data.extend_from_slice(version);
+        data
+    }
+
+    #[test]
+    fn parses_the_client_login_packet() {
+        let credentials = parse_login_request(client_login_packet(
+            b"p7w9dGPBPbbm9ZG-_abc",
+            4_102_479_591,
+            b"0.179.1.529971",
+        ))
+        .unwrap();
+        assert_eq!(credentials.ticket, "p7w9dGPBPbbm9ZG-_abc");
+        assert_eq!(credentials.guid, 4_102_479_591);
+        assert_eq!(credentials.version, "0.179.1.529971");
+    }
+
+    #[test]
+    fn rejects_malformed_login_packets() {
+        // GUID above u32::MAX
+        assert!(parse_login_request(client_login_packet(b"t", 1 << 32, b"v")).is_err());
+        // Ticket is not UTF-8
+        assert!(parse_login_request(client_login_packet(&[0xff, 0xfe], 1, b"v")).is_err());
+        // Truncated
+        let mut truncated = client_login_packet(b"ticket", 1, b"v");
+        truncated.truncate(10);
+        assert!(parse_login_request(truncated).is_err());
+        // Not a login request
+        assert!(parse_login_request(vec![0x02, 0x00, 0x01]).is_err());
     }
 }

@@ -19,12 +19,14 @@ use tokio::spawn;
 use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::config::ConfigError;
 use crate::game_server::GameServer;
+use crate::login_tickets::{TicketValidationOptions, TicketValidator};
 use crate::protocol::Channel;
 
 mod asset_server;
 mod channel_manager;
 mod config;
 mod game_server;
+mod login_tickets;
 mod protocol;
 
 static TIMEZONE: OnceLock<FixedOffset> = OnceLock::new();
@@ -90,6 +92,10 @@ struct Args {
     /// If true, the server exits immediately with a success code if all configuration is valid
     #[arg(long)]
     validate: bool,
+
+    /// Server options file
+    #[arg(long, default_value = "config/server.yaml")]
+    server_options: PathBuf,
 }
 
 #[tokio::main]
@@ -104,7 +110,7 @@ async fn main() {
 
     let config_dir = Path::new("config");
     let server_options =
-        Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
+        Arc::new(load_server_options(&args.server_options).expect("Unable to read server options"));
     server_options.validate();
     TIMEZONE
         .set(server_options.utc_offset_seconds.0)
@@ -130,6 +136,14 @@ async fn main() {
         return;
     }
 
+    let ticket_validator = Arc::new(
+        TicketValidator::from_options(server_options.ticket_validation.as_ref())
+            .unwrap_or_else(|err| panic!("Unable to configure ticket validation: {err}")),
+    );
+    if !ticket_validator.is_enabled() {
+        info!("Login tickets are not validated, so any client can log in as any player. Add ticket_validation to the server options to require tickets.");
+    }
+
     let channel_manager_arc = Arc::new(channel_manager);
     let socket_arc = Arc::new(socket);
     let game_server_arc = Arc::new(game_server);
@@ -152,6 +166,7 @@ async fn main() {
         client_dequeue,
         server_options.clone(),
         &game_server_arc,
+        &ticket_validator,
     ));
 
     let chunk_tick_duration = Duration::from_millis(server_options.chunk_tick_period_millis);
@@ -269,6 +284,7 @@ pub struct ServerOptions {
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
     pub max_client_version: Option<String>,
+    pub ticket_validation: Option<TicketValidationOptions>,
 }
 
 impl ServerOptions {
@@ -279,6 +295,12 @@ impl ServerOptions {
 
         if self.desired_resend_pct >= 100 {
             panic!("desired_resend_pct must be less than 100")
+        }
+
+        if let Some(ticket_validation) = &self.ticket_validation {
+            if let Err(err) = ticket_validation.validate() {
+                panic!("{err}");
+            }
         }
     }
 
@@ -299,8 +321,8 @@ impl ServerOptions {
     }
 }
 
-fn load_server_options(config_dir: &Path) -> Result<ServerOptions, ConfigError> {
-    let mut file = File::open(config_dir.join("server.yaml"))?;
+fn load_server_options(path: &Path) -> Result<ServerOptions, ConfigError> {
+    let mut file = File::open(path)?;
     Ok(serde_yaml::from_reader(&mut file)?)
 }
 
@@ -419,9 +441,11 @@ fn spawn_process_threads(
     client_dequeue: Receiver<SocketAddr>,
     server_options: Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
+    ticket_validator: &Arc<TicketValidator>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
+            let ticket_validator = ticket_validator.clone();
             let channel_manager = channel_manager.clone();
             let socket = socket.clone();
             let server_options = server_options.clone();
@@ -437,6 +461,7 @@ fn spawn_process_threads(
                     &game_server,
                     &client_dequeue,
                     &client_enqueue,
+                    &ticket_validator,
                 );
             })
         })
@@ -450,6 +475,7 @@ fn process_once(
     game_server: &Arc<GameServer>,
     client_dequeue: &Receiver<SocketAddr>,
     client_enqueue: &Sender<SocketAddr>,
+    ticket_validator: &TicketValidator,
 ) {
     defer! { PROCESSED_CLIENT_ADDR.set(None) }
     defer! { PROCESSED_CLIENT_GUID.set(None) }
@@ -496,11 +522,28 @@ fn process_once(
             }
         } else {
             match game_server.authenticate(packet) {
-                Ok((guid, client_version)) => {
-                    if !server_options.allows_client_version(&client_version) {
+                Ok(credentials) => {
+                    let guid = credentials.guid;
+                    if !server_options.allows_client_version(&credentials.version) {
                         info!(
                             "Disconnecting client {} that attempted to authenticate with disallowed version {}",
-                            channel_handle.addr, client_version
+                            channel_handle.addr, credentials.version
+                        );
+                        disconnect(
+                            Some(DisconnectReason::Application),
+                            &[],
+                            channel_handle,
+                            socket,
+                            server_options,
+                        );
+                        return;
+                    }
+
+                    // Never log the ticket itself: it is a credential
+                    if let Err(err) = ticket_validator.validate(&credentials.ticket, guid) {
+                        info!(
+                            "Disconnecting client {} that attempted to log in as player {}: {}",
+                            channel_handle.addr, guid, err
                         );
                         disconnect(
                             Some(DisconnectReason::Application),
