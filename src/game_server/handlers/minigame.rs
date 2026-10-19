@@ -679,81 +679,76 @@ impl MinigameCountdown {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MinigameStopwatchState {
+    Active { resume_time: Instant },
+    Paused { pause_time: Instant },
+}
+
 #[derive(Clone, Debug)]
 pub struct MinigameStopwatch {
-    paused: bool,
     previous_total_time: Duration,
     start_time: Option<Instant>,
-    last_resume: Option<Instant>,
-    last_pause: Option<Instant>,
+    state: MinigameStopwatchState,
 }
 
 impl MinigameStopwatch {
     pub fn new(start_time: Option<Instant>) -> Self {
+        let pause_time = start_time.unwrap_or_else(Instant::now);
         MinigameStopwatch {
-            paused: start_time.is_none(),
             previous_total_time: Duration::ZERO,
             start_time,
-            last_resume: start_time,
-            last_pause: None,
+            state: match start_time {
+                Some(resume_time) => MinigameStopwatchState::Active { resume_time },
+                None => MinigameStopwatchState::Paused { pause_time },
+            },
         }
     }
 
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
-        if self.paused == pause {
-            return;
-        }
-
-        if pause {
-            if let Some(resume_time) = self.last_resume {
-                if now >= resume_time {
-                    let elapsed_this_run = now.duration_since(resume_time);
+        match (&self.state, pause) {
+            (MinigameStopwatchState::Active { resume_time }, true) => {
+                if now >= *resume_time {
+                    let elapsed_this_run = now.duration_since(*resume_time);
                     self.previous_total_time =
                         self.previous_total_time.saturating_add(elapsed_this_run);
                 }
+                self.state = MinigameStopwatchState::Paused { pause_time: now };
             }
-            self.last_pause = Some(now);
-            self.last_resume = None;
-        } else {
-            if let Some(future_time) = self.start_time {
-                if let Some(pause_start) = self.last_pause {
-                    if pause_start < future_time {
-                        let dynamic_overrun = now.saturating_duration_since(pause_start);
-                        self.start_time = Some(future_time + dynamic_overrun);
+            (MinigameStopwatchState::Paused { pause_time }, false) => {
+                if let Some(future_time) = self.start_time {
+                    if *pause_time < future_time {
+                        let overrun = now.saturating_duration_since(*pause_time);
+                        self.start_time = Some(future_time + overrun);
                     }
                 }
+
+                let baseline = match self.start_time {
+                    Some(future_time) => now.max(future_time),
+                    None => now,
+                };
+                self.state = MinigameStopwatchState::Active {
+                    resume_time: baseline,
+                };
             }
-
-            let baseline = match self.start_time {
-                Some(future_time) => now.max(future_time),
-                None => now,
-            };
-
-            self.last_resume = Some(baseline);
-            self.last_pause = None;
+            _ => {}
         }
-
-        self.paused = pause;
     }
 
     pub fn paused(&self) -> bool {
-        self.paused
+        matches!(self.state, MinigameStopwatchState::Paused { .. })
     }
 
     pub fn elapsed(&self, now: Instant) -> Duration {
-        if self.paused {
-            return self.previous_total_time;
-        }
-
-        if let Some(resume_time) = self.last_resume {
-            if now <= resume_time {
-                return self.previous_total_time;
+        match self.state {
+            MinigameStopwatchState::Paused { .. } => self.previous_total_time,
+            MinigameStopwatchState::Active { resume_time } => {
+                if now <= resume_time {
+                    return self.previous_total_time;
+                }
+                let elapsed_this_run = now.duration_since(resume_time);
+                self.previous_total_time.saturating_add(elapsed_this_run)
             }
-
-            let elapsed_this_run = now.duration_since(resume_time);
-            self.previous_total_time.saturating_add(elapsed_this_run)
-        } else {
-            self.previous_total_time
         }
     }
 }
