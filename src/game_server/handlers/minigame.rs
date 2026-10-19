@@ -4624,7 +4624,7 @@ mod tests {
     }
 
     #[test]
-    fn test_stopwatch_anchor_corruption_prevention() {
+    fn test_stopwatch_redundant_pause_timeline_preservation() {
         let now = Instant::now();
         let future_start = now + Duration::from_secs(10);
         let mut stopwatch = MinigameStopwatch::new(Some(future_start));
@@ -4645,7 +4645,7 @@ mod tests {
     }
 
     #[test]
-    fn test_stopwatch_overflow_panic_defense() {
+    fn test_stopwatch_monotonic_overflow_boundary_protection() {
         let now = Instant::now();
         let future_start = now + Duration::from_secs(10);
         let mut stopwatch = MinigameStopwatch::new(Some(future_start));
@@ -4844,7 +4844,7 @@ mod tests {
     }
 
     #[test]
-    fn test_countdown_exploit_prevention() {
+    fn test_countdown_stale_pause_timestamp_handling() {
         let now = Instant::now();
         let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(10), now);
 
