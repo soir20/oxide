@@ -609,72 +609,89 @@ impl SharedMinigameTypeData {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MinigameCountdownState {
+    Active { last_timer_update: Instant },
+    Paused { last_timer_update: Instant },
+}
+
 #[derive(Clone, Debug)]
 pub struct MinigameCountdown {
-    paused: bool,
     time_until_next_event: Duration,
-    last_timer_update: Instant,
+    state: MinigameCountdownState,
 }
 
 impl MinigameCountdown {
     pub fn new() -> Self {
         MinigameCountdown {
-            paused: false,
             time_until_next_event: Duration::ZERO,
-            last_timer_update: Instant::now(),
+            state: MinigameCountdownState::Active {
+                last_timer_update: Instant::now(),
+            },
         }
     }
 
     pub fn new_with_event(duration: Duration, now: Instant) -> Self {
         MinigameCountdown {
-            paused: false,
             time_until_next_event: duration,
-            last_timer_update: now,
+            state: MinigameCountdownState::Active {
+                last_timer_update: now,
+            },
         }
     }
 
     pub fn paused(&self) -> bool {
-        self.paused
+        matches!(self.state, MinigameCountdownState::Paused { .. })
     }
 
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
-        if self.paused == pause {
-            return;
-        }
-
-        if pause {
-            if now < self.last_timer_update {
-                let mistaken_elapsed = self.last_timer_update.duration_since(now);
-                self.time_until_next_event =
-                    self.time_until_next_event.saturating_add(mistaken_elapsed);
-            } else {
-                self.time_until_next_event = self.time_until_next_event(now);
+        match (&self.state, pause) {
+            (MinigameCountdownState::Active { last_timer_update }, true) => {
+                if now < *last_timer_update {
+                    let mistaken_elapsed = last_timer_update.duration_since(now);
+                    self.time_until_next_event =
+                        self.time_until_next_event.saturating_add(mistaken_elapsed);
+                    self.state = MinigameCountdownState::Paused {
+                        last_timer_update: now,
+                    };
+                } else {
+                    let time_since_last_tick = now.duration_since(*last_timer_update);
+                    self.time_until_next_event = self
+                        .time_until_next_event
+                        .saturating_sub(time_since_last_tick);
+                    self.state = MinigameCountdownState::Paused {
+                        last_timer_update: now,
+                    };
+                }
             }
-            self.last_timer_update = now;
-        } else {
-            self.last_timer_update = now.max(self.last_timer_update);
+            (MinigameCountdownState::Paused { last_timer_update }, false) => {
+                let baseline = now.max(*last_timer_update);
+                self.state = MinigameCountdownState::Active {
+                    last_timer_update: baseline,
+                };
+            }
+            _ => {}
         }
-
-        self.paused = pause;
     }
 
     pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
-        self.last_timer_update = now;
         self.time_until_next_event = duration;
-        self.paused = false;
+        self.state = MinigameCountdownState::Active {
+            last_timer_update: now,
+        };
     }
 
     pub fn time_until_next_event(&self, now: Instant) -> Duration {
-        if self.paused {
-            self.time_until_next_event
-        } else {
-            if now <= self.last_timer_update {
-                return self.time_until_next_event;
+        match self.state {
+            MinigameCountdownState::Paused { .. } => self.time_until_next_event,
+            MinigameCountdownState::Active { last_timer_update } => {
+                if now <= last_timer_update {
+                    return self.time_until_next_event;
+                }
+                let time_since_last_tick = now.duration_since(last_timer_update);
+                self.time_until_next_event
+                    .saturating_sub(time_since_last_tick)
             }
-
-            let time_since_last_tick = now.duration_since(self.last_timer_update);
-            self.time_until_next_event
-                .saturating_sub(time_since_last_tick)
         }
     }
 }
