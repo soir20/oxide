@@ -16,17 +16,19 @@ use std::time::{Duration, Instant};
 use std::{env, panic, process};
 use tokio::spawn;
 
+use crate::backend::{Backend, BackendOptions};
 use crate::channel_manager::{ChannelManager, ReceiveResult};
 use crate::config::ConfigError;
 use crate::game_server::GameServer;
-use crate::login_tickets::{TicketValidationOptions, TicketValidator};
+use crate::persistence::CharacterSaver;
 use crate::protocol::Channel;
 
 mod asset_server;
+mod backend;
 mod channel_manager;
 mod config;
 mod game_server;
-mod login_tickets;
+mod persistence;
 mod protocol;
 
 static TIMEZONE: OnceLock<FixedOffset> = OnceLock::new();
@@ -136,12 +138,15 @@ async fn main() {
         return;
     }
 
-    let ticket_validator = Arc::new(
-        TicketValidator::from_options(server_options.ticket_validation.as_ref())
-            .unwrap_or_else(|err| panic!("Unable to configure ticket validation: {err}")),
+    let backend = Arc::new(
+        Backend::from_options(server_options.backend.as_ref())
+            .unwrap_or_else(|err| panic!("Unable to configure the backend: {err}")),
     );
-    if !ticket_validator.is_enabled() {
-        info!("Login tickets are not validated, so any client can log in as any player. Add ticket_validation to the server options to require tickets.");
+    if backend.is_enabled() {
+        let (saver, _) = CharacterSaver::spawn(backend.clone());
+        game_server.set_character_sink(saver);
+    } else {
+        info!("No backend is configured, so login tickets are not validated and characters are not saved. Add a backend section to the server options for both.");
     }
 
     let channel_manager_arc = Arc::new(channel_manager);
@@ -166,7 +171,7 @@ async fn main() {
         client_dequeue,
         server_options.clone(),
         &game_server_arc,
-        &ticket_validator,
+        &backend,
     ));
 
     let chunk_tick_duration = Duration::from_millis(server_options.chunk_tick_period_millis);
@@ -220,6 +225,10 @@ async fn main() {
         &server_options,
         &game_server_arc,
     );
+
+    if let Some(save_period) = backend.save_period() {
+        spawn_save_thread(save_period, &channel_manager_arc, &game_server_arc);
+    }
 
     info!("Hello, world!");
 
@@ -284,7 +293,7 @@ pub struct ServerOptions {
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
     pub max_client_version: Option<String>,
-    pub ticket_validation: Option<TicketValidationOptions>,
+    pub backend: Option<BackendOptions>,
 }
 
 impl ServerOptions {
@@ -297,8 +306,8 @@ impl ServerOptions {
             panic!("desired_resend_pct must be less than 100")
         }
 
-        if let Some(ticket_validation) = &self.ticket_validation {
-            if let Err(err) = ticket_validation.validate() {
+        if let Some(backend) = &self.backend {
+            if let Err(err) = backend.validate() {
                 panic!("{err}");
             }
         }
@@ -441,11 +450,11 @@ fn spawn_process_threads(
     client_dequeue: Receiver<SocketAddr>,
     server_options: Arc<ServerOptions>,
     game_server: &Arc<GameServer>,
-    ticket_validator: &Arc<TicketValidator>,
+    backend: &Arc<Backend>,
 ) -> Vec<JoinHandle<()>> {
     (0..threads)
         .map(|_| {
-            let ticket_validator = ticket_validator.clone();
+            let backend = backend.clone();
             let channel_manager = channel_manager.clone();
             let socket = socket.clone();
             let server_options = server_options.clone();
@@ -461,7 +470,7 @@ fn spawn_process_threads(
                     &game_server,
                     &client_dequeue,
                     &client_enqueue,
-                    &ticket_validator,
+                    &backend,
                 );
             })
         })
@@ -475,7 +484,7 @@ fn process_once(
     game_server: &Arc<GameServer>,
     client_dequeue: &Receiver<SocketAddr>,
     client_enqueue: &Sender<SocketAddr>,
-    ticket_validator: &TicketValidator,
+    backend: &Backend,
 ) {
     defer! { PROCESSED_CLIENT_ADDR.set(None) }
     defer! { PROCESSED_CLIENT_GUID.set(None) }
@@ -540,20 +549,23 @@ fn process_once(
                     }
 
                     // Never log the ticket itself: it is a credential
-                    if let Err(err) = ticket_validator.validate(&credentials.ticket, guid) {
-                        info!(
-                            "Disconnecting client {} that attempted to log in as player {}: {}",
-                            channel_handle.addr, guid, err
-                        );
-                        disconnect(
-                            Some(DisconnectReason::Application),
-                            &[],
-                            channel_handle,
-                            socket,
-                            server_options,
-                        );
-                        return;
-                    }
+                    let saved_character = match backend.redeem(&credentials.ticket, guid) {
+                        Ok(saved_character) => saved_character,
+                        Err(err) => {
+                            info!(
+                                "Disconnecting client {} that attempted to log in as player {}: {}",
+                                channel_handle.addr, guid, err
+                            );
+                            disconnect(
+                                Some(DisconnectReason::Application),
+                                &[],
+                                channel_handle,
+                                socket,
+                                server_options,
+                            );
+                            return;
+                        }
+                    };
 
                     drop(channel_handle);
                     drop(channel_manager_read_handle);
@@ -574,7 +586,7 @@ fn process_once(
                         ));
                     }
 
-                    match game_server.log_in(guid) {
+                    match game_server.log_in(guid, saved_character) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
                         Err(err) => {
                             info!(
@@ -797,6 +809,26 @@ fn spawn_minigame_daily_reset_thread(
         channel_manager
             .read()
             .broadcast(client_enqueue.clone(), broadcasts, &server_options);
+    });
+}
+
+/// Saves every logged-in player periodically, so a crash loses at most one period of progress
+fn spawn_save_thread(
+    save_period: Duration,
+    channel_manager: &Arc<RwLock<ChannelManager>>,
+    game_server: &Arc<GameServer>,
+) {
+    let channel_manager = channel_manager.clone();
+    let game_server = game_server.clone();
+    let save_tick_dequeue = tick(save_period);
+    thread::spawn(move || loop {
+        save_tick_dequeue
+            .recv()
+            .expect("Save tick channel disconnected");
+        let guids = channel_manager.read().authenticated_guids();
+        for guid in guids {
+            game_server.save_player(guid);
+        }
     });
 }
 

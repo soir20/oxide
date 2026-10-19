@@ -131,6 +131,13 @@ pub struct ZoneTemplate {
     pub dialog_choices: BTreeMap<u32, DialogChoiceTemplate>,
 }
 
+impl ZoneTemplate {
+    /// False for houses and lobbies that players should not be saved in
+    pub fn update_previous_location_on_leave(&self) -> bool {
+        self.update_previous_location_on_leave
+    }
+}
+
 impl Guid<u8> for ZoneTemplate {
     fn guid(&self) -> u8 {
         self.guid

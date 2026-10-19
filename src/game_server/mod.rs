@@ -5,7 +5,7 @@ use std::io::{Cursor, Error};
 use std::num::ParseIntError;
 use std::path::Path;
 use std::str::ParseBoolError;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 use std::time::{Duration, Instant};
 use std::vec;
 
@@ -31,7 +31,10 @@ use handlers::lock_enforcer::{
     CharacterLockEnforcer, CharacterLockRequest, CharacterTableWriteHandle, LockEnforcerSource,
     ZoneLockEnforcer, ZoneLockRequest, ZoneTableWriteHandle,
 };
-use handlers::login::{log_in, log_out, send_points_of_interest};
+use handlers::login::{log_in, log_out, save_player, send_points_of_interest};
+
+use crate::backend::SavedCharacter;
+use crate::persistence::CharacterSink;
 use handlers::minigame::{
     create_active_minigame_if_uncreated, load_all_minigames, process_minigame_packet,
     AllMinigameConfigs,
@@ -208,6 +211,7 @@ pub struct GameServer {
     start_time: Instant,
     utc_offset: UtcOffset,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
+    character_sink: OnceLock<Arc<dyn CharacterSink>>,
 }
 
 /// What a client presents in its first game packet. Deliberately not `Debug`: the ticket is a credential.
@@ -274,6 +278,7 @@ impl GameServer {
             utc_offset,
             zone_templates: templates,
             bvhs,
+            character_sink: OnceLock::new(),
         })
     }
 
@@ -281,8 +286,29 @@ impl GameServer {
         parse_login_request(data)
     }
 
-    pub fn log_in(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        log_in(sender, self)
+    /// `saved` is the character from the backend, or `None` in development mode
+    pub fn log_in(
+        &self,
+        sender: u32,
+        saved: Option<SavedCharacter>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        log_in(sender, saved, self)
+    }
+
+    /// Queues the player's character to be saved, if saving is enabled
+    pub fn save_player(&self, sender: u32) {
+        save_player(sender, self)
+    }
+
+    /// Enables saving characters. Can be set once.
+    pub fn set_character_sink(&self, sink: Arc<dyn CharacterSink>) {
+        if self.character_sink.set(sink).is_err() {
+            panic!("Character sink was already set");
+        }
+    }
+
+    pub fn character_sink(&self) -> Option<&Arc<dyn CharacterSink>> {
+        self.character_sink.get()
     }
 
     pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {

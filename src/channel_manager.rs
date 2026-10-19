@@ -44,6 +44,10 @@ impl ChannelManager {
         self.authenticated.guid(addr)
     }
 
+    pub fn authenticated_guids(&self) -> Vec<u32> {
+        self.authenticated.channels.keys().copied().collect()
+    }
+
     #[allow(clippy::result_large_err)]
     pub fn insert(
         &mut self,

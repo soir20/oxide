@@ -1,3 +1,4 @@
+use crate::backend::SavedEquippedItem;
 use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet},
     sync::Arc,
@@ -1994,6 +1995,23 @@ impl PlayerInventory {
 
     pub fn owns_item(&self, item_guid: i32) -> bool {
         self.inventory.contains(&item_guid)
+    }
+
+    /// Equipped items of every battle class, without temporary items
+    pub fn saved_equipment(&self) -> Vec<SavedEquippedItem> {
+        self.battle_classes
+            .iter()
+            .flat_map(|(battle_class_guid, battle_class)| {
+                battle_class
+                    .items
+                    .iter()
+                    .map(|(slot, item_guid)| SavedEquippedItem {
+                        battle_class: *battle_class_guid,
+                        slot: (*slot).into(),
+                        item_guid: *item_guid,
+                    })
+            })
+            .collect()
     }
 }
 
