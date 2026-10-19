@@ -142,12 +142,14 @@ async fn main() {
         Backend::from_options(server_options.backend.as_ref())
             .unwrap_or_else(|err| panic!("Unable to configure the backend: {err}")),
     );
-    if backend.is_enabled() {
+    let saver = if backend.is_enabled() {
         let (saver, _) = CharacterSaver::spawn(backend.clone());
-        game_server.set_character_sink(saver);
+        game_server.set_character_sink(saver.clone());
+        Some(saver)
     } else {
         info!("No backend is configured, so login tickets are not validated and characters are not saved. Add a backend section to the server options for both.");
-    }
+        None
+    };
 
     let channel_manager_arc = Arc::new(channel_manager);
     let socket_arc = Arc::new(socket);
@@ -232,8 +234,60 @@ async fn main() {
 
     info!("Hello, world!");
 
-    for thread in threads {
-        thread.join().expect("Thread exited with error");
+    let workers = tokio::task::spawn_blocking(move || {
+        for thread in threads {
+            thread.join().expect("Thread exited with error");
+        }
+    });
+    tokio::select! {
+        result = workers => result.expect("Unable to join the worker threads"),
+        () = shutdown_signal() => {
+            if let Some(saver) = saver {
+                shut_down(&saver, &channel_manager_arc, &game_server_arc);
+            }
+            info!("Goodbye");
+            process::exit(0);
+        }
+    }
+}
+
+const SHUTDOWN_SAVE_TIMEOUT: Duration = Duration::from_secs(10);
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        let _ = tokio::signal::ctrl_c().await;
+    };
+    #[cfg(unix)]
+    let terminate = async {
+        match tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate()) {
+            Ok(mut signal) => {
+                signal.recv().await;
+            }
+            Err(_) => std::future::pending::<()>().await,
+        }
+    };
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+    tokio::select! {
+        () = ctrl_c => {},
+        () = terminate => {},
+    }
+}
+
+/// Saves every online player and waits for the saves to reach the backend.
+fn shut_down(
+    saver: &CharacterSaver,
+    channel_manager: &RwLock<ChannelManager>,
+    game_server: &GameServer,
+) {
+    let guids = channel_manager.read().authenticated_guids();
+    info!("Shutting down: saving {} online players", guids.len());
+    for guid in guids {
+        game_server.save_player(guid);
+    }
+    match saver.flush(SHUTDOWN_SAVE_TIMEOUT) {
+        0 => info!("All players saved"),
+        unsaved => info!("Unable to save {} players before shutting down", unsaved),
     }
 }
 

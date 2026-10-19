@@ -34,6 +34,13 @@ struct State {
 }
 
 impl State {
+    fn unsaved(&self) -> usize {
+        self.entries
+            .values()
+            .filter(|entry| entry.saved_at.is_none())
+            .count()
+    }
+
     fn next_unsaved(&self) -> Option<(u32, CharacterSnapshot, u64)> {
         self.entries
             .iter()
@@ -95,11 +102,27 @@ impl CharacterSaver {
                         entry.saved_at = Some(Instant::now());
                     }
                 }
+                // Wakes `flush`
+                self.changed.notify_all();
             }
             Err(err) => {
                 info!("Unable to save player {}, will retry: {}", guid, err);
                 self.changed.wait_for(&mut state, RETRY_DELAY);
             }
+        }
+    }
+
+    /// Waits until every queued snapshot is saved, for at most `timeout`. Returns how many are
+    /// still unsaved.
+    pub fn flush(&self, timeout: Duration) -> usize {
+        let deadline = Instant::now() + timeout;
+        let mut state = self.state.lock();
+        loop {
+            let unsaved = state.unsaved();
+            if unsaved == 0 || Instant::now() >= deadline {
+                return unsaved;
+            }
+            self.changed.wait_until(&mut state, deadline);
         }
     }
 
@@ -194,6 +217,29 @@ mod tests {
             Ok(())
         });
         assert_eq!(saved, Some(2));
+    }
+
+    #[test]
+    fn flush_waits_for_queued_saves() {
+        let saver = Arc::new(CharacterSaver::new_for_test());
+        saver.save(7, snapshot(1));
+        saver.save(8, snapshot(2));
+        let worker = saver.clone();
+        let handle = thread::spawn(move || {
+            for _ in 0..2 {
+                thread::sleep(Duration::from_millis(20));
+                worker.save_next(|_, _| Ok(()));
+            }
+        });
+        assert_eq!(saver.flush(Duration::from_secs(5)), 0);
+        handle.join().unwrap();
+    }
+
+    #[test]
+    fn flush_gives_up_after_the_timeout() {
+        let saver = CharacterSaver::new_for_test();
+        saver.save(7, snapshot(1));
+        assert_eq!(saver.flush(Duration::from_millis(20)), 1);
     }
 
     #[test]
