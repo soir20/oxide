@@ -163,6 +163,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
                     role: Role::Admin,
                     action_bar: PlayerActionBar {
                         weapon_abilities: make_test_weapon_abilities(),
+                        consumables: Vec::new(),
                     },
                 },
                 game_server,
