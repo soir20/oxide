@@ -119,7 +119,7 @@ pub struct CastAndLand {
     pub unknown14: u32,
     pub action_bar_type: ActionBarType,
     pub slot_index: i32,
-    pub unknown17: u32,
+    pub unknown_cast_composite_effect_id: u32,
     pub override_launcher_guid: u64,
     pub unknown19: bool,
     pub unknown20: u32,

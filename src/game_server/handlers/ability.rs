@@ -301,7 +301,7 @@ fn make_cast_and_land_packet(
             unknown14: 0,
             action_bar_type,
             slot_index: ability_slot_index,
-            unknown17: 0,
+            unknown_cast_composite_effect_id: 0,
             override_launcher_guid: 0,
             unknown19: false,
             unknown20: 0,
