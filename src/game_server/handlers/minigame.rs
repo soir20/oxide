@@ -683,7 +683,9 @@ impl MinigameCountdown {
 pub struct MinigameStopwatch {
     paused: bool,
     previous_total_time: Duration,
-    possible_resume_time: Option<Instant>,
+    start_time: Option<Instant>,
+    last_resume: Option<Instant>,
+    last_pause: Option<Instant>,
 }
 
 impl MinigameStopwatch {
@@ -691,7 +693,9 @@ impl MinigameStopwatch {
         MinigameStopwatch {
             paused: start_time.is_none(),
             previous_total_time: Duration::ZERO,
-            possible_resume_time: start_time,
+            start_time,
+            last_resume: start_time,
+            last_pause: None,
         }
     }
 
@@ -701,27 +705,32 @@ impl MinigameStopwatch {
         }
 
         if pause {
-            if let Some(resume_time) = self.possible_resume_time {
-                if now < resume_time {
-                    self.previous_total_time = resume_time.saturating_duration_since(now);
-                } else {
-                    self.previous_total_time = now.saturating_duration_since(resume_time);
-                    self.possible_resume_time = None;
+            if let Some(resume_time) = self.last_resume {
+                if now >= resume_time {
+                    let elapsed_this_run = now.duration_since(resume_time);
+                    self.previous_total_time =
+                        self.previous_total_time.saturating_add(elapsed_this_run);
                 }
             }
+            self.last_pause = Some(now);
+            self.last_resume = None;
         } else {
-            let is_frozen_future_delay = self
-                .possible_resume_time
-                .is_some_and(|resume_time| now < resume_time);
-
-            self.possible_resume_time = Some(
-                match is_frozen_future_delay {
-                    true => now.checked_add(self.previous_total_time),
-                    false => now.checked_sub(self.previous_total_time),
+            if let Some(future_time) = self.start_time {
+                if let Some(pause_start) = self.last_pause {
+                    if pause_start < future_time {
+                        let dynamic_overrun = now.saturating_duration_since(pause_start);
+                        self.start_time = Some(future_time + dynamic_overrun);
+                    }
                 }
-                .unwrap_or(now),
-            );
-            self.previous_total_time = Duration::ZERO;
+            }
+
+            let baseline = match self.start_time {
+                Some(future_time) => now.max(future_time),
+                None => now,
+            };
+
+            self.last_resume = Some(baseline);
+            self.last_pause = None;
         }
 
         self.paused = pause;
@@ -733,16 +742,18 @@ impl MinigameStopwatch {
 
     pub fn elapsed(&self, now: Instant) -> Duration {
         if self.paused {
-            return match self.possible_resume_time.is_some() {
-                true => Duration::ZERO,
-                false => self.previous_total_time,
-            };
+            return self.previous_total_time;
         }
 
-        if let Some(resume_time) = self.possible_resume_time {
-            now.saturating_duration_since(resume_time)
+        if let Some(resume_time) = self.last_resume {
+            if now <= resume_time {
+                return self.previous_total_time;
+            }
+
+            let elapsed_this_run = now.duration_since(resume_time);
+            self.previous_total_time.saturating_add(elapsed_this_run)
         } else {
-            Duration::ZERO
+            self.previous_total_time
         }
     }
 }
