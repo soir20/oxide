@@ -4601,6 +4601,49 @@ mod tests {
     }
 
     #[test]
+    fn test_stopwatch_retroactive_unpause() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let pause_time = start + Duration::from_secs(10);
+        stopwatch.pause_or_resume(true, pause_time);
+
+        let historical_unpause_time = pause_time - Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, historical_unpause_time);
+
+        let check_time = pause_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(check_time), Duration::from_secs(15));
+    }
+
+    #[test]
+    fn test_stopwatch_future_start_late_resume() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        let late_resume = future_start + Duration::from_secs(20);
+        stopwatch.pause_or_resume(false, late_resume);
+
+        assert_eq!(
+            stopwatch.elapsed(late_resume + Duration::from_secs(5)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_uninitialized_redundant_pause() {
+        let now = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(None);
+
+        stopwatch.pause_or_resume(true, now + Duration::from_secs(5));
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(10)),
+            Duration::ZERO
+        );
+    }
+
+    #[test]
     fn test_countdown_normal_flow() {
         let now = Instant::now();
         let duration = Duration::from_secs(30);
@@ -4775,6 +4818,23 @@ mod tests {
         assert_eq!(
             countdown.time_until_next_event(intermediate_time + Duration::from_secs(5)),
             Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_retroactive_pause() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let advanced_time = now + Duration::from_secs(15);
+        let late_pause_packet = now + Duration::from_secs(10);
+
+        countdown.pause_or_resume(true, late_pause_packet);
+
+        assert_eq!(
+            countdown.time_until_next_event(advanced_time),
+            Duration::from_secs(20)
         );
     }
 }
