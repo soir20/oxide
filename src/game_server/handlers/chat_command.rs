@@ -46,7 +46,7 @@ pub fn load_commands(config_dir: &Path) -> Result<CommandConfig, ConfigError> {
     Ok(config)
 }
 
-fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
+pub fn server_msg(sender: u32, msg: &str) -> Vec<Broadcast> {
     vec![Broadcast::Single(
         sender,
         vec![

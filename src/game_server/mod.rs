@@ -33,7 +33,7 @@ use handlers::lock_enforcer::{
 };
 use handlers::login::{log_in, log_out, save_player, send_points_of_interest};
 
-use crate::backend::SavedCharacter;
+use crate::backend::Redeemed;
 use crate::persistence::CharacterSink;
 use handlers::minigame::{
     create_active_minigame_if_uncreated, load_all_minigames, process_minigame_packet,
@@ -286,13 +286,13 @@ impl GameServer {
         parse_login_request(data)
     }
 
-    /// `saved` is the character from the backend, or `None` in development mode
+    /// `redeemed` is the account and character from the backend, or `None` in development mode
     pub fn log_in(
         &self,
         sender: u32,
-        saved: Option<SavedCharacter>,
+        redeemed: Option<Redeemed>,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        log_in(sender, saved, self)
+        log_in(sender, redeemed, self)
     }
 
     /// Queues the player's character to be saved, if saving is enabled

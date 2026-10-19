@@ -549,8 +549,8 @@ fn process_once(
                     }
 
                     // Never log the ticket itself: it is a credential
-                    let saved_character = match backend.redeem(&credentials.ticket, guid) {
-                        Ok(saved_character) => saved_character,
+                    let redeemed = match backend.redeem(&credentials.ticket, guid) {
+                        Ok(redeemed) => redeemed,
                         Err(err) => {
                             info!(
                                 "Disconnecting client {} that attempted to log in as player {}: {}",
@@ -586,7 +586,7 @@ fn process_once(
                         ));
                     }
 
-                    match game_server.log_in(guid, saved_character) {
+                    match game_server.log_in(guid, redeemed) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
                         Err(err) => {
                             info!(

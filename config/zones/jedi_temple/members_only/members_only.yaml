@@ -6,6 +6,7 @@ members_only:
   asset_name: Members
   hide_ui: false
   is_combat: false
+  members_only: true
   chunk_size: 70
   default_point_of_interest:
     guid: 25

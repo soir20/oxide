@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use packet_serialize::NullTerminatedString;
 
 use crate::{
-    backend::{CharacterSnapshot, SavedCharacter, SavedCustomization},
+    backend::{AccountRole, CharacterSnapshot, Redeemed, SavedCustomization},
     game_server::{
         handlers::{
             character::{BattleClass, PlayerActionBar, PlayerInventory, Toggles},
@@ -42,21 +42,48 @@ struct StartingState {
     player: crate::game_server::packets::player_data::Player,
     customizations: BTreeMap<CustomizationSlot, i32>,
     zone_template: u8,
+    role: Role,
 }
 
+/// Emissary is not a backend role, so only staff can run Emissary-level commands.
+fn role_from(role: AccountRole) -> Role {
+    match role {
+        AccountRole::Member => Role::Citizen,
+        AccountRole::Counselor => Role::Counselor,
+        AccountRole::Enforcer => Role::Enforcer,
+        AccountRole::Admin => Role::Admin,
+    }
+}
+
+/// Development mode (no `redeemed`) keeps upstream's test player: an admin with a membership.
 fn starting_state(
     sender: u32,
-    saved: Option<SavedCharacter>,
+    redeemed: Option<Redeemed>,
     game_server: &GameServer,
 ) -> StartingState {
     let mut start = StartingState {
         player: make_test_player(sender, game_server.mounts(), game_server.items()),
         customizations: make_test_customizations(),
         zone_template: DEFAULT_ZONE_TEMPLATE,
+        role: Role::Admin,
     };
-    let Some(saved) = saved else {
+    let Some(Redeemed {
+        account,
+        character: saved,
+    }) = redeemed
+    else {
         return start;
     };
+
+    start.role = role_from(account.role);
+    // Only the first flag is known to mean membership (it sets `Player::member`); the others
+    // are unconfirmed and follow it, as they do for upstream's test player
+    let member = account.is_member();
+    let data = &mut start.player.data;
+    data.membership_unknown1 = member;
+    data.membership_unknown2 = member;
+    data.membership_unknown3 = member;
+    data.membership_unknown4 = member;
 
     start.player.data.name = Name {
         first_name: saved.name,
@@ -69,7 +96,10 @@ fn starting_state(
 
     let data = &mut start.player.data;
     match game_server.read_zone_templates().get(&state.zone_template) {
-        Some(template) if template.update_previous_location_on_leave() => {
+        Some(template)
+            if template.update_previous_location_on_leave()
+                && (member || !template.members_only()) =>
+        {
             start.zone_template = state.zone_template;
             data.pos = pos_from(state.pos);
             data.rot = pos_from(state.rot);
@@ -229,27 +259,28 @@ pub fn save_player(sender: u32, game_server: &GameServer) {
     }
 }
 
-/// `saved` is the character from the backend, or `None` in development mode.
+/// `redeemed` is the account and character from the backend, or `None` in development mode.
 pub fn log_in(
     sender: u32,
-    saved: Option<SavedCharacter>,
+    redeemed: Option<Redeemed>,
     game_server: &GameServer,
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     // A snapshot from the session that just ended is newer than what the backend returned
-    let saved = saved.map(|mut saved| {
+    let redeemed = redeemed.map(|mut redeemed| {
         if let Some(recent) = game_server
             .character_sink()
             .and_then(|sink| sink.recent(sender))
         {
-            saved.state = Some(recent);
+            redeemed.character.state = Some(recent);
         }
-        saved
+        redeemed
     });
     let StartingState {
         player: player_data,
         customizations,
         zone_template: player_zone_template,
-    } = starting_state(sender, saved, game_server);
+        role,
+    } = starting_state(sender, redeemed, game_server);
 
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
@@ -378,7 +409,7 @@ pub fn log_in(
                         free_camera: false,
                         click_to_teleport: false,
                     },
-                    role: Role::Admin,
+                    role,
                     action_bar: PlayerActionBar {
                         weapon_abilities: make_test_weapon_abilities(),
                     },
@@ -486,13 +517,16 @@ mod tests {
     use parking_lot::Mutex;
 
     use super::*;
-    use crate::backend::SavedEquippedItem;
+    use crate::backend::{Account, Membership, SavedCharacter, SavedEquippedItem};
+    use crate::game_server::handlers::chat_command::process_chat_command;
+    use crate::game_server::handlers::zone::{teleport_anywhere, DestinationZoneInstance};
     use crate::persistence::CharacterSink;
     use crate::UtcOffset;
 
     const GUID: u32 = 4_102_479_591;
     const HOUSE_TEMPLATE: u8 = 100;
     const FELUCIA_TEMPLATE: u8 = 15;
+    const MEMBERS_TEMPLATE: u8 = 25;
 
     #[derive(Default)]
     struct RecordingSink(Mutex<Vec<(u32, CharacterSnapshot)>>);
@@ -548,11 +582,43 @@ mod tests {
         }
     }
 
-    fn saved(state: Option<CharacterSnapshot>) -> Option<SavedCharacter> {
-        Some(SavedCharacter {
-            name: "Rex".to_string(),
-            state,
+    fn redeemed(
+        role: AccountRole,
+        member: bool,
+        state: Option<CharacterSnapshot>,
+    ) -> Option<Redeemed> {
+        Some(Redeemed {
+            account: Account {
+                role,
+                membership: member.then(|| Membership {
+                    membership_type: "standard".to_string(),
+                    ends_at: None,
+                }),
+            },
+            character: SavedCharacter {
+                name: "Rex".to_string(),
+                state,
+            },
         })
+    }
+
+    fn saved(state: Option<CharacterSnapshot>) -> Option<Redeemed> {
+        redeemed(AccountRole::Member, true, state)
+    }
+
+    fn current_zone_template(game_server: &GameServer) -> u8 {
+        game_server
+            .lock_enforcer()
+            .write_characters(|characters, _| {
+                zone_template_guid(
+                    characters
+                        .get(player_guid(GUID))
+                        .unwrap()
+                        .read()
+                        .stats
+                        .instance_guid,
+                )
+            })
     }
 
     #[test]
@@ -561,6 +627,105 @@ mod tests {
         let start = starting_state(GUID, None, &game_server);
         assert_eq!(start.player.data.name.first_name, "BLASTER");
         assert_eq!(start.zone_template, DEFAULT_ZONE_TEMPLATE);
+        assert_eq!(start.role, Role::Admin);
+        assert!(start.player.data.membership_unknown1);
+    }
+
+    #[test]
+    fn backend_roles_map_onto_oxide_roles() {
+        let (game_server, _) = game_server();
+        for (role, expected) in [
+            (AccountRole::Member, Role::Citizen),
+            (AccountRole::Counselor, Role::Counselor),
+            (AccountRole::Enforcer, Role::Enforcer),
+            (AccountRole::Admin, Role::Admin),
+        ] {
+            let start = starting_state(GUID, redeemed(role, false, None), &game_server);
+            assert_eq!(start.role, expected);
+        }
+    }
+
+    #[test]
+    fn the_membership_sets_the_member_flags() {
+        let (game_server, _) = game_server();
+        for member in [false, true] {
+            let data = starting_state(
+                GUID,
+                redeemed(AccountRole::Member, member, None),
+                &game_server,
+            )
+            .player
+            .data;
+            assert_eq!(
+                [
+                    data.membership_unknown1,
+                    data.membership_unknown2,
+                    data.membership_unknown3,
+                    data.membership_unknown4
+                ],
+                [member; 4]
+            );
+        }
+    }
+
+    #[test]
+    fn only_members_resume_in_the_members_area() {
+        let (game_server, _) = game_server();
+        let mut state = saved_state();
+        state.zone_template = MEMBERS_TEMPLATE;
+        for (member, expected) in [(false, DEFAULT_ZONE_TEMPLATE), (true, MEMBERS_TEMPLATE)] {
+            let start = starting_state(
+                GUID,
+                redeemed(AccountRole::Member, member, Some(state.clone())),
+                &game_server,
+            );
+            assert_eq!(start.zone_template, expected);
+        }
+    }
+
+    #[test]
+    fn only_members_can_teleport_into_the_members_area() {
+        for member in [false, true] {
+            let (game_server, _) = game_server();
+            game_server
+                .log_in(GUID, redeemed(AccountRole::Member, member, None))
+                .unwrap();
+            let destination =
+                game_server.read_zone_templates()[&MEMBERS_TEMPLATE].default_spawn_pos;
+            teleport_anywhere(
+                destination,
+                Pos::default(),
+                DestinationZoneInstance::Any {
+                    template_guid: MEMBERS_TEMPLATE,
+                },
+                GUID,
+            )
+            .unwrap()(&game_server)
+            .unwrap();
+            let expected = if member {
+                MEMBERS_TEMPLATE
+            } else {
+                DEFAULT_ZONE_TEMPLATE
+            };
+            assert_eq!(current_zone_template(&game_server), expected);
+        }
+    }
+
+    #[test]
+    fn only_staff_can_run_chat_commands() {
+        for (role, allowed) in [
+            (AccountRole::Member, false),
+            (AccountRole::Counselor, true),
+            (AccountRole::Enforcer, true),
+            (AccountRole::Admin, true),
+        ] {
+            let (game_server, _) = game_server();
+            game_server
+                .log_in(GUID, redeemed(role, true, None))
+                .unwrap();
+            let replies = process_chat_command(GUID, &["loc".to_string()], &game_server).unwrap();
+            assert_eq!(!replies.is_empty(), allowed, "{role:?}");
+        }
     }
 
     #[test]

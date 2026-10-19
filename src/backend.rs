@@ -52,7 +52,44 @@ impl fmt::Display for BackendError {
     }
 }
 
-/// The character a redeemed ticket belongs to.
+/// The account and character a redeemed ticket belongs to.
+#[derive(Clone, Debug, Deserialize, PartialEq)]
+pub struct Redeemed {
+    pub account: Account,
+    pub character: SavedCharacter,
+}
+
+/// Read at every login, so a change takes effect at the next one.
+#[derive(Clone, Debug, Deserialize, PartialEq)]
+pub struct Account {
+    pub role: AccountRole,
+    /// `None` unless a membership is in effect
+    pub membership: Option<Membership>,
+}
+
+impl Account {
+    pub fn is_member(&self) -> bool {
+        self.membership.is_some()
+    }
+}
+
+/// An unknown role fails the login rather than guessing its permissions.
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum AccountRole {
+    Member,
+    Counselor,
+    Enforcer,
+    Admin,
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq)]
+pub struct Membership {
+    #[serde(rename = "type")]
+    pub membership_type: String,
+    pub ends_at: Option<i64>,
+}
+
 #[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct SavedCharacter {
     pub name: String,
@@ -120,9 +157,9 @@ impl Backend {
         }
     }
 
-    /// Consumes `ticket` for `guid` and returns the character to load, or `None` when the
-    /// backend is disabled. Blocks for at most about twice the configured timeout.
-    pub fn redeem(&self, ticket: &str, guid: u32) -> Result<Option<SavedCharacter>, BackendError> {
+    /// Consumes `ticket` for `guid` and returns the account and character to load, or `None`
+    /// when the backend is disabled. Blocks for at most about twice the configured timeout.
+    pub fn redeem(&self, ticket: &str, guid: u32) -> Result<Option<Redeemed>, BackendError> {
         match self {
             Backend::Disabled => Ok(None),
             Backend::Http(backend) => backend.redeem(ticket, guid).map(Some),
@@ -191,23 +228,16 @@ struct Rejection {
     reason: String,
 }
 
-#[derive(Deserialize)]
-struct RedeemResponse {
-    character: SavedCharacter,
-}
-
 impl HttpBackend {
-    fn redeem(&self, ticket: &str, guid: u32) -> Result<SavedCharacter, BackendError> {
+    fn redeem(&self, ticket: &str, guid: u32) -> Result<Redeemed, BackendError> {
         let body = serde_json::json!({ "ticket": ticket, "guid": guid }).to_string();
         let (status, body) = self
             .request("POST", "/internal/game/redeem", &body)
             .map_err(BackendError::Unavailable)?;
         match status {
-            200 => serde_json::from_slice::<RedeemResponse>(&body)
-                .map(|response| response.character)
-                .map_err(|err| {
-                    BackendError::Unavailable(format!("invalid redeem response: {err}"))
-                }),
+            200 => serde_json::from_slice::<Redeemed>(&body).map_err(|err| {
+                BackendError::Unavailable(format!("invalid redeem response: {err}"))
+            }),
             403 => Err(BackendError::Rejected(
                 serde_json::from_slice::<Rejection>(&body)
                     .map(|rejection| rejection.reason)
@@ -300,7 +330,7 @@ mod tests {
     use std::thread;
 
     const SECRET: &str = "test-secret-0123456789abcdef0123456789";
-    const REDEEMED: &str = "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":4102479591,\"character\":{\"name\":\"Rex\",\"state\":null}}";
+    const REDEEMED: &str = "HTTP/1.1 200 OK\r\ncontent-type: application/json\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":4102479591,\"account\":{\"role\":\"member\",\"membership\":null},\"character\":{\"name\":\"Rex\",\"state\":null}}";
 
     /// Serves one canned response and returns the raw request it received.
     fn serve_once(response: &'static str) -> (String, mpsc::Receiver<String>) {
@@ -368,12 +398,18 @@ mod tests {
     #[test]
     fn redeem_sends_the_ticket_guid_and_secret() {
         let (url, request) = serve_once(REDEEMED);
-        let character = backend(&url).redeem("p7w9dGPB-_", 4102479591).unwrap();
+        let redeemed = backend(&url).redeem("p7w9dGPB-_", 4102479591).unwrap();
         assert_eq!(
-            character,
-            SavedCharacter {
-                name: "Rex".to_string(),
-                state: None
+            redeemed,
+            Redeemed {
+                account: Account {
+                    role: AccountRole::Member,
+                    membership: None,
+                },
+                character: SavedCharacter {
+                    name: "Rex".to_string(),
+                    state: None
+                },
             }
         );
         let request = request.recv().unwrap();
@@ -387,9 +423,27 @@ mod tests {
 
     #[test]
     fn redeem_returns_the_saved_state() {
-        let (url, _request) = serve_once("HTTP/1.1 200 OK\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":3,\"character\":{\"name\":\"Rex\",\"state\":{\"zone_template\":24,\"pos\":[887.3,171.93376,1546.956,1.0],\"rot\":[1.5,0.0,0.0,0.0],\"credits\":999250,\"active_battle_class\":1,\"equipment\":[{\"battle_class\":1,\"slot\":1,\"item_guid\":259}],\"customizations\":[{\"slot\":0,\"customization_id\":110000}]}}}");
-        let character = backend(&url).redeem("t", 3).unwrap();
-        assert_eq!(character.state, Some(snapshot()));
+        let (url, _request) = serve_once("HTTP/1.1 200 OK\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":3,\"account\":{\"role\":\"member\",\"membership\":null},\"character\":{\"name\":\"Rex\",\"state\":{\"zone_template\":24,\"pos\":[887.3,171.93376,1546.956,1.0],\"rot\":[1.5,0.0,0.0,0.0],\"credits\":999250,\"active_battle_class\":1,\"equipment\":[{\"battle_class\":1,\"slot\":1,\"item_guid\":259}],\"customizations\":[{\"slot\":0,\"customization_id\":110000}]}}}");
+        let redeemed = backend(&url).redeem("t", 3).unwrap();
+        assert_eq!(redeemed.character.state, Some(snapshot()));
+    }
+
+    #[test]
+    fn redeem_returns_the_role_and_membership() {
+        let (url, _request) = serve_once("HTTP/1.1 200 OK\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":3,\"account\":{\"role\":\"enforcer\",\"membership\":{\"type\":\"standard\",\"starts_at\":1,\"ends_at\":null}},\"character\":{\"name\":\"Rex\",\"state\":null}}");
+        let account = backend(&url).redeem("t", 3).unwrap().account;
+        assert_eq!(account.role, AccountRole::Enforcer);
+        assert!(account.is_member());
+        assert_eq!(account.membership.unwrap().membership_type, "standard");
+    }
+
+    #[test]
+    fn an_unknown_role_fails_closed() {
+        let (url, _request) = serve_once("HTTP/1.1 200 OK\r\n\r\n{\"user_id\":1,\"profile_id\":2,\"guid\":3,\"account\":{\"role\":\"emperor\",\"membership\":null},\"character\":{\"name\":\"Rex\",\"state\":null}}");
+        assert!(matches!(
+            backend(&url).redeem("t", 3),
+            Err(BackendError::Unavailable(_))
+        ));
     }
 
     #[test]

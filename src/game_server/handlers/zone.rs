@@ -42,6 +42,7 @@ use super::{
         CharacterSquadIndex, CharacterSynchronizationIndex, CharacterType, Chunk, PreviousFixture,
         PreviousLocation, RemovalMode,
     },
+    chat_command::server_msg,
     guid::{Guid, GuidTable, GuidTableIndexer, GuidTableWriteHandle, IndexedGuid},
     housing::prepare_init_house_packets,
     lock_enforcer::{
@@ -103,6 +104,8 @@ pub struct ZoneConfig {
     #[serde(default = "default_true")]
     update_previous_location_on_leave: bool,
     #[serde(default)]
+    members_only: bool,
+    #[serde(default)]
     map_id: u32,
     #[serde(default)]
     dialog_choices: Vec<DialogChoiceConfig>,
@@ -127,6 +130,7 @@ pub struct ZoneTemplate {
     characters: Vec<BaseNpcTemplate>,
     pub seconds_per_day: u32,
     update_previous_location_on_leave: bool,
+    members_only: bool,
     map_id: u32,
     pub dialog_choices: BTreeMap<u32, DialogChoiceTemplate>,
 }
@@ -135,6 +139,11 @@ impl ZoneTemplate {
     /// False for houses and lobbies that players should not be saved in
     pub fn update_previous_location_on_leave(&self) -> bool {
         self.update_previous_location_on_leave
+    }
+
+    /// Players without a membership cannot enter
+    pub fn members_only(&self) -> bool {
+        self.members_only
     }
 }
 
@@ -233,6 +242,7 @@ impl From<ZoneConfig> for ZoneTemplate {
             characters,
             seconds_per_day: value.seconds_per_day,
             update_previous_location_on_leave: value.update_previous_location_on_leave,
+            members_only: value.members_only,
             map_id: value.map_id,
             dialog_choices,
         }
@@ -1183,6 +1193,8 @@ pub enum DestinationZoneInstance {
     },
 }
 
+const MEMBERS_ONLY_MESSAGE: &str = "Only members can enter this area.";
+
 pub fn teleport_anywhere(
     destination_pos: Pos,
     destination_rot: Pos,
@@ -1194,14 +1206,44 @@ pub fn teleport_anywhere(
             |characters_table_write_handle, minigame_data_lock_enforcer| {
                 let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
                 zones_lock_enforcer.write_zones(|zones_table_write_handle| {
-                    let source_zone_guid =
+                    let (source_zone_guid, member) =
                         match characters_table_write_handle.get(player_guid(requester)) {
-                            Some(character) => Ok(character.read().stats.instance_guid),
+                            Some(character) => {
+                                let character = character.read();
+                                Ok((
+                                    character.stats.instance_guid,
+                                    matches!(
+                                        &character.stats.character_type,
+                                        CharacterType::Player(player) if player.member
+                                    ),
+                                ))
+                            }
                             None => Err(ProcessPacketError::new(
                                 ProcessPacketErrorType::ConstraintViolated,
                                 format!("Tried to teleport unknown player {requester} anywhere"),
                             )),
                         }?;
+
+                    let destination_template_guid = match destination_zone {
+                        DestinationZoneInstance::Same => None,
+                        DestinationZoneInstance::Other { instance_guid } => {
+                            Some(zone_template_guid(instance_guid))
+                        }
+                        DestinationZoneInstance::Any { template_guid } => Some(template_guid),
+                    };
+                    let members_only = destination_template_guid.is_some_and(|template_guid| {
+                        game_server
+                            .read_zone_templates()
+                            .get(&template_guid)
+                            .is_some_and(|template| template.members_only())
+                    });
+                    if members_only && !member {
+                        info!(
+                            "Player {} without a membership tried to enter members-only zone template {:?}",
+                            requester, destination_template_guid
+                        );
+                        return Ok(server_msg(requester, MEMBERS_ONLY_MESSAGE));
+                    }
 
                     let destination_zone_guid = match destination_zone {
                         DestinationZoneInstance::Same => source_zone_guid,
