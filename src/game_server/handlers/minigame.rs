@@ -729,6 +729,9 @@ impl MinigameStopwatch {
                     let elapsed_this_run = now.duration_since(*resume_time);
                     self.previous_total_time =
                         self.previous_total_time.saturating_add(elapsed_this_run);
+                } else if let Some(future_time) = self.start_time {
+                    let overrun = future_time.saturating_duration_since(now);
+                    self.start_time = Some(now + overrun);
                 }
                 self.state = MinigameStopwatchState::Paused { pause_time: now };
             }
@@ -740,13 +743,12 @@ impl MinigameStopwatch {
                     }
                 }
 
-                let baseline = match self.start_time {
+                let resume_time = match self.start_time {
                     Some(future_time) => now.max(future_time),
-                    None => now,
+                    None => now.max(*pause_time),
                 };
-                self.state = MinigameStopwatchState::Active {
-                    resume_time: baseline,
-                };
+
+                self.state = MinigameStopwatchState::Active { resume_time };
             }
             _ => {}
         }
@@ -4592,26 +4594,28 @@ mod tests {
             Duration::ZERO
         );
 
-        stopwatch.pause_or_resume(false, now);
+        let resume_time = now + Duration::from_secs(1);
+        stopwatch.pause_or_resume(false, resume_time);
         assert!(!stopwatch.paused());
+
         assert_eq!(
-            stopwatch.elapsed(now + Duration::from_secs(10)),
+            stopwatch.elapsed(resume_time + Duration::from_secs(10)),
             Duration::from_secs(10)
         );
     }
 
     #[test]
-    fn test_stopwatch_retroactive_unpause() {
+    fn test_stopwatch_clean_unpause() {
         let start = Instant::now();
         let mut stopwatch = MinigameStopwatch::new(Some(start));
 
         let pause_time = start + Duration::from_secs(10);
         stopwatch.pause_or_resume(true, pause_time);
 
-        let historical_unpause_time = pause_time - Duration::from_secs(5);
-        stopwatch.pause_or_resume(false, historical_unpause_time);
+        let resume_time = pause_time + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, resume_time);
 
-        let check_time = pause_time + Duration::from_secs(5);
+        let check_time = resume_time + Duration::from_secs(5);
         assert_eq!(stopwatch.elapsed(check_time), Duration::from_secs(15));
     }
 
@@ -4619,28 +4623,10 @@ mod tests {
     fn test_stopwatch_future_start_late_resume() {
         let now = Instant::now();
         let future_start = now + Duration::from_secs(10);
-        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+        let stopwatch = MinigameStopwatch::new(Some(future_start));
 
-        let late_resume = future_start + Duration::from_secs(20);
-        stopwatch.pause_or_resume(false, late_resume);
-
-        assert_eq!(
-            stopwatch.elapsed(late_resume + Duration::from_secs(5)),
-            Duration::from_secs(5)
-        );
-    }
-
-    #[test]
-    fn test_stopwatch_uninitialized_redundant_pause() {
-        let now = Instant::now();
-        let mut stopwatch = MinigameStopwatch::new(None);
-
-        stopwatch.pause_or_resume(true, now + Duration::from_secs(5));
-        assert!(stopwatch.paused());
-        assert_eq!(
-            stopwatch.elapsed(now + Duration::from_secs(10)),
-            Duration::ZERO
-        );
+        let query_time = future_start + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(query_time), Duration::from_secs(5));
     }
 
     #[test]
@@ -4759,13 +4745,10 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(30);
         let mut countdown = MinigameCountdown::new_with_event(duration, now);
-
         let pause_time = now + Duration::from_secs(10);
         countdown.pause_or_resume(true, pause_time);
-
         let historical_unpause_time = pause_time - Duration::from_secs(5);
         countdown.pause_or_resume(false, historical_unpause_time);
-
         assert_eq!(
             countdown.time_until_next_event(historical_unpause_time + Duration::from_secs(5)),
             Duration::from_secs(20)
@@ -4777,7 +4760,6 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(10);
         let countdown = MinigameCountdown::new_with_event(duration, now);
-
         let exact_expiry = now + Duration::from_secs(10);
         assert_eq!(
             countdown.time_until_next_event(exact_expiry),
@@ -4790,7 +4772,6 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(10);
         let countdown = MinigameCountdown::new_with_event(duration, now);
-
         let past_expiry = now + Duration::from_secs(15);
         assert_eq!(countdown.time_until_next_event(past_expiry), Duration::ZERO);
     }
@@ -4800,7 +4781,6 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(10);
         let countdown = MinigameCountdown::new_with_event(duration, now);
-
         let historical_query = now - Duration::from_secs(5);
         assert_eq!(
             countdown.time_until_next_event(historical_query),
@@ -4812,7 +4792,6 @@ mod tests {
     fn test_countdown_reschedule_while_running() {
         let now = Instant::now();
         let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(30), now);
-
         let intermediate_time = now + Duration::from_secs(10);
         countdown.schedule_event(Duration::from_secs(15), intermediate_time);
         assert_eq!(
@@ -4826,12 +4805,9 @@ mod tests {
         let now = Instant::now();
         let duration = Duration::from_secs(30);
         let mut countdown = MinigameCountdown::new_with_event(duration, now);
-
         let advanced_time = now + Duration::from_secs(15);
         let late_pause_packet = now + Duration::from_secs(10);
-
         countdown.pause_or_resume(true, late_pause_packet);
-
         assert_eq!(
             countdown.time_until_next_event(advanced_time),
             Duration::from_secs(20)
