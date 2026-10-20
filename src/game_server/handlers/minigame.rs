@@ -725,8 +725,8 @@ impl MinigameStopwatch {
                         self.previous_total_time.saturating_add(elapsed_this_run);
                 } else if let Some(start_time) = self.start_time {
                     if now < start_time {
-                        let overrun = start_time.saturating_duration_since(now);
-                        self.start_time = now.checked_add(overrun).or(self.start_time);
+                        let time_until_start = start_time.saturating_duration_since(now);
+                        self.start_time = now.checked_add(time_until_start).or(self.start_time);
                     }
                 }
                 self.state = MinigameStopwatchState::Paused { pause_time: now };
@@ -734,8 +734,9 @@ impl MinigameStopwatch {
             (MinigameStopwatchState::Paused { pause_time }, false) => {
                 if let Some(start_time) = self.start_time {
                     if *pause_time < start_time {
-                        let overrun = now.saturating_duration_since(*pause_time);
-                        self.start_time = start_time.checked_add(overrun).or(self.start_time);
+                        let time_since_pause = now.saturating_duration_since(*pause_time);
+                        self.start_time =
+                            start_time.checked_add(time_since_pause).or(self.start_time);
                     }
                 }
 
