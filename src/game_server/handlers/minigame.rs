@@ -4649,14 +4649,40 @@ mod tests {
     #[test]
     fn test_stopwatch_monotonic_overflow_boundary_protection() {
         let now = Instant::now();
-        let future_start = now + Duration::from_secs(10);
-        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
 
-        stopwatch.pause_or_resume(true, now + Duration::from_secs(2));
+        let mut low = Duration::ZERO;
+        let mut high = Duration::MAX;
+        let mut max_safe_duration = Duration::ZERO;
 
-        let extreme_jump = Duration::from_secs(u64::MAX / 2);
+        // Binary search to find the maximum representable timestamp on this platform
+        while low <= high {
+            let mid = low + (high - low) / 2;
 
-        stopwatch.pause_or_resume(false, now + extreme_jump);
+            if now.checked_add(mid).is_some() {
+                max_safe_duration = mid;
+                if let Some(next_ns) = mid.checked_add(Duration::from_nanos(1)) {
+                    if now.checked_add(next_ns).is_none() {
+                        break;
+                    }
+                    low = next_ns;
+                } else {
+                    break;
+                }
+            } else {
+                high = mid - Duration::from_nanos(1);
+            }
+        }
+
+        let future_start = Some(now + max_safe_duration);
+        let mut stopwatch = MinigameStopwatch::new(future_start);
+
+        let pause_time = now + Duration::from_secs(2);
+        stopwatch.pause_or_resume(true, pause_time);
+
+        let resume_time = pause_time + Duration::from_secs(5);
+
+        stopwatch.pause_or_resume(false, resume_time);
+
         assert!(!stopwatch.paused());
     }
 
