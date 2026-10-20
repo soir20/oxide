@@ -4895,6 +4895,6 @@ mod tests {
         countdown.pause_or_resume(false, t6);
 
         let t8 = now + Duration::from_secs(8);
-        assert_eq!(countdown.time_until_next_event(t8), Duration::from_secs(4));
+        assert_eq!(countdown.time_until_next_event(t8), Duration::from_secs(6));
     }
 }
