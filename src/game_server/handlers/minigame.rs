@@ -647,12 +647,14 @@ impl MinigameCountdown {
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
         match (&self.state, pause) {
             (MinigameCountdownState::Active { last_timer_update }, true) => {
-                if now > *last_timer_update {
-                    let time_since_last_tick = now.duration_since(*last_timer_update);
-                    self.time_until_next_event = self
-                        .time_until_next_event
-                        .saturating_sub(time_since_last_tick);
-                }
+                // If pausing in the past, clamp now to last valid update to avoid reprocessing old time
+                let now = now.max(*last_timer_update);
+
+                let time_since_last_tick = now.duration_since(*last_timer_update);
+                self.time_until_next_event = self
+                    .time_until_next_event
+                    .saturating_sub(time_since_last_tick);
+
                 self.state = MinigameCountdownState::Paused {
                     last_timer_update: now,
                 };
@@ -4876,5 +4878,23 @@ mod tests {
             countdown.time_until_next_event(t1 + Duration::from_secs(5)),
             Duration::from_secs(20)
         );
+    }
+
+    #[test]
+    fn test_countdown_timeline_reprocessing_prevention() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(10), now);
+
+        let t4 = now + Duration::from_secs(4);
+        assert_eq!(countdown.time_until_next_event(t4), Duration::from_secs(6));
+
+        let t2_stale = now + Duration::from_secs(2);
+        countdown.pause_or_resume(true, t2_stale);
+
+        let t6 = now + Duration::from_secs(6);
+        countdown.pause_or_resume(false, t6);
+
+        let t8 = now + Duration::from_secs(8);
+        assert_eq!(countdown.time_until_next_event(t8), Duration::from_secs(4));
     }
 }
