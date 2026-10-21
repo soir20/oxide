@@ -1683,6 +1683,8 @@ struct AttackCruiserActorDeltas {
     #[serde(default)]
     primary_tiers: i16,
     #[serde(default)]
+    player_hud_messages: Vec<AttackCruiserHudMessageConfig>,
+    #[serde(default)]
     player_lives: i8,
     #[serde(default)]
     player_score: u16,
@@ -1696,6 +1698,11 @@ impl AttackCruiserActorDeltas {
         AttackCruiserActorDeltas {
             health: self.health.saturating_add(rhs.health),
             primary_tiers: self.primary_tiers.saturating_add(rhs.primary_tiers),
+            player_hud_messages: [
+                self.player_hud_messages.as_slice(),
+                rhs.player_hud_messages.as_slice(),
+            ]
+            .concat(),
             player_lives: self.player_lives.saturating_add(rhs.player_lives),
             player_score: self.player_score.saturating_add(rhs.player_score),
             secondary_item: match (&self.secondary_item, &rhs.secondary_item) {
@@ -1935,7 +1942,6 @@ struct AttackCruiserShipAiBehavior {
     #[serde(default)]
     movement: AttackCruiserShipAiMovement,
     aoe: Option<Arc<AttackCruiserAoeConfig>>,
-    hud_message: Option<AttackCruiserHudMessageConfig>,
     #[serde(default)]
     ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
@@ -4508,6 +4514,13 @@ impl AttackCruiserGame {
                 player_state.add_primary_tiers(total_deltas.primary_tiers);
                 player_state.add_lives(total_deltas.player_lives);
 
+                broadcasts.extend(
+                    total_deltas
+                        .player_hud_messages
+                        .iter()
+                        .map(|message| show_hud_message(&[player_state.guid], message)),
+                );
+
                 if total_deltas.player_score != 0 {
                     broadcasts.append(&mut Self::player_score_update(
                         player_state.add_score(total_deltas.player_score, now),
@@ -4687,10 +4700,6 @@ impl AttackCruiserGame {
                     &self.config,
                     &self.bvhs,
                 ));
-
-                if let Some(message) = &ai_result.behavior.hud_message {
-                    broadcasts.push(show_hud_message(&self.active_players, message));
-                }
 
                 if ai_result.behavior.despawn {
                     broadcasts.push(Broadcast::Multi(
