@@ -4856,10 +4856,12 @@ impl AttackCruiserGame {
                 continue;
             }
 
+            // Add 1 so we always spawn a ship without waiting for the interval
             let elapsed_since_delay = wave_elapsed_time - delay;
             let max_spawnable_ships = elapsed_since_delay
                 .as_millis()
                 .saturating_div(wave_ship.interval_millis.into())
+                .saturating_add(1)
                 .min(wave_ship.count.into()) as u32;
 
             let yaw = wave_ship.yaw.to_radians();
@@ -4871,7 +4873,7 @@ impl AttackCruiserGame {
             let ship_config = self.config.ship(&wave_ship.ship);
             let bvh = self.bvhs.get(&wave_ship.ship).cloned();
 
-            for _ in spawned_ship_counts[wave_ship_index]..=max_spawnable_ships {
+            for _ in spawned_ship_counts[wave_ship_index]..max_spawnable_ships {
                 let launch_vector = launch_vector(
                     rng,
                     wave_ship.pos,
