@@ -1688,7 +1688,7 @@ struct AttackCruiserActorDeltas {
     player_lives: i8,
     #[serde(default)]
     player_score: u16,
-    secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
+    player_secondary_item: Option<AttackCruiserActorSecondaryItemDeltaConfig>,
     #[serde(default)]
     stun_millis: u32,
 }
@@ -1705,7 +1705,7 @@ impl AttackCruiserActorDeltas {
             .concat(),
             player_lives: self.player_lives.saturating_add(rhs.player_lives),
             player_score: self.player_score.saturating_add(rhs.player_score),
-            secondary_item: match (&self.secondary_item, &rhs.secondary_item) {
+            player_secondary_item: match (&self.player_secondary_item, &rhs.player_secondary_item) {
                 (None, None) => None,
                 (None, Some(rhs_item)) => Some(rhs_item.clone()),
                 (Some(lhs_item), None) => Some(lhs_item.clone()),
@@ -2178,13 +2178,13 @@ impl AttackCruiserConfig {
             });
 
             ship.primary_weapon_tiers.iter().for_each(|tier| tier.projectiles.iter().for_each(|projectile| {
-                if let Some(secondary_item) = &projectile.self_deltas.secondary_item {
+                if let Some(secondary_item) = &projectile.self_deltas.player_secondary_item {
                     if !self.player.secondary_items.contains_key(&secondary_item.name) {
                         info!("Attack Cruiser ship projectile self_deltas references unknown secondary item {}", secondary_item.name);
                     }
                 }
 
-                if let Some(secondary_item) = &projectile.target_deltas.secondary_item {
+                if let Some(secondary_item) = &projectile.target_deltas.player_secondary_item {
                     if !self.player.secondary_items.contains_key(&secondary_item.name) {
                         info!("Attack Cruiser ship projectile target_deltas references unknown secondary item {}", secondary_item.name);
                     }
@@ -4531,7 +4531,7 @@ impl AttackCruiserGame {
                 }
 
                 player_state.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
-                if let Some(secondary_item) = total_deltas.secondary_item {
+                if let Some(secondary_item) = total_deltas.player_secondary_item {
                     player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
                 }
 
