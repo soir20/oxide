@@ -200,7 +200,7 @@ impl SerializePacket for AttackCruiserStartupConfigHash {
 }
 
 #[derive(SerializePacket)]
-pub struct AttackCruiserHudMessageConfig {
+pub struct AttackCruiserClientTriggeredHudMessageConfig {
     pub speaker_name_id: i32,
     pub speaker_image_id: i32,
     pub message_id: i32,
@@ -318,7 +318,7 @@ pub struct AttackCruiserGlobalConfig {
     pub health_background_internal_id: i32,
     pub enable_weapon_tiers: AttackCruiserBool,
     pub player_death_spawn_config: AttackCruiserStartupConfigReference,
-    pub out_of_bounds_hud_message: AttackCruiserHudMessageConfig,
+    pub out_of_bounds_hud_message: AttackCruiserClientTriggeredHudMessageConfig,
 }
 
 #[derive(SerializePacket)]
@@ -639,7 +639,7 @@ pub struct AttackCruiserWaveActorConfig {
 #[derive(SerializePacket)]
 pub struct AttackCruiserWaveHudMessageConfig {
     pub display_condition_config: AttackCruiserStartupConfigReference,
-    pub hud_message_config: AttackCruiserHudMessageConfig,
+    pub hud_message_config: AttackCruiserClientTriggeredHudMessageConfig,
 }
 
 #[derive(SerializePacket)]

@@ -41,12 +41,12 @@ use crate::{
                 AttackCruiserBasePhysicsConfig, AttackCruiserBool, AttackCruiserBoolCommand,
                 AttackCruiserChallengeMode, AttackCruiserCinematicStyle, AttackCruiserClickType,
                 AttackCruiserClickedLocation, AttackCruiserClientConfig, AttackCruiserClientState,
-                AttackCruiserCommand, AttackCruiserComplexPhysicsConfig,
-                AttackCruiserComplexPhysicsGear, AttackCruiserCompositeEffect,
-                AttackCruiserEventActorConfig, AttackCruiserEventCinematicConfig,
-                AttackCruiserEventConfig, AttackCruiserEventType, AttackCruiserGameConfig,
-                AttackCruiserGlobalConfig, AttackCruiserHostility, AttackCruiserHudMessageConfig,
-                AttackCruiserOpCode, AttackCruiserPickupStartupConfig,
+                AttackCruiserClientTriggeredHudMessageConfig, AttackCruiserCommand,
+                AttackCruiserComplexPhysicsConfig, AttackCruiserComplexPhysicsGear,
+                AttackCruiserCompositeEffect, AttackCruiserEventActorConfig,
+                AttackCruiserEventCinematicConfig, AttackCruiserEventConfig,
+                AttackCruiserEventType, AttackCruiserGameConfig, AttackCruiserGlobalConfig,
+                AttackCruiserHostility, AttackCruiserOpCode, AttackCruiserPickupStartupConfig,
                 AttackCruiserPlanetStartupConfig, AttackCruiserPlayerStateActorId,
                 AttackCruiserPlayerStateIndex, AttackCruiserPlayerStateInventory,
                 AttackCruiserPlayerStateScore, AttackCruiserPlayerStateType,
@@ -155,14 +155,7 @@ fn launch_vector(
     }
 }
 
-fn show_hud_message(
-    recipients: &[u32],
-    message_id: u32,
-    duration_millis: u32,
-    name_id: Option<u32>,
-    image_id: Option<u32>,
-    sound_id: Option<u32>,
-) -> Broadcast {
+fn show_hud_message(recipients: &[u32], message: &AttackCruiserHudMessageConfig) -> Broadcast {
     Broadcast::Multi(
         recipients.to_vec(),
         vec![GamePacket::serialize(&TunneledPacket {
@@ -170,11 +163,11 @@ fn show_hud_message(
             inner: HudMessage {
                 unknown1: 0,
                 unknown2: 0,
-                name_id: name_id.unwrap_or_default(),
-                image_id: image_id.unwrap_or_default(),
-                message_id,
-                sound_id: sound_id.unwrap_or_default(),
-                duration_millis,
+                name_id: message.name_id.unwrap_or_default(),
+                image_id: message.image_id.unwrap_or_default(),
+                message_id: message.message_id,
+                sound_id: message.sound_id.unwrap_or_default(),
+                duration_millis: message.duration_millis,
                 unknown5: 0,
             },
         })],
@@ -1926,12 +1919,23 @@ struct AttackCruiserAoeConfig {
     composite_effect_id: Option<u32>,
 }
 
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserHudMessageConfig {
+    message_id: u32,
+    duration_millis: u32,
+    name_id: Option<u32>,
+    image_id: Option<u32>,
+    sound_id: Option<u32>,
+}
+
 #[derive(Clone, Debug, Default, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserShipAiBehavior {
     #[serde(default)]
     movement: AttackCruiserShipAiMovement,
     aoe: Option<Arc<AttackCruiserAoeConfig>>,
+    hud_message: Option<AttackCruiserHudMessageConfig>,
     #[serde(default)]
     ships: Vec<AttackCruiserSpawnedShipConfig>,
     #[serde(default)]
@@ -2096,8 +2100,13 @@ struct AttackCruiserPlayfieldConfig {
     radius_z: f32,
     half_height: f32,
     warning_radius_ratio: f32,
-    warning_message_id: u32,
-    warning_millis: u32,
+    warning_message: AttackCruiserHudMessageConfig,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct AttackCruiserWaveConfig {
+    despawn_factions: HashSet<String>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -2956,14 +2965,15 @@ impl AttackCruiserGame {
                                 class: AttackCruiserStartupConfigClass::DeathSpawn,
                                 name: "".to_string(),
                             },
-                            out_of_bounds_hud_message: AttackCruiserHudMessageConfig {
-                                speaker_name_id: 0,
-                                speaker_image_id: 0,
-                                message_id: 0,
-                                sound_id: 0,
-                                duration_millis: 0,
-                                delay_millis: 0,
-                            },
+                            out_of_bounds_hud_message:
+                                AttackCruiserClientTriggeredHudMessageConfig {
+                                    speaker_name_id: 0,
+                                    speaker_image_id: 0,
+                                    message_id: 0,
+                                    sound_id: 0,
+                                    duration_millis: 0,
+                                    delay_millis: 0,
+                                },
                         },
                     )),
                 ),
@@ -3554,16 +3564,14 @@ impl AttackCruiserGame {
                         .is_zero()
                 {
                     player_state.bounds_warning_hud_timer.schedule_event(
-                        Duration::from_millis(self.config.playfield.warning_millis.into()),
+                        Duration::from_millis(
+                            self.config.playfield.warning_message.duration_millis.into(),
+                        ),
                         now,
                     );
                     broadcasts.push(show_hud_message(
                         &[sender],
-                        self.config.playfield.warning_message_id,
-                        self.config.playfield.warning_millis,
-                        None,
-                        None,
-                        None,
+                        &self.config.playfield.warning_message,
                     ));
                 }
             }
@@ -4679,6 +4687,10 @@ impl AttackCruiserGame {
                     &self.config,
                     &self.bvhs,
                 ));
+
+                if let Some(message) = &ai_result.behavior.hud_message {
+                    broadcasts.push(show_hud_message(&self.active_players, message));
+                }
 
                 if ai_result.behavior.despawn {
                     broadcasts.push(Broadcast::Multi(
