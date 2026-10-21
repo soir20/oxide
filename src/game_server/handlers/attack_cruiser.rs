@@ -1472,7 +1472,11 @@ impl AttackCruiserPlayer {
 #[derive(Clone, Debug)]
 enum AttackCruiserGameState {
     WaitingForPlayersReady,
-    WaveActive,
+    WaveActive {
+        wave_index: usize,
+        wave_time: MinigameStopwatch,
+        spawned_ship_counts: Vec<u32>,
+    },
     GameOver,
 }
 
@@ -2111,8 +2115,25 @@ struct AttackCruiserPlayfieldConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserWaveShipConfig {
+    ship: String,
+    pos: Pos3,
+    yaw: Angle,
+    #[serde(default = "default_wobble")]
+    wobble: Angle,
+    #[serde(default = "default_count")]
+    count: u8,
+    delay_millis: u32,
+    interval_millis: u32,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserWaveConfig {
-    despawn_factions: HashSet<String>,
+    completed_max_duration_millis: u32,
+    despawn_factions_on_end: HashSet<String>,
+    min_ships_killed_by_faction: HashMap<String, u32>,
+    ships: Vec<AttackCruiserWaveShipConfig>,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -2132,6 +2153,7 @@ pub struct AttackCruiserConfig {
     playfield: AttackCruiserPlayfieldConfig,
     ships: HashMap<String, Arc<AttackCruiserShipConfig>>,
     sound_id: i32,
+    waves: Vec<Arc<AttackCruiserWaveConfig>>,
 }
 
 impl AttackCruiserConfig {
@@ -3268,7 +3290,7 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
-        if !matches!(self.state, AttackCruiserGameState::WaveActive) || self.paused() {
+        if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) || self.paused() {
             return Vec::new();
         }
 
@@ -3341,6 +3363,7 @@ impl AttackCruiserGame {
             |player| !player.permeable(),
             |npc| !npc.permeable(),
         );
+        self.tick_wave(now, &mut broadcasts, &mut pending_npcs, &actors_by_faction);
         self.tick_players(
             now,
             &mut broadcasts,
@@ -3526,7 +3549,7 @@ impl AttackCruiserGame {
             .all(|player_state| player_state.ready)
             && matches!(self.state, AttackCruiserGameState::WaitingForPlayersReady)
         {
-            broadcasts.append(&mut self.start_first_wave()?);
+            broadcasts.append(&mut self.start_first_wave(Instant::now())?);
         }
 
         Ok(broadcasts)
@@ -4045,8 +4068,19 @@ impl AttackCruiserGame {
         ]
     }
 
-    fn start_first_wave(&mut self) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        self.state = AttackCruiserGameState::WaveActive;
+    fn start_wave(&mut self, wave_index: usize, now: Instant) {
+        let Some(wave_config) = self.config.waves.get(wave_index) else {
+            return;
+        };
+        self.state = AttackCruiserGameState::WaveActive {
+            wave_index: 0,
+            wave_time: MinigameStopwatch::new(Some(now)),
+            spawned_ship_counts: vec![0; wave_config.ships.len()],
+        };
+    }
+
+    fn start_first_wave(&mut self, now: Instant) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        self.start_wave(0, now);
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserUpdateClientState {
@@ -4792,6 +4826,81 @@ impl AttackCruiserGame {
 
             true
         });
+    }
+
+    fn tick_wave(
+        &mut self,
+        now: Instant,
+        broadcasts: &mut Vec<Broadcast>,
+        pending_npcs: &mut Vec<AttackCruiserPendingActor>,
+        actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
+    ) -> bool {
+        let AttackCruiserGameState::WaveActive {
+            wave_index,
+            wave_time,
+            spawned_ship_counts,
+        } = &mut self.state
+        else {
+            return false;
+        };
+
+        let Some(wave_config) = self.config.waves.get(*wave_index) else {
+            return false;
+        };
+
+        let rng = &mut SmallRng::from_entropy();
+
+        let wave_elapsed_time = wave_time.elapsed(now);
+        for (wave_ship_index, wave_ship) in wave_config.ships.iter().enumerate() {
+            let delay = Duration::from_millis(wave_ship.delay_millis.into());
+            if wave_elapsed_time < delay {
+                continue;
+            }
+
+            let elapsed_since_delay = wave_elapsed_time - delay;
+            let max_spawnable_ships = elapsed_since_delay
+                .as_millis()
+                .saturating_div(wave_ship.interval_millis.into())
+                .min(wave_ship.count.into()) as u32;
+
+            let yaw = wave_ship.yaw.to_radians();
+            let direction = Pos3 {
+                x: yaw.sin(),
+                y: 0.0,
+                z: yaw.cos(),
+            };
+            let ship_config = self.config.ship(&wave_ship.ship);
+            let bvh = self.bvhs.get(&wave_ship.ship).cloned();
+
+            for _ in spawned_ship_counts[wave_ship_index]..=max_spawnable_ships {
+                let launch_vector = launch_vector(
+                    rng,
+                    wave_ship.pos,
+                    direction,
+                    0.0,
+                    wave_ship.wobble,
+                    wave_ship.yaw,
+                    0.0,
+                    0.0,
+                );
+                pending_npcs.push(AttackCruiserPendingActor::new(
+                    launch_vector.origin,
+                    launch_vector.yaw,
+                    0.0,
+                    0.0,
+                    bvh.clone(),
+                    None,
+                    ship_config.clone(),
+                    wave_ship.ship.clone(),
+                    now,
+                    rng,
+                ));
+            }
+
+            spawned_ship_counts[wave_ship_index] = max_spawnable_ships;
+        }
+
+        false
     }
 
     fn list_actors_by_faction(
