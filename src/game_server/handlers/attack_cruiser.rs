@@ -3363,7 +3363,7 @@ impl AttackCruiserGame {
             |player| !player.permeable(),
             |npc| !npc.permeable(),
         );
-        self.tick_wave(now, &mut broadcasts, &mut pending_npcs, &actors_by_faction);
+        self.tick_wave(now, &mut pending_npcs, &actors_by_faction);
         self.tick_players(
             now,
             &mut broadcasts,
@@ -4831,7 +4831,6 @@ impl AttackCruiserGame {
     fn tick_wave(
         &mut self,
         now: Instant,
-        broadcasts: &mut Vec<Broadcast>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) -> bool {
