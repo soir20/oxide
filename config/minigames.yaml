@@ -3278,6 +3278,7 @@ categories:
                   warning_message:
                     message_id: 13628
                     duration_millis: 5000
+                  wave_despawn_radius_ratio: 2
                 ships:
                   test:
                     seek_factions: [republic]

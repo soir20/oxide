@@ -854,7 +854,13 @@ impl AttackCruiserActor {
         (projectiles, actors)
     }
 
-    pub fn seek_target(&mut self, target_pos: Pos3, target_speed: Pos3, delta_secs: f32) {
+    pub fn seek_target(
+        &mut self,
+        target_pos: Pos3,
+        target_speed: Pos3,
+        delta_secs: f32,
+        desired_speed: f32,
+    ) {
         if delta_secs <= 0.0 {
             return;
         }
@@ -945,8 +951,7 @@ impl AttackCruiserActor {
 
         let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
 
-        let accelerated_speed =
-            (speed + self.ship.acceleration * delta_secs).min(self.ship.max_speed);
+        let accelerated_speed = (speed + self.ship.acceleration * delta_secs).min(desired_speed);
         self.speed.x = new_yaw.sin() * accelerated_speed;
         self.speed.z = new_yaw.cos() * accelerated_speed;
 
@@ -1481,7 +1486,6 @@ enum AttackCruiserGameState {
         wave_time: MinigameStopwatch,
         spawned_ship_counts: Vec<u32>,
         kills_by_faction: HashMap<String, u32>,
-        time_since_completion: Option<MinigameStopwatch>,
     },
     GameOver,
 }
@@ -2117,6 +2121,7 @@ struct AttackCruiserPlayfieldConfig {
     half_height: f32,
     warning_radius_ratio: f32,
     warning_message: AttackCruiserHudMessageConfig,
+    wave_despawn_radius_ratio: f32,
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -3916,7 +3921,6 @@ impl AttackCruiserGame {
 
     fn update_server_npc_actor(
         actor: &AttackCruiserActor,
-        warp_out: bool,
         group: MinigameMatchmakingGroup,
     ) -> Vec<u8> {
         GamePacket::serialize(&TunneledPacket {
@@ -3947,12 +3951,12 @@ impl AttackCruiserGame {
                         dead_unused: false,
                         warp_in: false,
                         global_cinematic: false,
-                        warp_out_animation: warp_out,
+                        warp_out_animation: false,
                         warp_end_game: false,
-                        reset_speed_damage_state: warp_out,
+                        reset_speed_damage_state: false,
                         unknown14: false,
                         show_stun_effect: actor.stunned(),
-                        hide_ring: warp_out,
+                        hide_ring: false,
                         show_boss_ring: false,
                     },
                 }],
@@ -4012,7 +4016,6 @@ impl AttackCruiserGame {
             wave_time: MinigameStopwatch::new(Some(now)),
             spawned_ship_counts: vec![0; wave_config.ships.len()],
             kills_by_faction: HashMap::new(),
-            time_since_completion: None,
         };
     }
 
@@ -4617,40 +4620,48 @@ impl AttackCruiserGame {
             }
 
             let mut ai_result = npc.current_ai_behavior(now);
-            let (is_real_target, target_pos, target_speed) = match ai_result.behavior.movement {
-                AttackCruiserShipAiMovement::SeekTarget => Self::closest_target(
-                    npc.id,
-                    &npc.ship.seek_factions,
-                    npc.pos,
-                    actors_by_faction,
-                    &self.config.playfield,
-                )
-                .map(|target| (true, target.pos, target.speed))
-                .unwrap_or_else(|| {
-                    let pos_ahead = npc.pos + npc.speed * tick_duration.as_secs_f32();
-                    let fallback_target = match is_inside_oval(
-                        pos_ahead,
-                        self.config.playfield.center,
-                        self.config.playfield.radius_x,
-                        self.config.playfield.radius_z,
-                    ) {
-                        true => pos_ahead,
-                        false => self.config.playfield.center,
-                    };
-
-                    (false, fallback_target, Pos3::default())
-                }),
-                AttackCruiserShipAiMovement::RandomPos => (
-                    false,
-                    Self::random_pos_in_bounds(
-                        npc.pos.y,
+            let warp_away = actors_to_warp_away.contains(&npc.id);
+            let (is_real_target, target_pos, target_speed) =
+                match (warp_away, &ai_result.behavior.movement) {
+                    (false, AttackCruiserShipAiMovement::SeekTarget) => Self::closest_target(
+                        npc.id,
+                        &npc.ship.seek_factions,
+                        npc.pos,
+                        actors_by_faction,
                         &self.config.playfield,
-                        &mut ai_result.rng,
+                    )
+                    .map(|target| (true, target.pos, target.speed))
+                    .unwrap_or_else(|| {
+                        let pos_ahead = npc.pos + npc.speed * tick_duration.as_secs_f32();
+                        let fallback_target = match is_inside_oval(
+                            pos_ahead,
+                            self.config.playfield.center,
+                            self.config.playfield.radius_x,
+                            self.config.playfield.radius_z,
+                        ) {
+                            true => pos_ahead,
+                            false => self.config.playfield.center,
+                        };
+
+                        (false, fallback_target, Pos3::default())
+                    }),
+                    (false, AttackCruiserShipAiMovement::RandomPos) => (
+                        false,
+                        Self::random_pos_in_bounds(
+                            npc.pos.y,
+                            &self.config.playfield,
+                            &mut ai_result.rng,
+                        ),
+                        Pos3::default(),
                     ),
-                    Pos3::default(),
-                ),
-                AttackCruiserShipAiMovement::FixedPos(pos) => (false, pos, Pos3::default()),
-            };
+                    (false, AttackCruiserShipAiMovement::FixedPos(pos)) => {
+                        (false, *pos, Pos3::default())
+                    }
+                    (true, _) => {
+                        let pos_ahead = npc.pos + npc.speed * tick_duration.as_secs_f32();
+                        (false, pos_ahead, Pos3::default())
+                    }
+                };
 
             if ai_result.triggered {
                 if let Some(config) = &ai_result.behavior.aoe {
@@ -4685,7 +4696,15 @@ impl AttackCruiserGame {
                 }
             }
 
-            npc.seek_target(target_pos, target_speed, tick_duration.as_secs_f32());
+            npc.seek_target(
+                target_pos,
+                target_speed,
+                tick_duration.as_secs_f32(),
+                match warp_away {
+                    true => f32::MAX,
+                    false => npc.ship.max_speed,
+                },
+            );
 
             if !npc.dead() {
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
@@ -4745,11 +4764,7 @@ impl AttackCruiserGame {
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(
-                    npc,
-                    actors_to_warp_away.contains(&npc.id),
-                    self.group,
-                )],
+                vec![Self::update_server_npc_actor(npc, self.group)],
             ));
 
             if npc.completed_death(now) {
@@ -4783,7 +4798,6 @@ impl AttackCruiserGame {
             wave_time,
             spawned_ship_counts,
             kills_by_faction,
-            time_since_completion,
         } = &mut self.state
         else {
             return (actor_ids_to_warp_away, actor_ids_to_despawn);
@@ -4803,11 +4817,7 @@ impl AttackCruiserGame {
         let wave_elapsed_time = wave_time.elapsed(now);
         let wave_expired = wave_elapsed_time
             > Duration::from_millis(wave_config.max_duration_if_complete_millis.into());
-
         let wave_complete = enough_kills && wave_expired;
-        if wave_complete && time_since_completion.is_none() {
-            *time_since_completion = Some(MinigameStopwatch::new(Some(now)));
-        }
 
         if !wave_complete {
             let rng = &mut SmallRng::from_entropy();
@@ -4863,8 +4873,11 @@ impl AttackCruiserGame {
             }
         }
 
-        if let Some(completion_time) = time_since_completion {
-            let elapsed_since_completion = completion_time.elapsed(now);
+        if wave_complete {
+            let despawn_radius_x =
+                self.config.playfield.radius_x * self.config.playfield.wave_despawn_radius_ratio;
+            let despawn_radius_z =
+                self.config.playfield.radius_z * self.config.playfield.warning_radius_ratio;
 
             for faction in wave_config.despawn_factions_on_end.iter() {
                 let Some(actors) = actors_by_faction.get(faction) else {
@@ -4875,9 +4888,16 @@ impl AttackCruiserGame {
                         continue;
                     };
 
-                    match elapsed_since_completion >= npc.min_death_time() {
-                        true => actor_ids_to_despawn.insert(actor.id),
-                        false => actor_ids_to_warp_away.insert(actor.id),
+                    let still_warping = is_inside_oval(
+                        npc.pos,
+                        self.config.playfield.center,
+                        despawn_radius_x,
+                        despawn_radius_z,
+                    );
+
+                    match still_warping {
+                        true => actor_ids_to_warp_away.insert(actor.id),
+                        false => actor_ids_to_despawn.insert(actor.id),
                     };
                 }
             }
