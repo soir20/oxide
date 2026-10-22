@@ -2732,7 +2732,7 @@ impl AttackCruiserGame {
         let player_bvh = bvhs.get(&config.player.ship).cloned();
 
         let mut actor_id_pool = AttackCruiserActorIdPool::new();
-        let mut npcs = HashMap::new();
+        let npcs = HashMap::new();
         let mut actors_by_ship_name = HashMap::new();
 
         let now = Instant::now();
@@ -2796,100 +2796,10 @@ impl AttackCruiserGame {
             ));
         }
 
-        // TODO: remove test NPC
         let player_actor_ids = &player_states
             .iter()
             .map(|player_state| player_state.actor.id)
             .collect::<Vec<i32>>();
-        let test_npc_ship_name = "test".to_string();
-        let test_npc_ship = config.ship(&test_npc_ship_name);
-        let npc_id1 = actor_id_pool
-            .next(
-                player_actor_ids,
-                &npcs,
-                &test_npc_ship_name,
-                &mut actors_by_ship_name,
-                test_npc_ship.max_alive,
-            )
-            .unwrap();
-        npcs.insert(
-            npc_id1,
-            AttackCruiserActor::new(
-                npc_id1,
-                config.player.spawn2.pos
-                    + Pos3 {
-                        x: 0.0,
-                        y: 0.0,
-                        z: 0.0,
-                    },
-                config.player.spawn2.yaw.to_radians(),
-                test_npc_ship.max_speed,
-                0.0,
-                player_bvh.clone(),
-                None,
-                test_npc_ship.clone(),
-                now,
-                rng,
-            ),
-        );
-        let npc_id2 = actor_id_pool
-            .next(
-                player_actor_ids,
-                &npcs,
-                &test_npc_ship_name,
-                &mut actors_by_ship_name,
-                test_npc_ship.max_alive,
-            )
-            .unwrap();
-        npcs.insert(
-            npc_id2,
-            AttackCruiserActor::new(
-                npc_id2,
-                config.player.spawn2.pos
-                    + Pos3 {
-                        x: 100.0,
-                        y: 25.0,
-                        z: 100.0,
-                    },
-                config.player.spawn2.yaw.to_radians(),
-                test_npc_ship.max_speed,
-                0.0,
-                player_bvh.clone(),
-                None,
-                test_npc_ship.clone(),
-                now,
-                rng,
-            ),
-        );
-        let npc_id3 = actor_id_pool
-            .next(
-                player_actor_ids,
-                &npcs,
-                &test_npc_ship_name,
-                &mut actors_by_ship_name,
-                test_npc_ship.max_alive,
-            )
-            .unwrap();
-        npcs.insert(
-            npc_id3,
-            AttackCruiserActor::new(
-                npc_id3,
-                config.player.spawn2.pos
-                    - Pos3 {
-                        x: 100.0,
-                        y: 25.0,
-                        z: 100.0,
-                    },
-                config.player.spawn2.yaw.to_radians(),
-                test_npc_ship.max_speed,
-                0.0,
-                player_bvh,
-                None,
-                test_npc_ship.clone(),
-                now,
-                rng,
-            ),
-        );
 
         AttackCruiserGame {
             bvhs,
@@ -2897,16 +2807,10 @@ impl AttackCruiserGame {
             player2,
             player_states,
             state: AttackCruiserGameState::WaitingForPlayersReady,
-            actors_by_ship_name: HashMap::from([
-                (
-                    config.player.ship.clone(),
-                    HashSet::from_iter(player_actor_ids.iter().copied()),
-                ),
-                (
-                    test_npc_ship_name,
-                    HashSet::from([npc_id1, npc_id2, npc_id3]),
-                ),
-            ]),
+            actors_by_ship_name: HashMap::from([(
+                config.player.ship.clone(),
+                HashSet::from_iter(player_actor_ids.iter().copied()),
+            )]),
             active_player_indices: (0..players.len() as u8).collect(),
             active_players: players,
             group,
@@ -4115,11 +4019,6 @@ impl AttackCruiserGame {
             ));
         }
 
-        // TODO: remove and spawn in waves
-        self.npcs.values().for_each(|npc| {
-            packets.append(&mut self.spawn_client_npc_actor(npc, &String::from("test")));
-        });
-
         Ok(vec![Broadcast::Multi(
             self.active_players.to_vec(),
             packets,
@@ -4750,7 +4649,7 @@ impl AttackCruiserGame {
                     &self.bvhs,
                 ));
 
-                if ai_result.behavior.despawn {
+                if ai_result.behavior.despawn || actors_to_despawn.contains(&npc.id) {
                     broadcasts.push(Broadcast::Multi(
                         self.active_players.to_vec(),
                         Self::despawn_client_actor(
@@ -4823,7 +4722,11 @@ impl AttackCruiserGame {
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(npc, false, self.group)],
+                vec![Self::update_server_npc_actor(
+                    npc,
+                    actors_to_warp_away.contains(&npc.id),
+                    self.group,
+                )],
             ));
 
             if npc.completed_death(now) {
