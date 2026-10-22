@@ -4483,6 +4483,8 @@ impl AttackCruiserGame {
 
                 if player_state.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
+                        Self::increment_wave_kills(&mut self.state, &player_state.actor);
+
                         let pos = player_state.actor.pos;
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
@@ -4677,6 +4679,7 @@ impl AttackCruiserGame {
 
                 if npc.dead() {
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
+                        Self::increment_wave_kills(&mut self.state, npc);
                         let delta_score = npc.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
                             self.player_states[killed_by_player_index as usize]
@@ -4865,6 +4868,18 @@ impl AttackCruiserGame {
         }
 
         (actor_ids_to_warp_away, actor_ids_to_despawn)
+    }
+
+    fn increment_wave_kills(state: &mut AttackCruiserGameState, actor: &AttackCruiserActor) {
+        if let AttackCruiserGameState::WaveActive {
+            kills_by_faction, ..
+        } = state
+        {
+            for faction in actor.ship.self_factions.iter() {
+                let kills = kills_by_faction.entry(faction.clone()).or_default();
+                *kills = kills.saturating_add(1);
+            }
+        }
     }
 
     fn list_actors_by_faction(
