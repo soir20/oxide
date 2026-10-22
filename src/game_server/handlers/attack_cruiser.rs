@@ -2136,7 +2136,7 @@ struct AttackCruiserWaveShipConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserWaveConfig {
-    completed_max_duration_millis: u32,
+    max_duration_if_complete_millis: u32,
     despawn_factions_on_end: HashSet<String>,
     min_kills_by_faction: HashMap<String, u32>,
     ships: Vec<AttackCruiserWaveShipConfig>,
@@ -4799,10 +4799,12 @@ impl AttackCruiserGame {
             .all(|(faction, min_kills)| {
                 kills_by_faction.get(faction).copied().unwrap_or_default() >= *min_kills
             });
+
         let wave_elapsed_time = wave_time.elapsed(now);
-        let wave_complete = enough_kills
-            && wave_elapsed_time
-                > Duration::from_millis(wave_config.completed_max_duration_millis.into());
+        let wave_expired = wave_elapsed_time
+            > Duration::from_millis(wave_config.max_duration_if_complete_millis.into());
+
+        let wave_complete = enough_kills && wave_expired;
         if wave_complete && time_since_completion.is_none() {
             *time_since_completion = Some(MinigameStopwatch::new(Some(now)));
         }

@@ -4012,7 +4012,7 @@ categories:
                             yaw: !Degrees 5
                 sound_id: 2413
                 waves:
-                  - completed_max_duration_millis: 60000
+                  - max_duration_if_complete_millis: 60000
                     despawn_factions_on_end: [separatist]
                     min_kills_by_faction:
                       separatist: 1
