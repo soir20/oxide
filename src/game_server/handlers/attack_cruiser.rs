@@ -4924,8 +4924,19 @@ impl AttackCruiserGame {
                 }
             }
 
+            let mut no_player_disabled = true;
+            for player_index in self.active_player_indices.iter().copied() {
+                if self.player_states[player_index as usize].disabled() {
+                    no_player_disabled = false;
+                    break;
+                }
+            }
+
             // Wave is complete and we despawned all the necessary NPCs
-            if actor_ids_to_despawn.is_empty() && actor_ids_to_warp_away.is_empty() {
+            if actor_ids_to_despawn.is_empty()
+                && actor_ids_to_warp_away.is_empty()
+                && no_player_disabled
+            {
                 let next_wave_index = wave_index.saturating_add(1);
                 self.start_wave(next_wave_index, now);
             }
