@@ -4774,7 +4774,7 @@ impl AttackCruiserGame {
             .min_kills_by_faction
             .iter()
             .all(|(faction, min_kills)| {
-                kills_by_faction.get(faction).copied().unwrap_or_default() > *min_kills
+                kills_by_faction.get(faction).copied().unwrap_or_default() >= *min_kills
             });
         let wave_elapsed_time = wave_time.elapsed(now);
         let wave_complete = enough_kills
