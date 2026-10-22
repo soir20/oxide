@@ -859,7 +859,7 @@ impl AttackCruiserActor {
         target_pos: Pos3,
         target_speed: Pos3,
         delta_secs: f32,
-        desired_speed: f32,
+        warping: bool,
     ) {
         if delta_secs <= 0.0 {
             return;
@@ -951,7 +951,11 @@ impl AttackCruiserActor {
 
         let new_yaw = normalize_angle(self.yaw + new_angular_speed * delta_secs);
 
-        let accelerated_speed = (speed + self.ship.acceleration * delta_secs).min(desired_speed);
+        let (desired_speed, acceleration) = match warping {
+            true => (self.ship.max_warp_speed, self.ship.warp_acceleration),
+            false => (self.ship.max_speed, self.ship.acceleration),
+        };
+        let accelerated_speed = (speed + acceleration * delta_secs).min(desired_speed);
         self.speed.x = new_yaw.sin() * accelerated_speed;
         self.speed.z = new_yaw.cos() * accelerated_speed;
 
@@ -1538,6 +1542,14 @@ const fn ai_randomization_interval_millis() -> u32 {
     2000
 }
 
+const fn default_max_warp_speed() -> f32 {
+    5000.0
+}
+
+const fn default_warp_acceleration() -> f32 {
+    1000.0
+}
+
 const fn default_true() -> bool {
     true
 }
@@ -2013,6 +2025,10 @@ struct AttackCruiserShipConfig {
     max_angular_speed: Angle,
     angular_acceleration: Angle,
     angular_deceleration: Angle,
+    #[serde(default = "default_max_warp_speed")]
+    max_warp_speed: f32,
+    #[serde(default = "default_warp_acceleration")]
+    warp_acceleration: f32,
     #[serde(default)]
     stationary_turn: f32,
     max_health: u16,
@@ -4620,7 +4636,8 @@ impl AttackCruiserGame {
             }
 
             let mut ai_result = npc.current_ai_behavior(now);
-            let warp_away = actors_to_warp_away.contains(&npc.id);
+            let warp_away =
+                actors_to_warp_away.contains(&npc.id) || actors_to_despawn.contains(&npc.id);
             let (is_real_target, target_pos, target_speed) =
                 match (warp_away, &ai_result.behavior.movement) {
                     (false, AttackCruiserShipAiMovement::SeekTarget) => Self::closest_target(
@@ -4700,10 +4717,7 @@ impl AttackCruiserGame {
                 target_pos,
                 target_speed,
                 tick_duration.as_secs_f32(),
-                match warp_away {
-                    true => f32::MAX,
-                    false => npc.ship.max_speed,
-                },
+                warp_away,
             );
 
             if !npc.dead() {
