@@ -3241,7 +3241,11 @@ impl AttackCruiserGame {
     }
 
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
-        if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) || self.paused() {
+        if !matches!(
+            self.state,
+            AttackCruiserGameState::WaveActive { .. } | AttackCruiserGameState::GameOver
+        ) || self.paused()
+        {
             return Vec::new();
         }
 
@@ -3574,7 +3578,9 @@ impl AttackCruiserGame {
         let player_state = &self.player_states[player_index as usize];
 
         let now = Instant::now();
-        if player_state.disarmed() {
+        if player_state.disarmed()
+            || !matches!(self.state, AttackCruiserGameState::WaveActive { .. })
+        {
             return Ok(Vec::new());
         }
 
@@ -4488,7 +4494,9 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            if !player_state.dead() {
+            if !player_state.dead()
+                && matches!(self.state, AttackCruiserGameState::WaveActive { .. })
+            {
                 let actor = &mut player_state.actor;
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
                     actor.id,
