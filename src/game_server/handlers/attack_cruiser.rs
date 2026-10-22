@@ -430,20 +430,24 @@ impl AttackCruiserActor {
                 .min(self.ship.max_health);
 
             if self.dead() {
-                let death_secs: f32 = self
-                    .ship
-                    .animations
-                    .iter()
-                    .filter(|animation| animation.animation_type.is_death())
-                    .map(|animation| animation.duration_seconds)
-                    .fold(0.0, |a, b| a.max(b));
                 self.invulnerability.set_phase(
                     AttackCruiserActorInvulnerabilityPhase::Dead,
-                    Duration::from_secs_f32(death_secs),
+                    self.min_death_time(),
                     now,
                 );
             }
         }
+    }
+
+    pub fn min_death_time(&self) -> Duration {
+        let death_secs: f32 = self
+            .ship
+            .animations
+            .iter()
+            .filter(|animation| animation.animation_type.is_death())
+            .map(|animation| animation.duration_seconds)
+            .fold(0.0, |a, b| a.max(b));
+        Duration::from_secs_f32(death_secs)
     }
 
     pub fn add_primary_weapon_tiers(&mut self, tiers: i16) {
@@ -1476,6 +1480,8 @@ enum AttackCruiserGameState {
         wave_index: usize,
         wave_time: MinigameStopwatch,
         spawned_ship_counts: Vec<u32>,
+        kills_by_faction: HashMap<String, u32>,
+        time_since_completion: Option<MinigameStopwatch>,
     },
     GameOver,
 }
@@ -2132,7 +2138,7 @@ struct AttackCruiserWaveShipConfig {
 struct AttackCruiserWaveConfig {
     completed_max_duration_millis: u32,
     despawn_factions_on_end: HashSet<String>,
-    min_ships_killed_by_faction: HashMap<String, u32>,
+    min_kills_by_faction: HashMap<String, u32>,
     ships: Vec<AttackCruiserWaveShipConfig>,
 }
 
@@ -3363,7 +3369,8 @@ impl AttackCruiserGame {
             |player| !player.permeable(),
             |npc| !npc.permeable(),
         );
-        self.tick_wave(now, &mut pending_npcs, &actors_by_faction);
+        let (actors_to_warp_away, actors_to_despawn) =
+            self.tick_wave(now, &mut pending_npcs, &actors_by_faction);
         self.tick_players(
             now,
             &mut broadcasts,
@@ -3380,6 +3387,8 @@ impl AttackCruiserGame {
             &aoes,
             &mut pending_npcs,
             &actors_by_faction,
+            actors_to_warp_away,
+            actors_to_despawn,
         );
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
@@ -4070,12 +4079,16 @@ impl AttackCruiserGame {
 
     fn start_wave(&mut self, wave_index: usize, now: Instant) {
         let Some(wave_config) = self.config.waves.get(wave_index) else {
+            self.state = AttackCruiserGameState::GameOver;
             return;
         };
+
         self.state = AttackCruiserGameState::WaveActive {
             wave_index: 0,
             wave_time: MinigameStopwatch::new(Some(now)),
             spawned_ship_counts: vec![0; wave_config.ships.len()],
+            kills_by_faction: HashMap::new(),
+            time_since_completion: None,
         };
     }
 
@@ -4666,6 +4679,8 @@ impl AttackCruiserGame {
         aoes: &HashMap<i32, Vec<AttackCruiserAoeHit>>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
+        actors_to_warp_away: HashSet<i32>,
+        actors_to_despawn: HashSet<i32>,
     ) {
         self.npcs.retain(|_, npc| {
             if npc.paused() {
@@ -4833,75 +4848,120 @@ impl AttackCruiserGame {
         now: Instant,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
-    ) -> bool {
+    ) -> (HashSet<i32>, HashSet<i32>) {
+        let mut actor_ids_to_warp_away = HashSet::new();
+        let mut actor_ids_to_despawn = HashSet::new();
+
         let AttackCruiserGameState::WaveActive {
             wave_index,
             wave_time,
             spawned_ship_counts,
+            kills_by_faction,
+            time_since_completion,
         } = &mut self.state
         else {
-            return false;
+            return (actor_ids_to_warp_away, actor_ids_to_despawn);
         };
 
         let Some(wave_config) = self.config.waves.get(*wave_index) else {
-            return false;
+            return (actor_ids_to_warp_away, actor_ids_to_despawn);
         };
 
-        let rng = &mut SmallRng::from_entropy();
-
+        let enough_kills = wave_config
+            .min_kills_by_faction
+            .iter()
+            .all(|(faction, min_kills)| {
+                kills_by_faction.get(faction).copied().unwrap_or_default() > *min_kills
+            });
         let wave_elapsed_time = wave_time.elapsed(now);
-        for (wave_ship_index, wave_ship) in wave_config.ships.iter().enumerate() {
-            let delay = Duration::from_millis(wave_ship.delay_millis.into());
-            if wave_elapsed_time < delay {
-                continue;
-            }
-
-            // Add 1 so we always spawn a ship without waiting for the interval
-            let elapsed_since_delay = wave_elapsed_time - delay;
-            let max_spawnable_ships = elapsed_since_delay
-                .as_millis()
-                .saturating_div(wave_ship.interval_millis.into())
-                .saturating_add(1)
-                .min(wave_ship.count.into()) as u32;
-
-            let yaw = wave_ship.yaw.to_radians();
-            let direction = Pos3 {
-                x: yaw.sin(),
-                y: 0.0,
-                z: yaw.cos(),
-            };
-            let ship_config = self.config.ship(&wave_ship.ship);
-            let bvh = self.bvhs.get(&wave_ship.ship).cloned();
-
-            for _ in spawned_ship_counts[wave_ship_index]..max_spawnable_ships {
-                let launch_vector = launch_vector(
-                    rng,
-                    wave_ship.pos,
-                    direction,
-                    0.0,
-                    wave_ship.wobble,
-                    wave_ship.yaw,
-                    0.0,
-                    0.0,
-                );
-                pending_npcs.push(AttackCruiserPendingActor::new(
-                    launch_vector.origin,
-                    launch_vector.yaw,
-                    0.0,
-                    0.0,
-                    bvh.clone(),
-                    None,
-                    ship_config.clone(),
-                    wave_ship.ship.clone(),
-                    now,
-                    rng,
-                ));
-            }
-
-            spawned_ship_counts[wave_ship_index] = max_spawnable_ships;
+        let wave_complete = enough_kills
+            && wave_elapsed_time
+                > Duration::from_millis(wave_config.completed_max_duration_millis.into());
+        if wave_complete && time_since_completion.is_none() {
+            *time_since_completion = Some(MinigameStopwatch::new(Some(now)));
         }
 
-        false
+        if !wave_complete {
+            let rng = &mut SmallRng::from_entropy();
+            for (wave_ship_index, wave_ship) in wave_config.ships.iter().enumerate() {
+                let delay = Duration::from_millis(wave_ship.delay_millis.into());
+                if wave_elapsed_time < delay {
+                    continue;
+                }
+
+                // Add 1 so we always spawn a ship without waiting for the interval
+                let elapsed_since_delay = wave_elapsed_time - delay;
+                let max_spawnable_ships = elapsed_since_delay
+                    .as_millis()
+                    .saturating_div(wave_ship.interval_millis.into())
+                    .saturating_add(1)
+                    .min(wave_ship.count.into()) as u32;
+
+                let yaw = wave_ship.yaw.to_radians();
+                let direction = Pos3 {
+                    x: yaw.sin(),
+                    y: 0.0,
+                    z: yaw.cos(),
+                };
+                let ship_config = self.config.ship(&wave_ship.ship);
+                let bvh = self.bvhs.get(&wave_ship.ship).cloned();
+
+                for _ in spawned_ship_counts[wave_ship_index]..max_spawnable_ships {
+                    let launch_vector = launch_vector(
+                        rng,
+                        wave_ship.pos,
+                        direction,
+                        0.0,
+                        wave_ship.wobble,
+                        wave_ship.yaw,
+                        0.0,
+                        0.0,
+                    );
+                    pending_npcs.push(AttackCruiserPendingActor::new(
+                        launch_vector.origin,
+                        launch_vector.yaw,
+                        0.0,
+                        0.0,
+                        bvh.clone(),
+                        None,
+                        ship_config.clone(),
+                        wave_ship.ship.clone(),
+                        now,
+                        rng,
+                    ));
+                }
+
+                spawned_ship_counts[wave_ship_index] = max_spawnable_ships;
+            }
+        }
+
+        if let Some(completion_time) = time_since_completion {
+            let elapsed_since_completion = completion_time.elapsed(now);
+
+            for faction in wave_config.despawn_factions_on_end.iter() {
+                let Some(actors) = actors_by_faction.get(faction) else {
+                    continue;
+                };
+                for actor in actors.iter() {
+                    let Some(npc) = self.npcs.get(&actor.id) else {
+                        continue;
+                    };
+
+                    match elapsed_since_completion >= npc.min_death_time() {
+                        true => actor_ids_to_despawn.insert(actor.id),
+                        false => actor_ids_to_warp_away.insert(actor.id),
+                    };
+                }
+            }
+
+            // Wave is complete and we despawned all the necessary NPCs
+            if actor_ids_to_despawn.is_empty() && actor_ids_to_warp_away.is_empty() {
+                let next_wave_index = wave_index.saturating_add(1);
+                self.start_wave(next_wave_index, now);
+            }
+        }
+
+        (actor_ids_to_warp_away, actor_ids_to_despawn)
     }
 
     fn list_actors_by_faction(
