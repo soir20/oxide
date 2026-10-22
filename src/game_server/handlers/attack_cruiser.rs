@@ -4538,9 +4538,8 @@ impl AttackCruiserGame {
                 }
 
                 if player_state.dead() {
+                    Self::increment_wave_kills(&mut self.state, &player_state.actor);
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
-                        Self::increment_wave_kills(&mut self.state, &player_state.actor);
-
                         let pos = player_state.actor.pos;
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
@@ -4748,8 +4747,8 @@ impl AttackCruiserGame {
                 npc.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
 
                 if npc.dead() {
+                    Self::increment_wave_kills(&mut self.state, npc);
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
-                        Self::increment_wave_kills(&mut self.state, npc);
                         let delta_score = npc.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
                             self.player_states[killed_by_player_index as usize]
