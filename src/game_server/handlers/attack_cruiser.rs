@@ -1494,6 +1494,14 @@ enum AttackCruiserGameState {
     GameOver,
 }
 
+impl AttackCruiserGameState {
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        if let AttackCruiserGameState::WaveActive { wave_time, .. } = self {
+            wave_time.pause_or_resume(pause, now);
+        }
+    }
+}
+
 const fn default_yaw() -> Angle {
     Angle::Degrees(0.0)
 }
@@ -3404,6 +3412,7 @@ impl AttackCruiserGame {
         self.npcs.values_mut().for_each(|npc| {
             npc.pause_or_resume(pause, now);
         });
+        self.state.pause_or_resume(pause, now);
         Ok(Vec::new())
     }
 
