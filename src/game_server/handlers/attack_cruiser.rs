@@ -2196,12 +2196,12 @@ impl AttackCruiserConfig {
         self.ships.values().for_each(|ship| {
             ship.self_factions.iter().for_each(|faction|  {
                 if !self.factions.contains_key(faction) {
-                    info!("Attack Cruiser ship self_factions references unknown faction {}", faction);
+                    info!("Attack Cruiser ship self_factions references unknown faction {faction}");
                 }
             });
             ship.seek_factions.iter().for_each(|faction|  {
                 if !self.factions.contains_key(faction) {
-                    info!("Attack Cruiser ship seek_factions references unknown faction {}", faction);
+                    info!("Attack Cruiser ship seek_factions references unknown faction {faction}");
                 }
             });
 
@@ -2220,7 +2220,7 @@ impl AttackCruiserConfig {
 
                 projectile.target_factions.iter().for_each(|target_faction| {
                     if !self.factions.contains_key(target_faction) {
-                        info!("Attack Cruiser ship projectile target_factions references unknown faction {}", target_faction);
+                        info!("Attack Cruiser ship projectile target_factions references unknown faction {target_faction}");
                     }
                 });
             }));
@@ -2228,7 +2228,7 @@ impl AttackCruiserConfig {
             if let Some(aoe) = &ship.default_ai_behavior.aoe {
                 aoe.target_factions.iter().for_each(|target_faction| {
                     if !self.factions.contains_key(target_faction) {
-                        info!("Attack Cruiser ship AOE target_factions references unknown faction {}", target_faction);
+                        info!("Attack Cruiser ship AOE target_factions references unknown faction {target_faction}");
                     }
                 });
             }
@@ -2237,9 +2237,29 @@ impl AttackCruiserConfig {
                 if let Some(aoe) = &ai_state.behavior.aoe {
                     aoe.target_factions.iter().for_each(|target_faction| {
                         if !self.factions.contains_key(target_faction) {
-                            info!("Attack Cruiser ship AOE target_factions references unknown faction {}", target_faction);
+                            info!("Attack Cruiser ship AOE target_factions references unknown faction {target_faction}");
                         }
                     });
+                }
+            });
+        });
+
+        self.waves.iter().for_each(|wave| {
+            wave.despawn_factions_on_end.iter().for_each(|faction|  {
+                if !self.factions.contains_key(faction) {
+                    info!("Attack Cruiser wave despawn_factions_on_end references unknown faction {faction}");
+                }
+            });
+
+            wave.min_kills_by_faction.keys().for_each(|faction|  {
+                if !self.factions.contains_key(faction) {
+                    info!("Attack Cruiser wave min_kills_by_faction references unknown faction {faction}");
+                }
+            });
+
+            wave.ships.iter().for_each(|ship|  {
+                if !self.ships.contains_key(&ship.ship) {
+                    info!("Attack Cruiser wave ships references unknown ship {}", ship.ship);
                 }
             });
         });
