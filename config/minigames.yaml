@@ -3541,7 +3541,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_score: 100
-                              secondary_item:
+                              player_secondary_item:
                                 name: invulnerability
                                 count: 1
                             self_deltas:
@@ -3575,7 +3575,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_score: 100
-                              secondary_item:
+                              player_secondary_item:
                                 name: torrent
                                 count: 1
                             self_deltas:
@@ -3609,7 +3609,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_score: 100
-                              secondary_item:
+                              player_secondary_item:
                                 name: emp
                                 count: 1
                             self_deltas:
@@ -3643,7 +3643,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_score: 100
-                              secondary_item:
+                              player_secondary_item:
                                 name: mine
                                 count: 1
                             self_deltas:
@@ -3677,7 +3677,7 @@ categories:
                             target_factions: [player]
                             target_deltas:
                               player_score: 100
-                              secondary_item:
+                              player_secondary_item:
                                 name: jerico
                                 count: 1
                             self_deltas:
@@ -4011,6 +4011,21 @@ categories:
                             cooldown_millis: 4000
                             yaw: !Degrees 5
                 sound_id: 2413
+                waves:
+                  - completed_max_duration_millis: 60000
+                    despawn_factions_on_end: [separatist]
+                    min_kills_by_faction:
+                      separatist: 1
+                    ships:
+                      - ship: test
+                        pos:
+                          x: 200.9
+                          y: 1000.0
+                          z: -1999.0
+                        yaw: !Degrees 45
+                        count: 5
+                        delay_millis: 10000
+                        interval_millis: 5000
               zone_template_guid: 250
               score_to_credits_expression: x / 129
       - guid: 1027
