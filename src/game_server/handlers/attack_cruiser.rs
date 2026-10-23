@@ -1492,7 +1492,9 @@ enum AttackCruiserGameState {
         kills_by_faction: HashMap<String, u32>,
         remaining_hud_messages: VecDeque<usize>,
     },
-    GameOver,
+    GameOver {
+        won: bool,
+    },
 }
 
 impl AttackCruiserGameState {
@@ -2774,6 +2776,7 @@ pub struct AttackCruiserGame {
     actors_by_ship_name: HashMap<String, HashSet<i32>>,
     actor_id_pool: AttackCruiserActorIdPool,
     pending_aoes: Vec<AttackCruiserPendingAoe>,
+    game_time: MinigameStopwatch,
 }
 
 impl AttackCruiserGame {
@@ -2878,6 +2881,7 @@ impl AttackCruiserGame {
             npcs,
             actor_id_pool,
             pending_aoes: Vec::new(),
+            game_time: MinigameStopwatch::new(Some(now)),
         }
     }
 
@@ -3261,7 +3265,7 @@ impl AttackCruiserGame {
     pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         if !matches!(
             self.state,
-            AttackCruiserGameState::WaveActive { .. } | AttackCruiserGameState::GameOver
+            AttackCruiserGameState::WaveActive { .. } | AttackCruiserGameState::GameOver { .. }
         ) || self.paused()
         {
             return Vec::new();
@@ -3423,6 +3427,7 @@ impl AttackCruiserGame {
             npc.pause_or_resume(pause, now);
         });
         self.state.pause_or_resume(pause, now);
+        self.game_time.pause_or_resume(pause, now);
         Ok(Vec::new())
     }
 
@@ -4063,7 +4068,20 @@ impl AttackCruiserGame {
 
     fn start_wave(&mut self, wave_index: usize, now: Instant) {
         let Some(wave_config) = self.config.waves.get(wave_index) else {
-            self.state = AttackCruiserGameState::GameOver;
+            let won = match self.config.challenge {
+                AttackCruiserChallengeConfig::ScoreTarget { score } => {
+                    self.active_player_indices
+                        .iter()
+                        .fold(0i32, |total_score, player_index| {
+                            total_score
+                                .saturating_add(self.player_states[*player_index as usize].score)
+                        }) as u32
+                        >= score
+                }
+                _ => true,
+            };
+
+            self.state = AttackCruiserGameState::GameOver { won };
             return;
         };
 
@@ -4509,28 +4527,9 @@ impl AttackCruiserGame {
                     actor_packets,
                 ));
             } else if player_state.lost(now) {
-                broadcasts.push(Broadcast::Single(
-                    self.player_states[player_index].guid,
-                    vec![
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: AttackCruiserUpdateClientState {
-                                minigame_header: MinigameHeader {
-                                    stage_guid: self.group.stage_guid,
-                                    sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                                    stage_group_guid: self.group.stage_group_guid,
-                                },
-                                client_state: AttackCruiserClientState::Defeat,
-                            },
-                        }),
-                        GamePacket::serialize(&TunneledPacket {
-                            unknown1: true,
-                            inner: ExecuteScriptWithStringParams {
-                                script_name: "StarDestroyerHandler.quitGame".to_string(),
-                                params: vec![],
-                            },
-                        }),
-                    ],
+                broadcasts.push(self.trigger_client_end_game(
+                    AttackCruiserClientState::Defeat,
+                    &[self.player_states[player_index].guid],
                 ));
             } else if player_state.completed_respawn(now) {
                 player_state.complete_respawn();
@@ -4863,6 +4862,16 @@ impl AttackCruiserGame {
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) -> (HashSet<i32>, HashSet<i32>) {
+        if let AttackCruiserChallengeConfig::Timed { limit_seconds } = self.config.challenge {
+            if self.game_time.elapsed(now) >= Duration::from_secs(limit_seconds.into()) {
+                self.state = AttackCruiserGameState::GameOver { won: false };
+                broadcasts.push(self.trigger_client_end_game(
+                    AttackCruiserClientState::Defeat,
+                    &self.active_players,
+                ));
+            }
+        }
+
         let mut actor_ids_to_warp_away = HashSet::new();
         let mut actor_ids_to_despawn = HashSet::new();
 
@@ -5212,5 +5221,35 @@ impl AttackCruiserGame {
         let z = rng.gen_range(-playfield.radius_z..playfield.radius_z) + playfield.center.y;
 
         Pos3 { x, y, z }
+    }
+
+    fn trigger_client_end_game(
+        &self,
+        client_state: AttackCruiserClientState,
+        players: &[u32],
+    ) -> Broadcast {
+        Broadcast::Multi(
+            players.to_vec(),
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserUpdateClientState {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        client_state,
+                    },
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: "StarDestroyerHandler.quitGame".to_string(),
+                        params: vec![],
+                    },
+                }),
+            ],
+        )
     }
 }
