@@ -3541,7 +3541,7 @@ impl AttackCruiserGame {
             .all(|player_state| player_state.ready)
             && matches!(self.state, AttackCruiserGameState::WaitingForPlayersReady)
         {
-            broadcasts.append(&mut self.start_first_wave(Instant::now())?);
+            broadcasts.append(&mut self.start_first_wave(Instant::now()));
         }
 
         Ok(broadcasts)
@@ -4082,7 +4082,7 @@ impl AttackCruiserGame {
         };
     }
 
-    fn start_first_wave(&mut self, now: Instant) -> Result<Vec<Broadcast>, ProcessPacketError> {
+    fn start_first_wave(&mut self, now: Instant) -> Vec<Broadcast> {
         self.start_wave(0, now);
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
@@ -4105,10 +4105,7 @@ impl AttackCruiserGame {
             ));
         }
 
-        Ok(vec![Broadcast::Multi(
-            self.active_players.to_vec(),
-            packets,
-        )])
+        vec![Broadcast::Multi(self.active_players.to_vec(), packets)]
     }
 
     fn actor_attack_primary<'a>(
