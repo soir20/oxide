@@ -1,6 +1,6 @@
 use std::{
     cmp::{Ordering, Reverse},
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet, VecDeque},
     f32::consts::PI,
     io::{Cursor, Read},
     iter,
@@ -1490,6 +1490,7 @@ enum AttackCruiserGameState {
         wave_time: MinigameStopwatch,
         spawned_ship_counts: Vec<u32>,
         kills_by_faction: HashMap<String, u32>,
+        remaining_hud_messages: VecDeque<usize>,
     },
     GameOver,
 }
@@ -2164,8 +2165,17 @@ struct AttackCruiserWaveShipConfig {
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct AttackCruiserWaveHudMessageConfig {
+    delay_millis: u32,
+    message: AttackCruiserHudMessageConfig,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 struct AttackCruiserWaveConfig {
     despawn_factions_on_end: HashSet<String>,
+    #[serde(default)]
+    hud_messages: Vec<AttackCruiserWaveHudMessageConfig>,
     max_duration_if_complete_millis: u32,
     min_kills_by_faction: HashMap<String, u32>,
     ships: Vec<AttackCruiserWaveShipConfig>,
@@ -3327,7 +3337,7 @@ impl AttackCruiserGame {
             |npc| !npc.permeable(),
         );
         let (actors_to_warp_away, actors_to_despawn) =
-            self.tick_wave(now, &mut pending_npcs, &actors_by_faction);
+            self.tick_wave(now, &mut broadcasts, &mut pending_npcs, &actors_by_faction);
         self.tick_players(
             now,
             &mut broadcasts,
@@ -4042,11 +4052,18 @@ impl AttackCruiserGame {
             return;
         };
 
+        let mut remaining_hud_messages: VecDeque<usize> =
+            (0..wave_config.hud_messages.len()).collect();
+        remaining_hud_messages
+            .make_contiguous()
+            .sort_by_key(|index| wave_config.hud_messages[*index].delay_millis);
+
         self.state = AttackCruiserGameState::WaveActive {
             wave_index: 0,
             wave_time: MinigameStopwatch::new(Some(now)),
             spawned_ship_counts: vec![0; wave_config.ships.len()],
             kills_by_faction: HashMap::new(),
+            remaining_hud_messages,
         };
     }
 
@@ -4817,6 +4834,7 @@ impl AttackCruiserGame {
     fn tick_wave(
         &mut self,
         now: Instant,
+        broadcasts: &mut Vec<Broadcast>,
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) -> (HashSet<i32>, HashSet<i32>) {
@@ -4828,6 +4846,7 @@ impl AttackCruiserGame {
             wave_time,
             spawned_ship_counts,
             kills_by_faction,
+            remaining_hud_messages,
         } = &mut self.state
         else {
             return (actor_ids_to_warp_away, actor_ids_to_despawn);
@@ -4845,8 +4864,19 @@ impl AttackCruiserGame {
             });
 
         let wave_elapsed_time = wave_time.elapsed(now);
+
+        while let Some(index) = remaining_hud_messages.pop_front_if(|index| {
+            wave_elapsed_time
+                >= Duration::from_millis(wave_config.hud_messages[*index].delay_millis.into())
+        }) {
+            broadcasts.push(show_hud_message(
+                &self.active_players,
+                &wave_config.hud_messages[index].message,
+            ));
+        }
+
         let wave_expired = wave_elapsed_time
-            > Duration::from_millis(wave_config.max_duration_if_complete_millis.into());
+            >= Duration::from_millis(wave_config.max_duration_if_complete_millis.into());
         let wave_complete = enough_kills && wave_expired;
 
         if !wave_complete {
