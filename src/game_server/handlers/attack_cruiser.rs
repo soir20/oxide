@@ -18,13 +18,20 @@ use serde::Deserialize;
 use smallvec::SmallVec;
 
 use crate::{
-    config::Angle, debug, game_server::{
-        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType, handlers::{
-            character::{MinigameMatchmakingGroup, MinigameStatus}, direction, distance3_pos, distance3_sq, minigame::{
-                MinigameCountdown, MinigameRemovePlayerResult, MinigameStopwatch, SharedMinigameTypeData, handle_minigame_packet_write,
-            }, unique_guid::player_guid,
-        }, packets::{
-            GamePacket, Pos, Pos3, Target, attack_cruiser::{
+    config::Angle,
+    debug,
+    game_server::{
+        handlers::{
+            character::{MinigameMatchmakingGroup, MinigameStatus},
+            direction, distance3_pos, distance3_sq,
+            minigame::{
+                handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
+                MinigameStopwatch, SharedMinigameTypeData,
+            },
+            unique_guid::player_guid,
+        },
+        packets::{
+            attack_cruiser::{
                 AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType,
                 AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType,
                 AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
@@ -52,9 +59,17 @@ use crate::{
                 AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
                 AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
                 AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
-            }, command::PlaySoundIdOnTarget, minigame::{MinigameHeader, ScoreEntry, ScoreType}, player_update::HudMessage, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams,
+            },
+            command::PlaySoundIdOnTarget,
+            minigame::{MinigameHeader, ScoreEntry, ScoreType},
+            player_update::HudMessage,
+            tunnel::TunneledPacket,
+            ui::ExecuteScriptWithStringParams,
+            GamePacket, Pos, Pos3, Target,
         },
-    }, info,
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
+    },
+    info,
 };
 
 const TIME_EPSILON: f32 = 1e-5;
@@ -433,6 +448,13 @@ impl AttackCruiserActor {
             .map(|animation| animation.duration_seconds)
             .fold(0.0, |a, b| a.max(b));
         Duration::from_secs_f32(death_secs)
+    }
+
+    pub fn has_global_cinematic_death(&self) -> bool {
+        self.ship
+            .cinematics
+            .iter()
+            .any(|cinematic| cinematic.cinematic_type == AttackCruiserActorCinematicType::Global)
     }
 
     pub fn add_primary_weapon_tiers(&mut self, tiers: i16) {
@@ -2762,6 +2784,7 @@ pub struct AttackCruiserGame {
     actor_id_pool: AttackCruiserActorIdPool,
     pending_aoes: Vec<AttackCruiserPendingAoe>,
     game_time: MinigameStopwatch,
+    last_cinematic_death: Option<i32>,
 }
 
 impl AttackCruiserGame {
@@ -2867,6 +2890,7 @@ impl AttackCruiserGame {
             actor_id_pool,
             pending_aoes: Vec::new(),
             game_time: MinigameStopwatch::new(Some(now)),
+            last_cinematic_death: None,
         }
     }
 
@@ -3412,7 +3436,7 @@ impl AttackCruiserGame {
             npc.pause_or_resume(pause, now);
         });
         self.state.pause_or_resume(pause, now);
-        
+
         if !matches!(self.state, AttackCruiserGameState::GameOver { .. }) {
             self.game_time.pause_or_resume(pause, now);
         }
@@ -3987,7 +4011,9 @@ impl AttackCruiserGame {
                             unknown7: false,
                             dead_unused: false,
                             warp_in: false,
-                            global_cinematic: false,
+                            global_cinematic: player_state.actor.dead()
+                                && matches!(self.state, AttackCruiserGameState::GameOver { .. })
+                                && Some(player_state.actor.id) == self.last_cinematic_death,
                             warp_out_animation: warp_out,
                             warp_end_game: false,
                             reset_speed_damage_state: warp_out,
@@ -4004,6 +4030,8 @@ impl AttackCruiserGame {
 
     fn update_server_npc_actor(
         actor: &AttackCruiserActor,
+        game_state: &AttackCruiserGameState,
+        last_global_cinematic_death: Option<i32>,
         group: MinigameMatchmakingGroup,
     ) -> Vec<u8> {
         GamePacket::serialize(&TunneledPacket {
@@ -4033,7 +4061,9 @@ impl AttackCruiserGame {
                         unknown7: false,
                         dead_unused: false,
                         warp_in: false,
-                        global_cinematic: false,
+                        global_cinematic: actor.dead()
+                            && matches!(game_state, AttackCruiserGameState::GameOver { .. })
+                            && Some(actor.id) == last_global_cinematic_death,
                         warp_out_animation: false,
                         warp_end_game: false,
                         reset_speed_damage_state: false,
@@ -4603,6 +4633,10 @@ impl AttackCruiserGame {
 
                 if player_state.dead() {
                     Self::increment_wave_kills(&mut self.state, &player_state.actor);
+                    if player_state.actor.has_global_cinematic_death() {
+                        self.last_cinematic_death = Some(player_state.actor.id);
+                    }
+
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let pos = player_state.actor.pos;
                         let delta_score = self.player_states[player_index].actor.ship.score;
@@ -4812,6 +4846,10 @@ impl AttackCruiserGame {
 
                 if npc.dead() {
                     Self::increment_wave_kills(&mut self.state, npc);
+                    if npc.has_global_cinematic_death() {
+                        self.last_cinematic_death = Some(npc.id);
+                    }
+
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let delta_score = npc.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
@@ -4858,7 +4896,12 @@ impl AttackCruiserGame {
 
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(npc, self.group)],
+                vec![Self::update_server_npc_actor(
+                    npc,
+                    &self.state,
+                    self.last_cinematic_death,
+                    self.group,
+                )],
             ));
 
             if npc.completed_death(now) {

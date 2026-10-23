@@ -503,7 +503,9 @@ pub struct AttackCruiserActorAnimationConfig {
     pub duration_seconds: f32,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[derive(
+    Clone, Copy, Debug, Deserialize, PartialEq, Eq, SerializePacket, TryFromPrimitive, IntoPrimitive,
+)]
 #[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserActorCinematicType {
