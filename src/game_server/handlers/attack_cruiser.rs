@@ -3487,6 +3487,13 @@ impl AttackCruiserGame {
         player_state.set_lives_unchecked(0);
 
         minigame_status.total_score = player_state.score;
+
+        let won = match self.state {
+            AttackCruiserGameState::GameOver { won } => won,
+            _ => false,
+        };
+        minigame_status.win_status.set_won(won);
+
         Ok(MinigameRemovePlayerResult {
             broadcasts,
             characters_to_remove: Vec::new(),
