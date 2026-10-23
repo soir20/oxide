@@ -3982,6 +3982,8 @@ impl AttackCruiserGame {
                 .bounds
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
 
+        let is_game_over = matches!(self.state, AttackCruiserGameState::GameOver { .. });
+
         Broadcast::Multi(
             self.active_players.to_vec(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -4012,7 +4014,7 @@ impl AttackCruiserGame {
                             dead_unused: false,
                             warp_in: false,
                             global_cinematic: player_state.actor.dead()
-                                && matches!(self.state, AttackCruiserGameState::GameOver { .. })
+                                && is_game_over
                                 && Some(player_state.actor.id) == self.last_cinematic_death,
                             warp_out_animation: warp_out,
                             warp_end_game: false,
