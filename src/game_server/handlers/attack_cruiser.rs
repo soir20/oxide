@@ -3457,7 +3457,22 @@ impl AttackCruiserGame {
                 guid: player_guid(player),
             },
         }));
-        let broadcasts = vec![Broadcast::Multi(self.active_players.to_vec(), packets)];
+
+        let mut broadcasts = vec![Broadcast::Multi(self.active_players.to_vec(), packets)];
+        broadcasts.push(Broadcast::Single(
+            player,
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateClientState {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    client_state: AttackCruiserClientState::Quit,
+                },
+            })],
+        ));
 
         self.active_players
             .retain(|active_player| *active_player != player);
@@ -4499,13 +4514,26 @@ impl AttackCruiserGame {
             } else if player_state.lost(now) {
                 broadcasts.push(Broadcast::Single(
                     self.player_states[player_index].guid,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: ExecuteScriptWithStringParams {
-                            script_name: "StarDestroyerHandler.quitGame".to_string(),
-                            params: vec![],
-                        },
-                    })],
+                    vec![
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: AttackCruiserUpdateClientState {
+                                minigame_header: MinigameHeader {
+                                    stage_guid: self.group.stage_guid,
+                                    sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                                    stage_group_guid: self.group.stage_group_guid,
+                                },
+                                client_state: AttackCruiserClientState::Defeat,
+                            },
+                        }),
+                        GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: ExecuteScriptWithStringParams {
+                                script_name: "StarDestroyerHandler.quitGame".to_string(),
+                                params: vec![],
+                            },
+                        }),
+                    ],
                 ));
             } else if player_state.completed_respawn(now) {
                 player_state.complete_respawn();
