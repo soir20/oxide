@@ -18,20 +18,13 @@ use serde::Deserialize;
 use smallvec::SmallVec;
 
 use crate::{
-    config::Angle,
-    debug,
-    game_server::{
-        handlers::{
-            character::{MinigameMatchmakingGroup, MinigameStatus},
-            direction, distance3_pos, distance3_sq,
-            minigame::{
-                handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
-                MinigameStopwatch, SharedMinigameTypeData,
-            },
-            unique_guid::player_guid,
-        },
-        packets::{
-            attack_cruiser::{
+    config::Angle, debug, game_server::{
+        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType, handlers::{
+            character::{MinigameMatchmakingGroup, MinigameStatus}, direction, distance3_pos, distance3_sq, minigame::{
+                MinigameCountdown, MinigameRemovePlayerResult, MinigameStopwatch, SharedMinigameTypeData, handle_minigame_packet_write,
+            }, unique_guid::player_guid,
+        }, packets::{
+            GamePacket, Pos, Pos3, Target, attack_cruiser::{
                 AttackCruiserActorAnimationConfig, AttackCruiserActorAnimationType,
                 AttackCruiserActorCinematicConfig, AttackCruiserActorCinematicType,
                 AttackCruiserActorConfig, AttackCruiserActorDamageStateConfig,
@@ -59,17 +52,9 @@ use crate::{
                 AttackCruiserStartupConfigHash, AttackCruiserStartupConfigReference,
                 AttackCruiserUpdateClientActors, AttackCruiserUpdateClientState,
                 AttackCruiserUpdatePlayers, AttackCruiserUpdateServerActors, AttackCruiserVec,
-            },
-            command::PlaySoundIdOnTarget,
-            minigame::MinigameHeader,
-            player_update::HudMessage,
-            tunnel::TunneledPacket,
-            ui::ExecuteScriptWithStringParams,
-            GamePacket, Pos, Pos3, Target,
+            }, command::PlaySoundIdOnTarget, minigame::{MinigameHeader, ScoreEntry, ScoreType}, player_update::HudMessage, tunnel::TunneledPacket, ui::ExecuteScriptWithStringParams,
         },
-        Broadcast, GameServer, LogLevel, ProcessPacketError, ProcessPacketErrorType,
-    },
-    info,
+    }, info,
 };
 
 const TIME_EPSILON: f32 = 1e-5;
@@ -3427,7 +3412,11 @@ impl AttackCruiserGame {
             npc.pause_or_resume(pause, now);
         });
         self.state.pause_or_resume(pause, now);
-        self.game_time.pause_or_resume(pause, now);
+        
+        if !matches!(self.state, AttackCruiserGameState::GameOver { .. }) {
+            self.game_time.pause_or_resume(pause, now);
+        }
+
         Ok(Vec::new())
     }
 
@@ -3493,6 +3482,32 @@ impl AttackCruiserGame {
             _ => false,
         };
         minigame_status.win_status.set_won(won);
+
+        let now = Instant::now();
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Time,
+            score_count: self.game_time.elapsed(now).as_secs() as i32,
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: player_state.lives.into(),
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Total,
+            score_count: minigame_status.total_score,
+            score_max: 0,
+            score_points: 0,
+        });
 
         Ok(MinigameRemovePlayerResult {
             broadcasts,
@@ -4089,6 +4104,7 @@ impl AttackCruiserGame {
             };
 
             self.state = AttackCruiserGameState::GameOver { won };
+            self.game_time.pause_or_resume(true, now);
             return;
         };
 
@@ -4872,6 +4888,7 @@ impl AttackCruiserGame {
         if let AttackCruiserChallengeConfig::Timed { limit_seconds } = self.config.challenge {
             if self.game_time.elapsed(now) >= Duration::from_secs(limit_seconds.into()) {
                 self.state = AttackCruiserGameState::GameOver { won: false };
+                self.game_time.pause_or_resume(true, now);
                 broadcasts.push(self.trigger_client_end_game(
                     AttackCruiserClientState::Defeat,
                     &self.active_players,
