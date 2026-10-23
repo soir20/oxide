@@ -2165,8 +2165,8 @@ struct AttackCruiserWaveShipConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserWaveConfig {
-    max_duration_if_complete_millis: u32,
     despawn_factions_on_end: HashSet<String>,
+    max_duration_if_complete_millis: u32,
     min_kills_by_faction: HashMap<String, u32>,
     ships: Vec<AttackCruiserWaveShipConfig>,
 }
