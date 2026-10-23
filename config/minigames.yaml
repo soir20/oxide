@@ -4013,8 +4013,25 @@ categories:
                             yaw: !Degrees 5
                 sound_id: 2413
                 waves:
-                  - max_duration_if_complete_millis: 60000
+                  - max_duration_if_complete_millis: 6000
                     despawn_factions_on_end: [separatist]
+                    hud_messages:
+                      - delay_millis: 1000
+                        message:
+                          message_id: 1
+                          duration_millis: 2000
+                      - delay_millis: 4000
+                        message:
+                          message_id: 2
+                          duration_millis: 2000
+                      - delay_millis: 7000
+                        message:
+                          message_id: 3
+                          duration_millis: 2000
+                      - delay_millis: 10000
+                        message:
+                          message_id: 4
+                          duration_millis: 2000
                     min_kills_by_faction:
                       separatist: 1
                     ships:
