@@ -1369,7 +1369,7 @@ impl AttackCruiserPlayer {
                 .score_multiplier_tier_progress
                 .saturating_add(multiplied_score);
 
-            if self.score_multiplier_tier_progress > self.score_multiplier_tier_goal {
+            if self.score_multiplier_tier_progress >= self.score_multiplier_tier_goal {
                 self.score_multiplier_tier_progress = 0;
 
                 let base_goal =
