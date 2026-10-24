@@ -4783,9 +4783,21 @@ impl AttackCruiserGame {
                 npc.remove_stun();
             }
 
+            if actors_to_despawn.contains(&npc.id) {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    Self::despawn_client_actor(
+                        npc,
+                        npc.ship.despawn_effect_id,
+                        &mut self.actors_by_ship_name,
+                        self.group,
+                    ),
+                ));
+                return false;
+            }
+
             let mut ai_result = npc.current_ai_behavior(now);
-            let warp_away =
-                actors_to_warp_away.contains(&npc.id) || actors_to_despawn.contains(&npc.id);
+            let warp_away = actors_to_warp_away.contains(&npc.id);
             let (is_real_target, target_pos, target_speed) =
                 match (warp_away, &ai_result.behavior.movement) {
                     (false, AttackCruiserShipAiMovement::SeekTarget) => Self::closest_target(
@@ -4847,7 +4859,7 @@ impl AttackCruiserGame {
                     &self.bvhs,
                 ));
 
-                if ai_result.behavior.despawn || actors_to_despawn.contains(&npc.id) {
+                if ai_result.behavior.despawn {
                     broadcasts.push(Broadcast::Multi(
                         self.active_players.to_vec(),
                         Self::despawn_client_actor(
@@ -5117,6 +5129,7 @@ impl AttackCruiserGame {
                     _ => true,
                 };
                 actors_to_despawn.extend(actors_to_warp_away.drain());
+                info!("actors to despawn: {:?}", actors_to_despawn);
                 broadcasts.append(&mut self.set_game_over(won, false, now));
             }
 
