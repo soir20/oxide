@@ -3365,16 +3365,14 @@ impl AttackCruiserGame {
         let (actors_to_warp_away, actors_to_despawn) =
             self.tick_wave(now, &mut broadcasts, &mut pending_npcs, &actors_by_faction);
 
-        if matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
-            self.tick_players(
-                now,
-                &mut broadcasts,
-                &hits,
-                &aoes,
-                &mut pending_npcs,
-                &actors_by_faction,
-            );
-        }
+        self.tick_players(
+            now,
+            &mut broadcasts,
+            &hits,
+            &aoes,
+            &mut pending_npcs,
+            &actors_by_faction,
+        );
         self.tick_npcs(
             now,
             tick_duration,
@@ -4517,7 +4515,7 @@ impl AttackCruiserGame {
                 self.config.playfield.center,
                 self.config.playfield.radius_x,
                 self.config.playfield.radius_z,
-            );
+            ) || matches!(self.state, AttackCruiserGameState::GameOver { .. });
 
             let mut update_clients = match (&mut player_state.bounds.phase(), in_bounds) {
                 (AttackCruiserPlayerBoundsPhase::Inside, true) => false,
@@ -4566,6 +4564,10 @@ impl AttackCruiserGame {
                     true
                 }
             };
+
+            if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
+                continue;
+            }
 
             let player_state = &mut self.player_states[player_index];
             let player_hostility = player_state.actor.hostility(&self.config.factions);
