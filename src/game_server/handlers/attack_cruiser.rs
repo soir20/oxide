@@ -4503,6 +4503,7 @@ impl AttackCruiserGame {
         pending_npcs: &mut Vec<AttackCruiserPendingActor>,
         actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
     ) {
+        let game_over = matches!(self.state, AttackCruiserGameState::GameOver { .. });
         for player_index in self.active_player_indices.clone().into_iter() {
             let player_index = player_index as usize;
             let player_state = &mut self.player_states[player_index];
@@ -4515,7 +4516,7 @@ impl AttackCruiserGame {
                 self.config.playfield.center,
                 self.config.playfield.radius_x,
                 self.config.playfield.radius_z,
-            ) || matches!(self.state, AttackCruiserGameState::GameOver { .. });
+            ) || game_over;
 
             let mut update_clients = match (&mut player_state.bounds.phase(), in_bounds) {
                 (AttackCruiserPlayerBoundsPhase::Inside, true) => false,
@@ -4565,10 +4566,6 @@ impl AttackCruiserGame {
                 }
             };
 
-            if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
-                continue;
-            }
-
             let player_state = &mut self.player_states[player_index];
             let player_hostility = player_state.actor.hostility(&self.config.factions);
             let has_enemies = player_state.actor.ship.seek_factions.iter().any(|faction| {
@@ -4599,7 +4596,7 @@ impl AttackCruiserGame {
                 player_state.remove_stun();
             }
 
-            if player_state.respawnable(now) {
+            if player_state.respawnable(now) || (game_over && player_state.dead()) {
                 player_state.respawn(
                     Duration::from_millis(
                         self.config
@@ -4645,6 +4642,10 @@ impl AttackCruiserGame {
                 ));
             } else if player_state.completed_invulnerable_powerup(now) {
                 player_state.complete_invulnerable_powerup();
+            }
+
+            if game_over {
+                continue;
             }
 
             let player_state = &mut self.player_states[player_index];
