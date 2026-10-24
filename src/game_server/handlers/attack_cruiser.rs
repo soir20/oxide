@@ -3630,6 +3630,10 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
+        if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
+            return Ok(Vec::new());
+        }
+
         let player_index = self.player_index(sender)?;
         let player_state = &mut self.player_states[player_index as usize];
 
@@ -3672,9 +3676,7 @@ impl AttackCruiserGame {
             }
         }
 
-        if matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
-            broadcasts.push(self.update_server_player_actor(player_index));
-        }
+        broadcasts.push(self.update_server_player_actor(player_index));
 
         Ok(broadcasts)
     }
@@ -4193,17 +4195,26 @@ impl AttackCruiserGame {
     fn trigger_client_quit(players: &[u32], group: MinigameMatchmakingGroup) -> Broadcast {
         Broadcast::Multi(
             players.to_vec(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateClientState {
-                    minigame_header: MinigameHeader {
-                        stage_guid: group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                        stage_group_guid: group.stage_group_guid,
+            vec![
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserUpdateClientState {
+                        minigame_header: MinigameHeader {
+                            stage_guid: group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                            stage_group_guid: group.stage_group_guid,
+                        },
+                        client_state: AttackCruiserClientState::Quit,
                     },
-                    client_state: AttackCruiserClientState::Quit,
-                },
-            })],
+                }),
+                GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: ExecuteScriptWithStringParams {
+                        script_name: "StarDestroyerHandler.quitGame".to_string(),
+                        params: vec![],
+                    },
+                }),
+            ],
         )
     }
 
