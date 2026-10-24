@@ -3824,7 +3824,7 @@ impl AttackCruiserGame {
     ) -> Vec<Vec<u8>> {
         let mut packets = self.spawn_client_actor(actor, ship_name);
 
-        packets.append(&mut self.set_actor_frozen(actor, None, false));
+        packets.append(&mut Self::set_actor_frozen(actor, None, false, self.group));
 
         packets
     }
@@ -4074,10 +4074,10 @@ impl AttackCruiserGame {
     }
 
     fn set_actor_frozen(
-        &self,
         actor: &AttackCruiserActor,
         guid_if_player: Option<u32>,
         frozen: bool,
+        group: MinigameMatchmakingGroup,
     ) -> Vec<Vec<u8>> {
         let guid = player_guid(guid_if_player.unwrap_or_default());
         vec![
@@ -4085,9 +4085,9 @@ impl AttackCruiserGame {
                 unknown1: true,
                 inner: AttackCruiserQueueCommand {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
+                        stage_guid: group.stage_guid,
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
-                        stage_group_guid: self.group.stage_group_guid,
+                        stage_group_guid: group.stage_group_guid,
                     },
                     actor_id: actor.id,
                     command: AttackCruiserCommand::Movable(AttackCruiserBoolCommand {
@@ -4100,9 +4100,9 @@ impl AttackCruiserGame {
                 unknown1: true,
                 inner: AttackCruiserQueueCommand {
                     minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
+                        stage_guid: group.stage_guid,
                         sub_op_code: AttackCruiserOpCode::QueueCommand as i32,
-                        stage_group_guid: self.group.stage_group_guid,
+                        stage_group_guid: group.stage_group_guid,
                     },
                     actor_id: actor.id,
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
@@ -4150,10 +4150,11 @@ impl AttackCruiserGame {
 
         for player_index in self.active_player_indices.iter().copied() {
             let player_state = &self.player_states[player_index as usize];
-            packets.append(&mut self.set_actor_frozen(
+            packets.append(&mut Self::set_actor_frozen(
                 &player_state.actor,
                 Some(player_state.guid),
                 false,
+                self.group,
             ));
         }
 
@@ -4611,7 +4612,12 @@ impl AttackCruiserGame {
                 let player_state = &self.player_states[player_index];
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
-                    self.set_actor_frozen(&player_state.actor, Some(player_state.guid), false),
+                    Self::set_actor_frozen(
+                        &player_state.actor,
+                        Some(player_state.guid),
+                        false,
+                        self.group,
+                    ),
                 ));
             } else if player_state.completed_invulnerable_powerup(now) {
                 player_state.complete_invulnerable_powerup();
@@ -4679,10 +4685,11 @@ impl AttackCruiserGame {
                     );
 
                     let player_state = &self.player_states[player_index];
-                    death_packets.append(&mut self.set_actor_frozen(
+                    death_packets.append(&mut Self::set_actor_frozen(
                         &player_state.actor,
                         Some(player_state.guid),
                         true,
+                        self.group,
                     ));
                     death_packets.append(&mut self.update_client_players_once_ready(
                         AttackCruiserPlayerStateType {
@@ -4860,12 +4867,20 @@ impl AttackCruiserGame {
                 }
             }
 
-            npc.seek_target(
-                target_pos,
-                target_speed,
-                tick_duration.as_secs_f32(),
-                warp_away,
-            );
+            // NPC must be frozen for the cinematic death
+            if npc.show_cinematic_death(&self.state, self.last_cinematic_death) {
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    Self::set_actor_frozen(npc, None, true, self.group),
+                ));
+            } else {
+                npc.seek_target(
+                    target_pos,
+                    target_speed,
+                    tick_duration.as_secs_f32(),
+                    warp_away,
+                );
+            }
 
             if !npc.dead() {
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
@@ -5116,7 +5131,6 @@ impl AttackCruiserGame {
                     _ => true,
                 };
                 actors_to_despawn.extend(actors_to_warp_away.drain());
-                info!("actors to despawn: {:?}", actors_to_despawn);
                 broadcasts.append(&mut self.set_game_over(won, false, now));
             }
 
