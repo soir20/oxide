@@ -4869,20 +4869,12 @@ impl AttackCruiserGame {
                 }
             }
 
-            // NPC must be frozen for the cinematic death
-            if npc.show_cinematic_death(&self.state, self.last_cinematic_death) {
-                broadcasts.push(Broadcast::Multi(
-                    self.active_players.to_vec(),
-                    Self::set_actor_frozen(npc, None, true, self.group),
-                ));
-            } else {
-                npc.seek_target(
-                    target_pos,
-                    target_speed,
-                    tick_duration.as_secs_f32(),
-                    warp_away,
-                );
-            }
+            npc.seek_target(
+                target_pos,
+                target_speed,
+                tick_duration.as_secs_f32(),
+                warp_away,
+            );
 
             if !npc.dead() {
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
