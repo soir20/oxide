@@ -3288,7 +3288,7 @@ categories:
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_speed: 200.0
                     acceleration: 25.0
-                    deceleration: 50.0
+                    deceleration: 500.0
                     max_angular_speed: !Degrees 60
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
@@ -3308,6 +3308,22 @@ categories:
                         duration_seconds: 6.0
                       - animation_type: Death2
                         animation_id: 3002
+                        duration_seconds: 6.0
+                    cinematics:
+                      - cinematic_type: Death1
+                        camera_animation_id: 10106
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10107
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10108
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10109
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10110
                         duration_seconds: 6.0
                     primary_weapon_tiers:
                       - projectiles:
@@ -3884,10 +3900,10 @@ categories:
                       - cinematic_type: Death2
                         camera_animation_id: 10312
                         duration_seconds: 6.0
-                      - cinematic_type: Warp
+                      - cinematic_type: Respawn
                         camera_animation_id: 10010
                         duration_seconds: 6.0
-                      - cinematic_type: Global
+                      - cinematic_type: GameOver
                         camera_animation_id: 10019
                         duration_seconds: 6.0
                     damage_states:

@@ -511,8 +511,8 @@ pub struct AttackCruiserActorAnimationConfig {
 pub enum AttackCruiserActorCinematicType {
     Death1 = 1,
     Death2 = 2,
-    Warp = 3,
-    Global = 4,
+    Respawn = 3,
+    GameOver = 4,
 }
 
 #[derive(SerializePacket)]
@@ -1097,9 +1097,9 @@ pub struct AttackCruiserActorState {
     pub unknown5: bool,
     pub unknown6: bool,
     pub unknown7: bool,
-    pub dead_unused: bool,
+    pub show_death1_cinematic: bool,
     pub warp_in: bool,
-    pub global_cinematic: bool,
+    pub end_game_cinematic: bool,
     pub warp_out_animation: bool,
     pub warp_end_game: bool,
     pub reset_speed_damage_state: bool,
@@ -1140,7 +1140,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 6;
         }
 
-        if self.dead_unused {
+        if self.show_death1_cinematic {
             state |= 1 << 7;
         }
 
@@ -1148,7 +1148,7 @@ impl SerializePacket for AttackCruiserActorState {
             state |= 1 << 8;
         }
 
-        if self.global_cinematic {
+        if self.end_game_cinematic {
             state |= 1 << 9;
         }
 
@@ -1218,9 +1218,9 @@ impl DeserializePacket for AttackCruiserActorState {
             unknown5,
             unknown6,
             unknown7,
-            dead_unused: unknown8,
+            show_death1_cinematic: unknown8,
             warp_in: unknown9,
-            global_cinematic: thrusters_flicker,
+            end_game_cinematic: thrusters_flicker,
             warp_out_animation: thrusters_on,
             warp_end_game: end_game_hyperdrive,
             reset_speed_damage_state: reset_damage_state,

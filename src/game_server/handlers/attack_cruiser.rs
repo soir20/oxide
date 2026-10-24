@@ -450,11 +450,21 @@ impl AttackCruiserActor {
         Duration::from_secs_f32(death_secs)
     }
 
-    pub fn has_global_cinematic_death(&self) -> bool {
+    pub fn has_cinematic_death(&self) -> bool {
         self.ship
             .cinematics
             .iter()
-            .any(|cinematic| cinematic.cinematic_type == AttackCruiserActorCinematicType::Global)
+            .any(|cinematic| cinematic.cinematic_type == AttackCruiserActorCinematicType::Death1)
+    }
+
+    pub fn show_cinematic_death(
+        &self,
+        game_state: &AttackCruiserGameState,
+        last_cinematic_death: Option<i32>,
+    ) -> bool {
+        self.dead()
+            && matches!(game_state, AttackCruiserGameState::GameOver { won: true })
+            && Some(self.id) == last_cinematic_death
     }
 
     pub fn add_primary_weapon_tiers(&mut self, tiers: i16) {
@@ -3982,8 +3992,6 @@ impl AttackCruiserGame {
                 .bounds
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
 
-        let is_game_over = matches!(self.state, AttackCruiserGameState::GameOver { .. });
-
         Broadcast::Multi(
             self.active_players.to_vec(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -4011,11 +4019,11 @@ impl AttackCruiserGame {
                             unknown5: false,
                             unknown6: false,
                             unknown7: false,
-                            dead_unused: false,
+                            show_death1_cinematic: player_state
+                                .actor
+                                .show_cinematic_death(&self.state, self.last_cinematic_death),
                             warp_in: false,
-                            global_cinematic: player_state.actor.dead()
-                                && is_game_over
-                                && Some(player_state.actor.id) == self.last_cinematic_death,
+                            end_game_cinematic: false,
                             warp_out_animation: warp_out,
                             warp_end_game: false,
                             reset_speed_damage_state: warp_out,
@@ -4033,7 +4041,7 @@ impl AttackCruiserGame {
     fn update_server_npc_actor(
         actor: &AttackCruiserActor,
         game_state: &AttackCruiserGameState,
-        last_global_cinematic_death: Option<i32>,
+        last_cinematic_death: Option<i32>,
         group: MinigameMatchmakingGroup,
     ) -> Vec<u8> {
         GamePacket::serialize(&TunneledPacket {
@@ -4061,11 +4069,10 @@ impl AttackCruiserGame {
                         unknown5: false,
                         unknown6: false,
                         unknown7: false,
-                        dead_unused: false,
+                        show_death1_cinematic: actor
+                            .show_cinematic_death(game_state, last_cinematic_death),
                         warp_in: false,
-                        global_cinematic: actor.dead()
-                            && matches!(game_state, AttackCruiserGameState::GameOver { .. })
-                            && Some(actor.id) == last_global_cinematic_death,
+                        end_game_cinematic: false,
                         warp_out_animation: false,
                         warp_end_game: false,
                         reset_speed_damage_state: false,
@@ -4122,21 +4129,6 @@ impl AttackCruiserGame {
 
     fn start_wave(&mut self, wave_index: usize, now: Instant) {
         let Some(wave_config) = self.config.waves.get(wave_index) else {
-            let won = match self.config.challenge {
-                AttackCruiserChallengeConfig::ScoreTarget { score } => {
-                    self.active_player_indices
-                        .iter()
-                        .fold(0i32, |total_score, player_index| {
-                            total_score
-                                .saturating_add(self.player_states[*player_index as usize].score)
-                        }) as u32
-                        >= score
-                }
-                _ => true,
-            };
-
-            self.state = AttackCruiserGameState::GameOver { won };
-            self.game_time.pause_or_resume(true, now);
             return;
         };
 
@@ -4179,6 +4171,46 @@ impl AttackCruiserGame {
         }
 
         vec![Broadcast::Multi(self.active_players.to_vec(), packets)]
+    }
+
+    fn trigger_client_quit(players: &[u32], group: MinigameMatchmakingGroup) -> Broadcast {
+        Broadcast::Multi(
+            players.to_vec(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateClientState {
+                    minigame_header: MinigameHeader {
+                        stage_guid: group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                        stage_group_guid: group.stage_group_guid,
+                    },
+                    client_state: AttackCruiserClientState::Quit,
+                },
+            })],
+        )
+    }
+
+    fn set_game_over(&mut self, won: bool, quit: bool, now: Instant) -> Vec<Broadcast> {
+        self.state = AttackCruiserGameState::GameOver { won };
+        self.game_time.pause_or_resume(true, now);
+        vec![Broadcast::Multi(
+            self.active_players.to_vec(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateClientState {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    client_state: match (quit, won) {
+                        (true, _) => AttackCruiserClientState::Quit,
+                        (false, true) => AttackCruiserClientState::Victory,
+                        (false, false) => AttackCruiserClientState::Defeat,
+                    },
+                },
+            })],
+        )]
     }
 
     fn actor_attack_primary<'a>(
@@ -4582,9 +4614,9 @@ impl AttackCruiserGame {
                     actor_packets,
                 ));
             } else if player_state.lost(now) {
-                broadcasts.push(self.trigger_client_end_game(
-                    AttackCruiserClientState::Defeat,
+                broadcasts.push(Self::trigger_client_quit(
                     &[self.player_states[player_index].guid],
+                    self.group,
                 ));
             } else if player_state.completed_respawn(now) {
                 player_state.complete_respawn();
@@ -4635,7 +4667,7 @@ impl AttackCruiserGame {
 
                 if player_state.dead() {
                     Self::increment_wave_kills(&mut self.state, &player_state.actor);
-                    if player_state.actor.has_global_cinematic_death() {
+                    if player_state.actor.has_cinematic_death() {
                         self.last_cinematic_death = Some(player_state.actor.id);
                     }
 
@@ -4848,7 +4880,7 @@ impl AttackCruiserGame {
 
                 if npc.dead() {
                     Self::increment_wave_kills(&mut self.state, npc);
-                    if npc.has_global_cinematic_death() {
+                    if npc.has_cinematic_death() {
                         self.last_cinematic_death = Some(npc.id);
                     }
 
@@ -4932,17 +4964,12 @@ impl AttackCruiserGame {
     ) -> (HashSet<i32>, HashSet<i32>) {
         if let AttackCruiserChallengeConfig::Timed { limit_seconds } = self.config.challenge {
             if self.game_time.elapsed(now) >= Duration::from_secs(limit_seconds.into()) {
-                self.state = AttackCruiserGameState::GameOver { won: false };
-                self.game_time.pause_or_resume(true, now);
-                broadcasts.push(self.trigger_client_end_game(
-                    AttackCruiserClientState::Defeat,
-                    &self.active_players,
-                ));
+                broadcasts.append(&mut self.set_game_over(false, true, now));
             }
         }
 
-        let mut actor_ids_to_warp_away = HashSet::new();
-        let mut actor_ids_to_despawn = HashSet::new();
+        let mut actors_to_warp_away = HashSet::new();
+        let mut actors_to_despawn = HashSet::new();
 
         let AttackCruiserGameState::WaveActive {
             wave_index,
@@ -4952,11 +4979,11 @@ impl AttackCruiserGame {
             remaining_hud_messages,
         } = &mut self.state
         else {
-            return (actor_ids_to_warp_away, actor_ids_to_despawn);
+            return (actors_to_warp_away, actors_to_despawn);
         };
 
         let Some(wave_config) = self.config.waves.get(*wave_index) else {
-            return (actor_ids_to_warp_away, actor_ids_to_despawn);
+            return (actors_to_warp_away, actors_to_despawn);
         };
 
         let enough_kills = wave_config
@@ -5059,8 +5086,8 @@ impl AttackCruiserGame {
                     );
 
                     match still_warping {
-                        true => actor_ids_to_warp_away.insert(actor.id),
-                        false => actor_ids_to_despawn.insert(actor.id),
+                        true => actors_to_warp_away.insert(actor.id),
+                        false => actors_to_despawn.insert(actor.id),
                     };
                 }
             }
@@ -5073,17 +5100,34 @@ impl AttackCruiserGame {
                 }
             }
 
+            let next_wave_index = wave_index.saturating_add(1);
+            let final_wave_complete = self.config.waves.get(next_wave_index).is_none();
+            if final_wave_complete {
+                let won = match self.config.challenge {
+                    AttackCruiserChallengeConfig::ScoreTarget { score } => {
+                        self.active_player_indices
+                            .iter()
+                            .fold(0i32, |total_score, player_index| {
+                                total_score.saturating_add(
+                                    self.player_states[*player_index as usize].score,
+                                )
+                            }) as u32
+                            >= score
+                    }
+                    _ => true,
+                };
+                actors_to_despawn.extend(actors_to_warp_away.drain());
+                broadcasts.append(&mut self.set_game_over(won, false, now));
+            }
+
             // Wave is complete and we despawned all the necessary NPCs
-            if actor_ids_to_despawn.is_empty()
-                && actor_ids_to_warp_away.is_empty()
-                && no_player_disabled
+            if actors_to_despawn.is_empty() && actors_to_warp_away.is_empty() && no_player_disabled
             {
-                let next_wave_index = wave_index.saturating_add(1);
                 self.start_wave(next_wave_index, now);
             }
         }
 
-        (actor_ids_to_warp_away, actor_ids_to_despawn)
+        (actors_to_warp_away, actors_to_despawn)
     }
 
     fn increment_wave_kills(state: &mut AttackCruiserGameState, actor: &AttackCruiserActor) {
@@ -5290,35 +5334,5 @@ impl AttackCruiserGame {
         let z = rng.gen_range(-playfield.radius_z..playfield.radius_z) + playfield.center.y;
 
         Pos3 { x, y, z }
-    }
-
-    fn trigger_client_end_game(
-        &self,
-        client_state: AttackCruiserClientState,
-        players: &[u32],
-    ) -> Broadcast {
-        Broadcast::Multi(
-            players.to_vec(),
-            vec![
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: AttackCruiserUpdateClientState {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                            stage_group_guid: self.group.stage_group_guid,
-                        },
-                        client_state,
-                    },
-                }),
-                GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: ExecuteScriptWithStringParams {
-                        script_name: "StarDestroyerHandler.quitGame".to_string(),
-                        params: vec![],
-                    },
-                }),
-            ],
-        )
     }
 }
