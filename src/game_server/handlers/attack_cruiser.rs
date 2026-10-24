@@ -3361,14 +3361,17 @@ impl AttackCruiserGame {
         );
         let (actors_to_warp_away, actors_to_despawn) =
             self.tick_wave(now, &mut broadcasts, &mut pending_npcs, &actors_by_faction);
-        self.tick_players(
-            now,
-            &mut broadcasts,
-            &hits,
-            &aoes,
-            &mut pending_npcs,
-            &actors_by_faction,
-        );
+
+        if matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
+            self.tick_players(
+                now,
+                &mut broadcasts,
+                &hits,
+                &aoes,
+                &mut pending_npcs,
+                &actors_by_faction,
+            );
+        }
         self.tick_npcs(
             now,
             tick_duration,
@@ -3666,7 +3669,9 @@ impl AttackCruiserGame {
             }
         }
 
-        broadcasts.push(self.update_server_player_actor(player_index));
+        if matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
+            broadcasts.push(self.update_server_player_actor(player_index));
+        }
 
         Ok(broadcasts)
     }
@@ -4626,9 +4631,7 @@ impl AttackCruiserGame {
             }
 
             let player_state = &mut self.player_states[player_index];
-            if !player_state.dead()
-                && matches!(self.state, AttackCruiserGameState::WaveActive { .. })
-            {
+            if !player_state.dead() {
                 let actor = &mut player_state.actor;
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
                     actor.id,
