@@ -3288,7 +3288,7 @@ categories:
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_speed: 200.0
                     acceleration: 25.0
-                    deceleration: 500.0
+                    deceleration: 50.0
                     max_angular_speed: !Degrees 60
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
