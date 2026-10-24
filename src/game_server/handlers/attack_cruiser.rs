@@ -2881,6 +2881,9 @@ impl AttackCruiserGame {
             .map(|player_state| player_state.actor.id)
             .collect::<Vec<i32>>();
 
+        let mut game_time = MinigameStopwatch::new(Some(now));
+        game_time.pause_or_resume(true, now);
+
         AttackCruiserGame {
             bvhs,
             player1,
@@ -2899,7 +2902,7 @@ impl AttackCruiserGame {
             npcs,
             actor_id_pool,
             pending_aoes: Vec::new(),
-            game_time: MinigameStopwatch::new(Some(now)),
+            game_time,
             last_cinematic_death: None,
         }
     }
@@ -3470,7 +3473,7 @@ impl AttackCruiserGame {
         });
         self.state.pause_or_resume(pause, now);
 
-        if !matches!(self.state, AttackCruiserGameState::GameOver { .. }) {
+        if matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
             self.game_time.pause_or_resume(pause, now);
         }
 
@@ -4161,6 +4164,7 @@ impl AttackCruiserGame {
 
     fn start_first_wave(&mut self, now: Instant) -> Vec<Broadcast> {
         self.start_wave(0, now);
+        self.game_time.pause_or_resume(self.paused(), now);
         let mut packets = vec![GamePacket::serialize(&TunneledPacket {
             unknown1: true,
             inner: AttackCruiserUpdateClientState {
