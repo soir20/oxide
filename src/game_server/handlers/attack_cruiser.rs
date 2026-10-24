@@ -3487,20 +3487,7 @@ impl AttackCruiserGame {
         }));
 
         let mut broadcasts = vec![Broadcast::Multi(self.active_players.to_vec(), packets)];
-        broadcasts.push(Broadcast::Single(
-            player,
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateClientState {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    client_state: AttackCruiserClientState::Quit,
-                },
-            })],
-        ));
+        broadcasts.push(Self::trigger_client_quit(&[player], self.group));
 
         self.active_players
             .retain(|active_player| *active_player != player);
