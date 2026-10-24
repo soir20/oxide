@@ -3410,8 +3410,6 @@ impl AttackCruiserGame {
                 .collect(),
         ));
 
-        broadcasts.append(&mut self.finalize_actors(pending_npcs));
-
         broadcasts.push(Broadcast::Multi(
             self.active_players.to_vec(),
             self.update_client_players_once_ready(AttackCruiserPlayerStateType {
@@ -3422,6 +3420,28 @@ impl AttackCruiserGame {
                 actor_id: false,
             }),
         ));
+
+        if let AttackCruiserGameState::GameOver { won } = &self.state {
+            broadcasts.push(Broadcast::Multi(
+                self.active_players.to_vec(),
+                vec![GamePacket::serialize(&TunneledPacket {
+                    unknown1: true,
+                    inner: AttackCruiserUpdateClientState {
+                        minigame_header: MinigameHeader {
+                            stage_guid: self.group.stage_guid,
+                            sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                            stage_group_guid: self.group.stage_group_guid,
+                        },
+                        client_state: match won {
+                            true => AttackCruiserClientState::Victory,
+                            false => AttackCruiserClientState::Defeat,
+                        },
+                    },
+                })],
+            ));
+        } else {
+            broadcasts.append(&mut self.finalize_actors(pending_npcs));
+        }
 
         broadcasts
     }
@@ -4178,27 +4198,9 @@ impl AttackCruiserGame {
         )
     }
 
-    fn set_game_over(&mut self, won: bool, quit: bool, now: Instant) -> Vec<Broadcast> {
+    fn set_game_over(&mut self, won: bool, now: Instant) {
         self.state = AttackCruiserGameState::GameOver { won };
         self.game_time.pause_or_resume(true, now);
-        vec![Broadcast::Multi(
-            self.active_players.to_vec(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateClientState {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    client_state: match (quit, won) {
-                        (true, _) => AttackCruiserClientState::Quit,
-                        (false, true) => AttackCruiserClientState::Victory,
-                        (false, false) => AttackCruiserClientState::Defeat,
-                    },
-                },
-            })],
-        )]
     }
 
     fn actor_attack_primary<'a>(
@@ -4978,7 +4980,7 @@ impl AttackCruiserGame {
     ) -> (HashSet<i32>, HashSet<i32>) {
         if let AttackCruiserChallengeConfig::Timed { limit_seconds } = self.config.challenge {
             if self.game_time.elapsed(now) >= Duration::from_secs(limit_seconds.into()) {
-                broadcasts.append(&mut self.set_game_over(false, true, now));
+                self.set_game_over(false, now);
             }
         }
 
@@ -5131,7 +5133,7 @@ impl AttackCruiserGame {
                     _ => true,
                 };
                 actors_to_despawn.extend(actors_to_warp_away.drain());
-                broadcasts.append(&mut self.set_game_over(won, false, now));
+                self.set_game_over(won, now);
             }
 
             // Wave is complete and we despawned all the necessary NPCs
