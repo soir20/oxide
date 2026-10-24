@@ -463,7 +463,10 @@ impl AttackCruiserActor {
         last_cinematic_death: Option<i32>,
     ) -> bool {
         self.dead()
-            && matches!(game_state, AttackCruiserGameState::GameOver { won: true })
+            && matches!(
+                game_state,
+                AttackCruiserGameState::GameOver { won: true, .. }
+            )
             && Some(self.id) == last_cinematic_death
     }
 
@@ -1511,13 +1514,20 @@ enum AttackCruiserGameState {
     },
     GameOver {
         won: bool,
+        exit_timer: MinigameCountdown,
     },
 }
 
 impl AttackCruiserGameState {
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
-        if let AttackCruiserGameState::WaveActive { wave_time, .. } = self {
-            wave_time.pause_or_resume(pause, now);
+        match self {
+            AttackCruiserGameState::WaitingForPlayersReady => {}
+            AttackCruiserGameState::WaveActive { wave_time, .. } => {
+                wave_time.pause_or_resume(pause, now);
+            }
+            AttackCruiserGameState::GameOver { exit_timer, .. } => {
+                exit_timer.pause_or_resume(pause, now);
+            }
         }
     }
 }
@@ -3425,7 +3435,7 @@ impl AttackCruiserGame {
             }),
         ));
 
-        if let AttackCruiserGameState::GameOver { won } = &self.state {
+        if let AttackCruiserGameState::GameOver { won, .. } = &self.state {
             broadcasts.push(Broadcast::Multi(
                 self.active_players.to_vec(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -3523,7 +3533,7 @@ impl AttackCruiserGame {
         minigame_status.total_score = player_state.score;
 
         let won = match self.state {
-            AttackCruiserGameState::GameOver { won } => won,
+            AttackCruiserGameState::GameOver { won, .. } => won,
             _ => false,
         };
         minigame_status.win_status.set_won(won);
@@ -3628,10 +3638,6 @@ impl AttackCruiserGame {
             return Ok(Vec::new());
         }
 
-        if !matches!(self.state, AttackCruiserGameState::WaveActive { .. }) {
-            return Ok(Vec::new());
-        }
-
         let player_index = self.player_index(sender)?;
         let player_state = &mut self.player_states[player_index as usize];
 
@@ -3674,7 +3680,7 @@ impl AttackCruiserGame {
             }
         }
 
-        broadcasts.push(self.update_server_player_actor(player_index));
+        broadcasts.append(&mut self.update_server_player_actor(player_index));
 
         Ok(broadcasts)
     }
@@ -4000,57 +4006,70 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_player_actor(&self, player_index: u8) -> Broadcast {
+    fn update_server_player_actor(&self, player_index: u8) -> Vec<Broadcast> {
         let player_state = &self.player_states[player_index as usize];
         let warp_out = !player_state.dead()
             && player_state
                 .bounds
                 .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
 
-        Broadcast::Multi(
-            self.active_players.to_vec(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateServerActors {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    states: vec![AttackCruiserActorUpdate {
-                        actor_id: player_state.actor.id,
-                        pos: player_state.actor.pos,
-                        yaw: player_state.actor.yaw,
-                        speed: player_state.actor.speed,
-                        angular_speed: player_state.actor.angular_speed,
-                        forward_multiplier: player_state.actor.forward_multiplier,
-                        turn_multiplier: player_state.actor.turn_multiplier,
-                        health: player_state.actor.health.into(),
-                        state: AttackCruiserActorState {
-                            unknown1: false,
-                            unknown2: false,
-                            show_invulnerablity_effect: player_state.used_invulnerable_powerup(),
-                            unknown4: false,
-                            unknown5: false,
-                            unknown6: false,
-                            unknown7: false,
-                            show_death1_cinematic: player_state
-                                .actor
-                                .show_cinematic_death(&self.state, self.last_cinematic_death),
-                            warp_in: false,
-                            end_game_cinematic: false,
-                            warp_out_animation: warp_out,
-                            warp_end_game: false,
-                            reset_speed_damage_state: warp_out,
-                            unknown14: false,
-                            show_stun_effect: player_state.stunned(),
-                            hide_ring: warp_out,
-                            show_boss_ring: false,
+        self.active_players
+            .iter()
+            .copied()
+            .map(|recipient| {
+                Broadcast::Single(
+                    recipient,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserUpdateServerActors {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                                stage_group_guid: self.group.stage_group_guid,
+                            },
+                            states: vec![AttackCruiserActorUpdate {
+                                actor_id: player_state.actor.id,
+                                pos: player_state.actor.pos,
+                                yaw: player_state.actor.yaw,
+                                speed: player_state.actor.speed,
+                                angular_speed: player_state.actor.angular_speed,
+                                forward_multiplier: player_state.actor.forward_multiplier,
+                                turn_multiplier: player_state.actor.turn_multiplier,
+                                health: player_state.actor.health.into(),
+                                state: AttackCruiserActorState {
+                                    unknown1: false,
+                                    unknown2: false,
+                                    show_invulnerablity_effect: player_state
+                                        .used_invulnerable_powerup(),
+                                    unknown4: false,
+                                    unknown5: false,
+                                    unknown6: false,
+                                    unknown7: false,
+                                    show_death1_cinematic: player_state.actor.show_cinematic_death(
+                                        &self.state,
+                                        self.last_cinematic_death,
+                                    ),
+                                    warp_in: false,
+                                    end_game_cinematic: false,
+                                    warp_out_animation: warp_out,
+                                    warp_end_game: player_state.guid == recipient
+                                        && matches!(
+                                            self.state,
+                                            AttackCruiserGameState::GameOver { .. }
+                                        )
+                                        && self.last_cinematic_death.is_none(),
+                                    reset_speed_damage_state: warp_out,
+                                    unknown14: false,
+                                    show_stun_effect: player_state.stunned(),
+                                    hide_ring: warp_out,
+                                    show_boss_ring: false,
+                                },
+                            }],
                         },
-                    }],
-                },
-            })],
-        )
+                    })],
+                )
+            })
+            .collect()
     }
 
     fn update_server_npc_actor(
@@ -4217,7 +4236,10 @@ impl AttackCruiserGame {
     }
 
     fn set_game_over(&mut self, won: bool, now: Instant) {
-        self.state = AttackCruiserGameState::GameOver { won };
+        self.state = AttackCruiserGameState::GameOver {
+            won,
+            exit_timer: MinigameCountdown::new(),
+        };
         self.game_time.pause_or_resume(true, now);
     }
 
@@ -4644,12 +4666,8 @@ impl AttackCruiserGame {
                 player_state.complete_invulnerable_powerup();
             }
 
-            if game_over {
-                continue;
-            }
-
             let player_state = &mut self.player_states[player_index];
-            if !player_state.dead() {
+            if !player_state.dead() && !game_over {
                 let actor = &mut player_state.actor;
                 let (total_deltas, most_damaged_by_player_index) = Self::total_actor_deltas(
                     actor.id,
@@ -4770,7 +4788,7 @@ impl AttackCruiserGame {
             }
 
             if update_clients {
-                broadcasts.push(self.update_server_player_actor(player_index as u8));
+                broadcasts.append(&mut self.update_server_player_actor(player_index as u8));
             }
         }
     }
@@ -4968,6 +4986,9 @@ impl AttackCruiserGame {
             ));
 
             if npc.completed_death(now) {
+                if Some(npc.id) == self.last_cinematic_death {
+                    self.last_cinematic_death = None;
+                }
                 broadcasts.push(Broadcast::Multi(
                     self.active_players.to_vec(),
                     Self::despawn_client_actor(
