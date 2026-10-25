@@ -3177,6 +3177,7 @@ categories:
                     hostility: Friendly
                   player_powerup:
                     hostility: Friendly
+                game_over_warp_delay_millis: 500
                 health_bar:
                   foreground_image_id: 163
                   background_image_id: 164
