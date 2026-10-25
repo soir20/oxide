@@ -354,7 +354,6 @@ pub struct BaseNpcConfig {
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
-
 pub struct NpcAttachmentConfig {
 	pub model_name: String,
 	#[serde(default)]
@@ -367,7 +366,6 @@ pub struct NpcAttachmentConfig {
 	pub composite_effect: u32,
 	pub slot: EquipmentSlot,
 }
-
 impl From<&NpcAttachmentConfig> for Attachment {
 	fn from(c: &NpcAttachmentConfig) ->Self{
 		Attachment {
