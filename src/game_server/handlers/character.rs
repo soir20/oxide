@@ -348,8 +348,38 @@ pub struct BaseNpcConfig {
     pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
     pub navmesh: Option<String>,
+	pub wield_type: Option<WieldType>,
+	#[serde(default)]
+	pub attachments: Vec<NpcAttachmentConfig>,
+}
+#[derive(Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+
+pub struct NpcAttachmentConfig {
+	pub model_name: String,
+	#[serde(default)]
+	pub texture_alias: String,
+	#[serde(default)]
+	pub tint_alias: String,
+	#[serde(default)]
+	pub tint: u32,
+	#[serde(default)]
+	pub composite_effect: u32,
+	pub slot: EquipmentSlot,
 }
 
+impl From<&NpcAttachmentConfig> for Attachment {
+	fn from(c: &NpcAttachmentConfig) ->Self{
+		Attachment {
+			model_name: c.model_name.clone(),
+			texture_alias: c.texture_alias.clone(),
+			tint_alias: c.tint_alias.clone(),
+			tint: c.tint,
+			composite_effect: c.composite_effect,
+			slot: c.slot,
+		}
+	}
+}
 #[derive(Clone)]
 pub struct BaseNpc {
     pub texture_alias: String,
@@ -2420,7 +2450,7 @@ impl BaseNpcTemplate {
             force_despawn: config.force_despawn,
             physics: config.physics,
             mount_id: None,
-            wield_type: WieldType::None,
+            wield_type: config.wield_type.unwrap_or(WieldType::None),
             max_distance_from_target: config.max_distance_from_target,
             max_distance_from_origin: config.max_distance_from_origin,
             auto_target_radius: config.auto_target_radius,
@@ -2443,7 +2473,7 @@ impl BaseNpcTemplate {
             enable_tilt: config.enable_tilt,
             use_terrain_model: config.use_terrain_model,
             head_customization_override: config.head_customization_override.clone(),
-            attachments: Vec::new(),
+            attachments: config.attachments.iter().map(Attachment::from).collect(),
             composite_effect_id: config.composite_effect_id,
             clickable: config.clickable,
             enable_camera_clipping: config.enable_camera_clipping,
