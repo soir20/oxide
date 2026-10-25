@@ -432,22 +432,11 @@ impl AttackCruiserActor {
             if self.dead() {
                 self.invulnerability.set_phase(
                     AttackCruiserActorInvulnerabilityPhase::Dead,
-                    self.min_death_time(),
+                    self.ship.max_death_time(),
                     now,
                 );
             }
         }
-    }
-
-    pub fn min_death_time(&self) -> Duration {
-        let death_secs: f32 = self
-            .ship
-            .animations
-            .iter()
-            .filter(|animation| animation.animation_type.is_death())
-            .map(|animation| animation.duration_seconds)
-            .fold(0.0, |a, b| a.max(b));
-        Duration::from_secs_f32(death_secs)
     }
 
     pub fn has_cinematic_death(&self) -> bool {
@@ -1503,6 +1492,27 @@ impl AttackCruiserPlayer {
 }
 
 #[derive(Clone, Debug)]
+enum AttackCruiserGameOverState {
+    CinematicDeath,
+    WaitingToWarp { countdown: MinigameCountdown },
+    Warping { countdown: MinigameCountdown },
+}
+
+impl AttackCruiserGameOverState {
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        match self {
+            AttackCruiserGameOverState::CinematicDeath => {}
+            AttackCruiserGameOverState::WaitingToWarp { countdown } => {
+                countdown.pause_or_resume(pause, now)
+            }
+            AttackCruiserGameOverState::Warping { countdown } => {
+                countdown.pause_or_resume(pause, now)
+            }
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 enum AttackCruiserGameState {
     WaitingForPlayersReady,
     WaveActive {
@@ -1514,7 +1524,7 @@ enum AttackCruiserGameState {
     },
     GameOver {
         won: bool,
-        exit_timer: MinigameCountdown,
+        state: AttackCruiserGameOverState,
     },
 }
 
@@ -1525,8 +1535,8 @@ impl AttackCruiserGameState {
             AttackCruiserGameState::WaveActive { wave_time, .. } => {
                 wave_time.pause_or_resume(pause, now);
             }
-            AttackCruiserGameState::GameOver { exit_timer, .. } => {
-                exit_timer.pause_or_resume(pause, now);
+            AttackCruiserGameState::GameOver { state, .. } => {
+                state.pause_or_resume(pause, now);
             }
         }
     }
@@ -2110,6 +2120,28 @@ impl AttackCruiserShipConfig {
             .reduce(gcd_u16)
             .unwrap_or_default()
     }
+
+    pub fn max_death_time(&self) -> Duration {
+        let death_secs: f32 = self
+            .animations
+            .iter()
+            .filter(|animation| animation.animation_type.is_death())
+            .map(|animation| animation.duration_seconds)
+            .fold(0.0, |a, b| a.max(b));
+        Duration::from_secs_f32(death_secs)
+    }
+
+    pub fn max_warp_out_time(&self) -> Duration {
+        let death_secs: f32 = self
+            .animations
+            .iter()
+            .filter(|animation| {
+                animation.animation_type == AttackCruiserActorAnimationType::WarpOut
+            })
+            .map(|animation| animation.duration_seconds)
+            .fold(0.0, |a, b| a.max(b));
+        Duration::from_secs_f32(death_secs)
+    }
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -2219,6 +2251,7 @@ pub struct AttackCruiserConfig {
     #[serde(default)]
     challenge: AttackCruiserChallengeConfig,
     factions: HashMap<String, AttackCruiserFactionConfig>,
+    game_over_warp_delay_millis: u32,
     health_bar: AttackCruiserHealthBarConfig,
     intro: AttackCruiserIntroConfig,
     max_weapon_cooldown_error_millis: u16,
@@ -3395,6 +3428,40 @@ impl AttackCruiserGame {
             actors_to_despawn,
         );
 
+        if self.last_cinematic_death.is_none() {
+            if let AttackCruiserGameState::GameOver { state, .. } = &mut self.state {
+                match state {
+                    AttackCruiserGameOverState::CinematicDeath => {
+                        *state = AttackCruiserGameOverState::WaitingToWarp {
+                            countdown: MinigameCountdown::new_with_event(
+                                Duration::from_millis(
+                                    self.config.game_over_warp_delay_millis.into(),
+                                ),
+                                now,
+                            ),
+                        }
+                    }
+                    AttackCruiserGameOverState::WaitingToWarp { countdown } => {
+                        if countdown.time_until_next_event(now).is_zero() {
+                            let player_ship = self.config.ship(&self.config.player.ship);
+                            *state = AttackCruiserGameOverState::Warping {
+                                countdown: MinigameCountdown::new_with_event(
+                                    player_ship.max_warp_out_time(),
+                                    now,
+                                ),
+                            }
+                        }
+                    }
+                    AttackCruiserGameOverState::Warping { countdown } => {
+                        if countdown.time_until_next_event(now).is_zero() {
+                            broadcasts
+                                .push(Self::trigger_client_quit(&self.active_players, self.group));
+                        }
+                    }
+                }
+            }
+        }
+
         broadcasts.append(&mut self.update_server_actors());
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
@@ -4010,9 +4077,21 @@ impl AttackCruiserGame {
         self.active_players
             .iter()
             .map(|recipient| {
-                let show_end_cinematic =
-                    matches!(self.state, AttackCruiserGameState::GameOver { .. })
-                        && self.last_cinematic_death.is_none();
+                let show_end_cinematic = matches!(
+                    self.state,
+                    AttackCruiserGameState::GameOver {
+                        state: AttackCruiserGameOverState::WaitingToWarp { .. }
+                            | AttackCruiserGameOverState::Warping { .. },
+                        ..
+                    }
+                );
+                let end_game_warp_out = matches!(
+                    self.state,
+                    AttackCruiserGameState::GameOver {
+                        state: AttackCruiserGameOverState::Warping { .. },
+                        ..
+                    }
+                );
                 Broadcast::Single(
                     *recipient,
                     vec![GamePacket::serialize(&TunneledPacket {
@@ -4061,7 +4140,7 @@ impl AttackCruiserGame {
                                             warp_in: false,
                                             end_game_cinematic: show_end_cinematic
                                                 && player_state.guid != *recipient,
-                                            warp_out_animation: warp_out || show_end_cinematic,
+                                            warp_out_animation: warp_out || end_game_warp_out,
                                             warp_end_game: false,
                                             reset_speed_damage_state: warp_out,
                                             unknown14: false,
@@ -4230,7 +4309,7 @@ impl AttackCruiserGame {
     fn set_game_over(&mut self, won: bool, now: Instant) {
         self.state = AttackCruiserGameState::GameOver {
             won,
-            exit_timer: MinigameCountdown::new(),
+            state: AttackCruiserGameOverState::CinematicDeath,
         };
         self.game_time.pause_or_resume(true, now);
     }
@@ -4773,8 +4852,6 @@ impl AttackCruiserGame {
                 );
             }
         }
-
-        broadcasts.append(&mut self.update_server_actors());
     }
 
     fn tick_npcs(

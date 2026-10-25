@@ -476,7 +476,9 @@ pub struct AttackCruiserEventConfig {
     pub event_actors: AttackCruiserVec<AttackCruiserEventActorConfig>,
 }
 
-#[derive(Clone, Copy, Debug, Deserialize, SerializePacket, TryFromPrimitive, IntoPrimitive)]
+#[derive(
+    Clone, Copy, Debug, Deserialize, PartialEq, Eq, SerializePacket, TryFromPrimitive, IntoPrimitive,
+)]
 #[serde(deny_unknown_fields)]
 #[repr(i32)]
 pub enum AttackCruiserActorAnimationType {
