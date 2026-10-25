@@ -3488,8 +3488,14 @@ impl AttackCruiserGame {
                 ),
                 AttackCruiserGameOverState::Warping {
                     client_state_updated,
-                    ..
-                } => (client_state_updated, AttackCruiserClientState::Quit),
+                    countdown,
+                } => (
+                    client_state_updated,
+                    match countdown.time_until_next_event(now).is_zero() {
+                        true => AttackCruiserClientState::Quit,
+                        false => AttackCruiserClientState::EndGameWarpAway,
+                    },
+                ),
             };
 
             if !*client_state_updated {
