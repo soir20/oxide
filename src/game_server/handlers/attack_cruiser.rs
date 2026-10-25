@@ -3395,6 +3395,8 @@ impl AttackCruiserGame {
             actors_to_despawn,
         );
 
+        broadcasts.append(&mut self.update_server_actors());
+
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
             .into_values()
             .flat_map(|hits| hits.into_iter())
@@ -3679,8 +3681,6 @@ impl AttackCruiserGame {
                 }
             }
         }
-
-        broadcasts.append(&mut self.update_server_player_actor(player_index));
 
         Ok(broadcasts)
     }
@@ -4006,28 +4006,29 @@ impl AttackCruiserGame {
         })]
     }
 
-    fn update_server_player_actor(&self, player_index: u8) -> Vec<Broadcast> {
-        let player_state = &self.player_states[player_index as usize];
-        let warp_out = !player_state.dead()
-            && player_state
-                .bounds
-                .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
+    fn update_server_actors(&self) -> Vec<Broadcast> {
+        vec![Broadcast::Multi(
+            self.active_players.to_vec(),
+            vec![GamePacket::serialize(&TunneledPacket {
+                unknown1: true,
+                inner: AttackCruiserUpdateServerActors {
+                    minigame_header: MinigameHeader {
+                        stage_guid: self.group.stage_guid,
+                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                        stage_group_guid: self.group.stage_group_guid,
+                    },
+                    states: self
+                        .active_player_indices
+                        .iter()
+                        .copied()
+                        .map(|player_index| {
+                            let player_state = &self.player_states[player_index as usize];
+                            let warp_out = !player_state.dead()
+                                && player_state
+                                    .bounds
+                                    .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
 
-        self.active_players
-            .iter()
-            .copied()
-            .map(|recipient| {
-                Broadcast::Single(
-                    recipient,
-                    vec![GamePacket::serialize(&TunneledPacket {
-                        unknown1: true,
-                        inner: AttackCruiserUpdateServerActors {
-                            minigame_header: MinigameHeader {
-                                stage_guid: self.group.stage_guid,
-                                sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
-                                stage_group_guid: self.group.stage_group_guid,
-                            },
-                            states: vec![AttackCruiserActorUpdate {
+                            AttackCruiserActorUpdate {
                                 actor_id: player_state.actor.id,
                                 pos: player_state.actor.pos,
                                 yaw: player_state.actor.yaw,
@@ -4052,72 +4053,52 @@ impl AttackCruiserGame {
                                     warp_in: false,
                                     end_game_cinematic: false,
                                     warp_out_animation: warp_out,
-                                    warp_end_game: player_state.guid == recipient
-                                        && matches!(
-                                            self.state,
-                                            AttackCruiserGameState::GameOver { .. }
-                                        )
-                                        && self.last_cinematic_death.is_none(),
+                                    warp_end_game: false,
                                     reset_speed_damage_state: warp_out,
                                     unknown14: false,
                                     show_stun_effect: player_state.stunned(),
                                     hide_ring: warp_out,
                                     show_boss_ring: false,
                                 },
-                            }],
-                        },
-                    })],
-                )
-            })
-            .collect()
-    }
-
-    fn update_server_npc_actor(
-        actor: &AttackCruiserActor,
-        game_state: &AttackCruiserGameState,
-        last_cinematic_death: Option<i32>,
-        group: MinigameMatchmakingGroup,
-    ) -> Vec<u8> {
-        GamePacket::serialize(&TunneledPacket {
-            unknown1: true,
-            inner: AttackCruiserUpdateServerActors {
-                minigame_header: MinigameHeader {
-                    stage_guid: group.stage_guid,
-                    sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
-                    stage_group_guid: group.stage_group_guid,
+                            }
+                        })
+                        .chain(self.npcs.values().map(|actor| AttackCruiserActorUpdate {
+                            actor_id: actor.id,
+                            pos: actor.pos,
+                            yaw: actor.yaw,
+                            speed: actor.speed,
+                            angular_speed: actor.angular_speed,
+                            forward_multiplier: actor.forward_multiplier,
+                            turn_multiplier: actor.turn_multiplier,
+                            health: actor.health.into(),
+                            state: AttackCruiserActorState {
+                                unknown1: false,
+                                unknown2: false,
+                                show_invulnerablity_effect: actor.used_invulnerable_powerup(),
+                                unknown4: false,
+                                unknown5: false,
+                                unknown6: false,
+                                unknown7: false,
+                                show_death1_cinematic:
+                                    actor.show_cinematic_death(
+                                        &self.state,
+                                        self.last_cinematic_death,
+                                    ),
+                                warp_in: false,
+                                end_game_cinematic: false,
+                                warp_out_animation: false,
+                                warp_end_game: false,
+                                reset_speed_damage_state: false,
+                                unknown14: false,
+                                show_stun_effect: actor.stunned(),
+                                hide_ring: false,
+                                show_boss_ring: false,
+                            },
+                        }))
+                        .collect(),
                 },
-                states: vec![AttackCruiserActorUpdate {
-                    actor_id: actor.id,
-                    pos: actor.pos,
-                    yaw: actor.yaw,
-                    speed: actor.speed,
-                    angular_speed: actor.angular_speed,
-                    forward_multiplier: actor.forward_multiplier,
-                    turn_multiplier: actor.turn_multiplier,
-                    health: actor.health.into(),
-                    state: AttackCruiserActorState {
-                        unknown1: false,
-                        unknown2: false,
-                        show_invulnerablity_effect: actor.used_invulnerable_powerup(),
-                        unknown4: false,
-                        unknown5: false,
-                        unknown6: false,
-                        unknown7: false,
-                        show_death1_cinematic: actor
-                            .show_cinematic_death(game_state, last_cinematic_death),
-                        warp_in: false,
-                        end_game_cinematic: false,
-                        warp_out_animation: false,
-                        warp_end_game: false,
-                        reset_speed_damage_state: false,
-                        unknown14: false,
-                        show_stun_effect: actor.stunned(),
-                        hide_ring: false,
-                        show_boss_ring: false,
-                    },
-                }],
-            },
-        })
+            })],
+        )]
     }
 
     fn set_actor_frozen(
@@ -4540,8 +4521,8 @@ impl AttackCruiserGame {
                 self.config.playfield.radius_z,
             ) || game_over;
 
-            let mut update_clients = match (&mut player_state.bounds.phase(), in_bounds) {
-                (AttackCruiserPlayerBoundsPhase::Inside, true) => false,
+            match (&mut player_state.bounds.phase(), in_bounds) {
+                (AttackCruiserPlayerBoundsPhase::Inside, true) => {}
                 (AttackCruiserPlayerBoundsPhase::Inside, false) => {
                     self.player_states[player_index].bounds.set_phase(
                         AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp,
@@ -4550,7 +4531,6 @@ impl AttackCruiserGame {
                         ),
                         now,
                     );
-                    true
                 }
                 (AttackCruiserPlayerBoundsPhase::Outside, _) => {
                     if self.player_states[player_index]
@@ -4565,11 +4545,9 @@ impl AttackCruiserGame {
                             now,
                         );
                     }
-                    true
                 }
                 (AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp, true) => {
                     self.player_states[player_index].bounds.set_in_bounds();
-                    true
                 }
                 (AttackCruiserPlayerBoundsPhase::OutsideWaitingToWarp, false) => {
                     if self.player_states[player_index]
@@ -4584,7 +4562,6 @@ impl AttackCruiserGame {
                             now,
                         );
                     }
-                    true
                 }
             };
 
@@ -4755,8 +4732,6 @@ impl AttackCruiserGame {
                         &self.config,
                         &self.bvhs,
                     ));
-
-                    update_clients = true;
                 }
             }
 
@@ -4786,11 +4761,9 @@ impl AttackCruiserGame {
                     now,
                 );
             }
-
-            if update_clients {
-                broadcasts.append(&mut self.update_server_player_actor(player_index as u8));
-            }
         }
+
+        broadcasts.append(&mut self.update_server_actors());
     }
 
     fn tick_npcs(
@@ -4974,16 +4947,6 @@ impl AttackCruiserGame {
                     Err(err) => debug!("Attack Cruiser NPC was unable to attack: {}", err),
                 }
             }
-
-            broadcasts.push(Broadcast::Multi(
-                self.active_players.to_vec(),
-                vec![Self::update_server_npc_actor(
-                    npc,
-                    &self.state,
-                    self.last_cinematic_death,
-                    self.group,
-                )],
-            ));
 
             if npc.completed_death(now) {
                 if Some(npc.id) == self.last_cinematic_death {
