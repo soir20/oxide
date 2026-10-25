@@ -1493,19 +1493,27 @@ impl AttackCruiserPlayer {
 
 #[derive(Clone, Debug)]
 enum AttackCruiserGameOverState {
-    CinematicDeath,
-    WaitingToWarp { countdown: MinigameCountdown },
-    Warping { countdown: MinigameCountdown },
+    CinematicDeath {
+        client_state_updated: bool,
+    },
+    WaitingToWarp {
+        client_state_updated: bool,
+        countdown: MinigameCountdown,
+    },
+    Warping {
+        client_state_updated: bool,
+        countdown: MinigameCountdown,
+    },
 }
 
 impl AttackCruiserGameOverState {
     pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
         match self {
-            AttackCruiserGameOverState::CinematicDeath => {}
-            AttackCruiserGameOverState::WaitingToWarp { countdown } => {
+            AttackCruiserGameOverState::CinematicDeath { .. } => {}
+            AttackCruiserGameOverState::WaitingToWarp { countdown, .. } => {
                 countdown.pause_or_resume(pause, now)
             }
-            AttackCruiserGameOverState::Warping { countdown } => {
+            AttackCruiserGameOverState::Warping { countdown, .. } => {
                 countdown.pause_or_resume(pause, now)
             }
         }
@@ -3431,8 +3439,9 @@ impl AttackCruiserGame {
         if self.last_cinematic_death.is_none() {
             if let AttackCruiserGameState::GameOver { state, .. } = &mut self.state {
                 match state {
-                    AttackCruiserGameOverState::CinematicDeath => {
+                    AttackCruiserGameOverState::CinematicDeath { .. } => {
                         *state = AttackCruiserGameOverState::WaitingToWarp {
+                            client_state_updated: false,
                             countdown: MinigameCountdown::new_with_event(
                                 Duration::from_millis(
                                     self.config.game_over_warp_delay_millis.into(),
@@ -3441,10 +3450,11 @@ impl AttackCruiserGame {
                             ),
                         }
                     }
-                    AttackCruiserGameOverState::WaitingToWarp { countdown } => {
+                    AttackCruiserGameOverState::WaitingToWarp { countdown, .. } => {
                         if countdown.time_until_next_event(now).is_zero() {
                             let player_ship = self.config.ship(&self.config.player.ship);
                             *state = AttackCruiserGameOverState::Warping {
+                                client_state_updated: false,
                                 countdown: MinigameCountdown::new_with_event(
                                     player_ship.max_warp_out_time(),
                                     now,
@@ -3452,7 +3462,7 @@ impl AttackCruiserGame {
                             }
                         }
                     }
-                    AttackCruiserGameOverState::Warping { countdown } => {
+                    AttackCruiserGameOverState::Warping { countdown, .. } => {
                         if countdown.time_until_next_event(now).is_zero() {
                             broadcasts
                                 .push(Self::trigger_client_quit(&self.active_players, self.group));
@@ -3463,6 +3473,44 @@ impl AttackCruiserGame {
         }
 
         broadcasts.append(&mut self.update_server_actors());
+
+        if let AttackCruiserGameState::GameOver { state, .. } = &mut self.state {
+            let (client_state_updated, client_state) = match state {
+                AttackCruiserGameOverState::CinematicDeath {
+                    client_state_updated,
+                } => (client_state_updated, AttackCruiserClientState::VictoryMusic),
+                AttackCruiserGameOverState::WaitingToWarp {
+                    client_state_updated,
+                    ..
+                } => (
+                    client_state_updated,
+                    AttackCruiserClientState::EndGameWarpAway,
+                ),
+                AttackCruiserGameOverState::Warping {
+                    client_state_updated,
+                    ..
+                } => (client_state_updated, AttackCruiserClientState::Quit),
+            };
+
+            if !*client_state_updated {
+                *client_state_updated = true;
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserUpdateClientState {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
+                                stage_group_guid: self.group.stage_group_guid,
+                            },
+                            client_state,
+                        },
+                    })],
+                ));
+            }
+            pending_npcs.clear();
+        }
 
         let unique_hits: HashMap<i32, AttackCruiserProjectileInstance> = hits
             .into_values()
@@ -3504,27 +3552,7 @@ impl AttackCruiserGame {
             }),
         ));
 
-        if let AttackCruiserGameState::GameOver { won, .. } = &self.state {
-            broadcasts.push(Broadcast::Multi(
-                self.active_players.to_vec(),
-                vec![GamePacket::serialize(&TunneledPacket {
-                    unknown1: true,
-                    inner: AttackCruiserUpdateClientState {
-                        minigame_header: MinigameHeader {
-                            stage_guid: self.group.stage_guid,
-                            sub_op_code: AttackCruiserOpCode::UpdateClientState as i32,
-                            stage_group_guid: self.group.stage_group_guid,
-                        },
-                        client_state: match won {
-                            true => AttackCruiserClientState::Victory,
-                            false => AttackCruiserClientState::Defeat,
-                        },
-                    },
-                })],
-            ));
-        } else {
-            broadcasts.append(&mut self.finalize_actors(pending_npcs));
-        }
+        broadcasts.append(&mut self.finalize_actors(pending_npcs));
 
         broadcasts
     }
@@ -4309,7 +4337,9 @@ impl AttackCruiserGame {
     fn set_game_over(&mut self, won: bool, now: Instant) {
         self.state = AttackCruiserGameState::GameOver {
             won,
-            state: AttackCruiserGameOverState::CinematicDeath,
+            state: AttackCruiserGameOverState::CinematicDeath {
+                client_state_updated: false,
+            },
         };
         self.game_time.pause_or_resume(true, now);
     }

@@ -842,8 +842,8 @@ impl GamePacket for AttackCruiserClientConfig {
 pub enum AttackCruiserClientState {
     Intro = 3,
     WaveActive = 4,
-    Victory = 6,
-    Defeat = 7,
+    VictoryMusic = 6,
+    EndGameWarpAway = 7,
     Quit = 8,
 }
 
@@ -1090,7 +1090,7 @@ impl GamePacket for AttackCruiserUpdatePlayers {
     const HEADER: Self::Header = MinigameOpCode::AttackCruiser;
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct AttackCruiserActorState {
     pub unknown1: bool,
     pub unknown2: bool,
