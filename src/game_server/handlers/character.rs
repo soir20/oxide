@@ -348,35 +348,35 @@ pub struct BaseNpcConfig {
     pub triggered_npc_keys_on_interact: Vec<String>,
     pub notification_icon: Option<u32>,
     pub navmesh: Option<String>,
-	pub wield_type: Option<WieldType>,
-	#[serde(default)]
-	pub attachments: Vec<NpcAttachmentConfig>,
+    pub wield_type: Option<WieldType>,
+    #[serde(default)]
+    pub attachments: Vec<NpcAttachmentConfig>,
 }
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct NpcAttachmentConfig {
-	pub model_name: String,
-	#[serde(default)]
-	pub texture_alias: String,
-	#[serde(default)]
-	pub tint_alias: String,
-	#[serde(default)]
-	pub tint: u32,
-	#[serde(default)]
-	pub composite_effect: u32,
-	pub slot: EquipmentSlot,
+    pub model_name: String,
+    #[serde(default)]
+    pub texture_alias: String,
+    #[serde(default)]
+    pub tint_alias: String,
+    #[serde(default)]
+    pub tint: u32,
+    #[serde(default)]
+    pub composite_effect: u32,
+    pub slot: EquipmentSlot,
 }
 impl From<&NpcAttachmentConfig> for Attachment {
-	fn from(c: &NpcAttachmentConfig) ->Self{
-		Attachment {
-			model_name: c.model_name.clone(),
-			texture_alias: c.texture_alias.clone(),
-			tint_alias: c.tint_alias.clone(),
-			tint: c.tint,
-			composite_effect: c.composite_effect,
-			slot: c.slot,
-		}
-	}
+    fn from(c: &NpcAttachmentConfig) -> Self {
+        Attachment {
+            model_name: c.model_name.clone(),
+            texture_alias: c.texture_alias.clone(),
+            tint_alias: c.tint_alias.clone(),
+            tint: c.tint,
+            composite_effect: c.composite_effect,
+            slot: c.slot,
+        }
+    }
 }
 #[derive(Clone)]
 pub struct BaseNpc {
