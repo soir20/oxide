@@ -4007,98 +4007,110 @@ impl AttackCruiserGame {
     }
 
     fn update_server_actors(&self) -> Vec<Broadcast> {
-        vec![Broadcast::Multi(
-            self.active_players.to_vec(),
-            vec![GamePacket::serialize(&TunneledPacket {
-                unknown1: true,
-                inner: AttackCruiserUpdateServerActors {
-                    minigame_header: MinigameHeader {
-                        stage_guid: self.group.stage_guid,
-                        sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
-                        stage_group_guid: self.group.stage_group_guid,
-                    },
-                    states: self
-                        .active_player_indices
-                        .iter()
-                        .copied()
-                        .map(|player_index| {
-                            let player_state = &self.player_states[player_index as usize];
-                            let warp_out = !player_state.dead()
-                                && player_state
-                                    .bounds
-                                    .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
-
-                            AttackCruiserActorUpdate {
-                                actor_id: player_state.actor.id,
-                                pos: player_state.actor.pos,
-                                yaw: player_state.actor.yaw,
-                                speed: player_state.actor.speed,
-                                angular_speed: player_state.actor.angular_speed,
-                                forward_multiplier: player_state.actor.forward_multiplier,
-                                turn_multiplier: player_state.actor.turn_multiplier,
-                                health: player_state.actor.health.into(),
-                                state: AttackCruiserActorState {
-                                    unknown1: false,
-                                    unknown2: false,
-                                    show_invulnerablity_effect: player_state
-                                        .used_invulnerable_powerup(),
-                                    unknown4: false,
-                                    unknown5: false,
-                                    unknown6: false,
-                                    unknown7: false,
-                                    show_death1_cinematic: player_state.actor.show_cinematic_death(
-                                        &self.state,
-                                        self.last_cinematic_death,
-                                    ),
-                                    warp_in: false,
-                                    end_game_cinematic: false,
-                                    warp_out_animation: warp_out,
-                                    warp_end_game: false,
-                                    reset_speed_damage_state: warp_out,
-                                    unknown14: false,
-                                    show_stun_effect: player_state.stunned(),
-                                    hide_ring: warp_out,
-                                    show_boss_ring: false,
-                                },
-                            }
-                        })
-                        .chain(self.npcs.values().map(|actor| AttackCruiserActorUpdate {
-                            actor_id: actor.id,
-                            pos: actor.pos,
-                            yaw: actor.yaw,
-                            speed: actor.speed,
-                            angular_speed: actor.angular_speed,
-                            forward_multiplier: actor.forward_multiplier,
-                            turn_multiplier: actor.turn_multiplier,
-                            health: actor.health.into(),
-                            state: AttackCruiserActorState {
-                                unknown1: false,
-                                unknown2: false,
-                                show_invulnerablity_effect: actor.used_invulnerable_powerup(),
-                                unknown4: false,
-                                unknown5: false,
-                                unknown6: false,
-                                unknown7: false,
-                                show_death1_cinematic:
-                                    actor.show_cinematic_death(
-                                        &self.state,
-                                        self.last_cinematic_death,
-                                    ),
-                                warp_in: false,
-                                end_game_cinematic: false,
-                                warp_out_animation: false,
-                                warp_end_game: false,
-                                reset_speed_damage_state: false,
-                                unknown14: false,
-                                show_stun_effect: actor.stunned(),
-                                hide_ring: false,
-                                show_boss_ring: false,
+        self.active_players
+            .iter()
+            .enumerate()
+            .map(|(player_index, recipient)| {
+                let show_end_cinematic =
+                    matches!(self.state, AttackCruiserGameState::GameOver { .. })
+                        && self.last_cinematic_death.is_none();
+                Broadcast::Single(
+                    *recipient,
+                    vec![GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: AttackCruiserUpdateServerActors {
+                            minigame_header: MinigameHeader {
+                                stage_guid: self.group.stage_guid,
+                                sub_op_code: AttackCruiserOpCode::UpdateActors as i32,
+                                stage_group_guid: self.group.stage_group_guid,
                             },
-                        }))
-                        .collect(),
-                },
-            })],
-        )]
+                            states: self
+                                .active_player_indices
+                                .iter()
+                                .copied()
+                                .map(|player_index| {
+                                    let player_state = &self.player_states[player_index as usize];
+                                    let warp_out = !player_state.dead()
+                                        && player_state
+                                            .bounds
+                                            .has_phase(AttackCruiserPlayerBoundsPhase::Outside);
+
+                                    AttackCruiserActorUpdate {
+                                        actor_id: player_state.actor.id,
+                                        pos: player_state.actor.pos,
+                                        yaw: player_state.actor.yaw,
+                                        speed: player_state.actor.speed,
+                                        angular_speed: player_state.actor.angular_speed,
+                                        forward_multiplier: player_state.actor.forward_multiplier,
+                                        turn_multiplier: player_state.actor.turn_multiplier,
+                                        health: player_state.actor.health.into(),
+                                        state: AttackCruiserActorState {
+                                            unknown1: false,
+                                            unknown2: false,
+                                            show_invulnerablity_effect: player_state
+                                                .used_invulnerable_powerup(),
+                                            unknown4: false,
+                                            unknown5: false,
+                                            unknown6: false,
+                                            unknown7: false,
+                                            show_death1_cinematic: player_state
+                                                .actor
+                                                .show_cinematic_death(
+                                                    &self.state,
+                                                    self.last_cinematic_death,
+                                                ),
+                                            warp_in: false,
+                                            end_game_cinematic: show_end_cinematic
+                                                && player_state.guid != *recipient,
+                                            warp_out_animation: warp_out || show_end_cinematic,
+                                            warp_end_game: false,
+                                            reset_speed_damage_state: warp_out,
+                                            unknown14: false,
+                                            show_stun_effect: player_state.stunned(),
+                                            hide_ring: warp_out,
+                                            show_boss_ring: false,
+                                        },
+                                    }
+                                })
+                                .chain(self.npcs.values().map(|actor| AttackCruiserActorUpdate {
+                                    actor_id: actor.id,
+                                    pos: actor.pos,
+                                    yaw: actor.yaw,
+                                    speed: actor.speed,
+                                    angular_speed: actor.angular_speed,
+                                    forward_multiplier: actor.forward_multiplier,
+                                    turn_multiplier: actor.turn_multiplier,
+                                    health: actor.health.into(),
+                                    state: AttackCruiserActorState {
+                                        unknown1: false,
+                                        unknown2: false,
+                                        show_invulnerablity_effect:
+                                            actor.used_invulnerable_powerup(),
+                                        unknown4: false,
+                                        unknown5: false,
+                                        unknown6: false,
+                                        unknown7: false,
+                                        show_death1_cinematic: actor.show_cinematic_death(
+                                            &self.state,
+                                            self.last_cinematic_death,
+                                        ),
+                                        warp_in: false,
+                                        end_game_cinematic: false,
+                                        warp_out_animation: false,
+                                        warp_end_game: false,
+                                        reset_speed_damage_state: false,
+                                        unknown14: false,
+                                        show_stun_effect: actor.stunned(),
+                                        hide_ring: false,
+                                        show_boss_ring: false,
+                                    },
+                                }))
+                                .collect(),
+                        },
+                    })],
+                )
+            })
+            .collect()
     }
 
     fn set_actor_frozen(
