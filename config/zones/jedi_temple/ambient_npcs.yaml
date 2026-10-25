@@ -571,7 +571,7 @@ jedi_temple:
           steps:
             - min_duration_millis: 1000
       synchronize_with: joker
-    hangar_purple_jedi_starfighter:
+    hanger_purple_jedi_starfighter:
       model_id: 723
       pos:
         x: 119.7354
@@ -612,7 +612,7 @@ jedi_temple:
               weight: 36
             - procedure: empty
               weight: 1259
-    hangar_green_jedi_starfighter:
+    hanger_green_jedi_starfighter:
       model_id: 721
       pos:
         x: 103.1059
