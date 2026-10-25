@@ -4722,6 +4722,9 @@ impl AttackCruiserGame {
             }
 
             if player_state.respawnable(now) || (game_over && player_state.dead()) {
+                if Some(player_state.actor.id) == self.last_cinematic_death {
+                    self.last_cinematic_death = None;
+                }
                 player_state.respawn(
                     Duration::from_millis(
                         self.config
