@@ -4009,8 +4009,7 @@ impl AttackCruiserGame {
     fn update_server_actors(&self) -> Vec<Broadcast> {
         self.active_players
             .iter()
-            .enumerate()
-            .map(|(player_index, recipient)| {
+            .map(|recipient| {
                 let show_end_cinematic =
                     matches!(self.state, AttackCruiserGameState::GameOver { .. })
                         && self.last_cinematic_death.is_none();
