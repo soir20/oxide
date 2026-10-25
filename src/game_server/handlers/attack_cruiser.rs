@@ -4173,7 +4173,7 @@ impl AttackCruiserGame {
                                                 ),
                                             warp_in: false,
                                             end_game_cinematic: show_end_cinematic
-                                                && player_state.guid != *recipient,
+                                                && player_state.guid == *recipient,
                                             warp_out_animation: warp_out || end_game_warp_out,
                                             warp_end_game: false,
                                             reset_speed_damage_state: warp_out,
