@@ -367,14 +367,14 @@ pub struct NpcAttachmentConfig {
     pub slot: EquipmentSlot,
 }
 impl From<&NpcAttachmentConfig> for Attachment {
-    fn from(c: &NpcAttachmentConfig) -> Self {
+    fn from(config: &NpcAttachmentConfig) -> Self {
         Attachment {
-            model_name: c.model_name.clone(),
-            texture_alias: c.texture_alias.clone(),
-            tint_alias: c.tint_alias.clone(),
-            tint: c.tint,
-            composite_effect: c.composite_effect,
-            slot: c.slot,
+            model_name: config.model_name.clone(),
+            texture_alias: config.texture_alias.clone(),
+            tint_alias: config.tint_alias.clone(),
+            tint: config.tint,
+            composite_effect: config.composite_effect,
+            slot: config.slot,
         }
     }
 }
