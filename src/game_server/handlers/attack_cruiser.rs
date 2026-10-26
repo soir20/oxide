@@ -323,9 +323,9 @@ struct AttackCruiserActor {
     primary_weapon_projectile_last_used: Vec<Option<MinigameStopwatch>>,
     primary_weapon_actor_last_used: Vec<Option<MinigameStopwatch>>,
     spawn_time: MinigameStopwatch,
-    last_behavior_selection: Instant,
+    last_behavior_selection: Duration,
     next_behavior_selection: MinigameCountdown,
-    last_behavior_execution: Instant,
+    last_behavior_execution: Duration,
     next_behavior_execution: Option<MinigameCountdown>,
     ai_state_executions: Vec<u32>,
     active_behavior_index: Option<usize>,
@@ -370,7 +370,7 @@ impl AttackCruiserActor {
             primary_weapon_projectile_last_used: Vec::new(),
             primary_weapon_actor_last_used: Vec::new(),
             spawn_time: MinigameStopwatch::new(Some(now)),
-            last_behavior_selection: now,
+            last_behavior_selection: Duration::ZERO,
             // Add jitter so not all AIs update at the same time
             next_behavior_selection: MinigameCountdown::new_with_event(
                 Duration::from_millis(
@@ -378,7 +378,7 @@ impl AttackCruiserActor {
                 ),
                 now,
             ),
-            last_behavior_execution: now,
+            last_behavior_execution: Duration::ZERO,
             next_behavior_execution: None,
             ai_state_executions: vec![0; ship.ai_states.len()],
             active_behavior_index: None,
@@ -588,16 +588,12 @@ impl AttackCruiserActor {
                 Duration::from_millis(self.ship.ai_behavior_randomization_interval_millis.into()),
                 now,
             );
-            self.last_behavior_selection = now;
+            self.last_behavior_selection = self.spawn_time.elapsed(now);
             selection_timer_expired = true;
         }
 
         let mut current_selected = None;
-        let selection_seed = (self
-            .spawn_time
-            .elapsed(self.last_behavior_selection)
-            .as_millis()
-            % u64::MAX as u128) as u64;
+        let selection_seed = (self.last_behavior_selection.as_millis() % u64::MAX as u128) as u64;
         let mut selection_rng = SmallRng::seed_from_u64(selection_seed);
 
         for (index, rule) in self.ship.ai_states.iter().enumerate() {
@@ -627,7 +623,7 @@ impl AttackCruiserActor {
 
         if behavior_changed {
             self.next_behavior_execution = None;
-            self.last_behavior_execution = now;
+            self.last_behavior_execution = self.spawn_time.elapsed(now);
         }
 
         let mut reexecuted = false;
@@ -642,7 +638,7 @@ impl AttackCruiserActor {
                     Duration::from_millis(interval_millis.into()),
                     now,
                 ));
-                self.last_behavior_execution = now;
+                self.last_behavior_execution = self.spawn_time.elapsed(now);
 
                 reexecuted = true;
             }
@@ -658,11 +654,7 @@ impl AttackCruiserActor {
             }
         }
 
-        let execution_seed = (self
-            .spawn_time
-            .elapsed(self.last_behavior_execution)
-            .as_millis()
-            % u64::MAX as u128) as u64;
+        let execution_seed = (self.last_behavior_execution.as_millis() % u64::MAX as u128) as u64;
         let execution_rng = SmallRng::seed_from_u64(execution_seed);
 
         AttackCruiserAiTickResult {
@@ -2555,7 +2547,7 @@ struct AttackCruiserProjectileInstance {
     direction: Pos3,
     speed: Pos3,
     origin: Pos3,
-    launch_time: Instant,
+    launch_time: Duration,
     config: Arc<AttackCruiserProjectileConfig>,
 }
 
@@ -2647,7 +2639,7 @@ impl AttackCruiserProjectilePool {
                     direction: launch_location.direction,
                     speed: launch_location.speed,
                     origin: launch_location.origin,
-                    launch_time: now,
+                    launch_time: self.global_time.elapsed(now),
                     config: projectile.clone(),
                 },
             );
@@ -2718,7 +2710,7 @@ impl AttackCruiserProjectilePool {
                 let secs_since_launch = self
                     .global_time
                     .elapsed(now)
-                    .saturating_sub(self.global_time.elapsed(projectile.launch_time))
+                    .saturating_sub(projectile.launch_time)
                     .saturating_sub(delta)
                     .as_secs_f32();
 
