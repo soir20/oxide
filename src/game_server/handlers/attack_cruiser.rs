@@ -3680,7 +3680,7 @@ impl AttackCruiserGame {
 
         let now = Instant::now();
         minigame_status.score_entries.push(ScoreEntry {
-            entry_text: "".to_string(),
+            entry_text: "sd_TotalTime".to_string(),
             icon_set_id: 0,
             score_type: ScoreType::Time,
             score_count: self.game_time.elapsed(now).as_secs() as i32,
@@ -3688,7 +3688,7 @@ impl AttackCruiserGame {
             score_points: 0,
         });
         minigame_status.score_entries.push(ScoreEntry {
-            entry_text: "".to_string(),
+            entry_text: "sd_Lives".to_string(),
             icon_set_id: 0,
             score_type: ScoreType::Counter,
             score_count: player_state.lives.into(),
@@ -3696,7 +3696,7 @@ impl AttackCruiserGame {
             score_points: 0,
         });
         minigame_status.score_entries.push(ScoreEntry {
-            entry_text: "".to_string(),
+            entry_text: "sd_TotalScore".to_string(),
             icon_set_id: 0,
             score_type: ScoreType::Total,
             score_count: minigame_status.total_score,
