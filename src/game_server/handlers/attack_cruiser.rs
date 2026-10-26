@@ -4417,7 +4417,7 @@ impl AttackCruiserGame {
             .sort_by_key(|index| wave_config.hud_messages[*index].delay_millis);
 
         self.state = AttackCruiserGameState::WaveActive {
-            wave_index: 0,
+            wave_index,
             wave_time: MinigameStopwatch::new(Some(now)),
             spawned_ship_counts: vec![0; wave_config.ships.len()],
             kills_by_faction: HashMap::new(),
