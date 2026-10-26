@@ -3630,7 +3630,11 @@ impl AttackCruiserGame {
             .retain(|active_player| *active_player != player);
         self.active_player_indices
             .retain(|player_index| self.player_states[*player_index as usize].guid != player);
+
         let player_state = &mut self.player_states[player_index];
+        if Some(player_state.actor.id) == self.last_cinematic_death {
+            self.last_cinematic_death = None;
+        }
 
         minigame_status.total_score = player_state.score;
 
@@ -4037,6 +4041,9 @@ impl AttackCruiserGame {
             self.group,
         );
         let player_state = &mut self.player_states[player_index as usize];
+        if Some(player_state.actor.id) == self.last_cinematic_death {
+            self.last_cinematic_death = None;
+        }
         // Reusing the actor ID tends to break animations, but at least the game remains playable
         player_state.actor.id = self
             .actor_id_pool
@@ -4176,7 +4183,8 @@ impl AttackCruiserGame {
                                             end_game_cinematic: show_end_cinematic
                                                 && player_state.guid == *recipient
                                                 && player_state.has_lives(),
-                                            warp_out_animation: (warp_out || end_game_warp_out) && player_state.has_lives(),
+                                            warp_out_animation: (warp_out || end_game_warp_out)
+                                                && player_state.has_lives(),
                                             warp_end_game: false,
                                             reset_speed_damage_state: warp_out,
                                             unknown14: false,
@@ -4723,10 +4731,9 @@ impl AttackCruiserGame {
                 player_state.remove_stun();
             }
 
-            if player_state.respawnable(now) || (game_over && player_state.dead() && player_state.has_lives()) {
-                if Some(player_state.actor.id) == self.last_cinematic_death {
-                    self.last_cinematic_death = None;
-                }
+            if player_state.respawnable(now)
+                || (game_over && player_state.dead() && player_state.has_lives())
+            {
                 player_state.respawn(
                     Duration::from_millis(
                         self.config
