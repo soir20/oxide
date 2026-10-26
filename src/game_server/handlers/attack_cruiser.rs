@@ -632,7 +632,7 @@ impl AttackCruiserActor {
                 .next_behavior_execution
                 .as_ref()
                 .map(|countdown| countdown.time_until_next_event(now).is_zero())
-                .unwrap_or(true)
+                .unwrap_or_default()
             {
                 self.next_behavior_execution = Some(MinigameCountdown::new_with_event(
                     Duration::from_millis(interval_millis.into()),
