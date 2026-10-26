@@ -3631,7 +3631,6 @@ impl AttackCruiserGame {
         self.active_player_indices
             .retain(|player_index| self.player_states[*player_index as usize].guid != player);
         let player_state = &mut self.player_states[player_index];
-        player_state.set_lives_unchecked(0);
 
         minigame_status.total_score = player_state.score;
 
@@ -3639,7 +3638,10 @@ impl AttackCruiserGame {
             AttackCruiserGameState::GameOver { won, .. } => won,
             _ => false,
         };
-        minigame_status.win_status.set_won(won);
+        minigame_status
+            .win_status
+            .set_won(won && player_state.has_lives());
+        player_state.set_lives_unchecked(0);
 
         let now = Instant::now();
         minigame_status.score_entries.push(ScoreEntry {
