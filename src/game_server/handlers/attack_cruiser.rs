@@ -3641,7 +3641,6 @@ impl AttackCruiserGame {
         minigame_status
             .win_status
             .set_won(won && player_state.has_lives());
-        player_state.set_lives_unchecked(0);
 
         let now = Instant::now();
         minigame_status.score_entries.push(ScoreEntry {
@@ -4175,8 +4174,9 @@ impl AttackCruiserGame {
                                                 ),
                                             warp_in: false,
                                             end_game_cinematic: show_end_cinematic
-                                                && player_state.guid == *recipient,
-                                            warp_out_animation: warp_out || end_game_warp_out,
+                                                && player_state.guid == *recipient
+                                                && player_state.has_lives(),
+                                            warp_out_animation: (warp_out || end_game_warp_out) && player_state.has_lives(),
                                             warp_end_game: false,
                                             reset_speed_damage_state: warp_out,
                                             unknown14: false,
@@ -4723,7 +4723,7 @@ impl AttackCruiserGame {
                 player_state.remove_stun();
             }
 
-            if player_state.respawnable(now) || (game_over && player_state.dead()) {
+            if player_state.respawnable(now) || (game_over && player_state.dead() && player_state.has_lives()) {
                 if Some(player_state.actor.id) == self.last_cinematic_death {
                     self.last_cinematic_death = None;
                 }
