@@ -8270,7 +8270,7 @@ categories:
             - !StageGroup
               guid: 116
               name_id: 51940
-              description_id: 0
+              description_id: 14
               icon_id: 2159
               stage_icon_id: 5928
               members_only: false
