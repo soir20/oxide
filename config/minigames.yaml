@@ -5607,7 +5607,7 @@ categories:
         tutorial_swf: HowtoBaseCommander.swf
         stage_group:
           # Galactic Forces
-          guid: 105
+          guid: 10019
           name_id: 44434
           description_id: 0
           icon_id: 4590
@@ -5617,7 +5617,7 @@ categories:
           stages:
             # Single Player
             - !StageGroup
-              guid: 10019
+              guid: 105
               name_id: 44433
               description_id: 14
               icon_id: 4590
@@ -6748,7 +6748,7 @@ categories:
           stages:
             # Campaign
             - !StageGroup
-              guid: 10021
+              guid: 72
               name_id: 19814
               description_id: 14
               icon_id: 373
@@ -8242,6 +8242,703 @@ categories:
     icon_id: 5809
     sort_order: 3
     portal_entries:
+      # Card Assault
+      - guid: 17
+        name_id: 4908
+        description_id: 0
+        members_only: false
+        is_flash: true
+        is_active: true
+        param1: 0
+        icon_id: 5879
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 2
+        tutorial_swf: ''
+        stage_group:
+          # Portal
+          guid: 117
+          name_id: 4908
+          description_id: 0
+          icon_id: 2159
+          stage_icon_id: 2159
+          members_only: false
+          stage_select_map_name: CardAssaultPortal
+          stages:
+            # Single Player Campaign
+            - !StageGroup
+              guid: 116
+              name_id: 51940
+              description_id: 0
+              icon_id: 2159
+              stage_icon_id: 5928
+              members_only: false
+              require_previous_completed: false
+              show_stage_numbers: false
+              stage_select_map_name: CardAssaultSeries1
+              short_name: sp
+              stages:
+                # Captain Rex 1 > Double Defense
+                - !Stage
+                  guid: 4001
+                  name_id: 51869
+                  description_id: 51870
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5896
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage01
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Captain Rex 2 > AT-TE
+                - !Stage
+                  guid: 4002
+                  name_id: 51871
+                  description_id: 51872
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5897
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage02
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Captain Rex 3 > Rex's Sidearm
+                - !Stage
+                  guid: 4003
+                  name_id: 51873
+                  description_id: 51874
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5898
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage03
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Captain Rex 4 > Captain Rex
+                - !Stage
+                  guid: 4004
+                  name_id: 51875
+                  description_id: 51876
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5899
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage04
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Aurra Sing 1 > Superior Position
+                - !Stage
+                  guid: 4005
+                  name_id: 51877
+                  description_id: 51878
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5900
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage05
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Aurra Sing 2 > Boba Fett
+                - !Stage
+                  guid: 4006
+                  name_id: 51879
+                  description_id: 51880
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5901
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage06
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Aurra Sing 3 > Aurra Sing's Blaster
+                - !Stage
+                  guid: 4007
+                  name_id: 51881
+                  description_id: 51882
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5902
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage07
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Aurra Sing 4 > Aurra Sing
+                - !Stage
+                  guid: 4008
+                  name_id: 51883
+                  description_id: 51884
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5903
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage08
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Asajj Ventress > 1 Twin Attack
+                - !Stage
+                  guid: 4009
+                  name_id: 51885
+                  description_id: 51886
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5904
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage09
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Asajj Ventress 2 > Karis
+                - !Stage
+                  guid: 4010
+                  name_id: 51887
+                  description_id: 51888
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5905
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage10
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Asajj Ventress 3 > Asajj's Lightsabers
+                - !Stage
+                  guid: 4011
+                  name_id: 51889
+                  description_id: 51890
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5906
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage11
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Asajj Ventress 4 > Asajj Ventress
+                - !Stage
+                  guid: 4012
+                  name_id: 51891
+                  description_id: 51892
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5907
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage12
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Cad Bane 1 > Turning the Tables
+                - !Stage
+                  guid: 4013
+                  name_id: 51893
+                  description_id: 51894
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5908
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage13
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Cad Bane 2 > Xanadu Blood
+                - !Stage
+                  guid: 4014
+                  name_id: 51895
+                  description_id: 51896
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5909
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage14
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Cad Bane 3 > Cad Bane's Blaster
+                - !Stage
+                  guid: 4015
+                  name_id: 51897
+                  description_id: 51898
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5910
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage15
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Cad Bane 4 > Cad Bane
+                - !Stage
+                  guid: 4016
+                  name_id: 51899
+                  description_id: 51900
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5911
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage16
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Darth Maul 1 > Unstoppable
+                - !Stage
+                  guid: 4017
+                  name_id: 51901
+                  description_id: 51902
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5912
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage17
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Darth Maul 2 > Savage Opress
+                - !Stage
+                  guid: 4018
+                  name_id: 51903
+                  description_id: 51904
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5913
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage18
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Darth Maul 3 > Darth Maul's Lightsaber
+                - !Stage
+                  guid: 4019
+                  name_id: 51905
+                  description_id: 51906
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5914
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage19
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Darth Maul 4 > Darth Maul
+                - !Stage
+                  guid: 4020
+                  name_id: 51907
+                  description_id: 51908
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5915
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage20
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Anakin Skywalker 1 > Desperate Block
+                - !Stage
+                  guid: 4021
+                  name_id: 51909
+                  description_id: 51910
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5916
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage21
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Anakin Skywalker 2 > Anakin's Starfighter
+                - !Stage
+                  guid: 4022
+                  name_id: 51911
+                  description_id: 51912
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5917
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage22
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Anakin Skywalker 3 > Anakin's Lightsaber
+                - !Stage
+                  guid: 4023
+                  name_id: 51913
+                  description_id: 51914
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5918
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage23
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Anakin Skywalker 4 > Anakin Skywalker
+                - !Stage
+                  guid: 4024
+                  name_id: 51915
+                  description_id: 51916
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5919
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage24
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Satine Kryze 1 > Affairs of State
+                - !Stage
+                  guid: 4025
+                  name_id: 51917
+                  description_id: 51918
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5920
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage25
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Satine Kryze 2 > Coronet
+                - !Stage
+                  guid: 4026
+                  name_id: 51919
+                  description_id: 51920
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5921
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage26
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Satine Kryze 3 > Droid Deactivator
+                - !Stage
+                  guid: 4027
+                  name_id: 51921
+                  description_id: 51922
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5922
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage27
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Satine Kryze 4 > Satine Kryze
+                - !Stage
+                  guid: 4028
+                  name_id: 51923
+                  description_id: 51924
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5923
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage28
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Mother Talzin 1 > Mystical Invisibility
+                - !Stage
+                  guid: 4029
+                  name_id: 51925
+                  description_id: 51926
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5924
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage29
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Mother Talzin 2 > Naa'Leth
+                - !Stage
+                  guid: 4030
+                  name_id: 51927
+                  description_id: 51928
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5925
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage30
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Mother Talzin 3 > Nightsister Energy Bow
+                - !Stage
+                  guid: 4031
+                  name_id: 51929
+                  description_id: 51930
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5926
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage31
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Mother Talzin 4 > Mother Talzin
+                - !Stage
+                  guid: 4032
+                  name_id: 51931
+                  description_id: 51932
+                  stage_icon_id: 0
+                  start_screen_icon_id: 5927
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage32
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # Tutorial
+                - !Stage
+                  guid: 4033
+                  name_id: 53665
+                  description_id: 0
+                  stage_icon_id: 0
+                  start_screen_icon_id: 0
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: ''
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+            # Single Player Campaign
+            - !StageGroup
+              guid: 126
+              name_id: 51940
+              description_id: 0
+              icon_id: 2159
+              stage_icon_id: 5928
+              members_only: false
+              require_previous_completed: false
+              show_stage_numbers: false
+              stage_select_map_name: CardAssaultSeries2
+              short_name: sp
+              stages: []
+            # Multiplayer
+            - !Stage
+              guid: 4000
+              name_id: 51941
+              description_id: 0
+              stage_icon_id: 5929
+              start_screen_icon_id: 0
+              min_players: 1
+              max_players: 1
+              difficulty: 1
+              start_sound_id: 0
+              members_only: false
+              require_previous_completed: false
+              link_name: group
+              short_name: mp
+              minigame_type:
+                !Flash
+                game_swf_name: TCCW_Main.swf
+              score_to_credits_expression: x / 40.9
+
       # Saber Strike
       - guid: 1004
         name_id: 7040
@@ -14010,7 +14707,7 @@ categories:
         tutorial_swf: HowtoGunship.swf
         stage_group:
           # Biggest Battles: Ryloth
-          guid: 1000001
+          guid: 93
           name_id: 33034
           description_id: 33035
           icon_id: 3920
