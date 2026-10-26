@@ -19,7 +19,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 1251
         background_icon_id: 0
@@ -863,7 +863,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 1246
         background_icon_id: 0
@@ -5278,11 +5278,11 @@ categories:
         description_id: 6369
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 1250
         background_icon_id: 0
-        is_popular: true
+        is_popular: false
         is_game_of_day: false
         sort_order: 4
         tutorial_swf: HowtoSpeederbike.swf
@@ -5597,11 +5597,11 @@ categories:
         description_id: 0
         members_only: true
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 4592
         background_icon_id: 0
-        is_popular: true
+        is_popular: false
         is_game_of_day: false
         sort_order: 5
         tutorial_swf: HowtoBaseCommander.swf
@@ -6728,7 +6728,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 1232
         background_icon_id: 0
@@ -8248,11 +8248,11 @@ categories:
         description_id: 0
         members_only: false
         is_flash: true
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 5879
         background_icon_id: 0
-        is_popular: false
+        is_popular: true
         is_game_of_day: false
         sort_order: 2
         tutorial_swf: ''
@@ -12996,7 +12996,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: true
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 1234
         background_icon_id: 0
@@ -14762,7 +14762,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 2636
         background_icon_id: 0
@@ -15077,7 +15077,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 3826
         background_icon_id: 0
@@ -15326,7 +15326,7 @@ categories:
         description_id: 0
         members_only: false
         is_flash: false
-        is_active: true
+        is_active: false
         param1: 0
         icon_id: 4623
         background_icon_id: 0
