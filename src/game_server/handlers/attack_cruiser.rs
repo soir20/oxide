@@ -5384,7 +5384,7 @@ impl AttackCruiserGame {
             let despawn_radius_x =
                 self.config.playfield.radius_x * self.config.playfield.wave_despawn_radius_ratio;
             let despawn_radius_z =
-                self.config.playfield.radius_z * self.config.playfield.warning_radius_ratio;
+                self.config.playfield.radius_z * self.config.playfield.wave_despawn_radius_ratio;
 
             for faction in wave_config.despawn_factions_on_end.iter() {
                 let Some(actors) = actors_by_faction.get(faction) else {
