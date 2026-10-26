@@ -5640,7 +5640,7 @@ impl AttackCruiserGame {
         rng: &mut SmallRng,
     ) -> Pos3 {
         let x = rng.gen_range(-playfield.radius_x..playfield.radius_x) + playfield.center.x;
-        let z = rng.gen_range(-playfield.radius_z..playfield.radius_z) + playfield.center.y;
+        let z = rng.gen_range(-playfield.radius_z..playfield.radius_z) + playfield.center.z;
 
         Pos3 { x, y, z }
     }
