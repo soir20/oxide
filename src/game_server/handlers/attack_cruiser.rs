@@ -1051,14 +1051,16 @@ impl AttackCruiserActor {
                     op.eval(lifetime_millis, *value as u128)
                 }
                 AttackCruiserShipPropertyExpr::DeathMillisRemaining(op, value) => {
-                    let death_millis_remaining = match self
+                    match self
                         .invulnerability
                         .has_phase(AttackCruiserActorInvulnerabilityPhase::Dead)
                     {
-                        true => self.invulnerability.time_remaining(now).as_millis(),
-                        false => 0,
-                    };
-                    op.eval(death_millis_remaining, *value as u128)
+                        true => op.eval(
+                            self.invulnerability.time_remaining(now).as_millis(),
+                            *value as u128,
+                        ),
+                        false => false,
+                    }
                 }
                 AttackCruiserShipPropertyExpr::Probability(op, chance) => {
                     let roll: f32 = rng.gen();
