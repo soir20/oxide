@@ -3194,7 +3194,7 @@ categories:
                       camera_heading: !Degrees 270.0
                       camera_fov: !Degrees 50.0
                       flip_camera_z: true
-                lifetime_kills_trophy_guid: 10000
+                lifetime_kills_trophy_guid: 100000
                 max_weapon_cooldown_error_millis: 10
                 planet:
                   model_id: 583
