@@ -313,6 +313,9 @@ struct AttackCruiserActor {
     pub health: u16,
     pub bvh: Option<Arc<Bvh>>,
     pub launched_by_player_index: Option<u8>,
+    pub is_boss: bool,
+    pub hostility: AttackCruiserHostility,
+    pub visual_hostility: AttackCruiserHostility,
     invulnerability: AttackCruiserActorInvulnerability,
     stun: AttackCruiserActorStun,
     primary_weapon_tier: usize,
@@ -337,6 +340,7 @@ impl AttackCruiserActor {
         bvh: Option<Arc<Bvh>>,
         launched_by_player_index: Option<u8>,
         ship: Arc<AttackCruiserShipConfig>,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
         now: Instant,
         rng: &mut SmallRng,
     ) -> Self {
@@ -355,6 +359,9 @@ impl AttackCruiserActor {
             health: ship.max_health,
             bvh,
             launched_by_player_index,
+            is_boss: Self::is_boss(&ship, faction_configs),
+            hostility: Self::hostility(&ship, faction_configs),
+            visual_hostility: Self::visual_hostility(&ship, faction_configs),
             invulnerability: AttackCruiserActorInvulnerability::default(),
             stun: AttackCruiserActorStun::default(),
             primary_weapon_tier: 0,
@@ -651,13 +658,16 @@ impl AttackCruiserActor {
         }
     }
 
-    pub fn is_boss(&self, faction_configs: &HashMap<String, AttackCruiserFactionConfig>) -> bool {
-        for faction in self.ship.self_factions.iter() {
+    pub fn is_boss(
+        ship: &AttackCruiserShipConfig,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
+    ) -> bool {
+        for faction in ship.self_factions.iter() {
             let Some(faction_config) = faction_configs.get(faction) else {
                 continue;
             };
 
-            if faction_config.boss {
+            if faction_config.is_boss {
                 return true;
             }
         }
@@ -665,12 +675,12 @@ impl AttackCruiserActor {
         false
     }
 
-    pub fn hostility(
-        &self,
+    fn hostility(
+        ship: &AttackCruiserShipConfig,
         faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
     ) -> AttackCruiserHostility {
         let mut hostility = AttackCruiserHostility::Neutral;
-        for faction in self.ship.self_factions.iter() {
+        for faction in ship.self_factions.iter() {
             let Some(faction_config) = faction_configs.get(faction) else {
                 continue;
             };
@@ -691,12 +701,12 @@ impl AttackCruiserActor {
         hostility
     }
 
-    pub fn visual_hostility(
-        &self,
+    fn visual_hostility(
+        ship: &AttackCruiserShipConfig,
         faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
     ) -> AttackCruiserHostility {
         if !matches!(
-            self.ship.mobility,
+            ship.mobility,
             AttackCruiserShipMobilityConfig::Dynamic {
                 show_arrow_to_player: true,
                 ..
@@ -705,7 +715,7 @@ impl AttackCruiserActor {
             return AttackCruiserHostility::Neutral;
         }
 
-        self.hostility(faction_configs)
+        Self::hostility(ship, faction_configs)
     }
 
     pub fn attack_primary(
@@ -1138,6 +1148,7 @@ impl AttackCruiserPendingActor {
         launched_by_player_index: Option<u8>,
         ship: Arc<AttackCruiserShipConfig>,
         ship_name: String,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
         now: Instant,
         rng: &mut SmallRng,
     ) -> Self {
@@ -1151,6 +1162,7 @@ impl AttackCruiserPendingActor {
                 bvh,
                 launched_by_player_index,
                 ship,
+                faction_configs,
                 now,
                 rng,
             ),
@@ -1266,6 +1278,7 @@ impl AttackCruiserPlayer {
         score_multiplier_grace_millis: u32,
         score_multiplier_tier_max: u8,
         bvh: Option<Arc<Bvh>>,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
         now: Instant,
         rng: &mut SmallRng,
     ) -> Self {
@@ -1281,6 +1294,7 @@ impl AttackCruiserPlayer {
                 bvh,
                 Some(index),
                 ship,
+                faction_configs,
                 now,
                 rng,
             ),
@@ -1678,9 +1692,9 @@ impl AttackCruiserChallengeConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserFactionConfig {
-    #[serde(default)]
-    boss: bool,
     hostility: AttackCruiserHostility,
+    #[serde(default)]
+    is_boss: bool,
     #[serde(default = "default_true")]
     unpause_player_score_multiplier: bool,
 }
@@ -2910,6 +2924,7 @@ impl AttackCruiserGame {
             config.player.score_multiplier_grace_millis,
             config.player.score_multiplier_tier_max,
             player_bvh.clone(),
+            &config.factions,
             now,
             rng,
         ));
@@ -2938,6 +2953,7 @@ impl AttackCruiserGame {
                 config.player.score_multiplier_grace_millis,
                 config.player.score_multiplier_tier_max,
                 player_bvh.clone(),
+                &config.factions,
                 now,
                 rng,
             ));
@@ -3949,7 +3965,7 @@ impl AttackCruiserGame {
                     stage_group_guid: self.group.stage_group_guid,
                 },
                 actor_id: actor.id,
-                hostility: actor.visual_hostility(&self.config.factions),
+                hostility: actor.visual_hostility,
                 actor_config: AttackCruiserStartupConfigHash {
                     name: ship_startup_config_name(ship_config),
                     class: match self.config.ship(ship_config).mobility {
@@ -4208,9 +4224,7 @@ impl AttackCruiserGame {
                                             unknown14: false,
                                             show_stun_effect: player_state.stunned(),
                                             hide_ring: warp_out,
-                                            show_boss_ring: player_state
-                                                .actor
-                                                .is_boss(&self.config.factions),
+                                            show_boss_ring: player_state.actor.is_boss,
                                         },
                                     }
                                 })
@@ -4244,7 +4258,7 @@ impl AttackCruiserGame {
                                         unknown14: false,
                                         show_stun_effect: actor.stunned(),
                                         hide_ring: false,
-                                        show_boss_ring: actor.is_boss(&self.config.factions),
+                                        show_boss_ring: actor.is_boss,
                                     },
                                 }))
                                 .collect(),
@@ -4473,6 +4487,7 @@ impl AttackCruiserGame {
                     launched_by_player_index,
                     ship.clone(),
                     launched_actor.ship.clone(),
+                    &config.factions,
                     now,
                     rng,
                 ));
@@ -4724,7 +4739,7 @@ impl AttackCruiserGame {
             };
 
             let player_state = &mut self.player_states[player_index];
-            let player_hostility = player_state.actor.hostility(&self.config.factions);
+            let player_hostility = player_state.actor.hostility;
             let has_enemies = player_state.actor.ship.seek_factions.iter().any(|faction| {
                 let Some(actors) = actors_by_faction.get(faction) else {
                     return false;
@@ -5250,6 +5265,7 @@ impl AttackCruiserGame {
                         None,
                         ship_config.clone(),
                         wave_ship.ship.clone(),
+                        &self.config.factions,
                         now,
                         rng,
                     ));
@@ -5409,6 +5425,7 @@ impl AttackCruiserGame {
                     player_index,
                     ship.clone(),
                     launched_actor.ship.clone(),
+                    &config.factions,
                     now,
                     rng,
                 ));
