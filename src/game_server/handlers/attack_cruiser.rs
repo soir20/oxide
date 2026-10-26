@@ -3964,7 +3964,9 @@ impl AttackCruiserGame {
     ) -> Vec<Vec<u8>> {
         let mut packets = self.spawn_client_actor(actor, ship_name);
 
-        packets.append(&mut Self::set_actor_frozen(actor, None, false, self.group));
+        packets.append(&mut Self::set_actor_frozen(
+            actor, None, false, true, self.group,
+        ));
 
         packets
     }
@@ -4239,6 +4241,7 @@ impl AttackCruiserGame {
         actor: &AttackCruiserActor,
         guid_if_player: Option<u32>,
         frozen: bool,
+        collision: bool,
         group: MinigameMatchmakingGroup,
     ) -> Vec<Vec<u8>> {
         let guid = player_guid(guid_if_player.unwrap_or_default());
@@ -4269,7 +4272,7 @@ impl AttackCruiserGame {
                     actor_id: actor.id,
                     command: AttackCruiserCommand::Collision(AttackCruiserBoolCommand {
                         guid,
-                        value: !frozen && actor.ship.enable_collision,
+                        value: collision && actor.ship.enable_collision,
                     }),
                 },
             }),
@@ -4317,6 +4320,7 @@ impl AttackCruiserGame {
                 &player_state.actor,
                 Some(player_state.guid),
                 false,
+                true,
                 self.group,
             ));
         }
@@ -4729,6 +4733,16 @@ impl AttackCruiserGame {
 
             if player_state.completed_stun(now) {
                 player_state.remove_stun();
+                broadcasts.push(Broadcast::Multi(
+                    self.active_players.to_vec(),
+                    Self::set_actor_frozen(
+                        &player_state.actor,
+                        Some(player_state.guid),
+                        false,
+                        true,
+                        self.group,
+                    ),
+                ));
             }
 
             if player_state.respawnable(now)
@@ -4774,6 +4788,7 @@ impl AttackCruiserGame {
                         &player_state.actor,
                         Some(player_state.guid),
                         false,
+                        true,
                         self.group,
                     ),
                 ));
@@ -4810,6 +4825,19 @@ impl AttackCruiserGame {
                 }
 
                 player_state.stun(Duration::from_millis(total_deltas.stun_millis.into()), now);
+                if player_state.stunned() {
+                    broadcasts.push(Broadcast::Multi(
+                        self.active_players.to_vec(),
+                        Self::set_actor_frozen(
+                            &player_state.actor,
+                            Some(player_state.guid),
+                            true,
+                            true,
+                            self.group,
+                        ),
+                    ));
+                }
+
                 if let Some(secondary_item) = total_deltas.player_secondary_item {
                     player_state.add_secondary_item(&secondary_item.name, secondary_item.count);
                 }
@@ -4845,6 +4873,7 @@ impl AttackCruiserGame {
                         &player_state.actor,
                         Some(player_state.guid),
                         true,
+                        false,
                         self.group,
                     ));
                     death_packets.append(&mut self.update_client_players_once_ready(
