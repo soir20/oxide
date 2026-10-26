@@ -8918,7 +8918,387 @@ categories:
               show_stage_numbers: false
               stage_select_map_name: CardAssaultSeries2
               short_name: sp
-              stages: []
+              stages:
+                # MORALO EVAL 1 > HIRED HELP
+                - !Stage
+                  guid: 4034
+                  name_id: 53771
+                  description_id: 53791
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6356
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage01
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # MORALO EVAL 2 > GENERAL KALANI
+                - !Stage
+                  guid: 4035
+                  name_id: 53772
+                  description_id: 53792
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6357
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage02
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 1 > SURVIVOR
+                - !Stage
+                  guid: 4036
+                  name_id: 53773
+                  description_id: 53793
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6358
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage03
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 2 > DERROWN
+                - !Stage
+                  guid: 4037
+                  name_id: 53774
+                  description_id: 53794
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6359
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage04
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # PONG KRELL 1 > TRAIN AND OBSERVE
+                - !Stage
+                  guid: 4038
+                  name_id: 53775
+                  description_id: 53795
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6372
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage05
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # PONG KRELL 2 > A PLEA FOR HELP
+                - !Stage
+                  guid: 4039
+                  name_id: 53776
+                  description_id: 53796
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6373
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage06
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # PONG KRELL 3 > INSPIRING SPEECH
+                - !Stage
+                  guid: 4040
+                  name_id: 53777
+                  description_id: 53797
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6374
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage07
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 3 > CRIPPLED
+                - !Stage
+                  guid: 4041
+                  name_id: 53778
+                  description_id: 53798
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6364
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage08
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 4 > BOBA FETT
+                - !Stage
+                  guid: 4042
+                  name_id: 53779
+                  description_id: 53799
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6365
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage09
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 5 > TRAITORS
+                - !Stage
+                  guid: 4043
+                  name_id: 53780
+                  description_id: 53800
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6366
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage10
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # MORALO EVAL 3 > MASSACRE
+                - !Stage
+                  guid: 4044
+                  name_id: 53781
+                  description_id: 53801
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6360
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage11
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # MORALO EVAL 4 > IG-100 MAGNAGUARD
+                - !Stage
+                  guid: 4045
+                  name_id: 53782
+                  description_id: 53802
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6361
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage12
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # MORALO EVAL 5 > PROBE LAUNCH
+                - !Stage
+                  guid: 4046
+                  name_id: 53783
+                  description_id: 53803
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6362
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage13
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # MORALO EVAL 6 > MORALO EVAL
+                - !Stage
+                  guid: 4047
+                  name_id: 53784
+                  description_id: 53804
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6363
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage14
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # JABBA THE HUTT 6 > JABBA THE HUTT
+                - !Stage
+                  guid: 4048
+                  name_id: 53785
+                  description_id: 53805
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6367
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage15
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # BO-KATAN 1 > WELCOME TO DEATH WATCH
+                - !Stage
+                  guid: 4049
+                  name_id: 53786
+                  description_id: 53806
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6368
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage16
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # BO-KATAN 2 > EVADING THE POLICE
+                - !Stage
+                  guid: 4050
+                  name_id: 53787
+                  description_id: 53807
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6369
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage17
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # BO-KATAN 3 > INITIATION RITUAL
+                - !Stage
+                  guid: 4051
+                  name_id: 53788
+                  description_id: 53808
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6370
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage18
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # BO-KATAN 4 > BO-KATAN
+                - !Stage
+                  guid: 4052
+                  name_id: 53789
+                  description_id: 53809
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6371
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage19
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
+                # PONG KRELL 4 > PONG KRELL
+                - !Stage
+                  guid: 4053
+                  name_id: 53790
+                  description_id: 53810
+                  stage_icon_id: 0
+                  start_screen_icon_id: 6375
+                  min_players: 1
+                  max_players: 1
+                  difficulty: 1
+                  start_sound_id: 0
+                  members_only: false
+                  require_previous_completed: false
+                  link_name: stage
+                  short_name: stage20
+                  minigame_type:
+                    !Flash
+                    game_swf_name: TCCW_Main.swf
+                  score_to_credits_expression: x / 40.9
             # Multiplayer
             - !Stage
               guid: 4000
