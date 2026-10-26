@@ -571,7 +571,12 @@ impl AttackCruiserActor {
         self.dead() || self.respawning() || self.stunned() || self.paused()
     }
 
-    pub fn current_ai_behavior(&mut self, now: Instant) -> AttackCruiserAiTickResult {
+    pub fn current_ai_behavior(
+        &mut self,
+        wave_index: Option<usize>,
+        actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
+        now: Instant,
+    ) -> AttackCruiserAiTickResult {
         let mut selection_timer_expired = false;
 
         if self
@@ -597,7 +602,14 @@ impl AttackCruiserActor {
 
         for (index, rule) in self.ship.ai_states.iter().enumerate() {
             let execution_count = self.ai_state_executions[index];
-            if self.matches_condition(&rule.condition, execution_count, now, &mut selection_rng) {
+            if self.matches_condition(
+                &rule.condition,
+                execution_count,
+                wave_index,
+                actors_by_faction,
+                now,
+                &mut selection_rng,
+            ) {
                 current_selected = Some((index, &rule.behavior));
                 break;
             }
@@ -1023,6 +1035,8 @@ impl AttackCruiserActor {
         &self,
         expr: &AttackCruiserShipBoolExpr,
         execution_count: u32,
+        wave_index: Option<usize>,
+        actors_by_faction: &HashMap<String, Vec<AttackCruiserActorTarget>>,
         now: Instant,
         rng: &mut SmallRng,
     ) -> bool {
@@ -1053,16 +1067,45 @@ impl AttackCruiserActor {
                 AttackCruiserShipPropertyExpr::ExecutionCount(op, value) => {
                     op.eval(execution_count, *value)
                 }
+                AttackCruiserShipPropertyExpr::WaveIndex(op, value) => wave_index
+                    .map(|index| op.eval(index, *value))
+                    .unwrap_or_default(),
+                AttackCruiserShipPropertyExpr::FactionShipsAlive(faction, op, value) => op.eval(
+                    actors_by_faction
+                        .get(faction)
+                        .map(|actors| actors.len())
+                        .unwrap_or_default(),
+                    *value,
+                ),
             },
-            AttackCruiserShipBoolExpr::Not { expr } => {
-                !self.matches_condition(expr, execution_count, now, rng)
-            }
-            AttackCruiserShipBoolExpr::And { exprs } => exprs
-                .iter()
-                .all(|expr| self.matches_condition(expr, execution_count, now, rng)),
-            AttackCruiserShipBoolExpr::Or { exprs } => exprs
-                .iter()
-                .any(|expr| self.matches_condition(expr, execution_count, now, rng)),
+            AttackCruiserShipBoolExpr::Not { expr } => !self.matches_condition(
+                expr,
+                execution_count,
+                wave_index,
+                actors_by_faction,
+                now,
+                rng,
+            ),
+            AttackCruiserShipBoolExpr::And { exprs } => exprs.iter().all(|expr| {
+                self.matches_condition(
+                    expr,
+                    execution_count,
+                    wave_index,
+                    actors_by_faction,
+                    now,
+                    rng,
+                )
+            }),
+            AttackCruiserShipBoolExpr::Or { exprs } => exprs.iter().any(|expr| {
+                self.matches_condition(
+                    expr,
+                    execution_count,
+                    wave_index,
+                    actors_by_faction,
+                    now,
+                    rng,
+                )
+            }),
         }
     }
 
@@ -2026,6 +2069,8 @@ enum AttackCruiserShipPropertyExpr {
     DeathMillisRemaining(AttackCruiserShipOp, u32),
     Probability(AttackCruiserShipOp, f32),
     ExecutionCount(AttackCruiserShipOp, u32),
+    WaveIndex(AttackCruiserShipOp, usize),
+    FactionShipsAlive(String, AttackCruiserShipOp, usize),
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -5028,6 +5073,11 @@ impl AttackCruiserGame {
         actors_to_warp_away: HashSet<i32>,
         actors_to_despawn: HashSet<i32>,
     ) {
+        let wave_index = match self.state {
+            AttackCruiserGameState::WaveActive { wave_index, .. } => Some(wave_index),
+            _ => None,
+        };
+
         self.npcs.retain(|_, npc| {
             if npc.paused() {
                 return true;
@@ -5054,7 +5104,7 @@ impl AttackCruiserGame {
                 return false;
             }
 
-            let mut ai_result = npc.current_ai_behavior(now);
+            let mut ai_result = npc.current_ai_behavior(wave_index, actors_by_faction, now);
             let warp_away = actors_to_warp_away.contains(&npc.id);
             let (is_real_target, target_pos, target_speed) =
                 match (warp_away, &ai_result.behavior.movement) {
