@@ -651,6 +651,20 @@ impl AttackCruiserActor {
         }
     }
 
+    pub fn is_boss(&self, faction_configs: &HashMap<String, AttackCruiserFactionConfig>) -> bool {
+        for faction in self.ship.self_factions.iter() {
+            let Some(faction_config) = faction_configs.get(faction) else {
+                continue;
+            };
+
+            if faction_config.boss {
+                return true;
+            }
+        }
+
+        false
+    }
+
     pub fn hostility(
         &self,
         faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
@@ -1664,6 +1678,8 @@ impl AttackCruiserChallengeConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct AttackCruiserFactionConfig {
+    #[serde(default)]
+    boss: bool,
     hostility: AttackCruiserHostility,
     #[serde(default = "default_true")]
     unpause_player_score_multiplier: bool,
@@ -4192,7 +4208,9 @@ impl AttackCruiserGame {
                                             unknown14: false,
                                             show_stun_effect: player_state.stunned(),
                                             hide_ring: warp_out,
-                                            show_boss_ring: false,
+                                            show_boss_ring: player_state
+                                                .actor
+                                                .is_boss(&self.config.factions),
                                         },
                                     }
                                 })
@@ -4226,7 +4244,7 @@ impl AttackCruiserGame {
                                         unknown14: false,
                                         show_stun_effect: actor.stunned(),
                                         hide_ring: false,
-                                        show_boss_ring: false,
+                                        show_boss_ring: actor.is_boss(&self.config.factions),
                                     },
                                 }))
                                 .collect(),
