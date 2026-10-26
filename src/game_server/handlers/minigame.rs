@@ -204,6 +204,13 @@ impl PlayerMinigameStats {
             .unwrap_or(0)
     }
 
+    pub fn trophy_progress(&mut self, trophy_guid: i32) -> i32 {
+        self.trophy_stats
+            .get(&trophy_guid)
+            .copied()
+            .unwrap_or_default()
+    }
+
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
         self.trophy_stats
             .entry(trophy_guid)
@@ -390,8 +397,10 @@ impl SharedMinigameData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
+        minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
-        self.data.remove_player(player, minigame_status)
+        self.data
+            .remove_player(player, minigame_status, minigame_stats)
     }
 
     pub fn characters(
@@ -563,10 +572,11 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
+        minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         match self {
             SharedMinigameTypeData::AttackCruiser { game } => {
-                game.remove_player(player, minigame_status)
+                game.remove_player(player, minigame_status, minigame_stats)
             }
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
@@ -3901,7 +3911,7 @@ fn leave_active_minigame_single_player_if_any(
             };
 
             let MinigameRemovePlayerResult { mut broadcasts, characters_to_remove, end_game_for_all } = shared_minigame_data
-                .remove_player(sender, minigame_status)?;
+                .remove_player(sender, minigame_status, &mut player.minigame_stats)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
             if minigame_status.awarded_credits == 0 {

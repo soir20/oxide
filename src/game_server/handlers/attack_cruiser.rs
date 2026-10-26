@@ -26,7 +26,7 @@ use crate::{
             direction, distance3_pos, distance3_sq,
             minigame::{
                 handle_minigame_packet_write, MinigameCountdown, MinigameRemovePlayerResult,
-                MinigameStopwatch, SharedMinigameTypeData,
+                MinigameStopwatch, PlayerMinigameStats, SharedMinigameTypeData,
             },
             unique_guid::player_guid,
         },
@@ -314,6 +314,7 @@ struct AttackCruiserActor {
     pub bvh: Option<Arc<Bvh>>,
     pub launched_by_player_index: Option<u8>,
     pub is_boss: bool,
+    pub track_kills: bool,
     pub hostility: AttackCruiserHostility,
     pub visual_hostility: AttackCruiserHostility,
     invulnerability: AttackCruiserActorInvulnerability,
@@ -360,6 +361,7 @@ impl AttackCruiserActor {
             bvh,
             launched_by_player_index,
             is_boss: Self::is_boss(&ship, faction_configs),
+            track_kills: Self::track_kills(&ship, faction_configs),
             hostility: Self::hostility(&ship, faction_configs),
             visual_hostility: Self::visual_hostility(&ship, faction_configs),
             invulnerability: AttackCruiserActorInvulnerability::default(),
@@ -668,6 +670,23 @@ impl AttackCruiserActor {
             };
 
             if faction_config.is_boss {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn track_kills(
+        ship: &AttackCruiserShipConfig,
+        faction_configs: &HashMap<String, AttackCruiserFactionConfig>,
+    ) -> bool {
+        for faction in ship.self_factions.iter() {
+            let Some(faction_config) = faction_configs.get(faction) else {
+                continue;
+            };
+
+            if faction_config.track_kills {
                 return true;
             }
         }
@@ -1245,6 +1264,7 @@ struct AttackCruiserPlayer {
     pub guid: u32,
     pub ready: bool,
     pub actor: AttackCruiserActor,
+    pub kills: i32,
     pub score: i32,
     pub score_multiplier_tier_progress: i32,
     pub score_multiplier_tier_goal: i32,
@@ -1298,6 +1318,7 @@ impl AttackCruiserPlayer {
                 now,
                 rng,
             ),
+            kills: 0,
             score: 0,
             score_multiplier_tier_progress: 0,
             score_multiplier_tier_goal: score_multiplier_goal_base,
@@ -1385,6 +1406,12 @@ impl AttackCruiserPlayer {
 
     pub fn set_lives_unchecked(&mut self, lives: u8) {
         self.lives = lives.min(self.max_lives);
+    }
+
+    pub fn add_kill(&mut self, track_kills: bool) {
+        if track_kills {
+            self.kills = self.kills.saturating_add(1);
+        }
     }
 
     pub fn add_score(&mut self, base_score: u16, now: Instant) -> i32 {
@@ -1695,6 +1722,8 @@ struct AttackCruiserFactionConfig {
     hostility: AttackCruiserHostility,
     #[serde(default)]
     is_boss: bool,
+    #[serde(default)]
+    track_kills: bool,
     #[serde(default = "default_true")]
     unpause_player_score_multiplier: bool,
 }
@@ -2292,6 +2321,7 @@ pub struct AttackCruiserConfig {
     game_over_warp_delay_millis: u32,
     health_bar: AttackCruiserHealthBarConfig,
     intro: AttackCruiserIntroConfig,
+    lifetime_kills_trophy_guid: i32,
     max_weapon_cooldown_error_millis: u16,
     planet: AttackCruiserPlanetConfig,
     player: AttackCruiserPlayerConfig,
@@ -3631,6 +3661,7 @@ impl AttackCruiserGame {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
+        minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         let player_index = self.player_index(player)? as usize;
 
@@ -3669,6 +3700,8 @@ impl AttackCruiserGame {
         }
 
         minigame_status.total_score = player_state.score;
+        minigame_stats
+            .update_trophy_progress(self.config.lifetime_kills_trophy_guid, player_state.kills);
 
         let won = match self.state {
             AttackCruiserGameState::GameOver { won, .. } => won,
@@ -3692,6 +3725,22 @@ impl AttackCruiserGame {
             icon_set_id: 0,
             score_type: ScoreType::Counter,
             score_count: player_state.lives.into(),
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "sd_CapitalKills".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: player_state.kills,
+            score_max: 0,
+            score_points: 0,
+        });
+        minigame_status.score_entries.push(ScoreEntry {
+            entry_text: "sd_LifetimeCapitalKills".to_string(),
+            icon_set_id: 0,
+            score_type: ScoreType::Counter,
+            score_count: minigame_stats.trophy_progress(self.config.lifetime_kills_trophy_guid),
             score_max: 0,
             score_points: 0,
         });
@@ -4883,6 +4932,7 @@ impl AttackCruiserGame {
 
                     if let Some(killed_by_player_index) = most_damaged_by_player_index {
                         let pos = player_state.actor.pos;
+                        let track_kills = player_state.actor.track_kills;
                         let delta_score = self.player_states[player_index].actor.ship.score;
                         broadcasts.append(&mut Self::player_score_update(
                             self.player_states[killed_by_player_index as usize]
@@ -4891,6 +4941,8 @@ impl AttackCruiserGame {
                             &self.player_states[killed_by_player_index as usize],
                             self.group,
                         ));
+
+                        self.player_states[killed_by_player_index as usize].add_kill(track_kills);
                     }
 
                     let player_state = &mut self.player_states[player_index];
@@ -5111,6 +5163,9 @@ impl AttackCruiserGame {
                             &self.player_states[killed_by_player_index as usize],
                             self.group,
                         ));
+
+                        self.player_states[killed_by_player_index as usize]
+                            .add_kill(npc.track_kills);
                     }
 
                     broadcasts.push(Broadcast::Multi(
