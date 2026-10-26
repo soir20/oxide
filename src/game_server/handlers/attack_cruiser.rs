@@ -1694,7 +1694,7 @@ const fn default_wipe_style() -> AttackCruiserCinematicStyle {
     AttackCruiserCinematicStyle::Random
 }
 
-const fn ai_randomization_interval_millis() -> u32 {
+const fn default_ai_randomization_interval_millis() -> u32 {
     2000
 }
 
@@ -2217,7 +2217,7 @@ struct AttackCruiserShipConfig {
     ai_states: Vec<AttackCruiserShipAiStateRule>,
     #[serde(default)]
     default_ai_behavior: Arc<AttackCruiserShipAiBehavior>,
-    #[serde(default = "ai_randomization_interval_millis")]
+    #[serde(default = "default_ai_randomization_interval_millis")]
     ai_behavior_randomization_interval_millis: u32,
 }
 
