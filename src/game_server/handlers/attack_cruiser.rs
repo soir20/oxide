@@ -5241,14 +5241,6 @@ impl AttackCruiserGame {
                 }
             }
 
-            let mut no_player_disabled = true;
-            for player_index in self.active_player_indices.iter().copied() {
-                if self.player_states[player_index as usize].disabled() {
-                    no_player_disabled = false;
-                    break;
-                }
-            }
-
             let next_wave_index = wave_index.saturating_add(1);
             let final_wave_complete = self.config.waves.get(next_wave_index).is_none();
             if final_wave_complete {
@@ -5270,8 +5262,7 @@ impl AttackCruiserGame {
             }
 
             // Wave is complete and we despawned all the necessary NPCs
-            if actors_to_despawn.is_empty() && actors_to_warp_away.is_empty() && no_player_disabled
-            {
+            if actors_to_despawn.is_empty() && actors_to_warp_away.is_empty() {
                 self.start_wave(next_wave_index, now);
             }
         }
