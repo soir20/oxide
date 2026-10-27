@@ -3144,7 +3144,7 @@ categories:
               stage_icon_id: 379
               start_screen_icon_id: 2091
               min_players: 1
-              max_players: 1
+              max_players: 2
               difficulty: 1
               start_sound_id: 2245
               members_only: false
@@ -3165,9 +3165,12 @@ categories:
                   near_clip_distance: 1
                 client_actor_update_interval_millis: 100
                 factions:
-                  separatist:
+                  separatist_cruiser:
+                    is_boss: true
                     hostility: Hostile
                     track_kills: true
+                  separatist:
+                    hostility: Hostile
                   separatist_missile:
                     hostility: Hostile
                   republic:
@@ -3179,6 +3182,7 @@ categories:
                   player_powerup:
                     hostility: Friendly
                 game_over_warp_delay_millis: 500
+                game_over_warp_duration_millis: 1000
                 health_bar:
                   foreground_image_id: 163
                   background_image_id: 164
@@ -3283,15 +3287,15 @@ categories:
                     duration_millis: 5000
                   wave_despawn_radius_ratio: 2
                 ships:
-                  test:
+                  munificent:
                     seek_factions: [republic]
-                    self_factions: [separatist]
-                    max_alive: 50
+                    self_factions: [separatist, separatist_cruiser]
+                    max_alive: 10
                     model_id: 165
                     asset_name: Ship_RepublicDestroyer_bbe
                     max_speed: 200.0
-                    acceleration: 25.0
-                    deceleration: 50.0
+                    acceleration: 100.0
+                    deceleration: 100.0
                     max_angular_speed: !Degrees 60
                     angular_acceleration: !Degrees 120
                     angular_deceleration: !Degrees 120
@@ -3300,7 +3304,7 @@ categories:
                     score: 500
                     death_start_effect_id: 1856
                     death_end_effect_id: 1668
-                    despawn_effect_id: 1718
+                    despawn_effect_id: 1719
                     mobility: !Dynamic
                       max_roll: !Degrees 15
                       thruster_effect_id: 1689
@@ -3337,24 +3341,133 @@ categories:
                             target_deltas:
                               health: -1
                             length: 25
-                            cooldown_millis: 500
+                            cooldown_millis: 1000
                             min_launch_angle: !Degrees -60
                             max_launch_angle: !Degrees 60
                         ships:
                           - count: 3
                             ship: separatist_missile
                             cooldown_millis: 20000
+                            wobble: !Degrees 45
                             min_launch_angle: !Degrees -60
                             max_launch_angle: !Degrees 60
                     ai_states:
                       - condition:
                           And:
-                            - HealthPercent: [Equal, 0.0]
-                            - ExecutionCount: [Equal, 0]
+                            - HealthPercent: [GreaterThan, 0.0]
+                            - Probability: [LessThan, 0.125]
+                        behavior:
+                          execution_interval_millis: 1000
+                          ships:
+                            - count: 5
+                              ship: vulture
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.125]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: health_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.143]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: life_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.167]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: weapon_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.2]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: invulnerability_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.25]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: torrent_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.333]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: emp_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.5]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: mine_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
                         behavior:
                           ships:
                             - count: 1
                               ship: jerico_powerup
+                  vulture:
+                    seek_factions: [republic]
+                    self_factions: [separatist]
+                    max_alive: 30
+                    model_id: 189
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 400.0
+                    acceleration: 250.0
+                    deceleration: 250.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    score: 50
+                    despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1832
+                      stunned_effect_id: 1745
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1256
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -1
+                            length: 10
+                            cooldown_millis: 500
+                            lifetime_millis: 1500
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                    ai_states:
+                      - condition:
+                          And:
+                            - Probability: [LessThan, 0.75]
+                        behavior:
+                          movement: !SeekTarget
+                          execution_interval_millis: 10000
+                    default_ai_behavior:
+                      movement: !RandomPos
+                      execution_interval_millis: 10000
                   separatist_missile:
                     seek_factions: [republic]
                     self_factions: [separatist_missile]
@@ -3410,7 +3523,7 @@ categories:
                     max_angular_speed: !Degrees 120
                     angular_acceleration: !Degrees 240
                     angular_deceleration: !Degrees 240
-                    max_health: 100
+                    max_health: 1000
                     stunnable: false
                     overhead_health_scale: 0.0
                     effect_id: 1297
@@ -4032,36 +4145,60 @@ categories:
                             yaw: !Degrees 5
                 sound_id: 2413
                 waves:
-                  - max_duration_if_complete_millis: 6000
+                  - max_duration_if_complete_millis: 30000
                     despawn_factions_on_end: [separatist]
                     hud_messages:
                       - delay_millis: 1000
                         message:
-                          message_id: 1
-                          duration_millis: 2000
-                      - delay_millis: 4000
-                        message:
-                          message_id: 2
-                          duration_millis: 2000
-                      - delay_millis: 7000
-                        message:
-                          message_id: 3
-                          duration_millis: 2000
-                      - delay_millis: 10000
-                        message:
-                          message_id: 4
-                          duration_millis: 2000
+                          message_id: 12416
+                          duration_millis: 6000
+                          name_id: 12105
+                          image_id: 1187
+                          sound_id: 2331
                     min_kills_by_faction:
-                      separatist: 1
+                      separatist: 15
                     ships:
-                      - ship: test
+                      - ship: vulture
                         pos:
-                          x: 200.9
+                          x: 1003.9
                           y: 1000.0
                           z: -1999.0
                         yaw: !Degrees 45
-                        count: 5
-                        delay_millis: 10000
+                        count: 100
+                        delay_millis: 7500
+                        interval_millis: 2000
+                        wobble: !Degrees 10
+                      - ship: vulture
+                        pos:
+                          x: -1003.9
+                          y: 1000.0
+                          z: -1999.0
+                        yaw: !Degrees 45
+                        count: 100
+                        delay_millis: 7500
+                        interval_millis: 2000
+                        wobble: !Degrees 10
+                  - max_duration_if_complete_millis: 60000
+                    despawn_factions_on_end: [separatist]
+                    hud_messages:
+                      - delay_millis: 1000
+                        message:
+                          message_id: 12424
+                          duration_millis: 7000
+                          name_id: 12105
+                          image_id: 1187
+                          sound_id: 2339
+                    min_kills_by_faction:
+                      separatist_cruiser: 10
+                    ships:
+                      - ship: munificent
+                        pos:
+                          x: 3.9
+                          y: 1000.0
+                          z: -999.0
+                        yaw: !Degrees 45
+                        count: 10
+                        delay_millis: 2000
                         interval_millis: 5000
               zone_template_guid: 250
               score_to_credits_expression: x / 129
