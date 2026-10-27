@@ -206,7 +206,7 @@ jedi_temple:
     #
     # SHOPS
     #
-    # 
+    #
     - button_key: AR-M33
       npc_key: AR-M33
       new_dialog:
@@ -221,12 +221,12 @@ jedi_temple:
         look_at:
           x: 892.576
           y: 173.7
-          z: 1576.502           
+          z: 1576.502
           w: 1
         choices:
           - button_key: Shop Now! (AR-M33)
             button_text_id: 16680
-              
+
     - button_key: H0-U5E
       npc_key: H0-U5E
       new_dialog:
@@ -266,7 +266,7 @@ jedi_temple:
         choices:
           - button_key: Shop Now! (5W0-0P)
             button_text_id: 16668
-    
+
     - button_key: 80-T5
       npc_key: 80-T5
       new_dialog:
@@ -293,7 +293,7 @@ jedi_temple:
         dialog_message_id: 16683
         speaker_sound_id: 3531
         zoom: 30
-        camera_placement: 
+        camera_placement:
           x: 911
           y: 173.7
           z: 1552.8569
@@ -327,14 +327,14 @@ jedi_temple:
           - button_key: Shop Now! (GL1-D3)
             button_text_id: 16668
 
-    
+
     - button_key: Shop Now! (AR-M33)
       npc_key: AR-M33
       script: !CustomIntParams
         script_name: UIGlobal.GotoItemGroupInStore
         params: [1, 0, 0]
       close_dialog: true
-    
+
     - button_key: Shop Now! (GL1-D3)
       npc_key: GL1-D3
       script: !CustomIntParams
@@ -369,9 +369,9 @@ jedi_temple:
         script_name: UIGlobal.GotoItemGroupInStore
         params: [94, 0, 0]
       close_dialog: true
-      
+
     ### War Room
-    
+
     - button_key: Mace Windu
       npc_key: mace_windu
       new_dialog:
@@ -392,7 +392,7 @@ jedi_temple:
         choices:
           - button_key: Play Republic Defender
             button_text_id: 15004
-        
+
     - button_key: Plo Koon
       npc_key: plo_koon
       new_dialog:
@@ -434,7 +434,7 @@ jedi_temple:
         choices:
           - button_key: Play Galactic Forces
             button_text_id: 44352
-           
+
     - button_key: Play Republic Defender
       npc_key: mace_windu
       close_dialog: true
@@ -446,4 +446,3 @@ jedi_temple:
     - button_key: Play Galactic Forces
       npc_key: captain_rex
       close_dialog: true
-

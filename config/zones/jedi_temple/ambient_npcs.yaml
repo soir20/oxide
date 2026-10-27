@@ -571,7 +571,7 @@ jedi_temple:
           steps:
             - min_duration_millis: 1000
       synchronize_with: joker
-    hanger_purple_jedi_starfighter:
+    hangar_purple_jedi_starfighter:
       model_id: 723
       pos:
         x: 119.7354
@@ -612,7 +612,7 @@ jedi_temple:
               weight: 36
             - procedure: empty
               weight: 1259
-    hanger_green_jedi_starfighter:
+    hangar_green_jedi_starfighter:
       model_id: 721
       pos:
         x: 103.1059
@@ -2329,7 +2329,7 @@ jedi_temple:
         y: 0
         z: 0.9980268
         w: 0
-      stand_animation_id: 2599   
+      stand_animation_id: 2599
       cursor: 52
     # Amb Shops Jedi 5
     amb_shops_jedi_5:
@@ -2426,7 +2426,7 @@ jedi_temple:
         z: 1536.595
         w: 1
       rot:
-        x: -0.9097582 
+        x: -0.9097582
         y: 0
         z: 0.4151385
         w: 0
@@ -2493,7 +2493,7 @@ jedi_temple:
       stand_animation_id: 911
       notification_icon: 10
       cursor: 52
-    #P1 Captain Rex (shop)
+    # P1 Captain Rex (shop)
     p1_captain_rex_shops:
       model_id: 1023
       pos:
@@ -2566,7 +2566,7 @@ jedi_temple:
         y: 172.50824
         z: 1554.0399
         w: 1
-      rot: 
+      rot:
         x: -0.9956088
         y: 0
         z: 0.0936123
@@ -2678,7 +2678,7 @@ jedi_temple:
         y: 171.91292
         z: 1564.3402
         w: 1
-      rot: 
+      rot:
         x: -0.83703655
         y: 0
         z: -0.5471469
@@ -2741,7 +2741,7 @@ jedi_temple:
       scale: 1.25
       physics: Disabled
     # Droid Shopkeeper
-    droid_shopkeeper: 
+    droid_shopkeeper:
       key: 80-T5
       model_id: 891
       name_id: 16685
@@ -2780,7 +2780,7 @@ jedi_temple:
         w: 0
       cursor: 53
       enable_interact_popup: true
-      one_shot_interaction: 
+      one_shot_interaction:
         dialog_option_key: AR-M33
         duration_millis: 1
       interact_radius: 4
@@ -2826,7 +2826,7 @@ jedi_temple:
         w: 1
       cursor: 53
       enable_interact_popup: true
-      one_shot_interaction: 
+      one_shot_interaction:
         dialog_option_key: 5A8-3R
         duration_millis: 1
       interact_radius: 4
@@ -2834,27 +2834,27 @@ jedi_temple:
       physics: Disabled
     # Starfighter Shopkeeper
     starfighter_shopkeeper:
-       key: GL1-D3
-       model_id: 891
-       name_id: 16665
-       pos:
-         x: 895.09393
-         y: 171.95
-         z: 1516.4126
-         w: 1
-       rot:
-         x: -0.9674596
-         y: 0
-         z: 0.25305992
-         w: 1
-       cursor: 53
-       enable_interact_popup: true
-       one_shot_interaction:
-         dialog_option_key: GL1-D3
-         duration_millis: 1
-       interact_radius: 4
-       scale: 1.25
-       physics: Disabled
+      key: GL1-D3
+      model_id: 891
+      name_id: 16665
+      pos:
+        x: 895.09393
+        y: 171.95
+        z: 1516.4126
+        w: 1
+      rot:
+        x: -0.9674596
+        y: 0
+        z: 0.25305992
+        w: 1
+      cursor: 53
+      enable_interact_popup: true
+      one_shot_interaction:
+        dialog_option_key: GL1-D3
+        duration_millis: 1
+      interact_radius: 4
+      scale: 1.25
+      physics: Disabled
     # Shop BARC Speeder
     shop_barc_speeder:
       model_id: 998
@@ -2868,7 +2868,7 @@ jedi_temple:
         y: 0
         z: -0.23360854
         w: 0
-    #Shop Starfighter
+    # Shop Starfighter
     shop_starfighter:
       model_id: 903
       pos:
@@ -2937,7 +2937,7 @@ jedi_temple:
         x: -0.86725897
         y: 0
         z: 0.7
-        w: 1 
+        w: 1
       notification_icon: 10
 
     #
@@ -3150,7 +3150,7 @@ jedi_temple:
         w: 1
       rot:
         x: 0.8420334
-        y: 0 
+        y: 0
         z: 0.53942543
         w: 0
       stand_animation_id: 901
@@ -3265,7 +3265,7 @@ jedi_temple:
     # Clone Trooper Aqua Squares
     clone_trooper_aqua_squares:
       model_id: 1947
-      pos: 
+      pos:
         x: 729.8733
         y: 10.098241
         z: 3.68976
@@ -3448,7 +3448,7 @@ jedi_temple:
       stand_animation_id: 2590
       enable_interact_popup: false
     # Clone Trooper Shoulder Pad
-    clone_trooper_shoulder_pad: 
+    clone_trooper_shoulder_pad:
       model_id: 600
       pos:
         x: 711.09393
