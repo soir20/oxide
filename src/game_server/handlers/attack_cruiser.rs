@@ -2236,18 +2236,6 @@ impl AttackCruiserShipConfig {
             .fold(0.0, |a, b| a.max(b));
         Duration::from_secs_f32(death_secs)
     }
-
-    pub fn max_warp_out_time(&self) -> Duration {
-        let death_secs: f32 = self
-            .animations
-            .iter()
-            .filter(|animation| {
-                animation.animation_type == AttackCruiserActorAnimationType::WarpOut
-            })
-            .map(|animation| animation.duration_seconds)
-            .fold(0.0, |a, b| a.max(b));
-        Duration::from_secs_f32(death_secs)
-    }
 }
 
 static EMPTY_SHIP_CONFIG: LazyLock<Arc<AttackCruiserShipConfig>> =
@@ -2358,6 +2346,7 @@ pub struct AttackCruiserConfig {
     challenge: AttackCruiserChallengeConfig,
     factions: HashMap<String, AttackCruiserFactionConfig>,
     game_over_warp_delay_millis: u32,
+    game_over_warp_duration_millis: u32,
     health_bar: AttackCruiserHealthBarConfig,
     intro: AttackCruiserIntroConfig,
     lifetime_kills_trophy_guid: i32,
@@ -3553,11 +3542,12 @@ impl AttackCruiserGame {
                     }
                     AttackCruiserGameOverState::WaitingToWarp { countdown, .. } => {
                         if countdown.time_until_next_event(now).is_zero() {
-                            let player_ship = self.config.ship(&self.config.player.ship);
                             *state = AttackCruiserGameOverState::Warping {
                                 client_state_updated: false,
                                 countdown: MinigameCountdown::new_with_event(
-                                    player_ship.max_warp_out_time(),
+                                    Duration::from_millis(
+                                        self.config.game_over_warp_duration_millis.into(),
+                                    ),
                                     now,
                                 ),
                             }
