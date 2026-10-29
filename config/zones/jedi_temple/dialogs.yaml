@@ -31,7 +31,7 @@ jedi_temple:
       close_dialog: true
 
     #
-    # Hanger
+    # Hangar
     #
     - button_key: Breaker
       npc_key: breaker
@@ -203,10 +203,9 @@ jedi_temple:
             button_text_id: 3793
 
     #
+    # Shops
     #
-    # SHOPS
-    #
-    #
+
     - button_key: AR-M33
       npc_key: AR-M33
       new_dialog:
@@ -370,7 +369,9 @@ jedi_temple:
         params: [94, 0, 0]
       close_dialog: true
 
-    ### War Room
+    #
+    # War Room
+    #
 
     - button_key: Mace Windu
       npc_key: mace_windu

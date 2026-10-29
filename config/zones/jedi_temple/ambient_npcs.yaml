@@ -220,7 +220,7 @@ jedi_temple:
         duration_millis: 2000
 
     #
-    # Hanger
+    # Hangar
     #
     breaker:
       key: breaker
@@ -583,7 +583,10 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      force_despawn: false
+      removal_mode: &starfighter_removal_config
+        !Graceful
+        enable_death_animation: false
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:
@@ -598,7 +601,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -624,7 +627,8 @@ jedi_temple:
         y: 0
         z: 0
         w: 0
-      force_despawn: false
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
       enable_gravity: false
       tickable_procedures:
         spawn:
@@ -639,7 +643,7 @@ jedi_temple:
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 6000
+              min_duration_millis: 1
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -653,7 +657,7 @@ jedi_temple:
               weight: 36
             - procedure: empty
               weight: 1259
-    clone_guard_hanger_1:
+    clone_guard_hangar_1:
       model_id: 1936
       pos:
         x: 72.97756
@@ -674,7 +678,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 2.5
-    clone_guard_hanger_2:
+    clone_guard_hangar_2:
       model_id: 1936
       pos:
         x: 72.97756
@@ -695,7 +699,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 2.5
-    hanger_dianoga_barrel:
+    hangar_dianoga_barrel:
       model_id: 1089
       pos:
         x: 97.0
@@ -717,7 +721,7 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 6000
-    hanger_clone_with_missile_rack:
+    hangar_clone_with_missile_rack:
       model_id: 968
       pos:
         x: 106.64343
@@ -1001,7 +1005,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Guard Left of Hanger Door
+    # Guard Left of Hangar Door
     clone_guard_main_hall_7:
       model_id: 1936
       pos:
@@ -1023,7 +1027,7 @@ jedi_temple:
         duration_millis: 4000
       interact_radius: 6
       auto_interact_radius: 5
-    # Guard Right of Hanger Door
+    # Guard Right of Hangar Door
     clone_guard_main_hall_8:
       model_id: 1936
       pos:
@@ -2234,7 +2238,8 @@ jedi_temple:
       auto_interact_radius: 5
     # Amb Shops Jedi 1
     amb_shops_jedi_1:
-      model_id: 40
+      possible_model_ids:
+        - 40
       pos:
         x: 905.4856
         y: 172.44919
@@ -2245,10 +2250,11 @@ jedi_temple:
         y: 0
         z: -0.303
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Jedi 2
     amb_shops_jedi_2:
-      model_id: 410
+      possible_model_ids:
+        - 410
       pos:
         x: 907.3328
         y: 172.44817
@@ -2259,10 +2265,11 @@ jedi_temple:
         y: 0
         z: 0.386
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Jedi 3
     amb_shops_jedi_3:
-      model_id: 409
+      possible_model_ids:
+        - 409
       pos:
         x: 884.0515
         y: 171.93375
@@ -2273,7 +2280,7 @@ jedi_temple:
         y: 0
         z: 0.36774
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Clone 1
     amb_shops_clone_1:
       model_id: 1580
@@ -2287,7 +2294,7 @@ jedi_temple:
         y: 0
         z: -0.052
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Clone 2
     amb_shops_clone_2:
       model_id: 709
@@ -2301,10 +2308,11 @@ jedi_temple:
         y: 0
         z: -0.997
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Jedi 4
     amb_shops_jedi_4:
-      model_id: 1901
+      possible_model_ids:
+        - 1901
       pos:
         x: 891.7515
         y: 171.93376
@@ -2315,7 +2323,7 @@ jedi_temple:
         y: 0
         z: 0.031216505
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Clone 3
     amb_shops_clone_3:
       model_id: 2698
@@ -2330,10 +2338,11 @@ jedi_temple:
         z: 0.9980268
         w: 0
       stand_animation_id: 2599
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Jedi 5
     amb_shops_jedi_5:
-      model_id: 1973
+      possible_model_ids:
+        - 1973
       pos:
         x: 883.60675
         y: 171.93376
@@ -2344,7 +2353,7 @@ jedi_temple:
         y: 0
         z: -0.99142605
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Mechanic
     amb_shops_mechanic:
       model_id: 630
@@ -2358,7 +2367,7 @@ jedi_temple:
         y: 0
         z: 0.92782885
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Clone 4
     amb_shops_clone_4:
       model_id: 1880
@@ -2372,7 +2381,7 @@ jedi_temple:
         y: 0
         z: 0.9701551
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Clone 5
     amb_shops_clone_5:
       model_id: 2032
@@ -2386,7 +2395,7 @@ jedi_temple:
         y: 0
         z: -0.9965829
         w: 0
-      cursor: 52
+      enable_interact_popup: false
     # Amb Shops Senator
     amb_shops_senator:
       model_id: 1617
@@ -2401,7 +2410,7 @@ jedi_temple:
         z: -0.992873
         w: 0
       stand_animation_id: 2600
-      cursor: 52
+      enable_interact_popup: false
     # Gonk Droid (shop)
     gonk_droid:
       model_id: 233
@@ -2416,6 +2425,7 @@ jedi_temple:
         z: -0.0973526
         w: 0
       notification_icon: 10
+      enable_interact_popup: false
     # TC-70 Protocol Droid (shop)
     TC-70_protocol_droid:
       model_id: 164
@@ -2431,6 +2441,7 @@ jedi_temple:
         z: 0.4151385
         w: 0
       notification_icon: 10
+      enable_interact_popup: false
     # R3-S6 Astromech Droid (shop)
     R3-S6_astromech_droid:
       model_id: 642
@@ -2445,6 +2456,7 @@ jedi_temple:
         z: -0.30534542
         w: 0
       notification_icon: 10
+      enable_interact_popup: false
     # Commander Jet (shop)
     commander_jet_shop:
       model_id: 2780
@@ -2461,6 +2473,7 @@ jedi_temple:
       stand_animation_id: 0
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Commander Gree (shop)
     commander_gree_shop:
       model_id: 631
@@ -2477,6 +2490,7 @@ jedi_temple:
       stand_animation_id: 910
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Cadet Clone (shop)
     cadet_clone_shop:
       model_id: 1093
@@ -2493,6 +2507,7 @@ jedi_temple:
       stand_animation_id: 911
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # P1 Captain Rex (shop)
     p1_captain_rex_shops:
       model_id: 1023
@@ -2509,6 +2524,7 @@ jedi_temple:
       stand_animation_id: 908
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Flamethrower Trooper (shops)
     flamethrower_trooper_shops:
       model_id: 1204
@@ -2525,7 +2541,7 @@ jedi_temple:
       stand_animation_id: 911
       notification_icon: 10
       cursor: 52
-      enable_interact_popup: true
+      enable_interact_popup: false
     # Snowtrooper Wolffe (shops)
     snowtrooper_wolffe_shops:
       model_id: 1660
@@ -2542,6 +2558,7 @@ jedi_temple:
       stand_animation_id: 1
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Geonosis ARF Trooper (shops)
     geonosis_arf_trooper_shops:
       model_id: 418
@@ -2558,6 +2575,7 @@ jedi_temple:
       stand_animation_id: 912
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Ahsoka Tano (shops)
     ahsokatano_shops:
       model_id: 1018
@@ -2574,6 +2592,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Mustafar Anakin (shops)
     mustafar_anakin:
       model_id: 1699
@@ -2590,6 +2609,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Fiery Obi Wan (shops)
     fiery_obi_wan_shops:
       model_id: 1693
@@ -2606,6 +2626,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Mestare Jedi (shops)
     mestare_jedi_shops:
       model_id: 1695
@@ -2622,6 +2643,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # General Snow (shops)
     general_snow_shops:
       model_id: 635
@@ -2638,6 +2660,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Officer (shops)
     officer_shops:
       model_id: 596
@@ -2654,6 +2677,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Mechanic (shops)
     mechanic_shops:
       model_id: 630
@@ -2670,6 +2694,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Special Ops Clone (shops)
     special_ops_clone_shops:
       model_id: 1703
@@ -2686,6 +2711,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Red Mandalorian (shops)
     red_mandalorian_shops:
       model_id: 1734
@@ -2702,6 +2728,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Kashyyyk Obi Wan (shops)
     kashyyyk_obi_wan:
       model_id: 1730
@@ -2718,6 +2745,7 @@ jedi_temple:
       stand_animation_id: 901
       notification_icon: 10
       cursor: 52
+      enable_interact_popup: false
     # Furniture Shopkeeper Droid
     Furniture_shopkeeper_Droid:
       key: H0-U5E
@@ -2868,6 +2896,7 @@ jedi_temple:
         y: 0
         z: -0.23360854
         w: 0
+      enable_interact_popup: false
     # Shop Starfighter
     shop_starfighter:
       model_id: 903
@@ -2883,6 +2912,7 @@ jedi_temple:
         w: 0
       physics: Disabled
       scale: 1.25
+      enable_interact_popup: false
     # Gungan Couch
     gungan_couch:
       model_id: 587
@@ -2897,6 +2927,7 @@ jedi_temple:
         z: 0.6056954
         w: 1
       notification_icon: 10
+      enable_interact_popup: false
     # Gungan Plant
     gungan_plant:
       model_id: 590
@@ -2911,6 +2942,7 @@ jedi_temple:
         z: 0.6527474
         w: 1
       notification_icon: 10
+      enable_interact_popup: false
     # Gungan Chair
     gungan_chair:
       model_id: 586
@@ -2925,6 +2957,7 @@ jedi_temple:
         z: -0.25800192
         w: 1
       notification_icon: 10
+      enable_interact_popup: false
     # Gungan Table
     gungan_table:
       model_id: 592
@@ -2939,6 +2972,7 @@ jedi_temple:
         z: 0.7
         w: 1
       notification_icon: 10
+      enable_interact_popup: false
 
     #
     # War Room
@@ -3007,7 +3041,6 @@ jedi_temple:
         w: 0
       stand_animation_id: 901
       enable_interact_popup: false
-      interact_radius: 5
     # Admiral Yularen
     admiral_yularen:
       model_id: 1011
@@ -3023,7 +3056,6 @@ jedi_temple:
         w: 0
       stand_animation_id: 901
       enable_interact_popup: false
-      interact_radius: 5
     # Commander Cody
     commander_cody_phase_2:
       model_id: 2785
@@ -3039,7 +3071,6 @@ jedi_temple:
         w: 0
       stand_animation_id: 901
       enable_interact_popup: false
-      interact_radius: 5
     # Mace Windu
     mace_windu:
       key: mace_windu
@@ -3057,7 +3088,6 @@ jedi_temple:
       stand_animation_id: 2100
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 26
       one_shot_interaction:
         dialog_option_key: Mace Windu
         duration_millis: 1
@@ -3115,7 +3145,6 @@ jedi_temple:
       stand_animation_id: 901
       cursor: 53
       enable_interact_popup: true
-      notification_icon: 41
       one_shot_interaction:
         dialog_option_key: Captain Rex
         duration_millis: 1
@@ -3404,19 +3433,28 @@ jedi_temple:
       enable_gravity: false
     # L1-LR3D
     L1LR3D:
-      model_id: 641
-      pos:
-        x: 716.88665
-        y: 10.98241
-        z: 15.351416
-        w: 1
-      rot:
-        x: 0.19670576
-        y: 0
-        z: 0.98804626
-        w: 0
-      stand_animation_id: 901
-      enable_interact_popup: false
+      model_id: 1081
+        name_id: 2478
+        show_name: false
+        enable_gravity: false
+        pos:
+          x: 716.89374
+          y: 10.097287
+          z: 15.25
+          w: 1.0
+        rot:
+          x: 0
+          y: 0
+          z: 1
+          w: 0
+        stand_animation_id: 2519
+        cursor: 54
+        enable_interact_popup: false
+        one_shot_interaction:
+           player_reaction:
+             animation_id: 3014
+            one_shot_animation_id: 2520
+            duration_millis: 1000
     # Clone Trooper No Helmet 2
     clone_trooper_no_helmet_2:
       model_id: 2032
@@ -3447,9 +3485,9 @@ jedi_temple:
         w: 0
       stand_animation_id: 2590
       enable_interact_popup: false
-    # Clone Trooper Shoulder Pad
-    clone_trooper_shoulder_pad:
-      model_id: 600
+    # Clone Trooper (No Helmet 5)
+    clone_trooper_no_helmet_5:
+      model_id: 2032
       pos:
         x: 711.09393
         y: 10.5910845
@@ -3492,6 +3530,7 @@ jedi_temple:
         w: 0
       stand_animation_id: 901
       enable_interact_popup: false
+
     #
     # Workshop
     #
