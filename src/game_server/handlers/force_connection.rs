@@ -896,7 +896,6 @@ impl ForceConnectionGame {
             return Vec::new();
         }
 
-        self.timer.update_timer(now);
         if !self.timer.time_until_next_event(now).is_zero() {
             return Vec::new();
         }
@@ -932,6 +931,7 @@ impl ForceConnectionGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Force Connection ({self:?})")));
@@ -941,7 +941,7 @@ impl ForceConnectionGame {
             return Ok(Vec::new());
         }
 
-        self.timer.pause_or_resume(pause);
+        self.timer.pause_or_resume(pause, now);
         Ok(Vec::new())
     }
 

@@ -1,4 +1,5 @@
 pub mod ability;
+pub mod attack_cruiser;
 pub mod chat;
 pub mod clicked_location;
 pub mod client_update;
@@ -30,6 +31,7 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
 };
 
+use glam::Vec3;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 use packet_serialize::{DeserializePacket, SerializePacket};
 use serde::Deserialize;
@@ -239,6 +241,166 @@ impl MulAssign for Pos {
 impl DivAssign for Pos {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs;
+    }
+}
+
+#[derive(
+    Copy, Clone, Debug, SerializePacket, DeserializePacket, Deserialize, Default, PartialEq,
+)]
+#[serde(deny_unknown_fields)]
+pub struct Pos3 {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+}
+
+impl From<Pos> for Pos3 {
+    fn from(value: Pos) -> Self {
+        Pos3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
+impl Add for Pos3 {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl Sub for Pos3 {
+    type Output = Pos3;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Mul for Pos3 {
+    type Output = Pos3;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl Div for Pos3 {
+    type Output = Pos3;
+
+    fn div(self, rhs: Self) -> Self::Output {
+        Pos3 {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z,
+        }
+    }
+}
+
+impl Add<f32> for Pos3 {
+    type Output = Self;
+
+    fn add(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x + rhs,
+            y: self.y + rhs,
+            z: self.z + rhs,
+        }
+    }
+}
+
+impl Sub<f32> for Pos3 {
+    type Output = Self;
+
+    fn sub(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x - rhs,
+            y: self.y - rhs,
+            z: self.z - rhs,
+        }
+    }
+}
+
+impl Mul<f32> for Pos3 {
+    type Output = Pos3;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Div<f32> for Pos3 {
+    type Output = Pos3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        Pos3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+impl AddAssign for Pos3 {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
+impl SubAssign for Pos3 {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
+    }
+}
+
+impl MulAssign for Pos3 {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
+impl DivAssign for Pos3 {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
+}
+
+impl From<Vec3> for Pos3 {
+    fn from(value: Vec3) -> Self {
+        Pos3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
+    }
+}
+
+impl From<Pos3> for Vec3 {
+    fn from(value: Pos3) -> Self {
+        Vec3 {
+            x: value.x,
+            y: value.y,
+            z: value.z,
+        }
     }
 }
 
