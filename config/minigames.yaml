@@ -3115,6 +3115,1093 @@ categories:
               stage_select_map_name: ''
               short_name: ''
               stages: []
+      - guid: 1006
+        name_id: 9228
+        description_id: 9228
+        members_only: false
+        is_flash: false
+        is_active: true
+        param1: 0
+        icon_id: 1232
+        background_icon_id: 0
+        is_popular: true
+        is_game_of_day: false
+        sort_order: 5000
+        tutorial_swf: HowtoStarDestroyer.swf
+        stage_group:
+          guid: 16
+          name_id: 9228
+          description_id: 9228
+          icon_id: 373
+          stage_icon_id: 373
+          members_only: false
+          stage_select_map_name: starDestroyer
+          stages:
+            - !Stage
+              guid: 33001
+              name_id: 7270
+              description_id: 15098
+              stage_icon_id: 379
+              start_screen_icon_id: 2091
+              min_players: 1
+              max_players: 2
+              difficulty: 1
+              start_sound_id: 2245
+              members_only: false
+              require_previous_completed: false
+              link_name: stage
+              short_name: stage03
+              minigame_type:
+                !AttackCruiser
+                actor_update_radius: 4000
+                camera:
+                  default_distance: 1000
+                  min_distance: 500
+                  max_distance: 1000
+                  pitch: !Degrees 30
+                  target_tracking_high_level_quotient: 0.1
+                  zoom_step_quantization: 0.1
+                  zoom_step_high_level_quotient: 0.1
+                  near_clip_distance: 1
+                client_actor_update_interval_millis: 100
+                factions:
+                  separatist_cruiser:
+                    is_boss: true
+                    hostility: Hostile
+                    track_kills: true
+                  separatist:
+                    hostility: Hostile
+                  separatist_missile:
+                    hostility: Hostile
+                  republic:
+                    hostility: Friendly
+                  republic_missile:
+                    hostility: Friendly
+                  player:
+                    hostility: Friendly
+                  player_powerup:
+                    hostility: Friendly
+                game_over_warp_delay_millis: 500
+                game_over_warp_duration_millis: 1000
+                health_bar:
+                  foreground_image_id: 163
+                  background_image_id: 164
+                intro:
+                  ships:
+                    - model_id: 580
+                      animation_id: 1
+                    - model_id: 167
+                      animation_id: 10317
+                  cinematics:
+                    - duration_seconds: 20.0
+                      camera_animation_id: 10317
+                      camera_heading: !Degrees 270.0
+                      camera_fov: !Degrees 50.0
+                      flip_camera_z: true
+                lifetime_kills_trophy_guid: 100000
+                max_weapon_cooldown_error_millis: 10
+                planet:
+                  model_id: 583
+                  center:
+                    x: 0.0
+                    y: 1363.94
+                    z: 28539.1
+                  angular_speed: !Radians -0.008
+                player:
+                  lives: 3
+                  max_lives: 5
+                  damage_alarm_sound_id: 2426
+                  damage_alarm_health_percent: 21.0
+                  damage_alarm_interval_millis: 2500
+                  post_respawn_invulnerability_millis: 3000
+                  primary_tiers_on_death: -1
+                  out_of_bounds_warp_millis: 3000
+                  out_of_bounds_warp_delay_millis: 250
+                  score_multiplier_goal_base: 2000
+                  score_multiplier_delta_per_sec_base: -150
+                  score_multiplier_grace_millis: 500
+                  score_multiplier_tier_max: 3
+                  secondary_items:
+                    invulnerability:
+                      icon_id: 517
+                      invulnerability_millis: 5000
+                    torrent:
+                      icon_id: 515
+                      ships:
+                        - count: 5
+                          ship: v19
+                          wobble: !Degrees 360
+                    emp:
+                      icon_id: 516
+                      aoe:
+                        radius: 1000.0
+                        composite_effect_id: 1739
+                        target_factions: [separatist]
+                        target_deltas:
+                          stun_millis: 5000
+                    mine:
+                      icon_id: 519
+                      aoe:
+                        radius: 0
+                        composite_effect_id: 2021
+                        target_factions: []
+                      ships:
+                        - count: 1
+                          ship: mine
+                    jerico:
+                      icon_id: 518
+                      ships:
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees -60
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees 0
+                        - count: 1
+                          ship: jerico_missile1
+                          yaw: !Degrees 60
+                  spawn1:
+                    pos:
+                      x: 3.9
+                      y: 1000.0
+                      z: -1999.0
+                    yaw: !Degrees 0.0
+                  spawn2:
+                    pos:
+                      x: 200.9
+                      y: 1000.0
+                      z: -1999.0
+                    yaw: !Degrees 0.0
+                  ship: venator
+                playfield:
+                  center:
+                    x: 3.9
+                    y: 1000.0
+                    z: -1999.0
+                  radius_x: 1100.0
+                  radius_z: 850.0
+                  half_height: 50.0
+                  warning_radius_ratio: 0.9
+                  warning_message:
+                    message_id: 13628
+                    duration_millis: 5000
+                  wave_despawn_radius_ratio: 2
+                ships:
+                  munificent:
+                    seek_factions: [republic]
+                    self_factions: [separatist, separatist_cruiser]
+                    max_alive: 10
+                    model_id: 165
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 200.0
+                    acceleration: 100.0
+                    deceleration: 100.0
+                    max_angular_speed: !Degrees 60
+                    angular_acceleration: !Degrees 120
+                    angular_deceleration: !Degrees 120
+                    max_health: 20
+                    overhead_health_scale: 0.5
+                    score: 500
+                    death_start_effect_id: 1856
+                    death_end_effect_id: 1668
+                    despawn_effect_id: 1719
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1689
+                      stunned_effect_id: 1736
+                    animations:
+                      - animation_type: Death1
+                        animation_id: 3001
+                        duration_seconds: 6.0
+                      - animation_type: Death2
+                        animation_id: 3002
+                        duration_seconds: 6.0
+                    cinematics:
+                      - cinematic_type: Death1
+                        camera_animation_id: 10106
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10107
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10108
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10109
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10110
+                        duration_seconds: 6.0
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1557
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 1000
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                        ships:
+                          - count: 3
+                            ship: separatist_missile
+                            cooldown_millis: 20000
+                            wobble: !Degrees 45
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                    ai_states:
+                      - condition:
+                          And:
+                            - HealthPercent: [GreaterThan, 0.0]
+                            - Probability: [LessThan, 0.125]
+                        behavior:
+                          execution_interval_millis: 1000
+                          ships:
+                            - count: 5
+                              ship: vulture
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.125]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: health_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.143]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: life_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.167]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: weapon_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.2]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: invulnerability_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.25]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: torrent_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.333]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: emp_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                            - Probability: [LessThan, 0.5]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: mine_powerup
+                      - condition:
+                          And:
+                            - DeathMillisRemaining: [Equal, 0]
+                        behavior:
+                          ships:
+                            - count: 1
+                              ship: jerico_powerup
+                  vulture:
+                    seek_factions: [republic]
+                    self_factions: [separatist]
+                    max_alive: 30
+                    model_id: 189
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 400.0
+                    acceleration: 250.0
+                    deceleration: 250.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    score: 50
+                    despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1832
+                      stunned_effect_id: 1745
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1256
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -1
+                            length: 10
+                            cooldown_millis: 500
+                            lifetime_millis: 1500
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                    ai_states:
+                      - condition:
+                          And:
+                            - Probability: [LessThan, 0.75]
+                        behavior:
+                          movement: !SeekTarget
+                          execution_interval_millis: 10000
+                    default_ai_behavior:
+                      movement: !RandomPos
+                      execution_interval_millis: 10000
+                  separatist_missile:
+                    seek_factions: [republic]
+                    self_factions: [separatist_missile]
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 400.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1
+                    stunnable: false
+                    score: 25
+                    overhead_health_scale: 0.0
+                    effect_id: 1532
+                    death_end_effect_id: 1450
+                    despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1315
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [republic, republic_missile]
+                            target_deltas:
+                              health: -2
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                            min_launch_angle: !Degrees -90
+                            max_launch_angle: !Degrees 90
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 20000]
+                        behavior:
+                          despawn: true
+                  republic_missile:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 400.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 1000
+                    stunnable: false
+                    overhead_health_scale: 0.0
+                    effect_id: 1297
+                    death_end_effect_id: 1450
+                    despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1315
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -2
+                            self_deltas:
+                              health: -100
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                            min_launch_angle: !Degrees -90
+                            max_launch_angle: !Degrees 90
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 20000]
+                        behavior:
+                          despawn: true
+                  health_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1545
+                    death_end_effect_id: 1774
+                    despawn_effect_id: 1774
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1774
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              health: 20
+                              player_score: 100
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  life_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1541
+                    death_end_effect_id: 1777
+                    despawn_effect_id: 1777
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1777
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_lives: 1
+                              player_score: 100
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  weapon_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1538
+                    death_end_effect_id: 1772
+                    despawn_effect_id: 1772
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1772
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              primary_tiers: 1
+                              player_score: 500
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  invulnerability_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1540
+                    death_end_effect_id: 1775
+                    despawn_effect_id: 1775
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1775
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_score: 100
+                              player_secondary_item:
+                                name: invulnerability
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  torrent_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1539
+                    death_end_effect_id: 1779
+                    despawn_effect_id: 1779
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1779
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_score: 100
+                              player_secondary_item:
+                                name: torrent
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  emp_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1537
+                    death_end_effect_id: 1773
+                    despawn_effect_id: 1773
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1773
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_score: 100
+                              player_secondary_item:
+                                name: emp
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  mine_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1543
+                    death_end_effect_id: 1778
+                    despawn_effect_id: 1778
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1778
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_score: 100
+                              player_secondary_item:
+                                name: mine
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  jerico_powerup:
+                    seek_factions: [player]
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 45
+                    max_speed: 15.0
+                    acceleration: 50.0
+                    deceleration: 50.0
+                    max_angular_speed: !Degrees 10
+                    angular_acceleration: !Degrees 100
+                    angular_deceleration: !Degrees 100
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    effect_id: 1542
+                    death_end_effect_id: 1776
+                    despawn_effect_id: 1776
+                    mobility: !Static
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - hit_composite_effect_id: 1776
+                            speed: 0
+                            wobble: !Degrees 0
+                            target_factions: [player]
+                            target_deltas:
+                              player_score: 100
+                              player_secondary_item:
+                                name: jerico
+                                count: 1
+                            self_deltas:
+                              health: -1
+                            length: 100
+                            cooldown_millis: 50
+                            max_cooldown_error_millis: 0
+                            lifetime_millis: 50
+                  v19:
+                    seek_factions: [separatist]
+                    self_factions: [republic]
+                    max_alive: 50
+                    model_id: 241
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 400.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 60
+                    angular_acceleration: !Degrees 120
+                    angular_deceleration: !Degrees 120
+                    max_health: 20
+                    overhead_health_scale: 0.0
+                    despawn_effect_id: 1718
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1827
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1761
+                            hit_composite_effect_id: 1315
+                            count: 1
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 500
+                            min_launch_angle: !Degrees -60
+                            max_launch_angle: !Degrees 60
+                  mine:
+                    seek_factions: []
+                    self_factions: [player_powerup]
+                    max_alive: 20
+                    model_id: 572
+                    max_speed: 0.0
+                    acceleration: 0.0
+                    deceleration: 0.0
+                    max_angular_speed: !Degrees 0
+                    angular_acceleration: !Degrees 0
+                    angular_deceleration: !Degrees 0
+                    max_health: 1
+                    overhead_health_scale: 0.0
+                    death_end_effect_id: 1836
+                    despawn_effect_id: 1836
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                      max_roll: !Degrees 15
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 3000]
+                        behavior:
+                          aoe:
+                            radius: 1000.0
+                            composite_effect_id: 1836
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -20
+                          despawn: true
+                  jerico_missile1:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 300.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 100
+                    stunnable: false
+                    overhead_health_scale: 0.0
+                    effect_id: 1725
+                    death_end_effect_id: 1724
+                    despawn_effect_id: 1724
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 1000]
+                        behavior:
+                          despawn: true
+                          ships:
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 0
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 72
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 144
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 216
+                            - count: 1
+                              ship: jerico_missile2
+                              yaw: !Degrees 288
+                  jerico_missile2:
+                    seek_factions: [separatist]
+                    self_factions: [republic_missile]
+                    max_alive: 20
+                    model_id: 45
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    max_speed: 300.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 240
+                    angular_deceleration: !Degrees 240
+                    max_health: 100
+                    stunnable: false
+                    overhead_health_scale: 0.0
+                    effect_id: 1726
+                    death_end_effect_id: 1724
+                    despawn_effect_id: 1724
+                    mobility: !Dynamic
+                      show_arrow_to_player: false
+                    ai_behavior_randomization_interval_millis: 1000
+                    ai_states:
+                      - condition:
+                          LifetimeMillis: [GreaterThan, 1000]
+                        behavior:
+                          despawn: true
+                          aoe:
+                            radius: 300.0
+                            composite_effect_id: 1723
+                            target_factions: [separatist]
+                            target_deltas:
+                              health: -10
+                  venator:
+                    seek_factions: [separatist]
+                    self_factions: [republic, player]
+                    max_alive: 20
+                    model_id: 167
+                    asset_name: Ship_RepublicDestroyer_bbe
+                    enable_collision: true
+                    max_speed: 100.0
+                    acceleration: 25.0
+                    deceleration: 25.0
+                    max_angular_speed: !Degrees 120
+                    angular_acceleration: !Degrees 120
+                    angular_deceleration: !Degrees 120
+                    max_health: 100
+                    overhead_health_scale: 0.5
+                    mobility: !Dynamic
+                      max_roll: !Degrees 15
+                      thruster_effect_id: 1707
+                      invulnerable_effect_id: 1744
+                    animations:
+                      - animation_type: Death1
+                        animation_id: 3001
+                        duration_seconds: 6.0
+                      - animation_type: Death2
+                        animation_id: 3002
+                        duration_seconds: 6.0
+                      - animation_type: WarpIn
+                        animation_id: 3010
+                        duration_seconds: 3.0
+                      - animation_type: WarpOut
+                        animation_id: 3009
+                        duration_seconds: 2.0
+                    cinematics:
+                      - cinematic_type: Death1
+                        camera_animation_id: 10207
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10208
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10209
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10210
+                        duration_seconds: 6.0
+                      - cinematic_type: Death1
+                        camera_animation_id: 10211
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10308
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10309
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10310
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10311
+                        duration_seconds: 6.0
+                      - cinematic_type: Death2
+                        camera_animation_id: 10312
+                        duration_seconds: 6.0
+                      - cinematic_type: Respawn
+                        camera_animation_id: 10010
+                        duration_seconds: 6.0
+                      - cinematic_type: GameOver
+                        camera_animation_id: 10019
+                        duration_seconds: 6.0
+                    damage_states:
+                      - min_health_percent: 81.0
+                        texture_alias: "damage0"
+                        effects: []
+                      - min_health_percent: 61.0
+                        texture_alias: "damage1"
+                        effects:
+                          - effect_id: 1345
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                      - min_health_percent: 41.0
+                        texture_alias: "damage2"
+                        effects:
+                          - effect_id: 1574
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                          - effect_id: 1346
+                            offset:
+                              x: -3.251
+                              y: 12.041
+                              z: -11.255
+                          - effect_id: 1346
+                            offset:
+                              x: 20.4703
+                              y: 1.89752
+                              z: -19.0574
+                      - min_health_percent: 0.0
+                        texture_alias: "damage3"
+                        effects:
+                          - effect_id: 1574
+                            offset:
+                              x: -5.14109
+                              y: 2.59693
+                              z: 50.5737
+                          - effect_id: 1347
+                            offset:
+                              x: 10.4945
+                              y: 1.45443
+                              z: 20.5566
+                          - effect_id: 1347
+                            offset:
+                              x: -11.0462
+                              y: 1.16923
+                              z: 11.1481
+                          - effect_id: 1574
+                            offset:
+                              x: -3.251
+                              y: 12.041
+                              z: -11.255
+                          - effect_id: 1574
+                            offset:
+                              x: 20.4703
+                              y: 1.89752
+                              z: -19.0574
+                          - effect_id: 1347
+                            offset:
+                              x: 1.69803
+                              y: 4.46827
+                              z: -45.8687
+                    primary_weapon_tiers:
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 250
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                      - projectiles:
+                          - composite_effect_id: 1558
+                            hit_composite_effect_id: 1315
+                            count: 2
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 25
+                            cooldown_millis: 250
+                          - composite_effect_id: 1763
+                            hit_composite_effect_id: 1315
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw: !Degrees 5
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                          - composite_effect_id: 1762
+                            hit_composite_effect_id: 1315
+                            yaw: !Degrees -5
+                            target_factions: [separatist, separatist_missile]
+                            target_deltas:
+                              health: -1
+                            length: 75
+                            cooldown_millis: 250
+                        ships:
+                          - count: 1
+                            ship: republic_missile
+                            cooldown_millis: 4000
+                            yaw: !Degrees -5
+                          - count: 1
+                            ship: republic_missile
+                            cooldown_millis: 4000
+                            yaw: !Degrees 5
+                sound_id: 2413
+                waves:
+                  - max_duration_if_complete_millis: 30000
+                    despawn_factions_on_end: [separatist]
+                    hud_messages:
+                      - delay_millis: 1000
+                        message:
+                          message_id: 12416
+                          duration_millis: 6000
+                          name_id: 12105
+                          image_id: 1187
+                          sound_id: 2331
+                    min_kills_by_faction:
+                      separatist: 15
+                    ships:
+                      - ship: vulture
+                        pos:
+                          x: 1003.9
+                          y: 1000.0
+                          z: -1999.0
+                        yaw: !Degrees 45
+                        count: 100
+                        delay_millis: 7500
+                        interval_millis: 2000
+                        wobble: !Degrees 10
+                      - ship: vulture
+                        pos:
+                          x: -1003.9
+                          y: 1000.0
+                          z: -1999.0
+                        yaw: !Degrees 45
+                        count: 100
+                        delay_millis: 7500
+                        interval_millis: 2000
+                        wobble: !Degrees 10
+                  - max_duration_if_complete_millis: 60000
+                    despawn_factions_on_end: [separatist]
+                    hud_messages:
+                      - delay_millis: 1000
+                        message:
+                          message_id: 12424
+                          duration_millis: 7000
+                          name_id: 12105
+                          image_id: 1187
+                          sound_id: 2339
+                    min_kills_by_faction:
+                      separatist_cruiser: 10
+                    ships:
+                      - ship: munificent
+                        pos:
+                          x: 3.9
+                          y: 1000.0
+                          z: -999.0
+                        yaw: !Degrees 45
+                        count: 10
+                        delay_millis: 2000
+                        interval_millis: 5000
+              zone_template_guid: 250
+              score_to_credits_expression: x / 129
       - guid: 1027
         name_id: 33128
         description_id: 6394

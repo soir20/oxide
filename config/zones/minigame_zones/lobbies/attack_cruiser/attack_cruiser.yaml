@@ -1,0 +1,27 @@
+---
+attack_cruiser:
+  guid: 250
+  max_players: 2
+  template_name: 9
+  asset_name: SD_Twin_Suns_bbe
+  hide_ui: false
+  is_combat: false
+  chunk_size: 1000
+  default_point_of_interest:
+    guid: 250
+    pos:
+      x: 0
+      y: 0
+      z: 0
+      w: 1
+    rot:
+      x: 0
+      y: 0
+      z: 0
+      w: 0
+  spawn_sky: sky_SD_twins_bbe.xml
+  speed: 8
+  jump_height_multiplier: 1
+  gravity_multiplier: 1
+  seconds_per_day: 10800
+  update_previous_location_on_leave: false

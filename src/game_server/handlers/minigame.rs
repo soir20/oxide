@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashMap},
     fs::File,
     io::{Cursor, Error, ErrorKind, Read},
     iter, mem,
@@ -11,6 +11,7 @@ use std::{
 use chrono::{DateTime, Datelike, FixedOffset, NaiveTime, Timelike, Utc};
 use evalexpr::{context_map, eval_with_context, Value};
 use num_enum::TryFromPrimitive;
+use oxide_bvh::Bvh;
 use packet_serialize::DeserializePacket;
 use rand::{seq::SliceRandom, thread_rng};
 use serde::Deserialize;
@@ -19,6 +20,9 @@ use crate::{
     game_server::{
         handlers::{
             are_dates_consecutive, are_dates_in_same_week,
+            attack_cruiser::{
+                process_attack_cruiser_packet, AttackCruiserConfig, AttackCruiserGame,
+            },
             character::{
                 Character, MinigameStatus, MinigameWinStatus, PlayerInventory, RemovalMode,
             },
@@ -200,6 +204,13 @@ impl PlayerMinigameStats {
             .unwrap_or(0)
     }
 
+    pub fn trophy_progress(&mut self, trophy_guid: i32) -> i32 {
+        self.trophy_stats
+            .get(&trophy_guid)
+            .copied()
+            .unwrap_or_default()
+    }
+
     pub fn update_trophy_progress(&mut self, trophy_guid: i32, delta: i32) {
         self.trophy_stats
             .entry(trophy_guid)
@@ -242,6 +253,7 @@ pub enum FlashMinigameType {
 #[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub enum MinigameType {
+    AttackCruiser(Arc<AttackCruiserConfig>),
     Flash {
         game_swf_name: String,
         #[serde(default)]
@@ -250,7 +262,7 @@ pub enum MinigameType {
     SaberStrike {
         saber_strike_stage_id: u32,
     },
-    SaberDuel(Box<SaberDuelConfig>),
+    SaberDuel(Arc<SaberDuelConfig>),
 }
 
 impl MinigameType {
@@ -367,25 +379,28 @@ impl SharedMinigameData {
         pause: bool,
         stage_config: &MinigameStageConfig,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
         if stage_config.max_players() == 1 {
             if let MinigameReadiness::Ready(timer) = &mut self.readiness {
-                timer.pause_or_resume(pause);
+                timer.pause_or_resume(pause, now);
             }
         }
 
         self.data.pause_or_resume(sender, pause)
     }
 
-    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
-        self.data.tick(now)
+    pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
+        self.data.tick(now, tick_duration)
     }
 
     pub fn remove_player(
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
+        minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
-        self.data.remove_player(player, minigame_status)
+        self.data
+            .remove_player(player, minigame_status, minigame_stats)
     }
 
     pub fn characters(
@@ -419,6 +434,9 @@ impl
 
     fn index1(&self) -> SharedMinigameDataTickableIndex {
         match self.data {
+            SharedMinigameTypeData::AttackCruiser { .. } => {
+                SharedMinigameDataTickableIndex::Tickable
+            }
             SharedMinigameTypeData::FleetCommander { .. } => {
                 SharedMinigameDataTickableIndex::Tickable
             }
@@ -447,6 +465,9 @@ impl
 #[non_exhaustive]
 #[derive(Clone, Default)]
 pub enum SharedMinigameTypeData {
+    AttackCruiser {
+        game: Box<AttackCruiserGame>,
+    },
     FleetCommander {
         game: Box<FleetCommanderGame>,
     },
@@ -467,12 +488,22 @@ impl SharedMinigameTypeData {
         group: MinigameMatchmakingGroup,
         difficulty: u32,
         start_pos: Option<Pos>,
+        bvhs: &HashMap<String, Arc<Bvh>>,
     ) -> Self {
         // We can't have a game without at least one player
         let player1 = members[0];
         let player2 = members.get(1).cloned();
 
         match minigame_type {
+            MinigameType::AttackCruiser(config) => SharedMinigameTypeData::AttackCruiser {
+                game: Box::new(AttackCruiserGame::new(
+                    config.clone(),
+                    player1,
+                    player2,
+                    group,
+                    bvhs,
+                )),
+            },
             MinigameType::Flash { game_type, .. } => match game_type {
                 FlashMinigameType::FleetCommander => SharedMinigameTypeData::FleetCommander {
                     game: Box::new(FleetCommanderGame::new(
@@ -496,7 +527,7 @@ impl SharedMinigameTypeData {
             MinigameType::SaberStrike { .. } => SharedMinigameTypeData::default(),
             MinigameType::SaberDuel(config) => SharedMinigameTypeData::SaberDuel {
                 game: Box::new(SaberDuelGame::new(
-                    *config.to_owned(),
+                    config.clone(),
                     player1,
                     player2,
                     group,
@@ -511,16 +542,25 @@ impl SharedMinigameTypeData {
         sender: u32,
         pause: bool,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        let now = Instant::now();
         match self {
-            SharedMinigameTypeData::FleetCommander { game } => game.pause_or_resume(sender, pause),
-            SharedMinigameTypeData::ForceConnection { game } => game.pause_or_resume(sender, pause),
-            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause),
+            SharedMinigameTypeData::AttackCruiser { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::FleetCommander { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::ForceConnection { game } => {
+                game.pause_or_resume(sender, pause, now)
+            }
+            SharedMinigameTypeData::SaberDuel { game } => game.pause_or_resume(sender, pause, now),
             _ => Ok(Vec::new()),
         }
     }
 
-    pub fn tick(&mut self, now: Instant) -> Vec<Broadcast> {
+    pub fn tick(&mut self, now: Instant, tick_duration: Duration) -> Vec<Broadcast> {
         match self {
+            SharedMinigameTypeData::AttackCruiser { game } => game.tick(now, tick_duration),
             SharedMinigameTypeData::FleetCommander { game } => game.tick(now),
             SharedMinigameTypeData::ForceConnection { game } => game.tick(now),
             SharedMinigameTypeData::SaberDuel { game } => game.tick(now),
@@ -532,8 +572,12 @@ impl SharedMinigameTypeData {
         &mut self,
         player: u32,
         minigame_status: &mut MinigameStatus,
+        minigame_stats: &mut PlayerMinigameStats,
     ) -> Result<MinigameRemovePlayerResult, ProcessPacketError> {
         match self {
+            SharedMinigameTypeData::AttackCruiser { game } => {
+                game.remove_player(player, minigame_status, minigame_stats)
+            }
             SharedMinigameTypeData::FleetCommander { game } => {
                 game.remove_player(player, minigame_status)
             }
@@ -575,100 +619,168 @@ impl SharedMinigameTypeData {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MinigameCountdownState {
+    Active { last_timer_update: Instant },
+    Paused { last_timer_update: Instant },
+}
+
 #[derive(Clone, Debug)]
 pub struct MinigameCountdown {
-    paused: bool,
     time_until_next_event: Duration,
-    last_timer_update: Instant,
+    state: MinigameCountdownState,
 }
 
 impl MinigameCountdown {
     pub fn new() -> Self {
         MinigameCountdown {
-            paused: false,
             time_until_next_event: Duration::ZERO,
-            last_timer_update: Instant::now(),
+            state: MinigameCountdownState::Active {
+                last_timer_update: Instant::now(),
+            },
         }
     }
 
-    pub fn new_with_event(duration: Duration) -> Self {
+    pub fn new_with_event(duration: Duration, now: Instant) -> Self {
         MinigameCountdown {
-            paused: false,
             time_until_next_event: duration,
-            last_timer_update: Instant::now(),
+            state: MinigameCountdownState::Active {
+                last_timer_update: now,
+            },
         }
     }
 
     pub fn paused(&self) -> bool {
-        self.paused
+        matches!(self.state, MinigameCountdownState::Paused { .. })
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        let now = Instant::now();
-        if pause {
-            self.time_until_next_event = self.time_until_next_event(now);
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        match (&self.state, pause) {
+            (MinigameCountdownState::Active { last_timer_update }, true) => {
+                // If pausing in the past, clamp now to last valid update to avoid reprocessing old time
+                let now = now.max(*last_timer_update);
+
+                let time_since_last_tick = now.duration_since(*last_timer_update);
+                self.time_until_next_event = self
+                    .time_until_next_event
+                    .saturating_sub(time_since_last_tick);
+
+                self.state = MinigameCountdownState::Paused {
+                    last_timer_update: now,
+                };
+            }
+            (MinigameCountdownState::Paused { last_timer_update }, false) => {
+                self.state = MinigameCountdownState::Active {
+                    last_timer_update: now.max(*last_timer_update),
+                };
+            }
+            _ => {}
         }
-        self.last_timer_update = now;
-        self.paused = pause;
     }
 
     pub fn schedule_event(&mut self, duration: Duration, now: Instant) {
-        self.last_timer_update = now;
         self.time_until_next_event = duration;
-    }
-
-    pub fn update_timer(&mut self, now: Instant) {
-        self.time_until_next_event = self.time_until_next_event(now);
-        self.last_timer_update = now;
+        self.state = MinigameCountdownState::Active {
+            last_timer_update: now,
+        };
     }
 
     pub fn time_until_next_event(&self, now: Instant) -> Duration {
-        if self.paused {
-            self.time_until_next_event
-        } else {
-            let time_since_last_tick = now.saturating_duration_since(self.last_timer_update);
-            self.time_until_next_event
-                .saturating_sub(time_since_last_tick)
+        match self.state {
+            MinigameCountdownState::Paused { .. } => self.time_until_next_event,
+            MinigameCountdownState::Active { last_timer_update } => {
+                if now <= last_timer_update {
+                    return self.time_until_next_event;
+                }
+                let time_since_last_tick = now.duration_since(last_timer_update);
+                self.time_until_next_event
+                    .saturating_sub(time_since_last_tick)
+            }
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum MinigameStopwatchState {
+    Active { resume_time: Instant },
+    Paused { pause_time: Instant },
 }
 
 #[derive(Clone, Debug)]
 pub struct MinigameStopwatch {
     previous_total_time: Duration,
-    possible_resume_time: Option<Instant>,
+    start_time: Option<Instant>,
+    state: MinigameStopwatchState,
 }
 
 impl MinigameStopwatch {
     pub fn new(start_time: Option<Instant>) -> Self {
+        let pause_time = start_time.unwrap_or_else(Instant::now);
         MinigameStopwatch {
             previous_total_time: Duration::ZERO,
-            possible_resume_time: start_time,
+            start_time,
+            state: match start_time {
+                Some(resume_time) => MinigameStopwatchState::Active { resume_time },
+                None => MinigameStopwatchState::Paused { pause_time },
+            },
         }
     }
 
-    pub fn pause_or_resume(&mut self, pause: bool) {
-        let now = Instant::now();
-        if pause {
-            if let Some(resume_time) = self.possible_resume_time {
-                self.previous_total_time = self
-                    .previous_total_time
-                    .saturating_add(now.saturating_duration_since(resume_time));
-                self.possible_resume_time = None;
+    pub fn pause_or_resume(&mut self, pause: bool, now: Instant) {
+        match (&self.state, pause) {
+            (MinigameStopwatchState::Active { resume_time }, true) => {
+                if now > *resume_time {
+                    let elapsed_this_run = now.duration_since(*resume_time);
+                    self.previous_total_time =
+                        self.previous_total_time.saturating_add(elapsed_this_run);
+                } else if let Some(start_time) = self.start_time {
+                    if now < start_time {
+                        let time_until_start = start_time.saturating_duration_since(now);
+                        self.start_time = now.checked_add(time_until_start).or(self.start_time);
+                    }
+                }
+                self.state = MinigameStopwatchState::Paused { pause_time: now };
             }
-        } else {
-            self.possible_resume_time = Some(now);
+            (MinigameStopwatchState::Paused { pause_time }, false) => {
+                if let Some(start_time) = self.start_time {
+                    if *pause_time < start_time {
+                        let time_since_pause = now.saturating_duration_since(*pause_time);
+                        self.start_time =
+                            start_time.checked_add(time_since_pause).or(self.start_time);
+                    }
+                }
+
+                let resume_time = match self.start_time {
+                    Some(start_time) => now.max(start_time),
+                    None => now.max(*pause_time),
+                };
+
+                self.state = MinigameStopwatchState::Active { resume_time };
+            }
+            _ => {}
         }
     }
 
-    pub fn elapsed(&self) -> Duration {
-        let now = Instant::now();
-        self.previous_total_time
-            .saturating_add(now.saturating_duration_since(self.possible_resume_time.unwrap_or(now)))
+    pub fn paused(&self) -> bool {
+        matches!(self.state, MinigameStopwatchState::Paused { .. })
+    }
+
+    pub fn elapsed(&self, now: Instant) -> Duration {
+        match self.state {
+            MinigameStopwatchState::Paused { .. } => self.previous_total_time,
+            MinigameStopwatchState::Active { resume_time } => {
+                if now <= resume_time {
+                    return self.previous_total_time;
+                }
+                let elapsed_this_run = now.duration_since(resume_time);
+                self.previous_total_time.saturating_add(elapsed_this_run)
+            }
+        }
     }
 }
 
 const CHALLENGE_LINK_NAME: &str = "challenge";
+const WILDCARD_STAGE_ID: i32 = -1;
 
 #[derive(Clone, Copy, Deserialize)]
 enum DailyGameType {
@@ -1866,48 +1978,55 @@ pub fn process_minigame_packet(
 ) -> Result<Vec<Broadcast>, ProcessPacketError> {
     let raw_op_code: u8 = DeserializePacket::deserialize(cursor)?;
     match MinigameOpCode::try_from(raw_op_code) {
-        Ok(op_code) => match op_code {
-            MinigameOpCode::RequestMinigameStageGroupInstance => {
-                let request = RequestMinigameStageGroupInstance::deserialize(cursor)?;
-                handle_request_stage_group_instance(request, sender, game_server)
+        Ok(op_code) => {
+            match op_code {
+                MinigameOpCode::RequestMinigameStageGroupInstance => {
+                    let request = RequestMinigameStageGroupInstance::deserialize(cursor)?;
+                    handle_request_stage_group_instance(request, sender, game_server)
+                }
+                MinigameOpCode::RequestCreateActiveMinigame => {
+                    let request = RequestCreateActiveMinigame::deserialize(cursor)?;
+                    handle_request_create_active_minigame(request, sender, game_server)
+                }
+                MinigameOpCode::RequestStartActiveMinigame => {
+                    let request = RequestStartActiveMinigame::deserialize(cursor)?;
+                    handle_request_start_active_minigame(request, sender, game_server)
+                }
+                MinigameOpCode::RequestCancelActiveMinigame => {
+                    RequestCancelActiveMinigame::deserialize(cursor)?;
+                    handle_request_cancel_active_minigame(true, sender, game_server)
+                }
+                MinigameOpCode::PauseActiveMinigame => {
+                    let header = MinigameHeader::deserialize(cursor)?;
+                    handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
+                }
+                MinigameOpCode::ResumeActiveMinigame => {
+                    let header = MinigameHeader::deserialize(cursor)?;
+                    handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
+                }
+                MinigameOpCode::FlashPayload => {
+                    let payload = FlashPayload::deserialize(cursor)?;
+                    handle_flash_payload(payload, sender, game_server)
+                }
+                MinigameOpCode::SaberStrike => {
+                    process_saber_strike_packet(cursor, sender, game_server)
+                }
+                MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
+                MinigameOpCode::AttackCruiser => {
+                    process_attack_cruiser_packet(cursor, sender, game_server)
+                }
+                // Ignore this unused packet to reduce log spam
+                MinigameOpCode::LeaveInstance => Ok(Vec::new()),
+                _ => {
+                    let mut buffer = Vec::new();
+                    cursor.read_to_end(&mut buffer)?;
+                    Err(ProcessPacketError::new(
+                        ProcessPacketErrorType::UnknownOpCode,
+                        format!("Unimplemented minigame op code: {op_code:?} {buffer:x?}"),
+                    ))
+                }
             }
-            MinigameOpCode::RequestCreateActiveMinigame => {
-                let request = RequestCreateActiveMinigame::deserialize(cursor)?;
-                handle_request_create_active_minigame(request, sender, game_server)
-            }
-            MinigameOpCode::RequestStartActiveMinigame => {
-                let request = RequestStartActiveMinigame::deserialize(cursor)?;
-                handle_request_start_active_minigame(request, sender, game_server)
-            }
-            MinigameOpCode::RequestCancelActiveMinigame => {
-                RequestCancelActiveMinigame::deserialize(cursor)?;
-                handle_request_cancel_active_minigame(true, sender, game_server)
-            }
-            MinigameOpCode::PauseActiveMinigame => {
-                let header = MinigameHeader::deserialize(cursor)?;
-                handle_pause_or_resume_active_minigame(sender, game_server, &header, true)
-            }
-            MinigameOpCode::ResumeActiveMinigame => {
-                let header = MinigameHeader::deserialize(cursor)?;
-                handle_pause_or_resume_active_minigame(sender, game_server, &header, false)
-            }
-            MinigameOpCode::FlashPayload => {
-                let payload = FlashPayload::deserialize(cursor)?;
-                handle_flash_payload(payload, sender, game_server)
-            }
-            MinigameOpCode::SaberStrike => process_saber_strike_packet(cursor, sender, game_server),
-            MinigameOpCode::SaberDuel => process_saber_duel_packet(cursor, sender, game_server),
-            // Ignore this unused packet to reduce log spam
-            MinigameOpCode::LeaveInstance => Ok(Vec::new()),
-            _ => {
-                let mut buffer = Vec::new();
-                cursor.read_to_end(&mut buffer)?;
-                Err(ProcessPacketError::new(
-                    ProcessPacketErrorType::UnknownOpCode,
-                    format!("Unimplemented minigame op code: {op_code:?} {buffer:x?}"),
-                ))
-            }
-        },
+        }
         Err(_) => {
             let mut buffer = Vec::new();
             cursor.read_to_end(&mut buffer)?;
@@ -2411,6 +2530,7 @@ pub fn prepare_active_minigame_instance(
                 matchmaking_group,
                 stage_config.stage_config.difficulty(),
                 start_pos,
+                game_server.bvhs(),
             );
 
             minigame_data.readiness = MinigameReadiness::InitialPlayersLoading(
@@ -2636,6 +2756,11 @@ fn handle_request_start_active_minigame(
                     }));
 
                     match stage_config.minigame_type() {
+                        MinigameType::AttackCruiser { .. } => {
+                            if let SharedMinigameTypeData::AttackCruiser { game } = &shared_minigame_data.data {
+                                packets.append(&mut game.start(sender)?)
+                            }
+                        },
                         MinigameType::Flash { game_swf_name, .. } => {
                             packets.push(
                                 GamePacket::serialize(&TunneledPacket {
@@ -2780,7 +2905,7 @@ pub fn handle_minigame_packet_write<T>(
                 ));
             };
 
-            if header.stage_guid != minigame_status.group.stage_guid {
+            if header.stage_guid != WILDCARD_STAGE_ID && header.stage_guid != minigame_status.group.stage_guid {
                 return Err(ProcessPacketError::new(
                     ProcessPacketErrorType::ConstraintViolated,
                     format!(
@@ -2943,7 +3068,7 @@ fn handle_flash_payload_game_result(
                 ));
             };
 
-            let total_time = timer.elapsed().as_millis();
+            let total_time = timer.elapsed(Instant::now()).as_millis();
 
             let total_score = parts[1].parse()?;
             minigame_status.total_score = total_score;
@@ -3786,7 +3911,7 @@ fn leave_active_minigame_single_player_if_any(
             };
 
             let MinigameRemovePlayerResult { mut broadcasts, characters_to_remove, end_game_for_all } = shared_minigame_data
-                .remove_player(sender, minigame_status)?;
+                .remove_player(sender, minigame_status, &mut player.minigame_stats)?;
 
             // If we've already awarded credits after a round, don't grant those credits again
             if minigame_status.awarded_credits == 0 {
@@ -4334,4 +4459,479 @@ fn evaluate_score_to_credits_expression(
             ),
         )
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{Duration, Instant};
+
+    #[test]
+    fn test_stopwatch_normal_flow() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(5)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_pause_and_resume_running() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let pause_time = start + Duration::from_secs(5);
+        stopwatch.pause_or_resume(true, pause_time);
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(pause_time + Duration::from_secs(10)),
+            Duration::from_secs(5)
+        );
+
+        let resume_time = pause_time + Duration::from_secs(10);
+        stopwatch.pause_or_resume(false, resume_time);
+        assert!(!stopwatch.paused());
+
+        let final_time = resume_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(final_time), Duration::from_secs(10));
+    }
+
+    #[test]
+    fn test_stopwatch_future_start_freeze_global_time() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        let pause_time = now + Duration::from_secs(4);
+        stopwatch.pause_or_resume(true, pause_time);
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(pause_time + Duration::from_secs(100)),
+            Duration::ZERO
+        );
+
+        let resume_time = pause_time + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, resume_time);
+        assert!(!stopwatch.paused());
+
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(3)),
+            Duration::ZERO
+        );
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(6)),
+            Duration::ZERO
+        );
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(11)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_elapsed_while_paused() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(10)),
+            Duration::from_secs(5)
+        );
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(15)),
+            Duration::from_secs(5)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_redundant_pause_calls() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(5));
+        let total_time_after_first_pause = stopwatch.elapsed(start + Duration::from_secs(10));
+
+        stopwatch.pause_or_resume(true, start + Duration::from_secs(15));
+        assert_eq!(
+            stopwatch.elapsed(start + Duration::from_secs(20)),
+            total_time_after_first_pause
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_redundant_unpause_calls() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let intermediate_time = start + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, intermediate_time);
+
+        let final_time = intermediate_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(final_time), Duration::from_secs(10));
+    }
+
+    #[test]
+    fn test_stopwatch_exact_resume_boundary() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        assert_eq!(stopwatch.elapsed(start), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_stopwatch_historical_elapsed_call() {
+        let start = Instant::now();
+        let stopwatch = MinigameStopwatch::new(Some(start));
+
+        let historical_query = start - Duration::from_secs(10);
+        assert_eq!(stopwatch.elapsed(historical_query), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_stopwatch_uninitialized_flow() {
+        let now = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(None);
+
+        assert!(stopwatch.paused());
+        assert_eq!(
+            stopwatch.elapsed(now + Duration::from_secs(10)),
+            Duration::ZERO
+        );
+
+        let resume_time = now + Duration::from_secs(1);
+        stopwatch.pause_or_resume(false, resume_time);
+        assert!(!stopwatch.paused());
+
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(10)),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_clean_unpause() {
+        let start = Instant::now();
+        let mut stopwatch = MinigameStopwatch::new(Some(start));
+
+        let pause_time = start + Duration::from_secs(10);
+        stopwatch.pause_or_resume(true, pause_time);
+
+        let resume_time = pause_time + Duration::from_secs(5);
+        stopwatch.pause_or_resume(false, resume_time);
+
+        let check_time = resume_time + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(check_time), Duration::from_secs(15));
+    }
+
+    #[test]
+    fn test_stopwatch_future_start_late_resume() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        let query_time = future_start + Duration::from_secs(5);
+        assert_eq!(stopwatch.elapsed(query_time), Duration::from_secs(5));
+    }
+
+    #[test]
+    fn test_stopwatch_redundant_pause_timeline_preservation() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let mut stopwatch = MinigameStopwatch::new(Some(future_start));
+
+        let pause_time = now + Duration::from_secs(2);
+        stopwatch.pause_or_resume(true, pause_time);
+
+        let redundant_pause = now + Duration::from_secs(5);
+        stopwatch.pause_or_resume(true, redundant_pause);
+
+        let resume_time = now + Duration::from_secs(12);
+        stopwatch.pause_or_resume(false, resume_time);
+
+        assert_eq!(
+            stopwatch.elapsed(resume_time + Duration::from_secs(3)),
+            Duration::ZERO
+        );
+    }
+
+    #[test]
+    fn test_stopwatch_monotonic_overflow_boundary_protection() {
+        let now = Instant::now();
+
+        let mut low = Duration::ZERO;
+        let mut high = Duration::MAX;
+        let mut max_safe_duration = Duration::ZERO;
+
+        // Binary search to find the maximum representable timestamp on this platform
+        while low <= high {
+            let mid = low + (high - low) / 2;
+
+            if now.checked_add(mid).is_some() {
+                max_safe_duration = mid;
+                if let Some(next_ns) = mid.checked_add(Duration::from_nanos(1)) {
+                    if now.checked_add(next_ns).is_none() {
+                        break;
+                    }
+                    low = next_ns;
+                } else {
+                    break;
+                }
+            } else {
+                high = mid - Duration::from_nanos(1);
+            }
+        }
+
+        let future_start = Some(now + max_safe_duration);
+        let mut stopwatch = MinigameStopwatch::new(future_start);
+
+        let pause_time = now + Duration::from_secs(2);
+        stopwatch.pause_or_resume(true, pause_time);
+
+        let resume_time = pause_time + Duration::from_secs(5);
+
+        stopwatch.pause_or_resume(false, resume_time);
+
+        assert!(!stopwatch.paused());
+    }
+
+    #[test]
+    fn test_countdown_normal_flow() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let tick = now + Duration::from_secs(10);
+        assert_eq!(
+            countdown.time_until_next_event(tick),
+            Duration::from_secs(20)
+        );
+    }
+
+    #[test]
+    fn test_countdown_pause_and_resume() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let pause_time = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, pause_time);
+        assert!(countdown.paused());
+
+        let internal_paused_check = pause_time + Duration::from_secs(15);
+        assert_eq!(
+            countdown.time_until_next_event(internal_paused_check),
+            Duration::from_secs(20)
+        );
+
+        let resume_time = pause_time + Duration::from_secs(15);
+        countdown.pause_or_resume(false, resume_time);
+        assert!(!countdown.paused());
+
+        let final_check = resume_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(final_check),
+            Duration::from_secs(15)
+        );
+    }
+
+    #[test]
+    fn test_countdown_schedule_event() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new();
+
+        let schedule_time = now + Duration::from_secs(5);
+        let new_duration = Duration::from_secs(15);
+        countdown.schedule_event(new_duration, schedule_time);
+
+        let check_time = schedule_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(check_time),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_schedule_already_expired_event() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new();
+
+        let past_schedule_time = now - Duration::from_secs(20);
+        let short_duration = Duration::from_secs(5);
+        countdown.schedule_event(short_duration, past_schedule_time);
+
+        assert_eq!(countdown.time_until_next_event(now), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_countdown_future_start_time_immediate_pause() {
+        let now = Instant::now();
+        let future_start = now + Duration::from_secs(10);
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, future_start);
+
+        countdown.pause_or_resume(true, future_start);
+        assert!(countdown.paused());
+        assert_eq!(
+            countdown.time_until_next_event(future_start + Duration::from_secs(5)),
+            Duration::from_secs(30)
+        );
+
+        let resume_time = future_start + Duration::from_secs(15);
+        countdown.pause_or_resume(false, resume_time);
+        assert!(!countdown.paused());
+
+        let check_before_future_anchor_passed = resume_time + Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(check_before_future_anchor_passed),
+            Duration::from_secs(25)
+        );
+    }
+
+    #[test]
+    fn test_countdown_redundant_calls() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+
+        let first_pause = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, first_pause);
+        let remaining_after_first = countdown.time_until_next_event(first_pause);
+
+        let second_pause = first_pause + Duration::from_secs(5);
+        countdown.pause_or_resume(true, second_pause);
+        assert_eq!(
+            countdown.time_until_next_event(second_pause),
+            remaining_after_first
+        );
+    }
+
+    #[test]
+    fn test_countdown_retroactive_unpause() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+        let pause_time = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, pause_time);
+        let historical_unpause_time = pause_time - Duration::from_secs(5);
+        countdown.pause_or_resume(false, historical_unpause_time);
+        assert_eq!(
+            countdown.time_until_next_event(historical_unpause_time + Duration::from_secs(5)),
+            Duration::from_secs(20)
+        );
+    }
+
+    #[test]
+    fn test_countdown_exact_expiry_boundary() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+        let exact_expiry = now + Duration::from_secs(10);
+        assert_eq!(
+            countdown.time_until_next_event(exact_expiry),
+            Duration::ZERO
+        );
+    }
+
+    #[test]
+    fn test_countdown_saturating_underflow() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+        let past_expiry = now + Duration::from_secs(15);
+        assert_eq!(countdown.time_until_next_event(past_expiry), Duration::ZERO);
+    }
+
+    #[test]
+    fn test_countdown_historical_query_before_anchor() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(10);
+        let countdown = MinigameCountdown::new_with_event(duration, now);
+        let historical_query = now - Duration::from_secs(5);
+        assert_eq!(
+            countdown.time_until_next_event(historical_query),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_reschedule_while_running() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(30), now);
+        let intermediate_time = now + Duration::from_secs(10);
+        countdown.schedule_event(Duration::from_secs(15), intermediate_time);
+        assert_eq!(
+            countdown.time_until_next_event(intermediate_time + Duration::from_secs(5)),
+            Duration::from_secs(10)
+        );
+    }
+
+    #[test]
+    fn test_countdown_retroactive_pause() {
+        let now = Instant::now();
+        let duration = Duration::from_secs(30);
+        let mut countdown = MinigameCountdown::new_with_event(duration, now);
+        let advanced_time = now + Duration::from_secs(15);
+        let late_pause_packet = now + Duration::from_secs(10);
+        countdown.pause_or_resume(true, late_pause_packet);
+        assert_eq!(
+            countdown.time_until_next_event(advanced_time),
+            Duration::from_secs(20)
+        );
+    }
+
+    #[test]
+    fn test_countdown_stale_pause_timestamp_handling() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(10), now);
+
+        let t4 = now + Duration::from_secs(4);
+        assert_eq!(countdown.time_until_next_event(t4), Duration::from_secs(6));
+
+        let t2_stale = now + Duration::from_secs(2);
+        countdown.pause_or_resume(true, t2_stale);
+
+        let final_check = t4 + Duration::from_secs(1);
+        assert_eq!(
+            countdown.time_until_next_event(final_check),
+            Duration::from_secs(8)
+        );
+    }
+
+    #[test]
+    fn test_countdown_microsecond_jitter_idempotency() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(30), now);
+
+        let t1 = now + Duration::from_secs(5);
+        countdown.pause_or_resume(true, t1);
+
+        let t1_stale = t1 - Duration::from_micros(1);
+        countdown.pause_or_resume(false, t1_stale);
+
+        assert_eq!(
+            countdown.time_until_next_event(t1 + Duration::from_secs(5)),
+            Duration::from_secs(20)
+        );
+    }
+
+    #[test]
+    fn test_countdown_timeline_reprocessing_prevention() {
+        let now = Instant::now();
+        let mut countdown = MinigameCountdown::new_with_event(Duration::from_secs(10), now);
+
+        let t4 = now + Duration::from_secs(4);
+        assert_eq!(countdown.time_until_next_event(t4), Duration::from_secs(6));
+
+        let t2_stale = now + Duration::from_secs(2);
+        countdown.pause_or_resume(true, t2_stale);
+
+        let t6 = now + Duration::from_secs(6);
+        countdown.pause_or_resume(false, t6);
+
+        let t8 = now + Duration::from_secs(8);
+        assert_eq!(countdown.time_until_next_event(t8), Duration::from_secs(6));
+    }
 }

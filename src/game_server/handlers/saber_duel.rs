@@ -536,7 +536,7 @@ enum SaberDuelBoutCompletion {
 
 #[derive(Clone, Debug)]
 pub struct SaberDuelGame {
-    config: SaberDuelConfig,
+    config: Arc<SaberDuelConfig>,
     pos: Pos,
     basic_bout_animation_distribution: WeightedAliasIndex<u8>,
     special_bout_animation_distribution: WeightedAliasIndex<u8>,
@@ -552,7 +552,7 @@ pub struct SaberDuelGame {
 
 impl SaberDuelGame {
     pub fn new(
-        config: SaberDuelConfig,
+        config: Arc<SaberDuelConfig>,
         player1: u32,
         player2: Option<u32>,
         group: MinigameMatchmakingGroup,
@@ -892,7 +892,7 @@ impl SaberDuelGame {
                 ai_next_force_power,
             } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    self.start_bout()
+                    self.start_bout(now)
                 } else {
                     let mut broadcasts = Vec::new();
 
@@ -925,7 +925,7 @@ impl SaberDuelGame {
             SaberDuelGameState::WaitingForRoundEnd { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
                     self.state = SaberDuelGameState::WaitingForRoundStart {
-                        timer: MinigameCountdown::new_with_event(ROUND_START_DELAY),
+                        timer: MinigameCountdown::new_with_event(ROUND_START_DELAY, now),
                     };
                     self.player_states
                         .iter_mut()
@@ -949,7 +949,7 @@ impl SaberDuelGame {
             }
             SaberDuelGameState::WaitingForRoundStart { timer } => {
                 if timer.time_until_next_event(now).is_zero() {
-                    self.prepare_bout()
+                    self.prepare_bout(now)
                 } else {
                     Vec::new()
                 }
@@ -1060,6 +1060,7 @@ impl SaberDuelGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         self.player_index(player)?;
 
@@ -1072,20 +1073,20 @@ impl SaberDuelGame {
                 timer,
                 ai_next_force_power,
             } => {
-                timer.pause_or_resume(pause);
-                ai_next_force_power.pause_or_resume(pause);
+                timer.pause_or_resume(pause, now);
+                ai_next_force_power.pause_or_resume(pause, now);
             }
             SaberDuelGameState::BoutActive {
                 bout_time_remaining,
                 ai_next_key,
                 ..
             } => {
-                bout_time_remaining.pause_or_resume(pause);
-                ai_next_key.pause_or_resume(pause);
+                bout_time_remaining.pause_or_resume(pause, now);
+                ai_next_key.pause_or_resume(pause, now);
             }
-            SaberDuelGameState::WaitingForRoundEnd { timer } => timer.pause_or_resume(pause),
-            SaberDuelGameState::WaitingForRoundStart { timer } => timer.pause_or_resume(pause),
-            SaberDuelGameState::WaitingForGameOver { timer } => timer.pause_or_resume(pause),
+            SaberDuelGameState::WaitingForRoundEnd { timer } => timer.pause_or_resume(pause, now),
+            SaberDuelGameState::WaitingForRoundStart { timer } => timer.pause_or_resume(pause, now),
+            SaberDuelGameState::WaitingForGameOver { timer } => timer.pause_or_resume(pause, now),
             _ => {}
         }
 
@@ -1096,7 +1097,7 @@ impl SaberDuelGame {
                 | SaberDuelGameState::WaitingForGameOver { .. }
                 | SaberDuelGameState::GameOver
         ) {
-            self.stopwatch.pause_or_resume(pause);
+            self.stopwatch.pause_or_resume(pause, now);
         }
 
         Ok(Vec::new())
@@ -1135,7 +1136,8 @@ impl SaberDuelGame {
         );
 
         // Time
-        let duel_seconds = i16::try_from(self.stopwatch.elapsed().as_secs()).unwrap_or(i16::MAX);
+        let duel_seconds =
+            i16::try_from(self.stopwatch.elapsed(Instant::now()).as_secs()).unwrap_or(i16::MAX);
         let time_bonus = match beat_opponent {
             true => (self.config.max_time_score_bonus
                 - Into::<f32>::into(duel_seconds) * self.config.score_penalty_per_second)
@@ -1253,8 +1255,9 @@ impl SaberDuelGame {
 
         let mut broadcasts = Vec::new();
 
+        let now = Instant::now();
         if *game_start {
-            self.stopwatch.pause_or_resume(false);
+            self.stopwatch.pause_or_resume(false, now);
             broadcasts.push(Broadcast::Multi(
                 self.recipients.clone(),
                 vec![GamePacket::serialize(&TunneledPacket {
@@ -1282,12 +1285,12 @@ impl SaberDuelGame {
             self.bout = 0;
 
             if Self::has_player_beat_opponent(&self.config, leader_state) {
-                broadcasts.append(&mut self.prepare_game_end(leader_index));
+                broadcasts.append(&mut self.prepare_game_end(leader_index, now));
             } else {
-                broadcasts.append(&mut self.prepare_round_end(leader_index));
+                broadcasts.append(&mut self.prepare_round_end(leader_index, now));
             }
         } else {
-            broadcasts.append(&mut self.prepare_bout());
+            broadcasts.append(&mut self.prepare_bout(now));
         }
 
         Ok(broadcasts)
@@ -1310,7 +1313,7 @@ impl SaberDuelGame {
         }
     }
 
-    fn prepare_bout(&mut self) -> Vec<Broadcast> {
+    fn prepare_bout(&mut self, now: Instant) -> Vec<Broadcast> {
         let mut broadcasts = vec![Broadcast::Multi(
             self.recipients.clone(),
             vec![GamePacket::serialize(&TunneledPacket {
@@ -1348,9 +1351,9 @@ impl SaberDuelGame {
         show_force_power_dialog |= player2_flags.can_use_any();
 
         if show_force_power_dialog {
-            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags));
+            broadcasts.append(&mut self.show_force_power_dialog(player1_flags, player2_flags, now));
         } else {
-            broadcasts.append(&mut self.start_bout());
+            broadcasts.append(&mut self.start_bout(now));
         }
 
         broadcasts
@@ -1360,6 +1363,7 @@ impl SaberDuelGame {
         &mut self,
         player1_flags: SaberDuelForcePowerFlags,
         player2_flags: SaberDuelForcePowerFlags,
+        now: Instant,
     ) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
 
@@ -1396,18 +1400,20 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::WaitingForForcePowers {
-            timer: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.force_power_selection_millis.into(),
-            )),
-            ai_next_force_power: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.ai.force_power_delay_millis.into(),
-            )),
+            timer: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.force_power_selection_millis.into()),
+                now,
+            ),
+            ai_next_force_power: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.ai.force_power_delay_millis.into()),
+                now,
+            ),
         };
 
         broadcasts
     }
 
-    fn start_bout(&mut self) -> Vec<Broadcast> {
+    fn start_bout(&mut self, now: Instant) -> Vec<Broadcast> {
         self.bout = self.bout.saturating_add(1);
         let is_special_bout = self.bout >= self.config.first_special_bout
             && (self.bout - self.config.first_special_bout)
@@ -1434,12 +1440,13 @@ impl SaberDuelGame {
         }
 
         self.state = SaberDuelGameState::BoutActive {
-            bout_time_remaining: MinigameCountdown::new_with_event(Duration::from_millis(
-                self.config.bout_max_millis.into(),
-            )),
+            bout_time_remaining: MinigameCountdown::new_with_event(
+                Duration::from_millis(self.config.bout_max_millis.into()),
+                now,
+            ),
             is_special_bout,
             keys: keys.clone(),
-            ai_next_key: MinigameCountdown::new_with_event(time_until_first_ai_key),
+            ai_next_key: MinigameCountdown::new_with_event(time_until_first_ai_key, now),
             player1_completed_time: None,
             player2_completed_time: None,
         };
@@ -1644,9 +1651,9 @@ impl SaberDuelGame {
         self.player_states[1].ready = self.is_ai_match();
     }
 
-    fn prepare_round_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+    fn prepare_round_end(&mut self, leader_index: u8, now: Instant) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::WaitingForRoundEnd {
-            timer: MinigameCountdown::new_with_event(ROUND_END_DELAY),
+            timer: MinigameCountdown::new_with_event(ROUND_END_DELAY, now),
         };
         vec![Broadcast::Multi(
             self.recipients.clone(),
@@ -1695,11 +1702,11 @@ impl SaberDuelGame {
             && !Self::has_player_failed_challenge(config, player_state)
     }
 
-    fn prepare_game_end(&mut self, leader_index: u8) -> Vec<Broadcast> {
+    fn prepare_game_end(&mut self, leader_index: u8, now: Instant) -> Vec<Broadcast> {
         self.state = SaberDuelGameState::WaitingForGameOver {
-            timer: MinigameCountdown::new_with_event(GAME_END_DELAY),
+            timer: MinigameCountdown::new_with_event(GAME_END_DELAY, now),
         };
-        self.stopwatch.pause_or_resume(true);
+        self.stopwatch.pause_or_resume(true, now);
 
         let sound_id = match self.is_ai_match() {
             true => match leader_index == 0 {
