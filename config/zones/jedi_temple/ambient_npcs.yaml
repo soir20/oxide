@@ -159,16 +159,23 @@ jedi_temple:
       model_id: 219
       enable_gravity: false
       pos:
-        x: 1723.835
-        y: 10.040001
-        z: 1694.052
+        x: 1723.99
+        y: 10.0
+        z: 1694.0
         w: 1.0
       rot:
         x: -1
         y: 0
         z: 0
         w: 1.0
+      cursor: 54
+      enable_interact_popup: false
       stand_animation_id: 2545
+      one_shot_interaction:
+        one_shot_animation_id: 2546
+        player_reaction:
+          animation_id: 3014
+        duration_millis: 1000
     archives_terminal_human_2:
       model_id: 2033
       enable_gravity: false
@@ -218,6 +225,138 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2548
         duration_millis: 2000
+    archives_force_perception_minigame_table:
+      terrain_object_id: 1283555991
+      name_id: 15022
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1742.725
+        y: 11.02499
+        z: 1694.052
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: false
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10
+        duration_millis: 1
+    archives_force_perception_minigame_table_blank:
+      model_id: 44
+      name_id: 15022
+      show_name: false
+      pos:
+        x: 1742.725
+        y: 11.02499
+        z: 1694.052
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10
+        duration_millis: 1
+    archives_daily_trivia_minigame_table:
+      terrain_object_id: 1283555993
+      name_id: 14997
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1702.05
+        y: 10.975
+        z: 1694.08
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: false
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 19
+        duration_millis: 1
+    archives_daily_trivia_minigame_table_blank:
+      model_id: 44
+      name_id: 14997
+      show_name: false
+      pos:
+        x: 1702.05
+        y: 10.975
+        z: 1694.08
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 19
+        duration_millis: 1
+    archives_daily_holocron_door:
+      terrain_object_id: 1278971827
+      name_id: 14042
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1687.969
+        y: 12.37499
+        z: 1693.998
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: true
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 18
+        duration_millis: 1
+    archives_daily_holocron_door_blank:
+      model_id: 44
+      name_id: 14042
+      show_name: false
+      pos:
+        x: 1687.969
+        y: 12.37499
+        z: 1693.998
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 18
+        duration_millis: 1
 
     #
     # Hangar
@@ -743,6 +882,141 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2555
         duration_millis: 8000
+    hangar_monitor_star_typer:
+      terrain_object_id: 1283211141
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 83.21099
+        y: 11.58
+        z: -195.0119
+        w: 1.0
+      rot:
+        x: 0
+        y: -151
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_monitor_star_typer_blank:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 83.21099
+        y: 11.58
+        z: -195.0119
+        w: 1
+      rot:
+        x: 0
+        y: -151
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter1_star_typer:
+      terrain_object_id: 1278977348
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 78.91527
+        y: 11.18914
+        z: -194.0563
+        w: 1.0
+      rot:
+        x: 0
+        y: -4
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter1_star_typer_blank:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 78.91527
+        y: 11.18914
+        z: -194.0563
+        w: 1
+      rot:
+        x: 0
+        y: -4
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter2_star_typer:
+      terrain_object_id: 1278977349
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 88.13051
+        y: 11.18447
+        z: -194.2917
+        w: 1.0
+      rot:
+        x: 0
+        y: 9
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter2_star_typer_blank:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 88.13051
+        y: 11.18447
+        z: -194.2917
+        w: 1
+      rot:
+        x: 0
+        y: 9
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
 
     #
     # Lounge
@@ -869,6 +1143,320 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 7000
+    lounge_arcade_machine_stunt_gungan:
+      terrain_object_id: 1278976561
+      name_id: 17910
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -101.1781
+        y: 10.0
+        z: 1252.27
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 33
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10000
+        duration_millis: 1
+    lounge_arcade_machine_stunt_gungan_blank:
+      model_id: 44
+      name_id: 17910
+      show_name: false
+      pos:
+        x: -101.1781
+        y: 10.0
+        z: 1252.27
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10000
+        duration_millis: 1
+    lounge_arcade_machine_crisis_ziro:
+      terrain_object_id: 1302027784
+      name_id: 14039
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -101.2647
+        y: 10.0
+        z: 1255.989
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 24
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 11000
+        duration_millis: 1
+    lounge_arcade_machine_crisis_ziro_blank:
+      model_id: 44
+      name_id: 14039
+      show_name: false
+      pos:
+        x: -101.2647
+        y: 10.0
+        z: 1255.989
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 11000
+        duration_millis: 1
+    lounge_arcade_machine_hasbro_attack_shuttle:
+      terrain_object_id: 1313014089
+      name_id: 45278
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.41586
+        y: 10.0
+        z: 1264.582
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      notification_icon: 44
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 9000
+        duration_millis: 1
+    lounge_arcade_machine_hasbro_attack_shuttle_blank:
+      model_id: 44
+      name_id: 45278
+      show_name: false
+      pos:
+        x: -95.41586
+        y: 10.0
+        z: 1264.582
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 9000
+        duration_millis: 1
+    lounge_arcade_machine_aquatic_assault:
+      terrain_object_id: 1317059914
+      name_id: 45895
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.50474
+        y: 10.0
+        z: 1268.304
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 45
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 14000
+        duration_millis: 1
+    lounge_arcade_machine_aquatic_assault_blank:
+      model_id: 44
+      name_id: 45895
+      show_name: false
+      pos:
+        x: -95.50474
+        y: 10.0
+        z: 1268.304
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 14000
+        duration_millis: 1
+    lounge_arcade_machine_daily_spin:
+      terrain_object_id: 1278976556
+      name_id: 14037
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.7117
+        y: 10.0
+        z: 1273.023
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 18
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 17
+        duration_millis: 1
+    lounge_arcade_machine_daily_spin_blank:
+      model_id: 44
+      name_id: 14037
+      show_name: false
+      pos:
+        x: -95.7117
+        y: 10.0
+        z: 1273.023
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 17
+        duration_millis: 1
+    lounge_arcade_machine_fleet_commander:
+      terrain_object_id: 1313014081
+      name_id: 43788
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.50342
+        y: 10.0
+        z: 1277.977
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 40
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    lounge_arcade_machine_fleet_commander_blank:
+      model_id: 44
+      name_id: 43788
+      show_name: false
+      pos:
+        x: -95.50342
+        y: 10.0
+        z: 1277.977
+        w: 1
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    lounge_arcade_machine_force_connection:
+      terrain_object_id: 1297214218
+      name_id: 34007
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.38324
+        y: 10.0
+        z: 1281.197
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 39
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
+    lounge_arcade_machine_force_connection_blank:
+      model_id: 44
+      name_id: 34007
+      show_name: false
+      pos:
+        x: -95.38324
+        y: 10.0
+        z: 1281.197
+        w: 1.0
+      rot:
+        x: 0
+        y: -90
+        z: 0
+        w: 1.0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
 
     #
     # Main Hall
