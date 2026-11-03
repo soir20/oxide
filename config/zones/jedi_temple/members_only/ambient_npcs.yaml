@@ -13,7 +13,7 @@ members_only:
         x: 1477.1298
         y: 69.85488
         z: 905.9868
-        w: 1.0
+        w: 1
       rot:
         x: -0.99949026
         y: 0
@@ -33,7 +33,7 @@ members_only:
         x: 1488.795
         y: 71.88129
         z: 919.0992
-        w: 1.0
+        w: 1
       rot:
         x: 0.9
         y: 0
@@ -54,7 +54,7 @@ members_only:
         x: 1489.576
         y: 73.23138
         z: 920.426
-        w: 1.0
+        w: 1
       rot:
         x: 0.5
         y: 0
@@ -67,7 +67,7 @@ members_only:
         x: 1495.6
         y: 71.88129
         z: 908.2
-        w: 1.0
+        w: 1
       rot:
         x: 0.17
         y: 0
@@ -88,7 +88,7 @@ members_only:
         x: 1497.21
         y: 73.301125
         z: 908.5
-        w: 1.0
+        w: 1
       rot:
         x: 1.0
         y: 0
@@ -101,7 +101,7 @@ members_only:
         x: 1492.0
         y: 71.88129
         z: 895.9
-        w: 1.0
+        w: 1
       rot:
         x: -0.6
         y: 0
@@ -122,7 +122,7 @@ members_only:
         x: 1493.39
         y: 73.235306
         z: 894.9
-        w: 1.0
+        w: 1
       rot:
         x: 0.8
         y: 0
@@ -135,7 +135,7 @@ members_only:
         x: 1467.9178
         y: 70.15328
         z: 892.4749
-        w: 1.0
+        w: 1
       rot:
         x: 0.7
         y: 0
@@ -148,7 +148,7 @@ members_only:
         x: 1479.3802
         y: 70.143936
         z: 923.82324
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -167,7 +167,7 @@ members_only:
         x: 800.338
         y: 11.77
         z: 668.0857
-        w: 1.0
+        w: 1
       rot:
         x: -0.6742825
         y: 0
@@ -264,7 +264,7 @@ members_only:
         x: 816.7
         y: 10.04
         z: 694.30
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -389,12 +389,12 @@ members_only:
         x: 811.7
         y: 10.0
         z: 699.6
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: 180
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 40
@@ -412,12 +412,12 @@ members_only:
         x: 811.7
         y: 10.0
         z: 699.6
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: 180
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
@@ -434,12 +434,12 @@ members_only:
         x: 814.531
         y: 10.0
         z: 699.6
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: 180
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 39
@@ -457,12 +457,12 @@ members_only:
         x: 814.531
         y: 10.0
         z: 699.6
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: 180
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
@@ -479,12 +479,12 @@ members_only:
         x: 816.7977
         y: 10.0
         z: 687.6322
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 47
@@ -502,12 +502,12 @@ members_only:
         x: 816.7977
         y: 10.0
         z: 687.6322
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
@@ -524,12 +524,12 @@ members_only:
         x: 814.76
         y: 10.0
         z: 685.7456
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 27
@@ -547,12 +547,12 @@ members_only:
         x: 814.76
         y: 10.0
         z: 685.7456
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
@@ -569,12 +569,12 @@ members_only:
         x: 812.5784
         y: 10.0
         z: 683.979
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 25
@@ -592,12 +592,12 @@ members_only:
         x: 812.5784
         y: 10.0
         z: 683.979
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
@@ -614,12 +614,12 @@ members_only:
         x: 810.6032
         y: 10.0
         z: 682.108
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: false
       notification_icon: 25
@@ -637,12 +637,12 @@ members_only:
         x: 810.6032
         y: 10.0
         z: 682.108
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: -42
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       cursor: 54
       enable_interact_popup: true
       interact_radius: 5
