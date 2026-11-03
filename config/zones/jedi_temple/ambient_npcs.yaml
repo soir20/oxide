@@ -248,7 +248,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 10
         duration_millis: 1
-    archives_force_perception_minigame_table_blank:
+    archives_force_perception_minigame_table_popup:
       model_id: 44
       name_id: 15022
       show_name: false
@@ -292,7 +292,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 19
         duration_millis: 1
-    archives_daily_trivia_minigame_table_blank:
+    archives_daily_trivia_minigame_table_popup:
       model_id: 44
       name_id: 14997
       show_name: false
@@ -336,7 +336,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 18
         duration_millis: 1
-    archives_daily_holocron_door_blank:
+    archives_daily_holocron_door_popup:
       model_id: 44
       name_id: 14042
       show_name: false
@@ -906,7 +906,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 12
         duration_millis: 1
-    hangar_monitor_star_typer_blank:
+    hangar_monitor_star_typer_popup:
       model_id: 44
       name_id: 4006
       show_name: false
@@ -951,7 +951,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 12
         duration_millis: 1
-    hangar_starfighter1_star_typer_blank:
+    hangar_starfighter1_star_typer_popup:
       model_id: 44
       name_id: 4006
       show_name: false
@@ -996,7 +996,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 12
         duration_millis: 1
-    hangar_starfighter2_star_typer_blank:
+    hangar_starfighter2_star_typer_popup:
       model_id: 44
       name_id: 4006
       show_name: false
@@ -1167,7 +1167,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 10000
         duration_millis: 1
-    lounge_arcade_machine_stunt_gungan_blank:
+    lounge_arcade_machine_stunt_gungan_popup:
       model_id: 44
       name_id: 17910
       show_name: false
@@ -1212,7 +1212,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 11000
         duration_millis: 1
-    lounge_arcade_machine_crisis_ziro_blank:
+    lounge_arcade_machine_crisis_ziro_popup:
       model_id: 44
       name_id: 14039
       show_name: false
@@ -1256,7 +1256,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 9000
         duration_millis: 1
-    lounge_arcade_machine_hasbro_attack_shuttle_blank:
+    lounge_arcade_machine_hasbro_attack_shuttle_popup:
       model_id: 44
       name_id: 45278
       show_name: false
@@ -1301,7 +1301,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 14000
         duration_millis: 1
-    lounge_arcade_machine_aquatic_assault_blank:
+    lounge_arcade_machine_aquatic_assault_popup:
       model_id: 44
       name_id: 45895
       show_name: false
@@ -1346,7 +1346,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 17
         duration_millis: 1
-    lounge_arcade_machine_daily_spin_blank:
+    lounge_arcade_machine_daily_spin_popup:
       model_id: 44
       name_id: 14037
       show_name: false
@@ -1391,7 +1391,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 20000
         duration_millis: 1
-    lounge_arcade_machine_fleet_commander_blank:
+    lounge_arcade_machine_fleet_commander_popup:
       model_id: 44
       name_id: 43788
       show_name: false
@@ -1436,7 +1436,7 @@ jedi_temple:
         script: !OpenMinigameStageGroup
           stage_group_id: 22000
         duration_millis: 1
-    lounge_arcade_machine_force_connection_blank:
+    lounge_arcade_machine_force_connection_popup:
       model_id: 44
       name_id: 34007
       show_name: false

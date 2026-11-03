@@ -404,7 +404,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 20000
         duration_millis: 1
-    members_only_arcade_machine_fleet_commander_blank:
+    members_only_arcade_machine_fleet_commander_popup:
       model_id: 44
       name_id: 43788
       show_name: false
@@ -449,7 +449,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 22000
         duration_millis: 1
-    members_only_arcade_machine_force_connection_blank:
+    members_only_arcade_machine_force_connection_popup:
       model_id: 44
       name_id: 34007
       show_name: false
@@ -494,7 +494,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 23000
         duration_millis: 1
-    members_only_arcade_machine_holo_scramble_blank:
+    members_only_arcade_machine_holo_scramble_popup:
       model_id: 44
       name_id: 50470
       show_name: false
@@ -539,7 +539,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 13000
         duration_millis: 1
-    members_only_arcade_machine_republic_gunship_blank:
+    members_only_arcade_machine_republic_gunship_popup:
       model_id: 44
       name_id: 17928
       show_name: false
@@ -584,7 +584,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 21000
         duration_millis: 1
-    members_only_arcade_machine_mine_buster_1_blank:
+    members_only_arcade_machine_mine_buster_1_popup:
       model_id: 44
       name_id: 17927
       show_name: false
@@ -629,7 +629,7 @@ members_only:
         script: !OpenMinigameStageGroup
           stage_group_id: 21000
         duration_millis: 1
-    members_only_arcade_machine_mine_buster_2_blank:
+    members_only_arcade_machine_mine_buster_2_popup:
       model_id: 44
       name_id: 17927
       show_name: false
