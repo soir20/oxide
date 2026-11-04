@@ -22,7 +22,7 @@ jedi_temple:
 
     - button_key: Lightsaber Duel
       script: !OpenMinigameStageGroup
-        stage_group_id: 31000
+        stage_group_id: 52
       close_dialog: true
 
     - button_key: Saber Strike
