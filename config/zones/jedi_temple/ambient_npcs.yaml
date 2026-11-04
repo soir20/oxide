@@ -148,27 +148,34 @@ jedi_temple:
         x: 1692.7
         y: 10.040001
         z: 1695.35
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
         z: 0
-        w: 1.0
+        w: 0
       composite_effect_id: 2053
     archives_terminal_human_1:
       model_id: 219
       enable_gravity: false
       pos:
-        x: 1723.835
-        y: 10.040001
-        z: 1694.052
-        w: 1.0
+        x: 1723.99
+        y: 10.0
+        z: 1694.0
+        w: 1
       rot:
         x: -1
         y: 0
         z: 0
-        w: 1.0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
       stand_animation_id: 2545
+      one_shot_interaction:
+        one_shot_animation_id: 2546
+        player_reaction:
+          animation_id: 3014
+        duration_millis: 1000
     archives_terminal_human_2:
       model_id: 2033
       enable_gravity: false
@@ -176,12 +183,12 @@ jedi_temple:
         x: 1743.925
         y: 10.070001
         z: 1694.052
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
         z: 0
-        w: 1.0
+        w: 0
       stand_animation_id: 2543
       tickable_procedures:
         wake:
@@ -202,12 +209,12 @@ jedi_temple:
         x: 1696.775
         y: 11.63229
         z: 1684.887
-        w: 1.0
+        w: 1
       rot:
         x: 0
-        y: 90
+        y: 0
         z: 0
-        w: 1.0
+        w: 0
       stand_animation_id: 2547
       cursor: 54
       enable_interact_popup: false
@@ -218,6 +225,138 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2548
         duration_millis: 2000
+    archives_force_perception_minigame_table:
+      terrain_object_id: 1283555991
+      name_id: 15022
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1742.725
+        y: 11.02499
+        z: 1694.052
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: false
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10
+        duration_millis: 1
+    archives_force_perception_minigame_table_popup:
+      model_id: 44
+      name_id: 15022
+      show_name: false
+      pos:
+        x: 1742.725
+        y: 11.02499
+        z: 1694.052
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10
+        duration_millis: 1
+    archives_daily_trivia_minigame_table:
+      terrain_object_id: 1283555993
+      name_id: 14997
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1702.05
+        y: 10.975
+        z: 1694.08
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: false
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 19
+        duration_millis: 1
+    archives_daily_trivia_minigame_table_popup:
+      model_id: 44
+      name_id: 14997
+      show_name: false
+      pos:
+        x: 1702.05
+        y: 10.975
+        z: 1694.08
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 19
+        duration_millis: 1
+    archives_daily_holocron_door:
+      terrain_object_id: 1278971827
+      name_id: 14042
+      show_name: false
+      use_terrain_model: true
+      pos:
+        x: 1687.969
+        y: 12.37499
+        z: 1693.998
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      interact_radius: 5.3
+      move_to_interact_offset: 5.2
+      enable_interact_popup: true
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 18
+        duration_millis: 1
+    archives_daily_holocron_door_popup:
+      model_id: 44
+      name_id: 14042
+      show_name: false
+      pos:
+        x: 1687.969
+        y: 12.37499
+        z: 1693.998
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 18
+        duration_millis: 1
 
     #
     # Hangar
@@ -705,7 +844,7 @@ jedi_temple:
         x: 97.0
         y: 9.975351
         z: -204.5
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -727,7 +866,7 @@ jedi_temple:
         x: 106.64343
         y: 9.97293
         z: -197.51973
-        w: 1.0
+        w: 1
       rot:
         x: 0.5162447
         y: 0
@@ -743,6 +882,141 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2555
         duration_millis: 8000
+    hangar_monitor_star_typer:
+      terrain_object_id: 1283211141
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 83.21099
+        y: 11.58
+        z: -195.0119
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_monitor_star_typer_popup:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 83.21099
+        y: 11.58
+        z: -195.0119
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter1_star_typer:
+      terrain_object_id: 1278977348
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 78.91527
+        y: 11.18914
+        z: -194.0563
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter1_star_typer_popup:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 78.91527
+        y: 11.18914
+        z: -194.0563
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter2_star_typer:
+      terrain_object_id: 1278977349
+      name_id: 4006
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 88.13051
+        y: 11.18447
+        z: -194.2917
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 32
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
+    hangar_starfighter2_star_typer_popup:
+      model_id: 44
+      name_id: 4006
+      show_name: false
+      pos:
+        x: 88.13051
+        y: 11.18447
+        z: -194.2917
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 12
+        duration_millis: 1
 
     #
     # Lounge
@@ -869,6 +1143,320 @@ jedi_temple:
           animation_id: 3014
         one_shot_animation_id: 2302
         duration_millis: 7000
+    lounge_arcade_machine_stunt_gungan:
+      terrain_object_id: 1278976561
+      name_id: 17910
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -101.1781
+        y: 10.0
+        z: 1252.27
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 33
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10000
+        duration_millis: 1
+    lounge_arcade_machine_stunt_gungan_popup:
+      model_id: 44
+      name_id: 17910
+      show_name: false
+      pos:
+        x: -101.1781
+        y: 10.0
+        z: 1252.27
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 10000
+        duration_millis: 1
+    lounge_arcade_machine_crisis_ziro:
+      terrain_object_id: 1302027784
+      name_id: 14039
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -101.2647
+        y: 10.0
+        z: 1255.989
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 24
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 11000
+        duration_millis: 1
+    lounge_arcade_machine_crisis_ziro_popup:
+      model_id: 44
+      name_id: 14039
+      show_name: false
+      pos:
+        x: -101.2647
+        y: 10.0
+        z: 1255.989
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 11000
+        duration_millis: 1
+    lounge_arcade_machine_hasbro_attack_shuttle:
+      terrain_object_id: 1313014089
+      name_id: 45278
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.41586
+        y: 10.0
+        z: 1264.582
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      notification_icon: 44
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 9000
+        duration_millis: 1
+    lounge_arcade_machine_hasbro_attack_shuttle_popup:
+      model_id: 44
+      name_id: 45278
+      show_name: false
+      pos:
+        x: -95.41586
+        y: 10.0
+        z: 1264.582
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 9000
+        duration_millis: 1
+    lounge_arcade_machine_aquatic_assault:
+      terrain_object_id: 1317059914
+      name_id: 45895
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.50474
+        y: 10.0
+        z: 1268.304
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 45
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 14000
+        duration_millis: 1
+    lounge_arcade_machine_aquatic_assault_popup:
+      model_id: 44
+      name_id: 45895
+      show_name: false
+      pos:
+        x: -95.50474
+        y: 10.0
+        z: 1268.304
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 14000
+        duration_millis: 1
+    lounge_arcade_machine_daily_spin:
+      terrain_object_id: 1278976556
+      name_id: 14037
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.7117
+        y: 10.0
+        z: 1273.023
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 18
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 17
+        duration_millis: 1
+    lounge_arcade_machine_daily_spin_popup:
+      model_id: 44
+      name_id: 14037
+      show_name: false
+      pos:
+        x: -95.7117
+        y: 10.0
+        z: 1273.023
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 17
+        duration_millis: 1
+    lounge_arcade_machine_fleet_commander:
+      terrain_object_id: 1313014081
+      name_id: 43788
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.50342
+        y: 10.0
+        z: 1277.977
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 40
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    lounge_arcade_machine_fleet_commander_popup:
+      model_id: 44
+      name_id: 43788
+      show_name: false
+      pos:
+        x: -95.50342
+        y: 10.0
+        z: 1277.977
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    lounge_arcade_machine_force_connection:
+      terrain_object_id: 1297214218
+      name_id: 34007
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: -95.38324
+        y: 10.0
+        z: 1281.197
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 39
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
+    lounge_arcade_machine_force_connection_popup:
+      model_id: 44
+      name_id: 34007
+      show_name: false
+      pos:
+        x: -95.38324
+        y: 10.0
+        z: 1281.197
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
 
     #
     # Main Hall
@@ -1173,7 +1761,7 @@ jedi_temple:
         x: 155.17
         y: 6.8242383
         z: 403.678
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1195,12 +1783,12 @@ jedi_temple:
         x: 142.0
         y: 6.8242335
         z: 426.5
-        w: 1.0
+        w: 1
       rot:
         x: -0.075
         y: 0
         z: 1.0
-        w: 1.0
+        w: 0
       stand_animation_id: 2220
       cursor: 53
       enable_interact_popup: true
@@ -1220,7 +1808,7 @@ jedi_temple:
         x: 153.45
         y: 6.824234
         z: 377.135
-        w: 1.0
+        w: 1
       rot:
         x: 0.8215353
         y: 0
@@ -1244,7 +1832,7 @@ jedi_temple:
         x: 138.175
         y: 6.8242426
         z: 341.99
-        w: 1.0
+        w: 1
       rot:
         x: 0.631
         y: 0
@@ -1265,12 +1853,12 @@ jedi_temple:
         x: 136.75
         y: 6.824233
         z: 421.12637
-        w: 1.0
+        w: 1
       rot:
         x: 0.85
         y: 0
         z: -0.5
-        w: 1.0
+        w: 0
     training_room_ambient_2:
       possible_model_ids:
         - 1884
@@ -1278,7 +1866,7 @@ jedi_temple:
         x: 139.75
         y: 6.824233
         z: 420.6
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -1291,7 +1879,7 @@ jedi_temple:
         x: 138.08643
         y: 6.8242426
         z: 417.85
-        w: 1.0
+        w: 1
       rot:
         x: -0.25
         y: 0
@@ -1304,7 +1892,7 @@ jedi_temple:
         x: 153.77
         y: 6.824235
         z: 404.75
-        w: 1.0
+        w: 1
       rot:
         x: -0.65
         y: 0
@@ -1317,7 +1905,7 @@ jedi_temple:
         x: 155.2815
         y: 6.8242407
         z: 402.1675
-        w: 1.0
+        w: 1
       rot:
         x: -0.95
         y: 0
@@ -1330,7 +1918,7 @@ jedi_temple:
         x: 155.82
         y: 6.8242435
         z: 401.05
-        w: 1.0
+        w: 1
       rot:
         x: -0.8
         y: 0
@@ -1343,7 +1931,7 @@ jedi_temple:
         x: 158.1349
         y: 6.8243723
         z: 366.27618
-        w: 1.0
+        w: 1
       rot:
         x: -0.9296713
         y: 0
@@ -1356,7 +1944,7 @@ jedi_temple:
         x: 157.95442
         y: 6.8243237
         z: 365.14832
-        w: 1.0
+        w: 1
       rot:
         x: -0.86171156
         y: 0
@@ -1369,12 +1957,12 @@ jedi_temple:
         x: 151.95
         y: 6.8242593
         z: 343.1
-        w: 1.0
+        w: 1
       rot:
         x: 0.88
         y: 0
         z: -0.5
-        w: 1.0
+        w: 0
     training_room_ambient_10:
       possible_model_ids:
         - 1952
@@ -1382,12 +1970,12 @@ jedi_temple:
         x: 153.34698
         y: 6.8242593
         z: 343.84308
-        w: 1.0
+        w: 1
       rot:
         x: 0.25
         y: 0
         z: -0.95
-        w: 1.0
+        w: 0
     training_room_ambient_11:
       possible_model_ids:
         - 1962
@@ -1395,7 +1983,7 @@ jedi_temple:
         x: 153.96236
         y: 6.8242626
         z: 342.8407
-        w: 1.0
+        w: 1
       rot:
         x: -0.35
         y: 0
@@ -1407,7 +1995,7 @@ jedi_temple:
         x: 106.5
         y: -3.6210203
         z: 390.5
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -1421,7 +2009,7 @@ jedi_temple:
         x: 101.0
         y: -3.6210194
         z: 394.5
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1434,7 +2022,7 @@ jedi_temple:
         x: 101.02
         y: -3.6210194
         z: 392.25
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1448,7 +2036,7 @@ jedi_temple:
         x: 101.04
         y: -3.6210194
         z: 390.0
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1462,7 +2050,7 @@ jedi_temple:
         x: 101.06
         y: -3.6210194
         z: 387.75
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1476,7 +2064,7 @@ jedi_temple:
         x: 97.38
         y: -3.6210198
         z: 394.25
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1490,7 +2078,7 @@ jedi_temple:
         x: 97.36
         y: -3.6210198
         z: 392.0
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1504,7 +2092,7 @@ jedi_temple:
         x: 97.34
         y: -3.6210198
         z: 389.75
-        w: 1.0
+        w: 1
       rot:
         x: 1
         y: 0
@@ -1518,12 +2106,12 @@ jedi_temple:
         x: 145.28635
         y: 6.8242335
         z: 427.0
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
         z: 1.0
-        w: 1.0
+        w: 0
       stand_animation_id: 241
       tickable_procedures:
         shoot:
@@ -1545,12 +2133,12 @@ jedi_temple:
         x: 138.52481
         y: 6.8242335
         z: 426.40643
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
         z: 1.0
-        w: 1.0
+        w: 0
       stand_animation_id: 241
       tickable_procedures:
         shoot:
@@ -1572,12 +2160,12 @@ jedi_temple:
         x: 135.35289
         y: 6.8242335
         z: 427.0
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
         z: 1.0
-        w: 1.0
+        w: 0
       stand_animation_id: 241
       tickable_procedures:
         shoot:
@@ -1599,7 +2187,7 @@ jedi_temple:
         x: 192.0
         y: 9.581754
         z: 395.1
-        w: 1.0
+        w: 1
       rot:
         x: -0.8794418
         y: 0
@@ -1612,7 +2200,7 @@ jedi_temple:
         x: 199.28156
         y: 9.583165
         z: 378.56808
-        w: 1.0
+        w: 1
       rot:
         x: 0.9836331
         y: 0
@@ -1625,7 +2213,7 @@ jedi_temple:
         x: 197.39528
         y: 9.583178
         z: 367.04382
-        w: 1.0
+        w: 1
       rot:
         x: 0.9836331
         y: 0
@@ -1639,7 +2227,7 @@ jedi_temple:
         x: 193.4
         y: 9.7
         z: 401.4
-        w: 1.0
+        w: 1
       rot:
         x: 0.32465783
         y: 0
@@ -1653,7 +2241,7 @@ jedi_temple:
         x: 194.8
         y: 9.7
         z: 398.86
-        w: 1.0
+        w: 1
       rot:
         x: 0.85
         y: 0
@@ -1667,7 +2255,7 @@ jedi_temple:
         x: 194.28
         y: 9.7
         z: 387.071
-        w: 1.0
+        w: 1
       rot:
         x: -0.15
         y: 0
@@ -1681,7 +2269,7 @@ jedi_temple:
         x: 194.5
         y: 9.7
         z: 383.63
-        w: 1.0
+        w: 1
       rot:
         x: -0.097
         y: 0
@@ -1695,7 +2283,7 @@ jedi_temple:
         x: 194.2
         y: 9.7
         z: 376.33
-        w: 1.0
+        w: 1
       rot:
         x: 0.17
         y: 0
@@ -1709,7 +2297,7 @@ jedi_temple:
         x: 193.92
         y: 9.7
         z: 373.0
-        w: 1.0
+        w: 1
       rot:
         x: 0.17
         y: 0
@@ -1723,7 +2311,7 @@ jedi_temple:
         x: 193.1
         y: 9.7
         z: 369.65
-        w: 1.0
+        w: 1
       rot:
         x: 0.2
         y: 0
@@ -1737,7 +2325,7 @@ jedi_temple:
         x: 195.2
         y: 9.7
         z: 362.065
-        w: 1.0
+        w: 1
       rot:
         x: -0.65
         y: 0
@@ -1751,7 +2339,7 @@ jedi_temple:
         x: 193.32
         y: 9.7
         z: 358.5
-        w: 1.0
+        w: 1
       rot:
         x: -0.1
         y: 0
@@ -1764,7 +2352,7 @@ jedi_temple:
         x: 103.15
         y: -3.6210194
         z: 414.5
-        w: 1.0
+        w: 1
       rot:
         x: -0.4
         y: 0
@@ -1777,7 +2365,7 @@ jedi_temple:
         x: 97.0
         y: -3.6210198
         z: 411.9
-        w: 1.0
+        w: 1
       rot:
         x: -0.41702244
         y: 0
@@ -1790,7 +2378,7 @@ jedi_temple:
         x: 91.5
         y: -3.6210198
         z: 409.25
-        w: 1.0
+        w: 1
       rot:
         x: -0.6
         y: 0
@@ -1825,7 +2413,7 @@ jedi_temple:
         x: 161.65
         y: 6.824238
         z: 346.9
-        w: 1.0
+        w: 1
       rot:
         x: 0.75
         y: 0
@@ -1846,7 +2434,7 @@ jedi_temple:
         x: 161.65
         y: 6.824238
         z: 346.9
-        w: 1.0
+        w: 1
       rot:
         x: 0.75
         y: 0
@@ -1945,7 +2533,7 @@ jedi_temple:
         x: 135.9
         y: 9.95
         z: 380.15
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -1959,7 +2547,7 @@ jedi_temple:
         x: 135.9
         y: 9.95
         z: 380.15
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -1973,7 +2561,7 @@ jedi_temple:
         x: 135.9
         y: 9.95
         z: 380.15
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -1986,7 +2574,7 @@ jedi_temple:
         x: 139.95262
         y: 6.8242335
         z: 339.0148
-        w: 1.0
+        w: 1
       rot:
         x: 0.43124008
         y: 0
@@ -1999,7 +2587,7 @@ jedi_temple:
         x: 143.9
         y: 6.8242335
         z: 334.98163
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -2012,7 +2600,7 @@ jedi_temple:
         x: 141.33
         y: 7.0
         z: 326.64008
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -2112,12 +2700,12 @@ jedi_temple:
         x: 146.38
         y: 10.334785
         z: 327.56
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
         z: 1
-        w: 1.0
+        w: 0
 
     #
     # Veranda (Shops)
@@ -2155,7 +2743,7 @@ jedi_temple:
         x: 917.18353
         y: 178.45145
         z: 1566.1334
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -2177,7 +2765,7 @@ jedi_temple:
         x: 898.0
         y: 172.44919
         z: 1561.6
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -2199,7 +2787,7 @@ jedi_temple:
         x: 917.18353
         y: 178.45145
         z: 1527.4415
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -2221,7 +2809,7 @@ jedi_temple:
         x: 898.0
         y: 172.44919
         z: 1532.5
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
@@ -2299,7 +2887,7 @@ jedi_temple:
         x: -337.12753
         y: 10.175473
         z: 1771.0919
-        w: 1.0
+        w: 1
       rot:
         x: 0.6814254
         y: 0
@@ -2321,7 +2909,7 @@ jedi_temple:
         x: -331.35208
         y: 10.191933
         z: 1771.8655
-        w: 1.0
+        w: 1
       rot:
         x: -0.2867432
         y: 0
@@ -2344,19 +2932,19 @@ jedi_temple:
         x: -337.6852
         y: 10.242787
         z: 1778.0006
-        w: 1.0
+        w: 1
       rot:
         x: 0.43641397
         y: 0
         z: 0.89974594
-        w: 1.0
+        w: 0
     workshop_running_gonk_droid:
       model_id: 233
       pos:
         x: -347.34412
         y: 11.888292
         z: 1792.9979
-        w: 1.0
+        w: 1
       rot:
         x: 0.010594733
         y: 0
@@ -2371,12 +2959,12 @@ jedi_temple:
         x: -330.63
         y: 10.185185
         z: 1791.75
-        w: 1.0
+        w: 1
       rot:
         x: -0.7430571
         y: 0
         z: -0.6692279
-        w: 1.0
+        w: 0
       composite_effect_id: 2044
     workshop_damaged_battle_droid:
       model_id: 1065
@@ -2384,12 +2972,12 @@ jedi_temple:
         x: -336.9498
         y: 11.457644
         z: 1781.624
-        w: 1.0
+        w: 1
       rot:
         x: -1
         y: 0
         z: 0.05
-        w: 1.0
+        w: 0
       stand_animation_id: 2562
       cursor: 54
       enable_interact_popup: false
@@ -2407,10 +2995,10 @@ jedi_temple:
         x: -349.7
         y: 16.736858
         z: 1775.4
-        w: 1.0
+        w: 1
       rot:
         x: 0.65553665
         y: 0
         z: 0.7551633
-        w: 1.0
+        w: 0
       stand_animation_id: 661
