@@ -13,7 +13,7 @@ members_only:
         x: 1477.1298
         y: 69.85488
         z: 905.9868
-        w: 1.0
+        w: 1
       rot:
         x: -0.99949026
         y: 0
@@ -33,7 +33,7 @@ members_only:
         x: 1488.795
         y: 71.88129
         z: 919.0992
-        w: 1.0
+        w: 1
       rot:
         x: 0.9
         y: 0
@@ -54,7 +54,7 @@ members_only:
         x: 1489.576
         y: 73.23138
         z: 920.426
-        w: 1.0
+        w: 1
       rot:
         x: 0.5
         y: 0
@@ -67,7 +67,7 @@ members_only:
         x: 1495.6
         y: 71.88129
         z: 908.2
-        w: 1.0
+        w: 1
       rot:
         x: 0.17
         y: 0
@@ -88,7 +88,7 @@ members_only:
         x: 1497.21
         y: 73.301125
         z: 908.5
-        w: 1.0
+        w: 1
       rot:
         x: 1.0
         y: 0
@@ -101,7 +101,7 @@ members_only:
         x: 1492.0
         y: 71.88129
         z: 895.9
-        w: 1.0
+        w: 1
       rot:
         x: -0.6
         y: 0
@@ -122,7 +122,7 @@ members_only:
         x: 1493.39
         y: 73.235306
         z: 894.9
-        w: 1.0
+        w: 1
       rot:
         x: 0.8
         y: 0
@@ -135,7 +135,7 @@ members_only:
         x: 1467.9178
         y: 70.15328
         z: 892.4749
-        w: 1.0
+        w: 1
       rot:
         x: 0.7
         y: 0
@@ -148,7 +148,7 @@ members_only:
         x: 1479.3802
         y: 70.143936
         z: 923.82324
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -167,7 +167,7 @@ members_only:
         x: 800.338
         y: 11.77
         z: 668.0857
-        w: 1.0
+        w: 1
       rot:
         x: -0.6742825
         y: 0
@@ -264,7 +264,7 @@ members_only:
         x: 816.7
         y: 10.04
         z: 694.30
-        w: 1.0
+        w: 1
       rot:
         x: 0
         y: 0
@@ -292,7 +292,20 @@ members_only:
         y: 0
         z: -1
         w: 0
+      cursor: 54
+      enable_interact_popup: false
+      interact_radius: 5
+      move_to_interact_offset: 4
+      one_shot_interaction:
+        one_shot_animation_id: 2570
+        player_reaction:
+          animation_id: 3014
+        duration_millis: 1000
+      triggered_npc_keys_on_interact:
+        - members_only_jedi_table_jedi_a
+        - members_only_jedi_table_jedi_b
     members_only_jedi_table_jedi_a:
+      key: members_only_jedi_table_jedi_a
       model_id: 39
       enable_gravity: false
       pos:
@@ -306,7 +319,11 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2566
+      one_shot_interaction:
+        one_shot_animation_id: 2570
+        duration_millis: 1000
     members_only_jedi_table_jedi_b:
+      key: members_only_jedi_table_jedi_b
       model_id: 40
       enable_gravity: false
       pos:
@@ -320,6 +337,9 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2567
+      one_shot_interaction:
+        one_shot_animation_id: 2571
+        duration_millis: 1000
     members_only_clones_table:
       model_id: 1010
       pos:
@@ -360,3 +380,273 @@ members_only:
         z: -1
         w: 0
       stand_animation_id: 2586
+    members_only_arcade_machine_fleet_commander:
+      terrain_object_id: 1359413049
+      name_id: 43788
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 811.7
+        y: 10.0
+        z: 699.6
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 40
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    members_only_arcade_machine_fleet_commander_popup:
+      model_id: 44
+      name_id: 43788
+      show_name: false
+      pos:
+        x: 811.7
+        y: 10.0
+        z: 699.6
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 20000
+        duration_millis: 1
+    members_only_arcade_machine_force_connection:
+      terrain_object_id: 1359413047
+      name_id: 34007
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 814.531
+        y: 10.0
+        z: 699.6
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 39
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
+    members_only_arcade_machine_force_connection_popup:
+      model_id: 44
+      name_id: 34007
+      show_name: false
+      pos:
+        x: 814.531
+        y: 10.0
+        z: 699.6
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 22000
+        duration_millis: 1
+    members_only_arcade_machine_holo_scramble:
+      terrain_object_id: 1320802149
+      name_id: 50470
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 816.7977
+        y: 10.0
+        z: 687.6322
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 47
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 23000
+        duration_millis: 1
+    members_only_arcade_machine_holo_scramble_popup:
+      model_id: 44
+      name_id: 50470
+      show_name: false
+      pos:
+        x: 816.7977
+        y: 10.0
+        z: 687.6322
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 23000
+        duration_millis: 1
+    members_only_arcade_machine_republic_gunship:
+      terrain_object_id: 1281995750
+      name_id: 17928
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 814.76
+        y: 10.0
+        z: 685.7456
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 27
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 13000
+        duration_millis: 1
+    members_only_arcade_machine_republic_gunship_popup:
+      model_id: 44
+      name_id: 17928
+      show_name: false
+      pos:
+        x: 814.76
+        y: 10.0
+        z: 685.7456
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 13000
+        duration_millis: 1
+    members_only_arcade_machine_mine_buster_1:
+      terrain_object_id: 1281995748
+      name_id: 17927
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 812.5784
+        y: 10.0
+        z: 683.979
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 25
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 21000
+        duration_millis: 1
+    members_only_arcade_machine_mine_buster_1_popup:
+      model_id: 44
+      name_id: 17927
+      show_name: false
+      pos:
+        x: 812.5784
+        y: 10.0
+        z: 683.979
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 21000
+        duration_millis: 1
+    members_only_arcade_machine_mine_buster_2:
+      terrain_object_id: 1281995747
+      name_id: 17927
+      show_name: false
+      enable_gravity: false
+      pos:
+        x: 810.6032
+        y: 10.0
+        z: 682.108
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: false
+      notification_icon: 25
+      interact_radius: 5
+      move_to_interact_offset: 4.9
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 21000
+        duration_millis: 1
+    members_only_arcade_machine_mine_buster_2_popup:
+      model_id: 44
+      name_id: 17927
+      show_name: false
+      pos:
+        x: 810.6032
+        y: 10.0
+        z: 682.108
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 54
+      enable_interact_popup: true
+      interact_radius: 5
+      one_shot_interaction:
+        script: !OpenMinigameStageGroup
+          stage_group_id: 21000
+        duration_millis: 1
