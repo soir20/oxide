@@ -331,7 +331,7 @@ jedi_temple:
       cursor: 54
       interact_radius: 5.3
       move_to_interact_offset: 5.2
-      enable_interact_popup: true
+      enable_interact_popup: false
       one_shot_interaction:
         script: !OpenMinigameStageGroup
           stage_group_id: 18
