@@ -331,7 +331,7 @@ jedi_temple:
       cursor: 54
       interact_radius: 5.3
       move_to_interact_offset: 5.2
-      enable_interact_popup: true
+      enable_interact_popup: false
       one_shot_interaction:
         script: !OpenMinigameStageGroup
           stage_group_id: 18
@@ -1165,7 +1165,7 @@ jedi_temple:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 10000
+          stage_group_id: 14
         duration_millis: 1
     lounge_arcade_machine_stunt_gungan_popup:
       model_id: 44
@@ -1186,7 +1186,7 @@ jedi_temple:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 10000
+          stage_group_id: 14
         duration_millis: 1
     lounge_arcade_machine_crisis_ziro:
       terrain_object_id: 1302027784
@@ -1210,7 +1210,7 @@ jedi_temple:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 11000
+          stage_group_id: 56
         duration_millis: 1
     lounge_arcade_machine_crisis_ziro_popup:
       model_id: 44
@@ -1231,7 +1231,7 @@ jedi_temple:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 11000
+          stage_group_id: 56
         duration_millis: 1
     lounge_arcade_machine_hasbro_attack_shuttle:
       terrain_object_id: 1313014089
@@ -1389,7 +1389,7 @@ jedi_temple:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 20000
+          stage_group_id: 89
         duration_millis: 1
     lounge_arcade_machine_fleet_commander_popup:
       model_id: 44
@@ -1410,7 +1410,7 @@ jedi_temple:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 20000
+          stage_group_id: 89
         duration_millis: 1
     lounge_arcade_machine_force_connection:
       terrain_object_id: 1297214218
