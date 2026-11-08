@@ -1,0 +1,108 @@
+---
+# Carlac Republic Outpost - NPC dialogue. All text IDs are the original 2014 client strings.
+carlac:
+  dialog_choices:
+    - button_key: Exit
+      close_dialog: true
+
+    # --- Commander Wolffe: situation report ---
+    - button_key: Wolffe
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 51712  # "Sir, our outpost here on Carlac has been established. Would...
+        speaker_animation_id: 2202
+        camera_placement:
+          x: 48.8694
+          y: 2.9421
+          z: 39.4613
+          w: 1
+        look_at:
+          x: 49.459793
+          y: 2.6421
+          z: 41.58064
+          w: 1
+        choices:
+          - button_key: Wolffe 2
+            button_text_id: 3981   # "Yes"
+          - button_key: Exit
+            button_text_id: 44554   # "No thanks."
+    - button_key: Wolffe 2
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 51716  # "The crashed Separatist Frigate that led us here shouldn't...
+        speaker_animation_id: 2202
+        camera_placement:
+          x: 48.8694
+          y: 2.9421
+          z: 39.4613
+          w: 1
+        look_at:
+          x: 49.459793
+          y: 2.6421
+          z: 41.58064
+          w: 1
+        choices:
+          - button_key: Wolffe 3
+            button_text_id: 3794   # "Next"
+    - button_key: Wolffe 3
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 51718  # "...a native village being occupied by... Death Watch...
+        speaker_animation_id: 2202
+        camera_placement:
+          x: 48.8694
+          y: 2.9421
+          z: 39.4613
+          w: 1
+        look_at:
+          x: 49.459793
+          y: 2.6421
+          z: 41.58064
+          w: 1
+        choices:
+          - button_key: Wolffe 4
+            button_text_id: 3794   # "Next"
+    - button_key: Wolffe 4
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 51720  # "...several Death Watch camps in the area... any assistance...
+        speaker_animation_id: 2202
+        camera_placement:
+          x: 48.8694
+          y: 2.9421
+          z: 39.4613
+          w: 1
+        look_at:
+          x: 49.459793
+          y: 2.6421
+          z: 41.58064
+          w: 1
+        choices:
+          - button_key: Exit
+            button_text_id: 3870   # "Exit"
+
+    # --- Scope: Carlac mount vendor ---
+    - button_key: Scope
+      npc_key: scope
+      new_dialog:
+        dialog_message_id: 51991  # "Scope: Would you like to see the vehicles we have available...
+        speaker_animation_id: 2202
+        camera_placement:
+          x: 76.092397
+          y: 2.7457
+          z: 44.016449
+          w: 1
+        look_at:
+          x: 77.450294
+          y: 2.4457
+          z: 42.28552
+          w: 1
+        choices:
+          - button_key: Scope Mounts
+            button_text_id: 3981   # "Yes"
+          - button_key: Exit
+            button_text_id: 44554  # "No thanks."
+    - button_key: Scope Mounts
+      script: !CustomStringParams
+        script_name: CombatHandler.ShowMounts   # combat-zone HUD mount window
+      close_dialog: true

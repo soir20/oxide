@@ -1,0 +1,557 @@
+---
+# Carlac Republic Outpost - NPCs. Positions/facings measured in game with ./loc on 9 Oct 2026.
+# Models and text IDs are from the 2014 client (Models.txt / en_us locale).
+carlac:
+  ambient_npcs:
+    snow_jedi_1:
+      key: snow_jedi_1
+      model_id: 2451  # Grp_HumanMale_AmbientJedi_Snow01 - "Ambient Snow Jedi" (light purple...
+      show_name: false
+      pos:
+        x: 44.67776
+        y: 0.954847
+        z: 22.921452
+        w: 1
+      rot:
+        x: -0.64230704
+        y: 0
+        z: 0.7664475
+        w: 0
+      stand_animation_id: 2201
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    commander_wolffe:
+      key: commander_wolffe
+      model_id: 1581          # Grp_CommanderWolffe_Snow - Wolffe in snow armour
+      name_id: 51711
+      show_name: true
+      pos:
+        x: 49.459793
+        y: 1.0420548
+        z: 41.58064
+        w: 1
+      rot:
+        x: -0.26836503
+        y: 0
+        z: -0.9633173
+        w: 0
+      stand_animation_id: 2505
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Wolffe
+        duration_millis: 1
+    snow_trooper_1:
+      key: snow_trooper_1
+      model_id: 2433  # Grp_Clone_Snow_Guard - "Snow Trooper Guard": full snow armour and...
+      show_name: false
+      pos:
+        x: 51.601456
+        y: 0.954847
+        z: 26.515133
+        w: 1
+      rot:
+        x: -0.9171056
+        y: 0
+        z: -0.39864427
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_nogun_1:
+      key: snow_trooper_nogun_1
+      model_id: 2431          # Grp_Clone_Snow_NoGun - full snow armour and helmet, no weapon
+      show_name: false
+      pos:
+        x: 50.068848
+        y: 0.954847
+        z: 24.425081
+        w: 1
+      rot:
+        x: 0.7043296
+        y: 0
+        z: 0.70987296
+        w: 0
+      stand_animation_id: 2599
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_nogun_2:
+      key: snow_trooper_nogun_2
+      model_id: 2431          # Grp_Clone_Snow_NoGun - full snow armour and helmet, no weapon
+      show_name: false
+      pos:
+        x: 49.569393
+        y: 0.954847
+        z: 26.665905
+        w: 1
+      rot:
+        x: 0.55856633
+        y: 0
+        z: -0.8294598
+        w: 0
+      stand_animation_id: 2600
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_2:
+      key: snow_trooper_2
+      model_id: 2433  # Grp_Clone_Snow_Guard - "Snow Trooper Guard": full snow armour and...
+      show_name: false
+      pos:
+        x: 62.221676
+        y: 1.0420545
+        z: 36.356068
+        w: 1
+      rot:
+        x: 0.4691672
+        y: 0
+        z: 0.8831094
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_3:
+      key: snow_trooper_3
+      model_id: 2433  # Grp_Clone_Snow_Guard - "Snow Trooper Guard": full snow armour and...
+      show_name: false
+      pos:
+        x: 50.025352
+        y: 1.0420545
+        z: 47.52703
+        w: 1
+      rot:
+        x: 0.9830103
+        y: 0
+        z: 0.18355009
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    scope:
+      key: scope
+      model_id: 2464          # Grp_Clone_CarlacMountVendor - "Carlac Mount Vendor"
+      name_id: 51987          # "Scope"
+      sub_title_id: 50598     # "Mount Vendor"
+      show_name: true
+      pos:
+        x: 77.450294
+        y: 0.84571826
+        z: 42.28552
+        w: 1
+      rot:
+        x: -0.61722594
+        y: 0
+        z: 0.7867859
+        w: 0
+      stand_animation_id: 2505
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
+    snow_officer_1:
+      key: snow_officer_1
+      model_id: 2449          # Grp_Clone_Ambient_Snow01 - "Ambient Snow Officer Clone"
+      show_name: false
+      pos:
+        x: 86.44908
+        y: 0.84571755
+        z: 79.0319
+        w: 1
+      rot:
+        x: -0.3984923
+        y: 0
+        z: -0.91717166
+        w: 0
+      stand_animation_id: 2601
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_officer_2:
+      key: snow_officer_2
+      model_id: 2450          # Grp_Clone_Ambient_Snow02 - "Ambient Snow Officer Clone"
+      show_name: false
+      pos:
+        x: 84.232124
+        y: 0.84571755
+        z: 78.28381
+        w: 1
+      rot:
+        x: 0.4118788
+        y: 0
+        z: -0.9112386
+        w: 0
+      stand_animation_id: 2505
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_jedi_zabrak:
+      key: snow_jedi_zabrak
+      model_id: 2434          # Grp_ZabrakFemale_AmbientJedi_Snow - Zabrak female Jedi, snow gear
+      show_name: false
+      pos:
+        x: 64.342545
+        y: 0.85572016
+        z: 68.735374
+        w: 1
+      rot:
+        x: 0.62374336
+        y: 0
+        z: 0.78162926
+        w: 0
+      stand_animation_id: 2201
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_jedi_togruta:
+      key: snow_jedi_togruta
+      model_id: 2435          # Grp_TogrutaMale_Ambient_Snow - Togruta male Jedi, snow gear
+      show_name: false
+      pos:
+        x: 31.456387
+        y: 1.0420548
+        z: 30.606865
+        w: 1
+      rot:
+        x: -0.72043586
+        y: 0
+        z: 0.6935215
+        w: 0
+      stand_animation_id: 2601   # Amb_StandingAroundC - chin/thinking pose
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_jedi_twilek:
+      key: snow_jedi_twilek
+      model_id: 2453          # Grp_TwilekMale_AmbientJedi_Snow - Twi'lek male Jedi, snow gear
+      show_name: false
+      pos:
+        x: 85.24131
+        y: 0.84571755
+        z: 76.447876
+        w: 1
+      rot:
+        x: 0.32854542
+        y: 0
+        z: 0.94448817
+        w: 0
+      stand_animation_id: 2201
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_officer_3:
+      key: snow_officer_3
+      model_id: 2449          # Grp_Clone_Ambient_Snow01 - Ambient Snow Officer Clone
+      show_name: false
+      pos:
+        x: 87.297264
+        y: 0.84571826
+        z: 52.900986
+        w: 1
+      rot:
+        x: -0.7626917
+        y: 0
+        z: 0.6467623
+        w: 0
+      stand_animation_id: 2601
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_nogun_3:
+      key: snow_trooper_nogun_3
+      model_id: 2431          # Grp_Clone_Snow_NoGun - full snow armour and helmet, no weapon
+      show_name: false
+      pos:
+        x: 85.415886
+        y: 0.84571826
+        z: 52.323315
+        w: 1
+      rot:
+        x: 0.8104245
+        y: 0
+        z: 0.585843
+        w: 0
+      stand_animation_id: 2599
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_4:
+      key: snow_trooper_4
+      model_id: 2433          # Grp_Clone_Snow_Guard - full snow armour and helmet, DC-15A
+      show_name: false
+      pos:
+        x: 95.631645
+        y: 0.58107257
+        z: 85.93895
+        w: 1
+      rot:
+        x: 0.4694786
+        y: 0
+        z: 0.88294375
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_5:
+      key: snow_trooper_5
+      model_id: 2433          # Grp_Clone_Snow_Guard - full snow armour and helmet, DC-15A
+      show_name: false
+      pos:
+        x: 76.97502
+        y: 0.22656322
+        z: 102.11947
+        w: 1
+      rot:
+        x: 0.9371827
+        y: 0
+        z: 0.34883863
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_officer_4:
+      key: snow_officer_4
+      model_id: 2449  # Grp_Clone_Ambient_Snow01 - Ambient Snow Officer Clone, no hood (old...
+      show_name: false
+      pos:
+        x: 43.809093
+        y: 0.954847
+        z: 21.734568
+        w: 1
+      rot:
+        x: -0.40561205
+        y: 0
+        z: 0.91404516
+        w: 0
+      stand_animation_id: 2505
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_6:
+      key: snow_trooper_6
+      model_id: 2433          # Grp_Clone_Snow_Guard - full snow armour and helmet, DC-15A
+      show_name: false
+      pos:
+        x: 64.03673
+        y: 0.8557204
+        z: 71.27667
+        w: 1
+      rot:
+        x: 0.60764176
+        y: 0
+        z: -0.79421115
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_7:
+      key: snow_trooper_7
+      model_id: 2433          # Grp_Clone_Snow_Guard - full snow armour and helmet, DC-15A
+      show_name: false
+      pos:
+        x: 66.21938
+        y: 0.8557204
+        z: 71.57283
+        w: 1
+      rot:
+        x: -0.63202524
+        y: 0
+        z: -0.7749478
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_8:
+      key: snow_trooper_8
+      model_id: 2433          # Grp_Clone_Snow_Guard - full snow armour and helmet, DC-15A
+      show_name: false
+      pos:
+        x: 66.53394
+        y: 0.85572016
+        z: 69.14362
+        w: 1
+      rot:
+        x: -0.7716539
+        y: 0
+        z: 0.6360426
+        w: 0
+      stand_animation_id: 241    # Loc_BlasterRifle_Stand - relaxed stand holding the rifle
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+    snow_trooper_wanderer:
+      key: snow_trooper_wanderer
+      model_id: 2431          # Grp_Clone_Snow_NoGun - full snow armour and helmet, no weapon
+      show_name: false
+      pos:
+        x: 64.223526
+        y: 0.8557193
+        z: 55.02534
+        w: 1
+      rot:
+        x: 0.6162374
+        y: 0
+        z: 0.7875604
+        w: 0
+      stand_animation_id: 1
+      hostility: "Friendly"
+      cursor: 54
+      clickable: false
+      enable_interact_popup: false
+      # Wanders inside an 8 m box around his marked spot. Nearest other NPC is ~12.7 m
+      # away on either axis, so his path can never reach anyone else.
+      tickable_procedures:
+        wander:
+          steps:
+            - speed: 2.5
+              animation_id: 2          # loc_walk
+              wander:
+                radius: 8
+                min_offset: 3
+                origin: {x: 64.223526, y: 0.8557193, z: 55.02534, w: 1}
+              min_duration_millis: 0   # step ends the moment he arrives
+            - animation_id: 1          # loc_stand
+              min_duration_millis: 4000
+    # --- Mounts on display beside Scope (clicking them opens Scope's shop) ---
+    mount_barc_1:
+      key: mount_barc_1
+      model_id: 2264          # BARC speeder (same as Umbara)
+      texture_alias: UmbaranBlue
+      show_name: false
+      pos:
+        x: 79.65017
+        y: 0.7743882
+        z: 36.43808
+        w: 1
+      rot:
+        x: -0.2707155
+        y: 0
+        z: 0.9626593
+        w: 0
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
+    mount_barc_2:
+      key: mount_barc_2
+      model_id: 2264          # BARC speeder (same as Umbara)
+      texture_alias: UmbaranBlue
+      show_name: false
+      pos:
+        x: 81.379585
+        y: 0.79057944
+        z: 38.513836
+        w: 1
+      rot:
+        x: -0.3141705
+        y: 0
+        z: 0.9493665
+        w: 0
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
+    mount_mando_1:
+      key: mount_mando_1
+      model_id: 2440          # Mandalorian speeder, white/blue
+      texture_alias: MandalorianWhiteBlue
+      show_name: false
+      pos:
+        x: 83.01078
+        y: 0.8201574
+        z: 41.58649
+        w: 1
+      rot:
+        x: -0.41288525
+        y: 0
+        z: 0.91078305
+        w: 0
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
+    mount_mando_2:
+      key: mount_mando_2
+      model_id: 2440          # Mandalorian speeder, white/blue
+      texture_alias: MandalorianWhiteBlue
+      show_name: false
+      pos:
+        x: 84.227295
+        y: 0.8453492
+        z: 44.12216
+        w: 1
+      rot:
+        x: -0.48597902
+        y: 0
+        z: 0.8739703
+        w: 0
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
+    mount_mando_3:
+      key: mount_mando_3
+      model_id: 2440          # Mandalorian speeder, white/blue
+      texture_alias: MandalorianWhiteBlue
+      show_name: false
+      pos:
+        x: 85.2128
+        y: 0.845718
+        z: 45.822212
+        w: 1
+      rot:
+        x: -0.41131777
+        y: 0
+        z: 0.911492
+        w: 0
+      hostility: "Friendly"
+      cursor: 53
+      enable_interact_popup: false
+      interact_radius: 6
+      one_shot_interaction:
+        dialog_option_key: Scope
+        duration_millis: 1
