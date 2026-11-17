@@ -37,7 +37,11 @@ use handlers::minigame::{
     AllMinigameConfigs,
 };
 use handlers::mount::{load_mounts, process_mount_packet, MountConfig};
-use handlers::reference_data::{load_categories, load_item_classes, load_item_groups};
+use handlers::quick_chat::process_quick_chat_packet;
+use handlers::reference_data::{
+    load_categories, load_item_classes, load_item_groups, load_quick_chats,
+};
+use handlers::store::{buy_item_group, process_store_packet};
 use handlers::test_data::make_test_nameplate_image;
 use handlers::tick::{
     enqueue_tickable_chunks, enqueue_tickable_minigames, tick_matchmaking_groups, tick_minigame,
@@ -51,6 +55,10 @@ use handlers::zone::{
     load_zones, teleport_anywhere, teleport_within_zone, DestinationZoneInstance,
     PointOfInterestConfig, ZoneInstance, ZoneTemplate,
 };
+use packets::purchase::EnableMarketplace;
+use packets::quick_chat::{QuickChatDefinition, QuickChatDefinitions};
+use packets::ui_interactions::UiInteraction;
+
 use oxide_bvh::Bvh;
 use packets::client_update::{Health, Power, PreloadCharactersDone, Stat, StatId, Stats};
 use packets::login::{LoginRequest, WelcomeScreen, ZoneDetailsDone};
@@ -75,6 +83,8 @@ use packet_serialize::{DeserializePacket, DeserializePacketError};
 mod handlers;
 mod navmesh;
 mod packets;
+
+pub use handlers::profile::PlayerSnapshot;
 
 #[derive(Debug)]
 pub enum Broadcast {
@@ -208,6 +218,7 @@ pub struct GameServer {
     start_time: Instant,
     utc_offset: UtcOffset,
     zone_templates: BTreeMap<u8, ZoneTemplate>,
+    quick_chats: Vec<QuickChatDefinition>,
 }
 
 impl GameServer {
@@ -237,11 +248,20 @@ impl GameServer {
             mounts: load_mounts(config_dir)?,
             navmeshes: load_navmeshes(config_dir, &bvhs)?,
             points_of_interest,
+            quick_chats: load_quick_chats(config_dir)?,
             start_time: Instant::now(),
             utc_offset,
             zone_templates: templates,
             bvhs,
         })
+    }
+
+    pub fn item_groups(&self) -> &ItemGroupDefinitions {
+        &self.item_groups
+    }
+
+    pub fn quick_chats(&self) -> &[QuickChatDefinition] {
+        &self.quick_chats
     }
 
     pub fn authenticate(&self, data: Vec<u8>) -> Result<(u32, String), ProcessPacketError> {
@@ -266,20 +286,59 @@ impl GameServer {
         }
     }
 
-    pub fn log_in(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        log_in(sender, self)
-    }
-
-    pub fn log_out(&self, sender: u32) -> Result<Vec<Broadcast>, ProcessPacketError> {
-        Ok(log_out(sender, self))
-    }
-
     pub fn enqueue_tickable_chunks(
         &self,
         synchronization: TickableNpcSynchronization,
         chunks_enqueue: Sender<(u64, Chunk, TickableNpcSynchronization)>,
     ) -> usize {
         enqueue_tickable_chunks(self, synchronization, chunks_enqueue)
+    }
+
+    pub fn log_in(
+        &self,
+        sender: u32,
+        saved: Option<PlayerSnapshot>,
+    ) -> Result<Vec<Broadcast>, ProcessPacketError> {
+        log_in(sender, saved, self)
+    }
+
+    pub fn log_out(
+        &self,
+        sender: u32,
+    ) -> Result<(Vec<Broadcast>, Option<PlayerSnapshot>), ProcessPacketError> {
+        Ok(log_out(sender, self))
+    }
+
+    pub fn snapshot_online_players(&self) -> Vec<PlayerSnapshot> {
+        self.lock_enforcer()
+            .read_characters(|characters_table_read_handle| {
+                let player_guids: Vec<u64> = characters_table_read_handle
+                    .keys_by_index1_range(
+                        (CharacterCategory::PlayerReady, 0, Character::MIN_CHUNK)
+                            ..=(
+                                CharacterCategory::PlayerUnready,
+                                u64::MAX,
+                                Character::MAX_CHUNK,
+                            ),
+                    )
+                    .collect();
+
+                CharacterLockRequest {
+                    read_guids: player_guids,
+                    write_guids: Vec::new(),
+                    character_consumer: |_, characters_read, _, _| {
+                        characters_read
+                            .iter()
+                            .filter_map(|(guid, character)| match &character.stats.character_type {
+                                CharacterType::Player(player) => {
+                                    Some(PlayerSnapshot::from_player(*guid as u32, player))
+                                }
+                                _ => None,
+                            })
+                            .collect()
+                    },
+                }
+            })
     }
 
     pub fn tick_single_chunk(
@@ -441,11 +500,22 @@ impl GameServer {
                     };
                     sender_only_packets.push(GamePacket::serialize(&item_groups));
 
+                    sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: QuickChatDefinitions {
+                            definitions: self.quick_chats.clone(),
+                        },
+                    }));
+
                     let store_items = TunneledPacket {
                         unknown1: true,
                         inner: GamePacket::serialize(&StoreItemList::from(&self.costs)),
                     };
                     sender_only_packets.push(GamePacket::serialize(&store_items));
+                    sender_only_packets.push(GamePacket::serialize(&TunneledPacket {
+                        unknown1: true,
+                        inner: EnableMarketplace { enabled: true },
+                    }));
                     sender_only_packets.append(&mut redirect_packets());
 
                     let mut character_broadcasts = self.lock_enforcer().read_characters(|characters_table_read_handle| {
@@ -807,7 +877,37 @@ impl GameServer {
                 }
                 // Ignore these packets to reduce log spam for now
                 OpCode::LobbyGameDefinition => {}
-                OpCode::UiInteractions => {}
+                OpCode::Store => {
+                    broadcasts.append(&mut process_store_packet(&mut cursor, sender, self)?);
+                }
+                OpCode::QuickChat => {
+                    broadcasts.append(&mut process_quick_chat_packet(&mut cursor, sender, self)?);
+                }
+                OpCode::StoreTransaction => {
+                    // Single-item "Buy Now": the client sends this first and waits for the
+                    // item list before it sends the actual BuyItem (Store sub-op 4).
+                    broadcasts.push(Broadcast::Single(
+                        sender,
+                        vec![GamePacket::serialize(&TunneledPacket {
+                            unknown1: true,
+                            inner: StoreItemList::from(&self.costs),
+                        })],
+                    ));
+                }
+                OpCode::UiInteractions => {
+                    if let Ok(interaction) = UiInteraction::deserialize(&mut cursor) {
+                        // Item-set "Buy Now": param is the item group guid.
+                        if interaction.button_name == "handleBuyItemButtonClick" {
+                            if let Some(group_guid) = interaction
+                                .param
+                                .as_deref()
+                                .and_then(|param| param.parse::<i32>().ok())
+                            {
+                                broadcasts.append(&mut buy_item_group(sender, group_guid, self)?);
+                            }
+                        }
+                    }
+                }
                 OpCode::ClientMetrics => {}
                 OpCode::LuaMetrics => {}
                 OpCode::ClientLog => {}
