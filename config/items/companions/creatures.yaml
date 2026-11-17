@@ -1,0 +1,347 @@
+---
+- guid: 2752
+  name_id: 43358
+  description_id: 14
+  icon_set_id: 1846
+  slot: !Equipment None
+  model_name: Char_Convor.adr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 2786
+  name_id: 44380
+  description_id: 14
+  icon_set_id: 1976
+  slot: !Equipment None
+  model_name: Char_Anoobus_LOD0.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 2802
+  name_id: 44508
+  description_id: 14
+  icon_set_id: 1997
+  slot: !Equipment None
+  model_name: Char_KowakianMonkeyLizard.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: true
+- guid: 2899
+  name_id: 45192
+  description_id: 14
+  icon_set_id: 2143
+  slot: !Equipment None
+  model_name: 3D_Vector.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3073
+  name_id: 45930
+  description_id: 14
+  icon_set_id: 2357
+  slot: !Equipment None
+  model_name: 3D_Babbo.agr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3074
+  name_id: 45931
+  description_id: 14
+  icon_set_id: 2358
+  slot: !Equipment None
+  model_name: 3D_Duppa.agr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3100
+  name_id: 4500
+  description_id: 14
+  icon_set_id: 2587
+  slot: !Equipment None
+  model_name: Char_Narglatch.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+- guid: 3219
+  name_id: 4380
+  description_id: 14
+  icon_set_id: 2463
+  slot: !Equipment None
+  model_name: Char_Anacondan.adr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3282
+  name_id: 50605
+  description_id: 14
+  icon_set_id: 2572
+  slot: !Equipment None
+  model_name: Char_Sarlacc.adr
+  item_type: 1
+  category: 0
+  cost: 4500
+- guid: 3283
+  name_id: 50607
+  description_id: 14
+  icon_set_id: 2573
+  slot: !Equipment None
+  model_name: Char_Rancor_Glow.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: true
+- guid: 3366
+  name_id: 50866
+  description_id: 14
+  icon_set_id: 2667
+  slot: !Equipment None
+  model_name: Char_Marrok.adr
+  item_type: 1
+  category: 0
+  cost: 3500
+- guid: 3373
+  name_id: 50899
+  description_id: 14
+  icon_set_id: 2700
+  slot: !Equipment None
+  model_name: Char_Gundark.adr
+  item_type: 1
+  category: 0
+  cost: 3500
+- guid: 3406
+  name_id: 54075
+  description_id: 14
+  icon_set_id: 3311
+  slot: !Equipment None
+  model_name: Char_KowakianMonkeyLizard.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3415
+  name_id: 52868
+  description_id: 14
+  icon_set_id: 3132
+  slot: !Equipment None
+  model_name: Char_Narglatch.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3460
+  name_id: 51756
+  description_id: 14
+  icon_set_id: 2922
+  slot: !Equipment None
+  model_name: Char_KowakianMonkeyLizard.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3461
+  name_id: 51859
+  description_id: 14
+  icon_set_id: 2927
+  slot: !Equipment None
+  model_name: Char_Anacondan.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3462
+  name_id: 50742
+  description_id: 14
+  icon_set_id: 2621
+  slot: !Equipment None
+  model_name: Char_Millicreep.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3463
+  name_id: 52058
+  description_id: 14
+  icon_set_id: 2952
+  slot: !Equipment None
+  model_name: Char_Narglatch.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3464
+  name_id: 52559
+  description_id: 14
+  icon_set_id: 2995
+  slot: !Equipment None
+  model_name: Char_Gundark.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3470
+  name_id: 62000
+  description_id: 14
+  icon_set_id: 3874
+  slot: !Equipment None
+  model_name: Grp_Companion_Bianca.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3471
+  name_id: 62001
+  description_id: 14
+  icon_set_id: 3875
+  slot: !Equipment None
+  model_name: Grp_Companion_Cairo.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3472
+  name_id: 62002
+  description_id: 14
+  icon_set_id: 3876
+  slot: !Equipment None
+  model_name: Grp_Companion_Tully.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3473
+  name_id: 62003
+  description_id: 14
+  icon_set_id: 2360
+  slot: !Equipment None
+  model_name: Grp_Companion_Caldwell.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3474
+  name_id: 62004
+  description_id: 14
+  icon_set_id: 2359
+  slot: !Equipment None
+  model_name: Grp_Companion_Mona.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3475
+  name_id: 54257
+  description_id: 14
+  icon_set_id: 3636
+  slot: !Equipment None
+  model_name: Grp_Companion_Omma.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3476
+  name_id: 53483
+  description_id: 14
+  icon_set_id: 2361
+  slot: !Equipment None
+  model_name: Grp_Companion_Oppa.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3477
+  name_id: 62005
+  description_id: 14
+  icon_set_id: 3877
+  slot: !Equipment None
+  model_name: Grp_Companion_Ceith.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3478
+  name_id: 62006
+  description_id: 14
+  icon_set_id: 3878
+  slot: !Equipment None
+  model_name: Grp_Companion_Syther.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3479
+  name_id: 50719
+  description_id: 14
+  icon_set_id: 2642
+  slot: !Equipment None
+  model_name: Grp_Companion_Fogg.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3480
+  name_id: 62007
+  description_id: 14
+  icon_set_id: 3654
+  slot: !Equipment None
+  model_name: Grp_Companion_Minoan.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3481
+  name_id: 62008
+  description_id: 14
+  icon_set_id: 3135
+  slot: !Equipment None
+  model_name: Grp_Companion_Halcombe.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3482
+  name_id: 62009
+  description_id: 14
+  icon_set_id: 3879
+  slot: !Equipment None
+  model_name: Grp_Companion_Rosie.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3483
+  name_id: 54429
+  description_id: 14
+  icon_set_id: 3694
+  slot: !Equipment None
+  model_name: Grp_Companion_Tardar.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3484
+  name_id: 60272
+  description_id: 14
+  icon_set_id: 3820
+  slot: !Equipment None
+  model_name: Grp_Companion_TookaGray.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3485
+  name_id: 54205
+  description_id: 14
+  icon_set_id: 3625
+  slot: !Equipment None
+  model_name: Grp_Companion_Zanbar.agr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true

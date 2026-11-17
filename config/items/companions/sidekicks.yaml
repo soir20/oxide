@@ -1,0 +1,28 @@
+---
+- guid: 3079
+  name_id: 2393
+  description_id: 14
+  icon_set_id: 1961
+  slot: !Equipment None
+  model_name: Holo_Jawa.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 3341
+  name_id: 50744
+  description_id: 14
+  icon_set_id: 1341
+  slot: !Equipment None
+  model_name: Holo_NPCGungan.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 3398
+  name_id: 4650
+  description_id: 14
+  icon_set_id: 2131
+  slot: !Equipment None
+  model_name: Holo_GamorreanGuard.adr
+  item_type: 1
+  category: 0
+  cost: 3000

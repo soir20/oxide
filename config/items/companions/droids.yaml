@@ -1,0 +1,399 @@
+---
+- guid: 541
+  name_id: 6398
+  description_id: 14
+  icon_set_id: 74
+  slot: !Equipment None
+  model_name: Char_ProtocolDroid3PO.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 542
+  name_id: 7217
+  description_id: 14
+  icon_set_id: 71
+  slot: !Equipment None
+  model_name: Char_MouseDroid.adr
+  item_type: 1
+  category: 0
+  cost: 1000
+  members: false
+- guid: 543
+  name_id: 7218
+  description_id: 14
+  icon_set_id: 73
+  slot: !Equipment None
+  model_name: Char_ProbeDroid.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: false
+- guid: 544
+  name_id: 7225
+  description_id: 14
+  icon_set_id: 72
+  slot: !Equipment None
+  model_name: Char_PowerDroid.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
+- guid: 545
+  name_id: 7555
+  description_id: 14
+  icon_set_id: 64
+  slot: !Equipment None
+  model_name: Char_AstroMechR2.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 546
+  name_id: 7556
+  description_id: 14
+  icon_set_id: 66
+  slot: !Equipment None
+  model_name: 3D_R3S6.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 547
+  name_id: 7557
+  description_id: 14
+  icon_set_id: 67
+  slot: !Equipment None
+  model_name: Char_AstroMechR4.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 548
+  name_id: 7558
+  description_id: 14
+  icon_set_id: 68
+  slot: !Equipment None
+  model_name: 3D_R4J1.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 549
+  name_id: 7559
+  description_id: 14
+  icon_set_id: 69
+  slot: !Equipment None
+  model_name: Char_AstroMechR5.adr
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 550
+  name_id: 7560
+  description_id: 14
+  icon_set_id: 77
+  slot: !Equipment None
+  model_name: 3D_TC14.agr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 551
+  name_id: 7563
+  description_id: 14
+  icon_set_id: 78
+  slot: !Equipment None
+  model_name: 3D_TC3.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 552
+  name_id: 7561
+  description_id: 14
+  icon_set_id: 76
+  slot: !Equipment None
+  model_name: 3D_TC70.agr
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 553
+  name_id: 7562
+  description_id: 14
+  icon_set_id: 75
+  slot: !Equipment None
+  model_name: 3D_TC2.agr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 554
+  name_id: 8859
+  description_id: 14
+  icon_set_id: 70
+  slot: !Equipment None
+  model_name: Char_LEPServantDroid.adr
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 632
+  name_id: 9151
+  description_id: 14
+  icon_set_id: 63
+  slot: !Equipment None
+  model_name: Char_ATAT.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 633
+  name_id: 9152
+  description_id: 14
+  icon_set_id: 79
+  slot: !Equipment None
+  model_name: Char_TechnoServiceDroid.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 916
+  name_id: 16258
+  description_id: 14
+  icon_set_id: 1075
+  slot: !Equipment None
+  model_name: 3D_R2KT.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 917
+  name_id: 16259
+  description_id: 14
+  icon_set_id: 1035
+  slot: !Equipment None
+  model_name: 3D_B3T4.agr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 998
+  name_id: 1592
+  description_id: 14
+  icon_set_id: 1231
+  slot: !Equipment None
+  model_name: Char_DeathStarDroidR7.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 2092
+  name_id: 17994
+  description_id: 14
+  icon_set_id: 1258
+  slot: !Equipment None
+  model_name: Char_MouseDroidGold.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 2114
+  name_id: 18729
+  description_id: 14
+  icon_set_id: 1385
+  slot: !Equipment None
+  model_name: Grp_R4_Pumpkin.agr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 2115
+  name_id: 18730
+  description_id: 14
+  icon_set_id: 1384
+  slot: !Equipment None
+  model_name: Grp_R4_CandyCorn.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 2146
+  name_id: 20048
+  description_id: 14
+  icon_set_id: 1464
+  slot: !Equipment None
+  model_name: Grp_R2_Wampa.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 2147
+  name_id: 20049
+  description_id: 14
+  icon_set_id: 1465
+  slot: !Equipment None
+  model_name: Grp_R2_Nutcracker.agr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 2393
+  name_id: 33908
+  description_id: 14
+  icon_set_id: 1675
+  slot: !Equipment None
+  model_name: Grp_R2_Valentine.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 2804
+  name_id: 44564
+  description_id: 14
+  icon_set_id: 1998
+  slot: !Equipment None
+  model_name: Grp_R2_711Promo.agr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: false
+- guid: 3080
+  name_id: 4268
+  description_id: 14
+  icon_set_id: 2392
+  slot: !Equipment None
+  model_name: Char_PitDroid.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 3081
+  name_id: 4270
+  description_id: 14
+  icon_set_id: 2393
+  slot: !Equipment None
+  model_name: Char_GladiatorDroid.adr
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 3284
+  name_id: 4501
+  description_id: 14
+  icon_set_id: 2574
+  slot: !Equipment None
+  model_name: 3D_BRRR.agr
+  item_type: 1
+  category: 0
+  cost: 8000
+  members: true
+- guid: 3407
+  name_id: 53975
+  description_id: 14
+  icon_set_id: 3260
+  slot: !Equipment None
+  model_name: Char_PitDroidAsym.adr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3408
+  name_id: 54000
+  description_id: 14
+  icon_set_id: 3265
+  slot: !Equipment None
+  model_name: 3D_Astromech_M5BZ.agr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3448
+  name_id: 51767
+  description_id: 51766
+  icon_set_id: 3873
+  slot: !Equipment None
+  model_name: Char_HodgepodgeDroid.adr
+  item_type: 1
+  category: 0
+  cost: 5000
+  members: true
+- guid: 3465
+  name_id: 54074
+  description_id: 14
+  icon_set_id: 3313
+  slot: !Equipment None
+  model_name: 3D_Astromech_U9C4.agr
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3466
+  name_id: 54175
+  description_id: 14
+  icon_set_id: 3341
+  slot: !Equipment None
+  model_name: Char_LEPServantDroidBNI393.adr
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3467
+  name_id: 54430
+  description_id: 14
+  icon_set_id: 3691
+  slot: !Equipment None
+  model_name: Char_BattleDroid.adr
+  item_type: 1
+  category: 0
+  cost: 4500
+  members: true
+- guid: 3468
+  name_id: 5486
+  description_id: 14
+  icon_set_id: 65
+  slot: !Equipment None
+  model_name: Char_AstroMechR2.adr
+  texture_alias: R2M5
+  item_type: 1
+  category: 0
+  cost: 3500
+  members: true
+- guid: 3486
+  name_id: 60782
+  description_id: 14
+  icon_set_id: 3863
+  slot: !Equipment None
+  model_name: Grp_Companion_R4T1.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
+- guid: 3487
+  name_id: 62010
+  description_id: 14
+  icon_set_id: 3865
+  slot: !Equipment None
+  model_name: Grp_Companion_R4YL0.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
+- guid: 3488
+  name_id: 62011
+  description_id: 14
+  icon_set_id: 3864
+  slot: !Equipment None
+  model_name: Grp_Companion_R4LT.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
+- guid: 3489
+  name_id: 60777
+  description_id: 14
+  icon_set_id: 3861
+  slot: !Equipment None
+  model_name: Grp_Companion_R4L9.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
+- guid: 3490
+  name_id: 62012
+  description_id: 14
+  icon_set_id: 3862
+  slot: !Equipment None
+  model_name: Grp_Companion_R4PRP.agr
+  item_type: 1
+  category: 0
+  cost: 3000
+  members: true
