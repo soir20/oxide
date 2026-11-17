@@ -15,9 +15,12 @@ use crate::{
                 REDIRECT_MODEL_ID, REDIRECT_NAME_ID,
             },
         },
-        packets::reference_data::{
-            CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions, ItemGroupDefinition,
-            ItemGroupItem,
+        packets::{
+            quick_chat::QuickChatDefinition,
+            reference_data::{
+                CategoryDefinitions, ItemClassDefinition, ItemClassDefinitions,
+                ItemGroupDefinition, ItemGroupItem,
+            },
         },
     },
     ConfigError,
@@ -164,4 +167,38 @@ pub fn load_item_groups(
     costs.retain(|item_guid, _| items_for_sale.contains(item_guid));
 
     Ok(groups.into_iter().map(|group| group.into()).collect())
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct QuickChatConfig {
+    id: i32,
+    parent_id: i32,
+    menu_text: i32,
+    menu_icon_id: i32,
+    #[serde(default)]
+    animation_id: i32,
+    #[serde(default)]
+    item_id: i32,
+}
+
+pub fn load_quick_chats(config_dir: &Path) -> Result<Vec<QuickChatDefinition>, ConfigError> {
+    let mut file = File::open(config_dir.join("quick_chats.yaml"))?;
+    let configs: Vec<QuickChatConfig> = serde_yaml::from_reader(&mut file)?;
+    Ok(configs
+        .into_iter()
+        .map(|config| QuickChatDefinition {
+            id: config.id,
+            id2: config.id,
+            menu_text: config.menu_text,
+            chat_text: 0,
+            animation_id: config.animation_id,
+            unknown1: 0,
+            admin_only: 0,
+            menu_icon_id: config.menu_icon_id,
+            item_id: config.item_id,
+            parent_id: config.parent_id,
+            unknown2: 0,
+        })
+        .collect())
 }

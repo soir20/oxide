@@ -367,14 +367,14 @@ pub struct NpcAttachmentConfig {
     pub slot: EquipmentSlot,
 }
 impl From<&NpcAttachmentConfig> for Attachment {
-    fn from(config: &NpcAttachmentConfig) -> Self {
+    fn from(c: &NpcAttachmentConfig) -> Self {
         Attachment {
-            model_name: config.model_name.clone(),
-            texture_alias: config.texture_alias.clone(),
-            tint_alias: config.tint_alias.clone(),
-            tint: config.tint,
-            composite_effect: config.composite_effect,
-            slot: config.slot,
+            model_name: c.model_name.clone(),
+            texture_alias: c.texture_alias.clone(),
+            tint_alias: c.tint_alias.clone(),
+            tint: c.tint,
+            composite_effect: c.composite_effect,
+            slot: c.slot,
         }
     }
 }
@@ -1932,6 +1932,14 @@ impl PlayerInventory {
         }
     }
 
+    pub fn battle_classes(&self) -> &BTreeMap<u32, BattleClass> {
+        &self.battle_classes
+    }
+
+    pub fn owned_items(&self) -> &BTreeSet<i32> {
+        &self.inventory
+    }
+
     pub fn equipped_items(&self, battle_class: u32) -> EquippedItemMap {
         let mut items = self
             .battle_classes
@@ -1948,6 +1956,10 @@ impl PlayerInventory {
                 };
             });
         items
+    }
+
+    pub fn add_item(&mut self, item_guid: i32) {
+        self.inventory.insert(item_guid);
     }
 
     pub fn equipped_item(&self, battle_class: u32, slot: EquipmentSlot) -> Option<i32> {

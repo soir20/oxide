@@ -21,16 +21,21 @@ use crate::{
 };
 
 use super::{
-    character::{Character, Player, PreviousLocation, RemovalMode, Role},
+    character::{Character, CharacterType, Player, PreviousLocation, RemovalMode, Role},
     guid::IndexedGuid,
     lock_enforcer::ZoneLockEnforcer,
     minigame::PlayerMinigameStats,
+    profile::{start_new_player, PlayerSnapshot},
     test_data::{make_test_customizations, make_test_player, make_test_weapon_abilities},
     unique_guid::player_guid,
     zone::{clean_up_zone_if_no_players, ZoneInstance},
 };
 
-pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, ProcessPacketError> {
+pub fn log_in(
+    sender: u32,
+    saved: Option<PlayerSnapshot>,
+    game_server: &GameServer,
+) -> Result<Vec<Broadcast>, ProcessPacketError> {
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
             let zones_lock_enforcer: ZoneLockEnforcer<'_> = minigame_data_lock_enforcer.into();
@@ -96,10 +101,14 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
             };
             packets.push(GamePacket::serialize(&item_defs_reply));
 
-            let player = TunneledPacket {
+            let mut player = TunneledPacket {
                 unknown1: true,
                 inner: make_test_player(sender, game_server.mounts(), game_server.items()),
             };
+			match &saved {
+				Some(saved) => saved.apply_to(&mut player.inner.data),
+				None => start_new_player(&mut player.inner.data),
+			}
             packets.push(GamePacket::serialize(&player));
 
             let Some(zone_template) = game_server.read_zone_templates().get(&player_zone_template)
@@ -173,7 +182,7 @@ pub fn log_in(sender: u32, game_server: &GameServer) -> Result<Vec<Broadcast>, P
     )
 }
 
-pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
+pub fn log_out(sender: u32, game_server: &GameServer) -> (Vec<Broadcast>, Option<PlayerSnapshot>) {
     info!("Logging out player {}", sender);
     game_server.lock_enforcer().write_characters(
         |characters_table_write_handle, minigame_data_lock_enforcer| {
@@ -199,9 +208,13 @@ pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
                         let Some((character, (_, instance_guid, chunk), ..)) =
                             characters_table_write_handle.remove(player_guid(sender))
                         else {
-                            return broadcasts;
+                            return (broadcasts, None);
                         };
 
+						let snapshot = match &character.read().stats.character_type {
+                            CharacterType::Player(player) => Some(PlayerSnapshot::from_player(sender, player)),
+                            _ => None,
+                          };
                         let other_players_nearby = ZoneInstance::other_players_nearby(
                             Some(sender),
                             chunk,
@@ -221,7 +234,7 @@ pub fn log_out(sender: u32, game_server: &GameServer) -> Vec<Broadcast> {
                             zones_table_write_handle,
                         );
 
-                        broadcasts
+                        (broadcasts, snapshot)
                     })
                 },
             )
