@@ -7,6 +7,7 @@
   item_type: 29
   category: 1000
   max_stack_size: -1
+  cost: 100
 - guid: 1391
   description_id: 14
   slot: !Equipment None
@@ -14,6 +15,7 @@
   item_type: 29
   category: 1000
   max_stack_size: 1000
+  cost: 100
 - guid: 1392
   description_id: 14
   slot: !Equipment None
@@ -21,6 +23,7 @@
   item_type: 29
   category: 1000
   max_stack_size: -1
+  cost: 100
 - guid: 1390
   description_id: 14
   slot: !Equipment None
@@ -28,6 +31,7 @@
   item_type: 29
   category: 1000
   max_stack_size: 1000
+  cost: 50
 - guid: 1388
   description_id: 14
   slot: !Equipment None
@@ -35,3 +39,4 @@
   item_type: 29
   category: 1000
   max_stack_size: 1000
+  cost: 50
