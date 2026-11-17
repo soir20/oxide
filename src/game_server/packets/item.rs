@@ -162,8 +162,26 @@ impl WieldType {
             _ => EquipmentSlot::PrimaryWeapon,
         }
     }
-}
 
+    pub fn flourish_packs(&self) -> Option<([i32; 3], [i32; 3])> {
+        match self {
+            WieldType::SingleSaber => Some(([110, 111, 112], [113, 114, 115])),
+            WieldType::StaffSaber => Some(([130, 131, 132], [133, 134, 135])),
+            WieldType::ReverseSingleSaber => Some(([150, 151, 152], [153, 154, 155])),
+            WieldType::DualSaber => Some(([170, 171, 172], [173, 174, 175])),
+            WieldType::Staff => Some(([190, 191, 192], [193, 194, 195])),
+            WieldType::SinglePistol => Some(([210, 211, 212], [213, 214, 215])),
+            WieldType::DualPistol => Some(([230, 231, 232], [233, 234, 235])),
+            WieldType::Rifle => Some(([250, 251, 252], [253, 254, 255])),
+            WieldType::SniperRifle => Some(([270, 271, 272], [273, 274, 275])),
+            WieldType::HeavyCannon => Some(([290, 291, 292], [293, 294, 295])),
+            WieldType::RocketLauncher => Some(([310, 311, 312], [313, 314, 315])),
+            WieldType::Bow => Some(([350, 351, 352], [353, 354, 355])),
+            WieldType::Sparklers => Some(([363, 364, 365], [366, 367, 368])),
+            WieldType::None | WieldType::FlameThrower | WieldType::Misc => None,
+        }
+    }
+}
 #[derive(Clone, Deserialize, SerializePacket)]
 pub struct Attachment {
     pub model_name: String,
