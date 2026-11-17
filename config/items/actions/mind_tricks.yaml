@@ -1,0 +1,101 @@
+---
+- guid: 565
+  name_id: 9632
+  description_id: 9633
+  icon_set_id: 996
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 300
+  members: true
+- guid: 566
+  name_id: 9634
+  description_id: 9635
+  icon_set_id: 1012
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 1000
+  members: true
+- guid: 567
+  name_id: 9636
+  description_id: 9637
+  icon_set_id: 1010
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 250
+- guid: 630
+  name_id: 9695
+  description_id: 9696
+  icon_set_id: 1004
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500
+  members: true
+- guid: 662
+  name_id: 546
+  description_id: 547
+  icon_set_id: 998
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 2000
+  members: true
+- guid: 663
+  name_id: 548
+  description_id: 549
+  icon_set_id: 1000
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 250
+- guid: 664
+  name_id: 550
+  description_id: 551
+  icon_set_id: 994
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500
+- guid: 2084
+  name_id: 17809
+  description_id: 17810
+  icon_set_id: 1002
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 250
+- guid: 250020
+  name_id: 62212
+  description_id: 14
+  icon_set_id: 3996
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500
+- guid: 250021
+  name_id: 62213
+  description_id: 14
+  icon_set_id: 1535
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500
+- guid: 250022
+  name_id: 62214
+  description_id: 14
+  icon_set_id: 1536
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500
+- guid: 250023
+  name_id: 62215
+  description_id: 14
+  icon_set_id: 1534
+  slot: !Equipment None
+  item_type: 1
+  category: 83
+  cost: 500

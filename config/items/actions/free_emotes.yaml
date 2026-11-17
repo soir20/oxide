@@ -1,0 +1,289 @@
+---
+- guid: 6001
+  name_id: 3985
+  description_id: 14
+  icon_set_id: 1185
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6002
+  name_id: 3986
+  description_id: 14
+  icon_set_id: 1186
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6003
+  name_id: 62194
+  description_id: 14
+  icon_set_id: 266
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6004
+  name_id: 3984
+  description_id: 14
+  icon_set_id: 1188
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6005
+  name_id: 3987
+  description_id: 14
+  icon_set_id: 1187
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6006
+  name_id: 3988
+  description_id: 14
+  icon_set_id: 1190
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6007
+  name_id: 62195
+  description_id: 14
+  icon_set_id: 3985
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6008
+  name_id: 3989
+  description_id: 14
+  icon_set_id: 1189
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6009
+  name_id: 3990
+  description_id: 14
+  icon_set_id: 1191
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6010
+  name_id: 3991
+  description_id: 14
+  icon_set_id: 1192
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6011
+  name_id: 3983
+  description_id: 14
+  icon_set_id: 1193
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6012
+  name_id: 3992
+  description_id: 14
+  icon_set_id: 1194
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6013
+  name_id: 8628
+  description_id: 14
+  icon_set_id: 994
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6014
+  name_id: 3982
+  description_id: 14
+  icon_set_id: 1195
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6015
+  name_id: 62196
+  description_id: 14
+  icon_set_id: 3982
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 500
+- guid: 6016
+  name_id: 62197
+  description_id: 14
+  icon_set_id: 3983
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6017
+  name_id: 62198
+  description_id: 14
+  icon_set_id: 3984
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6018
+  name_id: 62199
+  description_id: 14
+  icon_set_id: 3986
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6019
+  name_id: 62200
+  description_id: 14
+  icon_set_id: 3987
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6020
+  name_id: 62201
+  description_id: 14
+  icon_set_id: 998
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6021
+  name_id: 50564
+  description_id: 14
+  icon_set_id: 1002
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6022
+  name_id: 62202
+  description_id: 14
+  icon_set_id: 3994
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6023
+  name_id: 62203
+  description_id: 14
+  icon_set_id: 3995
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6024
+  name_id: 53004
+  description_id: 14
+  icon_set_id: 2420
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6025
+  name_id: 54026
+  description_id: 14
+  icon_set_id: 3289
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6026
+  name_id: 54027
+  description_id: 14
+  icon_set_id: 3290
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6027
+  name_id: 54028
+  description_id: 14
+  icon_set_id: 3291
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6028
+  name_id: 54029
+  description_id: 14
+  icon_set_id: 3292
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1000
+- guid: 6029
+  name_id: 54030
+  description_id: 14
+  icon_set_id: 3293
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6030
+  name_id: 54031
+  description_id: 14
+  icon_set_id: 3294
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6031
+  name_id: 54033
+  description_id: 14
+  icon_set_id: 3296
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6032
+  name_id: 54034
+  description_id: 14
+  icon_set_id: 3297
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6033
+  name_id: 54035
+  description_id: 14
+  icon_set_id: 3298
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6034
+  name_id: 54036
+  description_id: 14
+  icon_set_id: 3299
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6035
+  name_id: 54037
+  description_id: 14
+  icon_set_id: 3300
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
+- guid: 6036
+  name_id: 10641
+  description_id: 14
+  icon_set_id: 3295
+  slot: !Equipment None
+  item_type: 1
+  category: 81
+  cost: 1500
