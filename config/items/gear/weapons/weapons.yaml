@@ -50,6 +50,7 @@
       - "clone_trooper_blaster"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 200
 
 # Boba Fett's Blaster Rifle
 - guid: 57
@@ -85,6 +86,7 @@
       - "naboo_security_blaster_pistol"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 1400
 
 # Gaffi Stick
 - guid: 59
@@ -103,6 +105,7 @@
       - "gaffi_stick"
       - "proximity_mine"
       - "chopping_lunge"
+  cost: 800
 
 # Captain Rex's Left Blaster
 - guid: 141
@@ -116,6 +119,7 @@
   item_type: 1
   category: 64
   members: true
+  cost: 2000
 
 # Cad Bane's Left Blaster
 - guid: 400
@@ -128,6 +132,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 64
+  cost: 3000
 
 # Clone Trooper Blaster Rifle
 - guid: 439
@@ -146,6 +151,7 @@
       - "clone_trooper_blaster_rifle"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 600
 
 # Cad Bane's Right Blaster
 - guid: 512
@@ -163,6 +169,7 @@
       - "cad_bane_right_blaster"
       - "proximity_mine"
       - "focused_shot"
+  cost: 3000
 
 # Aurra Sing's Hunting Rifle
 - guid: 513
@@ -181,6 +188,7 @@
       - "aurra_sing_hunting_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 2000
 
 # Captain Rex's Right Blaster
 - guid: 514
@@ -199,6 +207,7 @@
       - "captain_rex_right_blaster"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 1000
 
 # Han Solo's Blaster Pistol
 - guid: 516
@@ -233,6 +242,7 @@
       - "republic_flamethrower"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 3000
 
 # Republic Missile Launcher
 - guid: 521
@@ -251,6 +261,7 @@
       - "republic_missile_launcher"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 24000
 
 # Rotary Blaster Cannon
 - guid: 522
@@ -268,6 +279,7 @@
       - "rotary_blaster_cannon"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 3000
 
 # Mandalorian Blaster Rifle
 - guid: 758
@@ -286,6 +298,7 @@
       - "mandalorian_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 3000
 
 # Bowcaster
 - guid: 759
@@ -304,6 +317,7 @@
       - "bowcaster"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 4000
 
 # Papanoida Blaster
 - guid: 1144
@@ -322,6 +336,7 @@
       - "papanoida_blaster"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 2000
 
 # Assassin Aurra Sing's Right Blaster
 - guid: 1165
@@ -340,6 +355,7 @@
       - "assassin_aurra_sing_right_blaster"
       - "proximity_mine"
       - "focused_shot"
+  cost: 1500
 
 # Assassin Aurra Sing's Left Blaster
 - guid: 1166
@@ -353,6 +369,7 @@
   item_type: 1
   category: 64
   members: true
+  cost: 1500
 
 # Satine's Royal Guard Staff
 - guid: 1167
@@ -370,6 +387,7 @@
       - "satine_royal_guard_staff"
       - "thermal_grenade"
       - "chopping_lunge"
+  cost: 1500
 
 # Gungan Double-headed Spear
 - guid: 1322
@@ -387,6 +405,7 @@
       - "gungan_double_headed_spear"
       - "thermal_grenade"
       - "chopping_lunge"
+  cost: 3000
 
 # Spring Fever
 - guid: 1415
@@ -422,6 +441,7 @@
       - "balnab_hunter_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 1500
 
 # Nightsister's Bow
 - guid: 2254
@@ -440,6 +460,7 @@
       - "nightsister_bow"
       - "force_lightning"
       - "focused_shot"
+  cost: 2000
 
 # Savage Opress' Pike
 - guid: 2266
@@ -457,6 +478,7 @@
       - "savage_opress_pike"
       - "force_lightning"
       - "chopping_lunge"
+  cost: 3000
 
 # Cupid Clone's Bow
 - guid: 2392
@@ -492,6 +514,7 @@
       - "blue_sparkler"
       - "force_push"
       - "slashing_strike"
+  cost: 500
 
 # Green Sparkler
 - guid: 2810
@@ -510,6 +533,7 @@
       - "green_sparkler"
       - "force_push"
       - "slashing_strike"
+  cost: 500
 
 # Orange Sparkler
 - guid: 2811
@@ -528,6 +552,7 @@
       - "orange_sparkler"
       - "force_push"
       - "slashing_strike"
+  cost: 500
 
 # Purple Sparkler
 - guid: 2812
@@ -546,6 +571,7 @@
       - "purple_sparkler"
       - "force_valor"
       - "slashing_strike"
+  cost: 500
 
 # Red Sparkler
 - guid: 2813
@@ -564,6 +590,7 @@
       - "red_sparkler"
       - "force_lightning"
       - "slashing_strike"
+  cost: 500
 
 # White Sparkler
 - guid: 2814
@@ -582,6 +609,7 @@
       - "white_sparkler"
       - "force_heal"
       - "slashing_strike"
+  cost: 500
 
 # Yellow Sparkler
 - guid: 2815
@@ -600,6 +628,7 @@
       - "yellow_sparkler"
       - "force_valor"
       - "slashing_strike"
+  cost: 500
 
 # Vigilance
 - guid: 2909
@@ -617,6 +646,7 @@
       - "vigilance"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 3000
 
 # Negotiator
 - guid: 2910
@@ -629,6 +659,7 @@
   texture_alias: Vigilance
   item_type: 1
   category: 64
+  cost: 3000
 
 # Skeletal Clone Trooper Scythe
 - guid: 3092
@@ -665,6 +696,7 @@
       - "umbaran_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 1500
 
 # Zygerrian Blaster Rifle
 - guid: 3254
@@ -683,6 +715,7 @@
       - "zygerrian_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 1500
 
 # Captain Rex's Zygerrian Electrostaff
 - guid: 3262
@@ -699,6 +732,7 @@
       - "captain_rex_zygerrian_electrostaff"
       - "thermal_grenade"
       - "chopping_lunge"
+  cost: 3000
 
 # Shadow Tech Rifle
 - guid: 3280
@@ -717,6 +751,7 @@
       - "shadow_tech_rifle"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 25000
 
 # Rako Hardeen's Sniper Rifle
 - guid: 3327
@@ -734,6 +769,7 @@
       - "rako_hardeen_sniper_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 3000
 
 # Cad Bane's Blaster Rifle
 - guid: 3328
@@ -751,6 +787,7 @@
       - "cad_bane_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 3000
 
 # Cryo-Cannon
 - guid: 3369
@@ -768,6 +805,7 @@
       - "cryo_cannon"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 3000
 
 # Plasma Thrower
 - guid: 3370
@@ -785,6 +823,7 @@
       - "plasma_thrower"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 3000
 
 # Ion Blaster
 - guid: 3371
@@ -802,6 +841,7 @@
       - "ion_blaster"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 3000
 
 # Quarzite Boba Fett's Blaster
 - guid: 3413
@@ -819,6 +859,7 @@
       - "quarzite_boba_fett_blaster"
       - "proximity_mine"
       - "focused_shot"
+  cost: 1500
 
 # Quarzite Boba Fett's Offhand Blaster
 - guid: 3414
@@ -831,6 +872,7 @@
   texture_alias: BobaFett
   item_type: 1
   category: 64
+  cost: 1500
 
 # Cold Warrior Rifle
 - guid: 80000
@@ -849,6 +891,7 @@
       - "cold_warrior_rifle"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 5000
 
 # Ming Po Militia Rifle
 - guid: 80001
@@ -867,6 +910,7 @@
       - "ming_po_militia_rifle"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 5000
 
 # Usk Bunker General Blaster Rifle
 - guid: 80002
@@ -885,6 +929,7 @@
       - "usk_bunker_general_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 5000
 
 # Grek Bunker General Blaster Rifle
 - guid: 80003
@@ -903,6 +948,7 @@
       - "grek_bunker_general_blaster_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 5000
 
 # Republic Grenade Launcher
 - guid: 80004
@@ -920,6 +966,7 @@
       - "republic_grenade_launcher"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 5000
 
 # Accelerated Thermal Carbine
 - guid: 80005
@@ -937,6 +984,7 @@
       - "accelerated_thermal_carbine"
       - "deflector_shield"
       - "charged_shot"
+  cost: 5000
 
 # Rail Cannon
 - guid: 80006
@@ -954,6 +1002,7 @@
       - "rail_cannon"
       - "deflector_shield"
       - "charged_shot"
+  cost: 5000
 
 # Hip-Mounted Cannon
 - guid: 80007
@@ -971,6 +1020,7 @@
       - "hip_mounted_cannon"
       - "deflector_shield"
       - "charged_shot"
+  cost: 5000
 
 # Mandalorian Repeater
 - guid: 80008
@@ -988,6 +1038,7 @@
       - "mandalorian_repeater"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 5000
 
 # Repeater Cannon
 - guid: 80009
@@ -1005,6 +1056,7 @@
       - "repeater_cannon"
       - "deflector_shield"
       - "rapid_fire"
+  cost: 5000
 
 # Turbolaser
 - guid: 80010
@@ -1022,6 +1074,7 @@
       - "turbolaser"
       - "deflector_shield"
       - "charged_shot"
+  cost: 5000
 
 # Bossk's Long Rifle
 - guid: 80011
@@ -1039,6 +1092,7 @@
       - "bossk_long_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 5000
 
 # Grand Officer Rifle
 - guid: 80012
@@ -1056,6 +1110,7 @@
       - "grand_officer_rifle"
       - "cryo_grenade"
       - "aimed_shot"
+  cost: 5000
 
 # Felucian Commando Rifle
 - guid: 80013
@@ -1073,6 +1128,7 @@
       - "felucian_commando_rifle"
       - "thermal_grenade"
       - "aimed_shot"
+  cost: 5000
 
 # Onderon Long Rifle
 - guid: 80014
@@ -1091,6 +1147,7 @@
       - "onderon_long_rifle"
       - "proximity_mine"
       - "aimed_shot"
+  cost: 5000
 
 # Energized Disruptor
 - guid: 80015
@@ -1109,6 +1166,7 @@
       - "energized_disruptor"
       - "deflector_shield"
       - "focused_shot"
+  cost: 5000
 
 # Light Plasma Pistol
 - guid: 80016
@@ -1127,6 +1185,7 @@
       - "light_plasma_pistol"
       - "deflector_shield"
       - "focused_shot"
+  cost: 5000
 
 # Major Rigosso's Quarzite Pistol
 - guid: 80017
@@ -1145,6 +1204,7 @@
       - "major_rigosso_quarzite_pistol"
       - "proximity_mine"
       - "focused_shot"
+  cost: 5000
 
 # Major Rigosso's Offhand Quarzite Pistol
 - guid: 80018
@@ -1158,6 +1218,7 @@
   item_type: 1
   category: 64
   members: true
+  cost: 5000
 
 # Black Sun Blaster Pistol
 - guid: 80019
@@ -1175,6 +1236,7 @@
       - "black_sun_blaster_pistol"
       - "proximity_mine"
       - "focused_shot"
+  cost: 5000
 
 # Subtram Hunter Blaster
 - guid: 80020
@@ -1192,6 +1254,7 @@
       - "subtram_hunter_blaster"
       - "proximity_mine"
       - "focused_shot"
+  cost: 5000
 
 # Subtram Hunter Offhand Blaster
 - guid: 80021
@@ -1204,6 +1267,7 @@
   texture_alias: BobaGreen
   item_type: 1
   category: 64
+  cost: 5000
 
 # Royal Hold-out Blaster Pistol
 - guid: 80022
@@ -1222,6 +1286,7 @@
       - "royal_hold_out_blaster_pistol"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 5000
 
 # Corrupt Warlord Right Pistol
 - guid: 80023
@@ -1239,6 +1304,7 @@
       - "corrupt_warlord_right_pistol"
       - "deploy_turret"
       - "focused_shot"
+  cost: 5000
 
 # Corrupt Warlord Left Pistol
 - guid: 80024
@@ -1251,6 +1317,7 @@
   texture_alias: Mercenary
   item_type: 1
   category: 64
+  cost: 5000
 
 # Pyke Blaster Pistol
 - guid: 80025
@@ -1268,6 +1335,7 @@
       - "pyke_blaster_pistol"
       - "thermal_grenade"
       - "focused_shot"
+  cost: 5000
 
 # Onderon Blaster Pistol
 - guid: 80026
@@ -1286,6 +1354,7 @@
       - "onderon_blaster_pistol"
       - "proximity_mine"
       - "focused_shot"
+  cost: 5000
 
 # IG-113's Electrostaff
 - guid: 80027
@@ -1304,6 +1373,7 @@
       - "ig_113_electrostaff"
       - "force_lightning"
       - "chopping_lunge"
+  cost: 5000
 
 # Renegade Heavy Blaster Pistol (Right)
 - guid: 80028
@@ -1321,3 +1391,4 @@
       - "renegade_heavy_blaster_pistol_right"
       - "proximity_mine"
       - "focused_shot"
+  cost: 5000
