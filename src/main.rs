@@ -25,6 +25,7 @@ mod asset_server;
 mod channel_manager;
 mod config;
 mod game_server;
+mod persistence;
 mod protocol;
 
 static TIMEZONE: OnceLock<FixedOffset> = OnceLock::new();
@@ -106,6 +107,7 @@ async fn main() {
     let server_options =
         Arc::new(load_server_options(config_dir).expect("Unable to read server options"));
     server_options.validate();
+    persistence::init(&server_options.database_path).expect("Unable to open the player database");
     TIMEZONE
         .set(server_options.utc_offset_seconds.0)
         .expect("Unable to set server timezone");
@@ -206,11 +208,34 @@ async fn main() {
         &game_server_arc,
     );
 
+    spawn_save_thread(
+        &game_server_arc,
+        Duration::from_secs(server_options.save_interval_seconds),
+    );
+
+    let shutdown_game_server = game_server_arc.clone();
+    spawn(async move {
+        if tokio::signal::ctrl_c().await.is_ok() {
+            info!("Shutting down, saving players...");
+            persistence::save_players(&shutdown_game_server.snapshot_online_players());
+            process::exit(0);
+        }
+    });
+
     info!("Hello, world!");
 
     for thread in threads {
         thread.join().expect("Thread exited with error");
     }
+}
+
+/// Saves every online player to the database every `interval`.
+fn spawn_save_thread(game_server: &Arc<GameServer>, interval: Duration) {
+    let game_server = game_server.clone();
+    thread::spawn(move || loop {
+        thread::sleep(interval);
+        persistence::save_players(&game_server.snapshot_online_players());
+    });
 }
 
 #[derive(Clone, Copy)]
@@ -269,6 +294,8 @@ pub struct ServerOptions {
     pub channel_inactive_timeout_millis: u64,
     pub min_client_version: Option<String>,
     pub max_client_version: Option<String>,
+    pub database_path: PathBuf,
+    pub save_interval_seconds: u64,
 }
 
 impl ServerOptions {
@@ -531,7 +558,7 @@ fn process_once(
                         ));
                     }
 
-                    match game_server.log_in(guid) {
+                    match game_server.log_in(guid, persistence::load_player(guid)) {
                         Ok(mut log_in_broadcasts) => broadcasts.append(&mut log_in_broadcasts),
                         Err(err) => {
                             info!(
@@ -898,7 +925,12 @@ fn log_out_and_disconnect(
         server_options,
     );
     match game_server.log_out(guid) {
-        Ok(log_out_broadcasts) => log_out_broadcasts,
+        Ok((log_out_broadcasts, snapshot)) => {
+            if let Some(snapshot) = snapshot {
+                persistence::save_players(&[snapshot]);
+            }
+            log_out_broadcasts
+        }
         Err(err) => {
             info!("Unable to log out existing player {}: {}", guid, err);
             Vec::new()
