@@ -1,0 +1,853 @@
+# parent_id 1 = Emotes, 2 = Mind Tricks, 3 = Holoprojectors
+# menu_text 0 = no text (free emotes without known string IDs)
+# menu_icon_id 0 = no icon (free emotes without known icon IDs)
+# icon_set_id values taken from items/actions/moves.yaml per-item entries
+---
+
+# ─── General Emotes (free, parent_id=1) ─────────────────────────────────────
+# Each emote is a single direct entry (parent_id=1, animation_id != 0) so the
+# client shows it in the Actions flyout.
+
+# Bow
+- id: 63
+  parent_id: 1
+  menu_text: 3985
+  menu_icon_id: 1185
+  animation_id: 3001
+  item_id: 6001
+
+# Cry
+- id: 64
+  parent_id: 1
+  menu_text: 3986
+  menu_icon_id: 1186
+  animation_id: 3002
+  item_id: 6002
+
+# Drink
+- id: 65
+  parent_id: 1
+  menu_text: 62194
+  menu_icon_id: 266
+  animation_id: 3013
+  item_id: 6003
+
+# Fist Pump
+- id: 66
+  parent_id: 1
+  menu_text: 3984
+  menu_icon_id: 1188
+  animation_id: 3003
+  item_id: 6004
+
+# Facepalm
+- id: 67
+  parent_id: 1
+  menu_text: 3987
+  menu_icon_id: 1187
+  animation_id: 3004
+  item_id: 6005
+
+# Head Shake
+- id: 68
+  parent_id: 1
+  menu_text: 3988
+  menu_icon_id: 1190
+  animation_id: 3005
+  item_id: 6006
+
+# Hit the Deck
+- id: 69
+  parent_id: 1
+  menu_text: 62195
+  menu_icon_id: 3985
+  animation_id: 3023
+  item_id: 6007
+
+# Laugh
+- id: 70
+  parent_id: 1
+  menu_text: 3989
+  menu_icon_id: 1189
+  animation_id: 3006
+  item_id: 6008
+
+# Nod
+- id: 71
+  parent_id: 1
+  menu_text: 3990
+  menu_icon_id: 1191
+  animation_id: 3007
+  item_id: 6009
+
+# Nod Yes
+- id: 72
+  parent_id: 1
+  menu_text: 3991
+  menu_icon_id: 1192
+  animation_id: 3008
+  item_id: 6010
+
+# Point
+- id: 73
+  parent_id: 1
+  menu_text: 3983
+  menu_icon_id: 1193
+  animation_id: 3009
+  item_id: 6011
+
+# Threaten
+- id: 74
+  parent_id: 1
+  menu_text: 3992
+  menu_icon_id: 1194
+  animation_id: 3010
+  item_id: 6012
+
+# Tusken Raider
+- id: 75
+  parent_id: 1
+  menu_text: 8628
+  menu_icon_id: 994
+  animation_id: 3012
+  item_id: 6013
+
+# Wave
+- id: 76
+  parent_id: 1
+  menu_text: 3982
+  menu_icon_id: 1195
+  animation_id: 3011
+  item_id: 6014
+
+# Charge
+- id: 77
+  parent_id: 1
+  menu_text: 62196
+  menu_icon_id: 3982
+  animation_id: 3018
+  item_id: 6015
+
+# Flank Left
+- id: 78
+  parent_id: 1
+  menu_text: 62197
+  menu_icon_id: 3983
+  animation_id: 3021
+  item_id: 6016
+
+# Flank Right
+- id: 79
+  parent_id: 1
+  menu_text: 62198
+  menu_icon_id: 3984
+  animation_id: 3020
+  item_id: 6017
+
+# Retreat
+- id: 80
+  parent_id: 1
+  menu_text: 62199
+  menu_icon_id: 3986
+  animation_id: 3022
+  item_id: 6018
+
+# Return to Leader
+- id: 81
+  parent_id: 1
+  menu_text: 62200
+  menu_icon_id: 3987
+  animation_id: 3019
+  item_id: 6019
+
+# Force Lift
+- id: 82
+  parent_id: 1
+  menu_text: 62201
+  menu_icon_id: 998
+  animation_id: 3014
+  item_id: 6020
+
+# Force Push
+- id: 83
+  parent_id: 1
+  menu_text: 50564
+  menu_icon_id: 1002
+  animation_id: 3015
+  item_id: 6021
+
+# Force Lightning Emote
+- id: 62
+  parent_id: 1
+  menu_text: 10641
+  menu_icon_id: 3295
+  animation_id: 3608
+  item_id: 6036
+
+# ─── Dances ─────────────────────────────────────────────────────────────────
+
+# Dance Pack I (items 43/44/45, requires ownership)
+- id: 84
+  parent_id: 1
+  menu_text: 288
+  menu_icon_id: 986
+  animation_id: 3101
+  item_id: 43  # Small Sidestep
+
+- id: 85
+  parent_id: 1
+  menu_text: 290
+  menu_icon_id: 988
+  animation_id: 3102
+  item_id: 44  # Leaning Sidestep
+
+- id: 86
+  parent_id: 1
+  menu_text: 296
+  menu_icon_id: 990
+  animation_id: 3103
+  item_id: 45  # Flyata Bump
+
+# Basic dances (free)
+- id: 87
+  parent_id: 1
+  menu_text: 62202
+  menu_icon_id: 3994
+  animation_id: 3104
+  item_id: 6022  # Bad Dance
+
+- id: 88
+  parent_id: 1
+  menu_text: 62203
+  menu_icon_id: 3995
+  animation_id: 3105
+  item_id: 6023  # Running Man
+
+- id: 89
+  parent_id: 1
+  menu_text: 53004
+  menu_icon_id: 2420
+  animation_id: 3113
+  item_id: 6024  # Gungan Style
+
+# Dance Pack II (items 2828/2829/2830, requires ownership)
+- id: 90
+  parent_id: 1
+  menu_text: 44759
+  menu_icon_id: 2032
+  animation_id: 3106
+  item_id: 2828  # Strut-tastic
+
+- id: 91
+  parent_id: 1
+  menu_text: 44760
+  menu_icon_id: 2033
+  animation_id: 3107
+  item_id: 2829  # The Comeback
+
+- id: 92
+  parent_id: 1
+  menu_text: 44761
+  menu_icon_id: 1731
+  animation_id: 3108
+  item_id: 2830  # The Shudder
+
+# Dance Pack III (items 3169/3170/3171, requires ownership)
+- id: 93
+  parent_id: 1
+  menu_text: 4319
+  menu_icon_id: 2420
+  animation_id: 3109
+  item_id: 3171  # Sprinkler
+
+- id: 94
+  parent_id: 1
+  menu_text: 4318
+  menu_icon_id: 2419
+  animation_id: 3110
+  item_id: 3170  # Shuffle
+
+- id: 95
+  parent_id: 1
+  menu_text: 4317
+  menu_icon_id: 2418
+  animation_id: 3111
+  item_id: 3169  # Diva
+
+# ─── Force Powers (gated by ownership) ──────────────────────────────────────
+- id: 96
+  parent_id: 1
+  menu_text: 4283
+  menu_icon_id: 2405
+  animation_id: 3016
+  item_id: 3095  # Force Juggle
+
+- id: 97
+  parent_id: 1
+  menu_text: 4284
+  menu_icon_id: 2406
+  animation_id: 3017
+  item_id: 3096  # Force Meditate
+
+# ─── Weapon Moves (animation_id=0: weapon-class-dependent, resolved at play time) ──
+- id: 98
+  parent_id: 1
+  menu_text: 32686
+  menu_icon_id: 1578
+  animation_id: 0
+  item_id: 2237  # Weapon Move 1
+
+- id: 99
+  parent_id: 1
+  menu_text: 32687
+  menu_icon_id: 1579
+  animation_id: 0
+  item_id: 2238  # Weapon Move 2
+
+- id: 100
+  parent_id: 1
+  menu_text: 32688
+  menu_icon_id: 1580
+  animation_id: 0
+  item_id: 2239  # Weapon Move 3
+
+- id: 101
+  parent_id: 1
+  menu_text: 44505
+  menu_icon_id: 1990
+  animation_id: 0
+  item_id: 2797  # Taunting Weapon Move
+
+- id: 102
+  parent_id: 1
+  menu_text: 44506
+  menu_icon_id: 1991
+  animation_id: 0
+  item_id: 2798  # Throwing Weapon Move
+
+# ─── Class Emotes (free) ────────────────────────────────────────────────────
+# Converted from solo-parent pairs to direct entries (ids 103-113 = former leaf ids).
+
+# Trooper: Acknowledge
+- id: 103
+  parent_id: 1
+  menu_text: 54026
+  menu_icon_id: 3289
+  animation_id: 3602
+  item_id: 6025
+
+# Trooper: Man Down
+- id: 104
+  parent_id: 1
+  menu_text: 54027
+  menu_icon_id: 3290
+  animation_id: 3603
+  item_id: 6026
+
+# Trooper: Transmission Received
+- id: 105
+  parent_id: 1
+  menu_text: 54028
+  menu_icon_id: 3291
+  animation_id: 3604
+  item_id: 6027
+
+# Jedi: Force Pound
+- id: 106
+  parent_id: 1
+  menu_text: 54029
+  menu_icon_id: 3292
+  animation_id: 3605
+  item_id: 6028
+
+# Jedi: Handstand
+- id: 107
+  parent_id: 1
+  menu_text: 54030
+  menu_icon_id: 3293
+  animation_id: 3606
+  item_id: 6029
+
+# Jedi: Meditate
+- id: 108
+  parent_id: 1
+  menu_text: 54031
+  menu_icon_id: 3294
+  animation_id: 3607
+  item_id: 6030
+
+# Sith: Rage
+- id: 109
+  parent_id: 1
+  menu_text: 54033
+  menu_icon_id: 3296
+  animation_id: 3609
+  item_id: 6031
+
+# Sith: Seethe
+- id: 110
+  parent_id: 1
+  menu_text: 54034
+  menu_icon_id: 3297
+  animation_id: 3610
+  item_id: 6032
+
+# Mercenary: Barter
+- id: 111
+  parent_id: 1
+  menu_text: 54035
+  menu_icon_id: 3298
+  animation_id: 3611
+  item_id: 6033
+
+# Mercenary: Intimidate
+- id: 112
+  parent_id: 1
+  menu_text: 54036
+  menu_icon_id: 3299
+  animation_id: 3612
+  item_id: 6034
+
+# Mercenary: Punch
+- id: 113
+  parent_id: 1
+  menu_text: 54037
+  menu_icon_id: 3300
+  animation_id: 3613
+  item_id: 6035
+
+# Mind Tricks
+- id: 8
+  parent_id: 2
+  menu_text: 9632
+  menu_icon_id: 996
+  animation_id: 0
+  item_id: 565  # Fireworks Mind Trick
+
+- id: 9
+  parent_id: 2
+  menu_text: 9634
+  menu_icon_id: 1012
+  animation_id: 0
+  item_id: 566  # Proton Torpedoes Mind Trick
+
+- id: 10
+  parent_id: 2
+  menu_text: 9636
+  menu_icon_id: 1010
+  animation_id: 0
+  item_id: 567  # Republic Cruiser Mind Trick
+
+- id: 11
+  parent_id: 2
+  menu_text: 9695
+  menu_icon_id: 1004
+  animation_id: 0
+  item_id: 630  # Orbiting Malevolence Mind Trick
+
+- id: 12
+  parent_id: 2
+  menu_text: 546
+  menu_icon_id: 998
+  animation_id: 0
+  item_id: 662  # Force Explosion Mind Trick
+
+- id: 13
+  parent_id: 2
+  menu_text: 548
+  menu_icon_id: 1000
+  animation_id: 0
+  item_id: 663  # Force Glow Mind Trick
+
+- id: 14
+  parent_id: 2
+  menu_text: 550
+  menu_icon_id: 994
+  animation_id: 0
+  item_id: 664  # Fighter Battle Mind Trick
+
+- id: 15
+  parent_id: 2
+  menu_text: 17809
+  menu_icon_id: 1002
+  animation_id: 0
+  item_id: 2084  # Force Push Mind Trick
+
+# Holoprojectors
+- id: 16
+  parent_id: 3
+  menu_text: 8358
+  menu_icon_id: 1024
+  animation_id: 0
+  item_id: 443  # Super Battle Droid Holoprojector
+
+- id: 17
+  parent_id: 3
+  menu_text: 13966
+  menu_icon_id: 1018
+  animation_id: 0
+  item_id: 744  # Battle Droid Holoprojector
+
+- id: 18
+  parent_id: 3
+  menu_text: 13970
+  menu_icon_id: 1016
+  animation_id: 0
+  item_id: 745  # Commando Droid Holoprojector
+
+- id: 19
+  parent_id: 3
+  menu_text: 13974
+  menu_icon_id: 1020
+  animation_id: 0
+  item_id: 746  # Droideka Holoprojector
+
+- id: 20
+  parent_id: 3
+  menu_text: 13976
+  menu_icon_id: 1014
+  animation_id: 0
+  item_id: 747  # Bith Holoprojector
+
+- id: 21
+  parent_id: 3
+  menu_text: 2292
+  menu_icon_id: 1961
+  animation_id: 0
+  item_id: 1418  # Jawa Holoprojector
+
+- id: 22
+  parent_id: 3
+  menu_text: 18167
+  menu_icon_id: 1340
+  animation_id: 0
+  item_id: 2106  # Gotal Holoprojector
+
+- id: 23
+  parent_id: 3
+  menu_text: 18169
+  menu_icon_id: 1339
+  animation_id: 0
+  item_id: 2107  # Ithorian Holoprojector
+
+- id: 24
+  parent_id: 3
+  menu_text: 18155
+  menu_icon_id: 1341
+  animation_id: 0
+  item_id: 2108  # Gungan Holoprojector
+
+- id: 25
+  parent_id: 3
+  menu_text: 30463
+  menu_icon_id: 1540  # fixed (was 2567)
+  animation_id: 0
+  item_id: 2234  # Geonosian Holoprojector
+
+- id: 26
+  parent_id: 3
+  menu_text: 30464
+  menu_icon_id: 1542
+  animation_id: 0
+  item_id: 2235  # Brain Worm Holoprojector
+
+- id: 27
+  parent_id: 3
+  menu_text: 33883
+  menu_icon_id: 1736
+  animation_id: 0
+  item_id: 2386  # Mortis Daughter Force Form Holoprojector
+
+- id: 28
+  parent_id: 3
+  menu_text: 33882
+  menu_icon_id: 1738
+  animation_id: 0
+  item_id: 2387  # Mortis Son Force Form Holoprojector
+
+- id: 29
+  parent_id: 3
+  menu_text: 43507
+  menu_icon_id: 1851
+  animation_id: 0
+  item_id: 2753  # Chewbacca Holoprojector
+
+- id: 30
+  parent_id: 3
+  menu_text: 43508
+  menu_icon_id: 1853
+  animation_id: 0
+  item_id: 2754  # Underworld Ithorian Holoprojector
+
+- id: 31
+  parent_id: 3
+  menu_text: 44225
+  menu_icon_id: 1951
+  animation_id: 0
+  item_id: 2772  # Yoda Holoprojector
+
+- id: 32
+  parent_id: 3
+  menu_text: 44671
+  menu_icon_id: 1999
+  animation_id: 0
+  item_id: 2807  # General Grievous Holoprojector
+
+- id: 33
+  parent_id: 3
+  menu_text: 44672
+  menu_icon_id: 2000
+  animation_id: 0
+  item_id: 2808  # Talz Holoprojector
+
+- id: 34
+  parent_id: 3
+  menu_text: 44754
+  menu_icon_id: 2035
+  animation_id: 0
+  item_id: 2831  # Jabba Holoprojector
+
+- id: 35
+  parent_id: 3
+  menu_text: 44762
+  menu_icon_id: 2036
+  animation_id: 0
+  item_id: 2832  # Cad Bane Holoprojector
+
+- id: 36
+  parent_id: 3
+  menu_text: 44918
+  menu_icon_id: 2131
+  animation_id: 0
+  item_id: 2890  # Gamorrean Guard Holoprojector
+
+- id: 37
+  parent_id: 3
+  menu_text: 44938
+  menu_icon_id: 2132
+  animation_id: 0
+  item_id: 2891  # Seripas Holoprojector
+
+- id: 38
+  parent_id: 3
+  menu_text: 2734
+  menu_icon_id: 2160
+  animation_id: 0
+  item_id: 2898  # Savage Opress Holoprojector
+
+- id: 39
+  parent_id: 3
+  menu_text: 2830
+  menu_icon_id: 2300
+  animation_id: 0
+  item_id: 2906  # Ziro Holoprojector
+
+- id: 40
+  parent_id: 3
+  menu_text: 45540
+  menu_icon_id: 2308
+  animation_id: 0
+  item_id: 2907  # Kowakian Monkey Lizard Holoprojector
+
+- id: 41
+  parent_id: 3
+  menu_text: 45545
+  menu_icon_id: 2319
+  animation_id: 0
+  item_id: 2913  # Captain Ackbar Holoprojector
+
+- id: 42
+  parent_id: 3
+  menu_text: 45544
+  menu_icon_id: 2321
+  animation_id: 0
+  item_id: 2914  # Nossor Ri Holoprojector
+
+- id: 43
+  parent_id: 3
+  menu_text: 2917
+  menu_icon_id: 2320
+  animation_id: 0
+  item_id: 2915  # Karkarodon Warrior Holoprojector
+
+- id: 44
+  parent_id: 3
+  menu_text: 2658
+  menu_icon_id: 2587  # fixed (was 0)
+  animation_id: 0
+  item_id: 2450  # Rancor Holoprojector
+
+- id: 45
+  parent_id: 3
+  menu_text: 4232
+  menu_icon_id: 2375
+  animation_id: 0
+  item_id: 2920  # Orphne Holoprojector
+
+- id: 46
+  parent_id: 3
+  menu_text: 4234
+  menu_icon_id: 2374
+  animation_id: 0
+  item_id: 3070  # King Manchucho Holoprojector
+
+- id: 47
+  parent_id: 3
+  menu_text: 4236
+  menu_icon_id: 2376
+  animation_id: 0
+  item_id: 3071  # Magnaguard Holoprojector
+
+- id: 48
+  parent_id: 3
+  menu_text: 4590
+  menu_icon_id: 2648
+  animation_id: 0
+  item_id: 3222  # Sniper Droid Holoprojector
+
+- id: 49
+  parent_id: 3
+  menu_text: 4654
+  menu_icon_id: 2718
+  animation_id: 0
+  item_id: 3405  # Gundark Holoprojector
+
+- id: 50
+  parent_id: 3
+  menu_text: 4692
+  menu_icon_id: 2746
+  animation_id: 0
+  item_id: 3434  # Darth Maul Holoprojector
+
+- id: 51
+  parent_id: 3
+  menu_text: 4691
+  menu_icon_id: 2745
+  animation_id: 0
+  item_id: 3433  # C-21 Highsinger Holoprojector
+
+- id: 52
+  parent_id: 3
+  menu_text: 4694
+  menu_icon_id: 2748
+  animation_id: 0
+  item_id: 3439  # Plo Koon Holoprojector
+
+- id: 53
+  parent_id: 3
+  menu_text: 4728
+  menu_icon_id: 2774
+  animation_id: 0
+  item_id: 3441  # Kage Warrior Holoprojector
+
+- id: 54
+  parent_id: 3
+  menu_text: 4732
+  menu_icon_id: 2778
+  animation_id: 0
+  item_id: 3442  # Ortolan Holoprojector
+
+- id: 55
+  parent_id: 3
+  menu_text: 4753
+  menu_icon_id: 2801
+  animation_id: 0
+  item_id: 3443  # Umbaran Soldier Holoprojector
+
+- id: 56
+  parent_id: 3
+  menu_text: 4833
+  menu_icon_id: 2869
+  animation_id: 0
+  item_id: 3444  # Narglatch Holoprojector
+
+- id: 57
+  parent_id: 3
+  menu_text: 4868
+  menu_icon_id: 2919
+  animation_id: 0
+  item_id: 3445  # Old Daka Holoprojector
+
+- id: 58
+  parent_id: 3
+  menu_text: 18675
+  menu_icon_id: 1401
+  animation_id: 3504  # holomacewindu
+  item_id: 2110  # Mace Windu Handheld Holoprojector
+
+- id: 59
+  parent_id: 3
+  menu_text: 18677
+  menu_icon_id: 1400
+  animation_id: 3502  # holoyoda
+  item_id: 2111  # Yoda Handheld Holoprojector
+
+- id: 60
+  parent_id: 3
+  menu_text: 18679
+  menu_icon_id: 1402
+  animation_id: 3501  # holocody
+  item_id: 2112  # Commander Cody Handheld Holoprojector
+
+- id: 61
+  parent_id: 3
+  menu_text: 18681
+  menu_icon_id: 1403
+  animation_id: 3503  # holoanakin
+  item_id: 2113  # Anakin Skywalker Handheld Holoprojector
+
+- id: 114
+  parent_id: 2
+  menu_text: 62212
+  menu_icon_id: 3996
+  animation_id: 0
+  item_id: 250020  # Orbiting Starfighters Mind Trick
+
+- id: 115
+  parent_id: 2
+  menu_text: 62213
+  menu_icon_id: 1535
+  animation_id: 0
+  item_id: 250021  # Orbiting Vulture Droids Mind Trick
+
+- id: 116
+  parent_id: 2
+  menu_text: 62214
+  menu_icon_id: 1536
+  animation_id: 0
+  item_id: 250022  # Orbiting Y-Wings Mind Trick
+
+- id: 117
+  parent_id: 2
+  menu_text: 62215
+  menu_icon_id: 1534
+  animation_id: 0
+  item_id: 250023  # Force Glow Hands Mind Trick
+
+- id: 118
+  parent_id: 1
+  menu_text: 62216
+  menu_icon_id: 3997
+  animation_id: 3401  # Emo_PortraitPose1
+  item_id: 250024  # Pose
+
+- id: 119
+  parent_id: 1
+  menu_text: 54017
+  menu_icon_id: 3283
+  animation_id: 3301  # Emo_Standard_Flourish1
+  item_id: 250025  # Battle Class Flourish I
+
+- id: 120
+  parent_id: 1
+  menu_text: 54018
+  menu_icon_id: 3284
+  animation_id: 3301  # Emo_Standard_Flourish1 (placeholder)
+  item_id: 250026  # Battle Class Flourish II
+
+- id: 121
+  parent_id: 1
+  menu_text: 54019
+  menu_icon_id: 3285
+  animation_id: 3301  # Emo_Standard_Flourish1 (placeholder)
+  item_id: 250027  # Battle Class Flourish III

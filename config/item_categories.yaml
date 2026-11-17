@@ -114,6 +114,228 @@ definitions:
     icon_set_id: 787
     sort_order: 1001
     visible: true
+  # Store category
+  - guid: 0
+    name_id: 0
+    icon_set_id: 0
+    sort_order: -1
+    visible: false
+  # Store category
+  - guid: 2
+    name_id: 100
+    icon_set_id: 1440
+    sort_order: 2
+    visible: true
+  # Store category
+  - guid: 14
+    name_id: 1222
+    icon_set_id: 1229
+    sort_order: 5
+    visible: true
+  # Store category
+  - guid: 15
+    name_id: 54536
+    icon_set_id: 421
+    sort_order: 3
+    visible: true
+  # Store category
+  - guid: 16
+    name_id: 54534
+    icon_set_id: 3802
+    sort_order: 1
+    visible: true
+  # Store category
+  - guid: 17
+    name_id: 1225
+    icon_set_id: 422
+    sort_order: 7
+    visible: true
+  # Store category
+  - guid: 20
+    name_id: 113
+    icon_set_id: 672
+    sort_order: 20
+    visible: true
+  # Store category
+  - guid: 21
+    name_id: 114
+    icon_set_id: 669
+    sort_order: 21
+    visible: true
+  # Store category
+  - guid: 22
+    name_id: 115
+    icon_set_id: 670
+    sort_order: 22
+    visible: true
+  # Store category
+  - guid: 26
+    name_id: 44940
+    icon_set_id: 2134
+    sort_order: 8
+    visible: true
+  # Store category
+  - guid: 30
+    name_id: 8506
+    icon_set_id: 423
+    sort_order: 30
+    visible: true
+  # Store category
+  - guid: 32
+    name_id: 8508
+    icon_set_id: 683
+    sort_order: 32
+    visible: true
+  # Store category
+  - guid: 33
+    name_id: 8509
+    icon_set_id: 428
+    sort_order: 33
+    visible: true
+  # Store category
+  - guid: 34
+    name_id: 32455
+    icon_set_id: 1229
+    sort_order: 34
+    visible: true
+  # Store category
+  - guid: 71
+    name_id: 1247
+    icon_set_id: 678
+    sort_order: 71
+    visible: true
+  # Store category
+  - guid: 72
+    name_id: 1248
+    icon_set_id: 678
+    sort_order: 72
+    visible: true
+  # Store category
+  - guid: 75
+    name_id: 3820
+    icon_set_id: 1995
+    sort_order: 75
+    visible: true
+  # Store category
+  - guid: 76
+    name_id: 5625
+    icon_set_id: 1994
+    sort_order: 76
+    visible: true
+  # Store category
+  - guid: 78
+    name_id: 4885
+    icon_set_id: 3069
+    sort_order: 78
+    visible: true
+  # Store category
+  - guid: 80
+    name_id: 2602
+    icon_set_id: 1153
+    sort_order: 80
+    visible: true
+  # Store category
+  - guid: 84
+    name_id: 43526
+    icon_set_id: 1855
+    sort_order: 84
+    visible: true
+  # Store category
+  - guid: 85
+    name_id: 43527
+    icon_set_id: 1854
+    sort_order: 85
+    visible: true
+  # Store category
+  - guid: 88
+    name_id: 4251
+    icon_set_id: 2407
+    sort_order: 88
+    visible: true
+  # Store category
+  - guid: 91
+    name_id: 4433
+    icon_set_id: 2525
+    sort_order: 1
+    visible: true
+  # Store category
+  - guid: 93
+    name_id: 4483
+    icon_set_id: 2585
+    sort_order: 93
+    visible: true
+  # Store category
+  - guid: 95
+    name_id: 4485
+    icon_set_id: 2582
+    sort_order: 3
+    visible: true
+  # Store category
+  - guid: 101
+    name_id: 28
+    icon_set_id: 1155
+    sort_order: 101
+    visible: true
+  # Store category
+  - guid: 102
+    name_id: 29
+    icon_set_id: 1156
+    sort_order: 102
+    visible: true
+  # Store category
+  - guid: 104
+    name_id: 32
+    icon_set_id: 1157
+    sort_order: 104
+    visible: true
+  # Store category
+  - guid: 105
+    name_id: 31
+    icon_set_id: 1158
+    sort_order: 105
+    visible: true
+  # Store category
+  - guid: 107
+    name_id: 107
+    icon_set_id: 1162
+    sort_order: 107
+    visible: true
+  # Store category
+  - guid: 108
+    name_id: 108
+    icon_set_id: 1159
+    sort_order: 108
+    visible: true
+  # Store category
+  - guid: 109
+    name_id: 110
+    icon_set_id: 1160
+    sort_order: 109
+    visible: true
+  # Store category
+  - guid: 111
+    name_id: 112
+    icon_set_id: 1161
+    sort_order: 111
+    visible: true
+  # Store category
+  - guid: 10000
+    name_id: 54535
+    icon_set_id: 3803
+    sort_order: 2
+    visible: true
+  # Store category
+  - guid: 10001
+    name_id: 54537
+    icon_set_id: 3805
+    sort_order: 4
+    visible: true
+  # Store category
+  - guid: 10002
+    name_id: 54260
+    icon_set_id: 3604
+    sort_order: 10003
+    visible: true
 relations:
   - parent_guid: -1
     child_guid: 10
@@ -149,3 +371,81 @@ relations:
     child_guid: 1000
   - parent_guid: 65
     child_guid: 1001
+  - parent_guid: -1
+    child_guid: 2
+  - parent_guid: -1
+    child_guid: 70
+  - parent_guid: 2
+    child_guid: 11
+  - parent_guid: 2
+    child_guid: 14
+  - parent_guid: 2
+    child_guid: 15
+  - parent_guid: 2
+    child_guid: 16
+  - parent_guid: 2
+    child_guid: 17
+  - parent_guid: 2
+    child_guid: 26
+  - parent_guid: 2
+    child_guid: 91
+  - parent_guid: 2
+    child_guid: 10000
+  - parent_guid: 2
+    child_guid: 10001
+  - parent_guid: 11
+    child_guid: 101
+  - parent_guid: 11
+    child_guid: 102
+  - parent_guid: 11
+    child_guid: 104
+  - parent_guid: 11
+    child_guid: 105
+  - parent_guid: 11
+    child_guid: 107
+  - parent_guid: 11
+    child_guid: 108
+  - parent_guid: 11
+    child_guid: 109
+  - parent_guid: 11
+    child_guid: 111
+  - parent_guid: 14
+    child_guid: 30
+  - parent_guid: 14
+    child_guid: 34
+  - parent_guid: 14
+    child_guid: 75
+  - parent_guid: 14
+    child_guid: 76
+  - parent_guid: 15
+    child_guid: 71
+  - parent_guid: 15
+    child_guid: 72
+  - parent_guid: 15
+    child_guid: 84
+  - parent_guid: 15
+    child_guid: 85
+  - parent_guid: 15
+    child_guid: 88
+  - parent_guid: 15
+    child_guid: 93
+  - parent_guid: 16
+    child_guid: 32
+  - parent_guid: 16
+    child_guid: 33
+  - parent_guid: 16
+    child_guid: 95
+  - parent_guid: 17
+    child_guid: 20
+  - parent_guid: 17
+    child_guid: 21
+  - parent_guid: 17
+    child_guid: 22
+  - parent_guid: 70
+    child_guid: 78
+  - parent_guid: 10000
+    child_guid: 80
+  - parent_guid: 10001
+    child_guid: 10002
+  - parent_guid: 10001
+    child_guid: 78
