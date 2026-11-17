@@ -1,0 +1,21 @@
+# Custom texture aliases for wearable models, built into loose .adr files in the
+# game folder by:
+#   python tools/cwa_aliases.py "C:\Games\Clone_Wars\Clone_Wars"
+# (run with the game closed).  Items then use `texture_alias: <alias>`.
+# `<gender>` in `adr` builds both the Male and Female model; female wearables
+# reuse the male textures, so `texture` is always the Wear_Human_Male_* file.
+---
+
+# Unused texture variants that already ship with the game
+- adr: Wear_Human_<gender>_Head_CloneHelmCyclops.adr
+  alias: White
+  texture: Wear_Human_Male_Head_CloneHelmCyclops_White_C.dds
+- adr: Wear_Human_Male_Body_BlackSunSoldierArmor.adr
+  alias: BlackSunSoldier
+  texture: Wear_Human_Male_Body_BlackSunSoldierArmor_BlackSunSoldier_C.dds
+- adr: Wear_Human_<gender>_Body_CloneBasicArmor.adr
+  alias: BlueSquares
+  texture: Wear_Human_Male_Body_CloneBasicArmor_BlueSquares_C.dds
+- adr: Wear_Human_<gender>_Feet_BobaSneakers.adr
+  alias: BobaPhat
+  texture: Wear_Human_Male_Feet_BobaSneakers_BobaPhat_C.dds
