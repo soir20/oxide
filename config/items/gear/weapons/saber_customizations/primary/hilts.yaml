@@ -16,6 +16,7 @@
       - "plo_koon_lightsaber"
       - "force_valor"
       - "slashing_strike"
+  cost: 2500
 
 # Dahgee Jedi Lightsaber
 - guid: 227
@@ -34,6 +35,7 @@
       - "dahgee_jedi_lightsaber"
       - "force_valor"
       - "slashing_strike"
+  cost: 20000
 
 # Ahsoka Tano's Reverse Lightsaber
 - guid: 422
@@ -52,6 +54,7 @@
       - "ahsoka_tano_reverse_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 4000
 
 # Anakin Skywalker's Lightsaber
 - guid: 435
@@ -87,6 +90,7 @@
       - "zabrak_sith_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 4000
 
 # Adi Gallia's Lightsaber
 - guid: 526
@@ -105,6 +109,7 @@
       - "adi_gallia_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 800
 
 # Pre Vizsla's Darksaber
 - guid: 527
@@ -122,6 +127,7 @@
       - "pre_vizsla_darksaber"
       - "proximity_mine"
       - "slashing_strike"
+  cost: 3000
 
 # Count Dooku's Lightsaber
 - guid: 528
@@ -139,6 +145,7 @@
       - "count_dooku_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 3000
 
 # Kit Fisto's Lightsaber
 - guid: 532
@@ -174,6 +181,7 @@
       - "luminara_unduli_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 800
 
 # Mace Windu's Lightsaber
 - guid: 535
@@ -191,6 +199,7 @@
       - "mace_windu_lightsaber"
       - "force_valor"
       - "slashing_strike"
+  cost: 3000
 
 # Obi-Wan Kenobi's Lightsaber
 - guid: 536
@@ -209,6 +218,7 @@
       - "obi_wan_kenobi_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 900
 
 # Darth Sidious' Lightsaber
 - guid: 537
@@ -226,6 +236,7 @@
       - "darth_sidious_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 300
 
 # Training Lightsaber
 - guid: 538
@@ -243,6 +254,7 @@
       - "training_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 200
 
 # Asajj Ventress' Right Lightsaber
 - guid: 539
@@ -261,6 +273,7 @@
       - "asajj_ventress_right_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 1000
 
 # Miko Jedi Lightsaber
 - guid: 761
@@ -278,6 +291,7 @@
       - "miko_jedi_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 3000
 
 # Mestare Lightsaber
 - guid: 762
@@ -295,6 +309,7 @@
       - "mestare_lightsaber"
       - "force_heal"
       - "slashing_strike"
+  cost: 500
 
 # Shaak Ti's Lightsaber
 - guid: 763
@@ -313,6 +328,7 @@
       - "shaak_ti_lightsaber"
       - "force_heal"
       - "slashing_strike"
+  cost: 1000
 
 # Savek Lightsaber
 - guid: 764
@@ -331,6 +347,7 @@
       - "savek_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 4000
 
 # Kyle Katarn's Lightsaber
 - guid: 786
@@ -365,6 +382,7 @@
       - "shotem_jedi_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 3000
 
 # Bravis Sith Lightsaber
 - guid: 788
@@ -401,6 +419,7 @@
       - "ermi_jedi_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 4000
 
 # Ancient Cobal Lightsaber
 - guid: 790
@@ -418,6 +437,7 @@
       - "ancient_cobal_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 3000
 
 # Ultimate FX Gungan Lightsaber
 - guid: 1992
@@ -452,6 +472,7 @@
       - "quinlan_vos_lightsaber"
       - "force_valor"
       - "slashing_strike"
+  cost: 1000
 
 # Ahsoka Tano's Lightsaber
 - guid: 2141
@@ -469,6 +490,7 @@
       - "ahsoka_tano_lightsaber"
       - "force_push"
       - "slashing_strike"
+  cost: 1000
 
 # Savage Opress' Lightsaber
 - guid: 2363
@@ -486,6 +508,7 @@
       - "savage_opress_lightsaber"
       - "force_lightning"
       - "slashing_strike"
+  cost: 3000
 
 # Saesee Tiin's Lightsaber
 - guid: 2708
@@ -503,6 +526,7 @@
       - "saesee_tiin_lightsaber"
       - "force_valor"
       - "slashing_strike"
+  cost: 1500
 
 # Kashyyyk Lightsaber
 - guid: 2801
@@ -521,6 +545,7 @@
       - "kashyyyk_lightsaber"
       - "force_heal"
       - "slashing_strike"
+  cost: 64000
 
 # Sith Marauder Lightsaber
 - guid: 110000
