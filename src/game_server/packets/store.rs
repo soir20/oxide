@@ -1,11 +1,16 @@
-use packet_serialize::{SerializePacket, Skip};
+use num_enum::TryFromPrimitive;
+use packet_serialize::{DeserializePacket, SerializePacket, Skip};
 
 use super::{GamePacket, OpCode};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, TryFromPrimitive)]
+#[repr(u16)]
 pub enum StoreOpCode {
     ItemList = 0x1,
+    ItemDefinitionsRequest = 0x2,
     ItemDefinitionsReply = 0x3,
+    BuyItem = 0x4,
+    SellToClientResponse = 0x6,
 }
 
 impl SerializePacket for StoreOpCode {
@@ -159,4 +164,41 @@ impl RedirectCategories {
             }],
         }
     }
+}
+
+#[derive(DeserializePacket)]
+pub struct BuyItemRequest {
+    pub unknown: u64,
+    pub item_guid: i32,
+    pub currency_type: u32,
+    pub quantity: u32,
+}
+
+pub struct SellToClientResponse {
+    pub result: u32,
+    pub tid: u32,
+    pub transaction_type: u32,
+    pub item_guid: i32,
+    pub quantity: u32,
+}
+
+impl SerializePacket for SellToClientResponse {
+    fn serialize(&self, buffer: &mut Vec<u8>) {
+        self.result.serialize(buffer);
+        self.tid.serialize(buffer);
+        self.transaction_type.serialize(buffer);
+        0u64.serialize(buffer);
+        self.tid.serialize(buffer);
+        0u64.serialize(buffer);
+        self.item_guid.serialize(buffer); // item definition id
+        self.item_guid.serialize(buffer); // item guid (same as definition id)
+        self.quantity.serialize(buffer);
+        0u32.serialize(buffer);
+        false.serialize(buffer);
+    }
+}
+
+impl GamePacket for SellToClientResponse {
+    type Header = StoreOpCode;
+    const HEADER: Self::Header = StoreOpCode::SellToClientResponse;
 }

@@ -13,6 +13,8 @@ pub mod minigame;
 pub mod mount;
 pub mod player_data;
 pub mod player_update;
+pub mod purchase;
+pub mod quick_chat;
 pub mod reference_data;
 pub mod saber_duel;
 pub mod saber_strike;
@@ -22,6 +24,7 @@ pub mod time;
 pub mod tower_defense;
 pub mod tunnel;
 pub mod ui;
+pub mod ui_interactions;
 pub mod update_position;
 pub mod zone;
 
@@ -89,6 +92,7 @@ pub enum OpCode {
     SecondsOffGmt = 0xa8,
     BrandishHolster = 0xb4,
     UiInteractions = 0xbd,
+    StoreTransaction = 0x75,
 }
 
 pub trait GamePacket: SerializePacket {
