@@ -1,0 +1,84 @@
+---
+- guid: 644
+  name_id: 5826
+  description_id: 5827
+  icon_set_id: 702
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 645
+  name_id: 5828
+  description_id: 5829
+  icon_set_id: 703
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 646
+  name_id: 5830
+  description_id: 5831
+  icon_set_id: 698
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 500
+- guid: 647
+  name_id: 5832
+  description_id: 5833
+  icon_set_id: 699
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 500
+- guid: 648
+  name_id: 5834
+  description_id: 5835
+  icon_set_id: 700
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 500
+- guid: 650
+  name_id: 5838
+  description_id: 5839
+  icon_set_id: 693
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 651
+  name_id: 5840
+  description_id: 5841
+  icon_set_id: 694
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 652
+  name_id: 5842
+  description_id: 5843
+  icon_set_id: 695
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+  members: true
+- guid: 653
+  name_id: 5844
+  description_id: 5845
+  icon_set_id: 696
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+  members: true
+- guid: 654
+  name_id: 5846
+  description_id: 5847
+  icon_set_id: 697
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+  members: true

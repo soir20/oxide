@@ -1,0 +1,118 @@
+---
+- guid: 49
+  name_id: 80
+  description_id: 14
+  icon_set_id: 690
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 50
+  name_id: 81
+  description_id: 14
+  icon_set_id: 685
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 51
+  name_id: 82
+  description_id: 14
+  icon_set_id: 687
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 52
+  name_id: 89
+  description_id: 14
+  icon_set_id: 688
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 53
+  name_id: 90
+  description_id: 14
+  icon_set_id: 686
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 748
+  name_id: 14062
+  description_id: 14063
+  icon_set_id: 691
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 1384
+  name_id: 1979
+  description_id: 14
+  icon_set_id: 1594
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+- guid: 2206
+  name_id: 20399
+  description_id: 14
+  icon_set_id: 1502
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 2207
+  name_id: 20400
+  description_id: 14
+  icon_set_id: 1503
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 2709
+  name_id: 43213
+  description_id: 14
+  icon_set_id: 1796
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 2710
+  name_id: 43214
+  description_id: 14
+  icon_set_id: 1795
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 3097
+  name_id: 4285
+  description_id: 14
+  icon_set_id: 2400
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3098
+  name_id: 4286
+  description_id: 14
+  icon_set_id: 2401
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
+- guid: 3099
+  name_id: 4287
+  description_id: 14
+  icon_set_id: 2402
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+  members: true
