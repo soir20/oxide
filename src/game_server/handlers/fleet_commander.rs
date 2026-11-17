@@ -674,7 +674,7 @@ impl FleetCommanderGame {
         }
 
         ship_placement_timers[player_index] = FleetCommanderPlacementState::WaitingForPlacement {
-            timer: MinigameCountdown::new_with_event(SHIP_PLACEMENT_TIMEOUT),
+            timer: MinigameCountdown::new_with_event(SHIP_PLACEMENT_TIMEOUT, Instant::now()),
         };
 
         let mut broadcasts = vec![Broadcast::Single(
@@ -825,7 +825,7 @@ impl FleetCommanderGame {
             })],
         )];
 
-        broadcasts.append(&mut self.switch_turn());
+        broadcasts.append(&mut self.switch_turn(Instant::now()));
         Ok(broadcasts)
     }
 
@@ -845,7 +845,7 @@ impl FleetCommanderGame {
             time_left_in_turn,
             animations_complete: [true, true],
         };
-        broadcasts.append(&mut self.switch_turn());
+        broadcasts.append(&mut self.switch_turn(turn_time));
 
         Ok(broadcasts)
     }
@@ -959,7 +959,7 @@ impl FleetCommanderGame {
                     },
                 })],
             )];
-            broadcasts.append(&mut self.switch_turn());
+            broadcasts.append(&mut self.switch_turn(Instant::now()));
             Ok(broadcasts)
         } else {
             Ok(Vec::new())
@@ -998,12 +998,11 @@ impl FleetCommanderGame {
                     return Vec::new();
                 }
 
-                timer.update_timer(now);
                 if !timer.time_until_next_event(now).is_zero() {
                     return Vec::new();
                 }
 
-                self.switch_turn()
+                self.switch_turn(now)
             }
             _ => Vec::new(),
         }
@@ -1013,6 +1012,7 @@ impl FleetCommanderGame {
         &mut self,
         player: u32,
         pause: bool,
+        now: Instant,
     ) -> Result<Vec<Broadcast>, ProcessPacketError> {
         if player != self.player1 && Some(player) != self.player2 {
             return Err(ProcessPacketError::new(ProcessPacketErrorType::ConstraintViolated, format!("Tried to pause or resume (pause: {pause}) the game for player {player}, who is not playing this instance of Fleet Commander ({self:?})")));
@@ -1030,11 +1030,11 @@ impl FleetCommanderGame {
                     if let FleetCommanderPlacementState::WaitingForPlacement { timer } =
                         placement_state
                     {
-                        timer.pause_or_resume(pause);
+                        timer.pause_or_resume(pause, now);
                     }
                 }
             }
-            FleetCommanderGameState::WaitingForMove { timer } => timer.pause_or_resume(pause),
+            FleetCommanderGameState::WaitingForMove { timer } => timer.pause_or_resume(pause, now),
             _ => (),
         }
 
@@ -1189,7 +1189,6 @@ impl FleetCommanderGame {
             return Vec::new();
         }
 
-        timer.update_timer(now);
         if timer.time_until_next_event(now).is_zero() {
             *placement_state = FleetCommanderPlacementState::Done;
             vec![Broadcast::Single(
@@ -1239,7 +1238,7 @@ impl FleetCommanderGame {
         Ok(time_left_in_turn)
     }
 
-    fn switch_turn(&mut self) -> Vec<Broadcast> {
+    fn switch_turn(&mut self, now: Instant) -> Vec<Broadcast> {
         let mut broadcasts = Vec::new();
         if let FleetCommanderGameState::ProcessingMove {
             time_left_in_turn, ..
@@ -1272,7 +1271,7 @@ impl FleetCommanderGame {
         }
 
         self.state = FleetCommanderGameState::WaitingForMove {
-            timer: MinigameCountdown::new_with_event(self.difficulty.turn_timeout()),
+            timer: MinigameCountdown::new_with_event(self.difficulty.turn_timeout(), now),
         };
         self.turn = match self.turn {
             FleetCommanderTurn::Player1 => FleetCommanderTurn::Player2,

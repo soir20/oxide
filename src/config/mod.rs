@@ -4,7 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Deserialize};
 use serde_yaml::{Mapping, Value};
 
 #[allow(dead_code)]
@@ -97,4 +97,33 @@ pub fn merge_config_dir<T: DeserializeOwned>(root: &Path) -> Result<T, ConfigErr
     }
 
     Ok(serde_yaml::from_value(Value::Mapping(accumulated_map))?)
+}
+
+#[derive(Clone, Copy, Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub enum Angle {
+    Degrees(f32),
+    Radians(f32),
+}
+
+impl Angle {
+    pub fn to_degrees(self) -> f32 {
+        match self {
+            Angle::Degrees(degrees) => degrees,
+            Angle::Radians(radians) => radians.to_degrees(),
+        }
+    }
+
+    pub fn to_radians(self) -> f32 {
+        match self {
+            Angle::Degrees(degrees) => degrees.to_radians(),
+            Angle::Radians(radians) => radians,
+        }
+    }
+}
+
+impl Default for Angle {
+    fn default() -> Self {
+        Angle::Radians(0.0)
+    }
 }
