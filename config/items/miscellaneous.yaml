@@ -1,0 +1,26 @@
+---
+- guid: 1776
+  name_id: 45051
+  description_id: 14
+  icon_set_id: 2583
+  cost: 2000
+  members_cost_expression: x
+  slot: !Equipment None
+  item_type: 1
+  max_stack_size: 1000
+- guid: 15000
+  name_id: 54418
+  description_id: 14
+  icon_set_id: 3727
+  slot: !Equipment None
+  item_type: 1
+  category: 114
+  max_stack_size: 1000
+- guid: 15001
+  name_id: 54517
+  description_id: 14
+  icon_set_id: 3794
+  slot: !Equipment None
+  item_type: 1
+  category: 114
+  max_stack_size: 1000

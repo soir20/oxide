@@ -1,0 +1,7 @@
+---
+- guid: 1338
+  icon_set_id: 1740
+  slot: !Equipment None
+  item_type: 1
+  category: 36
+  max_stack_size: 1000
