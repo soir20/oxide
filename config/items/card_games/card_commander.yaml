@@ -1,0 +1,73 @@
+---
+- guid: 952
+  name_id: 2596
+  description_id: 14
+  icon_set_id: 1646
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 966
+  name_id: 1531
+  description_id: 33623
+  icon_set_id: 1332
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1000
+- guid: 967
+  name_id: 1533
+  description_id: 33622
+  icon_set_id: 1329
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 968
+  name_id: 1535
+  description_id: 33621
+  icon_set_id: 1331
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 1500
+- guid: 969
+  name_id: 1537
+  description_id: 33620
+  icon_set_id: 1328
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 3000
+- guid: 1417
+  name_id: 2200
+  description_id: 14
+  icon_set_id: 1956
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 5000
+- guid: 2371
+  name_id: 33192
+  description_id: 33194
+  icon_set_id: 1644
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 4000
+- guid: 2372
+  name_id: 33193
+  description_id: 33195
+  icon_set_id: 1645
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 2000
+- guid: 2373
+  name_id: 33196
+  description_id: 33197
+  icon_set_id: 1647
+  slot: !Equipment None
+  item_type: 1
+  category: 0
+  cost: 3000
