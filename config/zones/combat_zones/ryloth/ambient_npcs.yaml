@@ -1,7 +1,7 @@
 ---
 ryloth:
   ambient_npcs:
-    arf_arc_1:
+    commander_trauma:
       model_id: 1336
       pos:
         x: 573.0281
@@ -546,6 +546,7 @@ ryloth:
         y: 0
         z: -0.720324
         w: 0
+      stand_animation_id: 2590
     phase1_clone_nohelmet_2:
       model_id: 2032
       pos:
