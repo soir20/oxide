@@ -10,6 +10,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 300
 # Adi Gallia's Headdress
 - guid: 780
   name_id: 962
@@ -21,6 +22,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 500
 # Adi Gallia's Gloves
 - guid: 187
   name_id: 912
@@ -32,6 +34,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Adi Gallia's Boots
 - guid: 189
   name_id: 916
@@ -43,6 +46,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Anakin Skywalker's Original Robes
 - guid: 416
   name_id: 2514
@@ -83,6 +87,7 @@
   texture_alias: AnakinV2
   item_type: 1
   category: 61
+  cost: 2000
 # Anakin Skywalker's Gloves
 - guid: 1278
   name_id: 1901
@@ -93,6 +98,7 @@
   texture_alias: AnakinV2
   item_type: 1
   category: 62
+  cost: 500
 # Anakin Skywalker's Boots
 - guid: 1280
   name_id: 1905
@@ -103,6 +109,7 @@
   texture_alias: AnakinV2
   item_type: 1
   category: 63
+  cost: 500
 # Republic Diver Gloves
 - guid: 1311
   name_id: 2346
@@ -113,6 +120,7 @@
   texture_alias: AnakinScuba
   item_type: 1
   category: 62
+  cost: 500
 # Republic Diver Flippers
 - guid: 1313
   name_id: 2350
@@ -123,6 +131,7 @@
   texture_alias: AnakinScuba
   item_type: 1
   category: 63
+  cost: 750
 # Republic Diver Wetsuit
 - guid: 1312
   name_id: 2348
@@ -133,6 +142,7 @@
   texture_alias: AnakinScuba
   item_type: 1
   category: 61
+  cost: 1500
 # Diver Anakin Skywalker's Helmet
 - guid: 1310
   name_id: 2344
@@ -143,6 +153,7 @@
   texture_alias: AnakinScuba
   item_type: 1
   category: 60
+  cost: 1500
 # Mace Windu's Robes
 - guid: 463
   name_id: 8896
@@ -153,6 +164,7 @@
   texture_alias: MaceWindu
   item_type: 1
   category: 61
+  cost: 1000
 # Mace Windu's Gloves
 - guid: 465
   name_id: 8900
@@ -163,6 +175,7 @@
   texture_alias: MaceWindu
   item_type: 1
   category: 62
+  cost: 500
 # Mace Windu's Boots
 - guid: 464
   name_id: 8898
@@ -173,6 +186,7 @@
   texture_alias: MaceWindu
   item_type: 1
   category: 63
+  cost: 500
 # Shotem Jedi Robes
 - guid: 860
   name_id: 1319
@@ -183,6 +197,7 @@
   texture_alias: PulsingCrystal
   item_type: 1
   category: 61
+  cost: 1000
 # Shotem Jedi Visor
 - guid: 909
   name_id: 1416
@@ -193,6 +208,7 @@
   texture_alias: PulsingCrystal
   item_type: 1
   category: 60
+  cost: 1000
 # Shotem Jedi Gloves
 - guid: 894
   name_id: 1386
@@ -203,6 +219,7 @@
   texture_alias: PulsingCrystal
   item_type: 1
   category: 62
+  cost: 500
 # Shotem Jedi Boots
 - guid: 879
   name_id: 1356
@@ -213,6 +230,7 @@
   texture_alias: PulsingCrystal
   item_type: 1
   category: 63
+  cost: 500
 # Shotem Master Robes
 - guid: 180021
   name_id: 60676
@@ -223,6 +241,7 @@
   texture_alias: PulsingCrystalBlue
   item_type: 1
   category: 61
+  cost: 5000
 # Shotem Master Visor
 - guid: 180022
   name_id: 60674
@@ -233,6 +252,7 @@
   texture_alias: PulsingCrystalBlue
   item_type: 1
   category: 60
+  cost: 5000
 # Shotem Master Gloves
 - guid: 180023
   name_id: 60675
@@ -243,6 +263,7 @@
   texture_alias: PulsingCrystalBlue
   item_type: 1
   category: 62
+  cost: 5000
 # Shotem Master Boots
 - guid: 180024
   name_id: 60677
@@ -253,6 +274,7 @@
   texture_alias: PulsingCrystalBlue
   item_type: 1
   category: 63
+  cost: 5000
 # Miko Jedi Tunic
 - guid: 245
   name_id: 842
@@ -263,6 +285,7 @@
   texture_alias: CompressedCrystalGreen
   item_type: 1
   category: 61
+  cost: 1000
 # Miko Jedi Gloves
 - guid: 244
   name_id: 840
@@ -273,6 +296,7 @@
   texture_alias: CompressedCrystalGreen
   item_type: 1
   category: 62
+  cost: 500
 # Miko Jedi Boots
 - guid: 246
   name_id: 844
@@ -283,6 +307,7 @@
   texture_alias: CompressedCrystalGreen
   item_type: 1
   category: 63
+  cost: 500
 # Quinlan Vos' Jedi Robes
 - guid: 1152
   name_id: 1753
@@ -293,6 +318,7 @@
   texture_alias: QuinlinVos
   item_type: 1
   category: 61
+  cost: 1500
 # Quinlan Vos' Wraps
 - guid: 1151
   name_id: 1751
@@ -303,6 +329,7 @@
   texture_alias: QuinlinVos
   item_type: 1
   category: 62
+  cost: 500
 # Quinlan Vos' Boots
 - guid: 1153
   name_id: 1755
@@ -313,6 +340,7 @@
   texture_alias: QuinlinVos
   item_type: 1
   category: 63
+  cost: 500
 # Ahsoka Tano's Original Tunic
 - guid: 191
   name_id: 920
@@ -324,6 +352,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 700
 # Ahsoka Tano's Original Gloves
 - guid: 190
   name_id: 918
@@ -335,6 +364,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Ahsoka Tano's Original Boots
 - guid: 192
   name_id: 922
@@ -346,6 +376,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Ahsoka Tano's Tunic
 - guid: 1276
   name_id: 1897
@@ -356,6 +387,7 @@
   texture_alias: AhsokaV2
   item_type: 1
   category: 61
+  cost: 1000
 # Ahsoka Tano's Gloves
 - guid: 1274
   name_id: 1893
@@ -366,6 +398,7 @@
   texture_alias: AhsokaV2
   item_type: 1
   category: 62
+  cost: 500
 # Ahsoka Tano's Boots
 - guid: 1277
   name_id: 1899
@@ -376,6 +409,7 @@
   texture_alias: AhsokaV2
   item_type: 1
   category: 63
+  cost: 500
 # Ahsoka Tano's Zygerrian Suit
 - guid: 3248
   name_id: 4450
@@ -386,6 +420,7 @@
   texture_alias: AhsokaBlue
   item_type: 1
   category: 61
+  cost: 2000
 # Ahsoka Tano's Zygerrian Shoes
 - guid: 3249
   name_id: 4451
@@ -396,6 +431,7 @@
   texture_alias: AhsokaBlue
   item_type: 1
   category: 63
+  cost: 500
 # Saesee Tiin's Flight Gear
 - guid: 2889
   name_id: 44894
@@ -406,6 +442,7 @@
   texture_alias: SaeseeTiinFlight
   item_type: 1
   category: 61
+  cost: 2500
 # Saesee Tiin's Robes
 - guid: 2704
   name_id: 43186
@@ -416,6 +453,7 @@
   texture_alias: SaeseeTin
   item_type: 1
   category: 61
+  cost: 1000
 # Saesee Tiin's Gloves
 - guid: 2703
   name_id: 43185
@@ -426,6 +464,7 @@
   texture_alias: SaeseeTin
   item_type: 1
   category: 62
+  cost: 500
 # Saesee Tiin's Boots
 - guid: 2705
   name_id: 43187
@@ -436,6 +475,7 @@
   texture_alias: SaeseeTiin
   item_type: 1
   category: 63
+  cost: 500
 # Temple Guard Cloak
 - guid: 180043
   name_id: 54476
@@ -447,6 +487,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Temple Guard Mask
 - guid: 180044
   name_id: 54474
@@ -458,6 +499,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Temple Guard Gloves
 - guid: 180045
   name_id: 54475
@@ -469,6 +511,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Temple Guard Boots
 - guid: 180046
   name_id: 54477
@@ -480,6 +523,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Covert Anakin Tunic
 - guid: 2770
   name_id: 43963
@@ -490,6 +534,7 @@
   texture_alias: Stealth
   item_type: 1
   category: 61
+  cost: 3500
 # Covert Anakin Gloves
 - guid: 2769
   name_id: 43962
@@ -500,6 +545,7 @@
   texture_alias: Stealth
   item_type: 1
   category: 62
+  cost: 500
 # Covert Anakin Boots
 - guid: 2771
   name_id: 43964
@@ -510,6 +556,7 @@
   texture_alias: Stealth
   item_type: 1
   category: 63
+  cost: 500
 # Fiery Ahsoka Tunic
 - guid: 2775
   name_id: 44191
@@ -520,6 +567,7 @@
   texture_alias: AhsokaRed
   item_type: 1
   category: 61
+  cost: 3000
 # Fiery Ahsoka Gloves
 - guid: 2774
   name_id: 44190
@@ -530,6 +578,7 @@
   texture_alias: AhsokaRed
   item_type: 1
   category: 62
+  cost: 500
 # Fiery Ahsoka Boots
 - guid: 2776
   name_id: 44192
@@ -540,6 +589,7 @@
   texture_alias: AhsokaRed
   item_type: 1
   category: 63
+  cost: 500
 # Sassy Ahsoka Tunic
 - guid: 2788
   name_id: 44378
@@ -550,6 +600,7 @@
   texture_alias: AhsokaPink
   item_type: 1
   category: 61
+  cost: 3000
 # Sassy Ahsoka Gloves
 - guid: 2787
   name_id: 44377
@@ -560,6 +611,7 @@
   texture_alias: AhsokaPink
   item_type: 1
   category: 62
+  cost: 500
 # Sassy Ahsoka Boots
 - guid: 2789
   name_id: 44376
@@ -570,6 +622,7 @@
   texture_alias: AhsokaPink
   item_type: 1
   category: 63
+  cost: 500
 # Adept Ahsoka Tunic
 - guid: 2792
   name_id: 44503
@@ -580,6 +633,7 @@
   texture_alias: AhsokaBlack
   item_type: 1
   category: 61
+  cost: 3500
 # Adept Ahsoka Gloves
 - guid: 2791
   name_id: 44502
@@ -590,6 +644,7 @@
   texture_alias: AhsokaBlack
   item_type: 1
   category: 62
+  cost: 500
 # Adept Ahsoka Boots
 - guid: 2793
   name_id: 44504
@@ -600,6 +655,7 @@
   texture_alias: AhsokaBlack
   item_type: 1
   category: 63
+  cost: 500
 # Icy Anakin Tunic
 - guid: 2817
   name_id: 44669
@@ -610,6 +666,7 @@
   texture_alias: IcyAnakin
   item_type: 1
   category: 61
+  cost: 3000
 # Icy Anakin Gloves
 - guid: 2816
   name_id: 44668
@@ -620,6 +677,7 @@
   texture_alias: IcyAnakin
   item_type: 1
   category: 62
+  cost: 500
 # Icy Anakin Boots
 - guid: 2818
   name_id: 44670
@@ -630,6 +688,7 @@
   texture_alias: IcyAnakin
   item_type: 1
   category: 63
+  cost: 500
 # Ancient Cobal Robes
 - guid: 231
   name_id: 814
@@ -640,6 +699,7 @@
   texture_alias: BuggyCrystal
   item_type: 1
   category: 61
+  cost: 2500
 # Ancient Cobal Gloves
 - guid: 230
   name_id: 812
@@ -650,6 +710,7 @@
   texture_alias: BuggyCrystal
   item_type: 1
   category: 62
+  cost: 500
 # Ancient Cobal Boots
 - guid: 232
   name_id: 816
@@ -660,6 +721,7 @@
   texture_alias: BuggyCrystal
   item_type: 1
   category: 63
+  cost: 500
 # Mestare Jedi Robes
 - guid: 861
   name_id: 44852
@@ -670,6 +732,7 @@
   texture_alias: Samurai
   item_type: 1
   category: 61
+  cost: 800
 # Mestare Jedi Gloves
 - guid: 895
   name_id: 44854
@@ -680,6 +743,7 @@
   texture_alias: Samurai
   item_type: 1
   category: 62
+  cost: 200
 # Mestare Jedi Boots
 - guid: 880
   name_id: 44853
@@ -690,6 +754,7 @@
   texture_alias: Samurai
   item_type: 1
   category: 63
+  cost: 500
 # Mustafar Anakin's Tunic
 - guid: 2867
   name_id: 44842
@@ -700,6 +765,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 61
+  cost: 3000
 # Mustafar Anakin's Gloves
 - guid: 2866
   name_id: 44841
@@ -710,6 +776,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 62
+  cost: 500
 # Mustafar Anakin's Boots
 - guid: 2868
   name_id: 44843
@@ -720,6 +787,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 63
+  cost: 500
 # Kashyyyk Obi-Wan's Robes
 - guid: 2453
   name_id: 2661
@@ -730,6 +798,7 @@
   texture_alias: ObiwanKashyyyk
   item_type: 1
   category: 61
+  cost: 1500
 # Kashyyyk Obi-Wan's Gloves
 - guid: 2452
   name_id: 2660
@@ -740,6 +809,7 @@
   texture_alias: ObiwanKashyyyk
   item_type: 1
   category: 62
+  cost: 500
 # Kashyyyk Obi-Wan's Boots
 - guid: 2451
   name_id: 2659
@@ -750,6 +820,7 @@
   texture_alias: ObiwanKashyyyk
   item_type: 1
   category: 63
+  cost: 500
 # Tranquil Ahsoka's Tunic
 - guid: 2459
   name_id: 2667
@@ -760,6 +831,7 @@
   texture_alias: AhsokaBlue
   item_type: 1
   category: 61
+  cost: 2000
 # Tranquil Ahsoka's Gloves
 - guid: 2458
   name_id: 2666
@@ -770,6 +842,7 @@
   texture_alias: AhsokaBlue
   item_type: 1
   category: 62
+  cost: 500
 # Tranquil Ahsoka's Boots
 - guid: 2460
   name_id: 2668
@@ -780,6 +853,7 @@
   texture_alias: AhsokaBlue
   item_type: 1
   category: 63
+  cost: 500
 # Camo Obi-Wan's Robes
 - guid: 2462
   name_id: 2670
@@ -790,6 +864,7 @@
   texture_alias: ObiwanCamo
   item_type: 1
   category: 61
+  cost: 1500
 # Camo Obi-Wan's Gloves
 - guid: 2461
   name_id: 2669
@@ -800,6 +875,7 @@
   texture_alias: ObiwanCamo
   item_type: 1
   category: 62
+  cost: 500
 # Camo Obi-Wan's Boots
 - guid: 2463
   name_id: 2671
@@ -810,6 +886,7 @@
   texture_alias: ObiwanCamo
   item_type: 1
   category: 63
+  cost: 500
 # Obi-Wan Kenobi's Original Uniform
 - guid: 405
   name_id: 8534
@@ -821,6 +898,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1200
 # Obi-Wan Kenobi's Original Gloves
 - guid: 407
   name_id: 8538
@@ -832,6 +910,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 500
 # Obi-Wan Kenobi's Original Boots
 - guid: 406
   name_id: 8536
@@ -843,6 +922,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Obi-Wan Kenobi's Robes
 - guid: 2248
   name_id: 32936
@@ -854,6 +934,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1200
 # Obi-Wan Kenobi's Gloves
 - guid: 2247
   name_id: 32935
@@ -865,6 +946,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 500
 # Obi-Wan Kenobi's Boots
 - guid: 2249
   name_id: 32937
@@ -876,6 +958,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Plo Koon's Robes
 - guid: 616
   name_id: 232
@@ -887,6 +970,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Plo Koon's Mask
 - guid: 614
   name_id: 228
@@ -898,6 +982,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 2400
 # Plo Koon's Gloves
 - guid: 615
   name_id: 230
@@ -909,6 +994,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 500
 # Plo Koon's Boots
 - guid: 617
   name_id: 234
@@ -920,6 +1006,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 500
 # Cold Weather Plo's Suit
 - guid: 2871
   name_id: 44875
@@ -931,6 +1018,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1200
 # Cold Weather Plo's Hood
 - guid: 2869
   name_id: 44873
@@ -942,6 +1030,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 800
 # Cold Weather Plo's Gloves
 - guid: 2870
   name_id: 44874
@@ -953,6 +1042,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 400
 # Cold Weather Plo's Boots
 - guid: 2872
   name_id: 44876
@@ -964,6 +1054,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Ermi Jedi Robe
 - guid: 864
   name_id: 1327
@@ -975,6 +1066,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Ermi Jedi Hood
 - guid: 912
   name_id: 1422
@@ -986,6 +1078,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 600
 # Ermi Jedi Gloves
 - guid: 896
   name_id: 1390
@@ -997,6 +1090,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 250
 # Ermi Jedi Boots
 - guid: 882
   name_id: 1362
@@ -1008,6 +1102,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Shaak Ti's Robe
 - guid: 923
   name_id: 1464
@@ -1019,6 +1114,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 700
 # Shaak Ti's Boots
 - guid: 928
   name_id: 1474
@@ -1030,6 +1126,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Luminara Unduli's Robes
 - guid: 605
   name_id: 210
@@ -1041,6 +1138,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1500
 # Luminara Unduli's Headdress
 - guid: 604
   name_id: 208
@@ -1052,6 +1150,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 2000
 # Luminara Unduli's Boots
 - guid: 606
   name_id: 212
@@ -1063,6 +1162,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 300
 # Kalifa's Suit
 - guid: 2748
   name_id: 43511
@@ -1074,6 +1174,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1500
 # Kalifa's Boots
 - guid: 2749
   name_id: 43512
@@ -1085,6 +1186,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Dahgee Jedi Robes
 - guid: 944
   name_id: 1506
@@ -1096,6 +1198,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 10000
 # Dahgee Jedi Gloves
 - guid: 941
   name_id: 1500
@@ -1107,6 +1210,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 3000
 # Dahgee Jedi Boots
 - guid: 929
   name_id: 1476
@@ -1118,6 +1222,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 3000
 # Aquatic Obi-Wan Tunic
 - guid: 2795
   name_id: 44500
@@ -1129,6 +1234,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Aquatic Obi-Wan Gloves
 - guid: 2794
   name_id: 44499
@@ -1140,6 +1246,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 1000
 # Aquatic Obi-Wan Boots
 - guid: 2796
   name_id: 44501
@@ -1151,6 +1258,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 1000
 # Fiery Obi-Wan's Tunic
 - guid: 2836
   name_id: 44829
@@ -1162,6 +1270,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1200
 # Fiery Obi-Wan's Gloves
 - guid: 2835
   name_id: 44828
@@ -1173,6 +1282,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 300
 # Fiery Obi-Wan's Boots
 - guid: 2837
   name_id: 44830
@@ -1184,6 +1294,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 300
 # Kit Fisto's Robes
 - guid: 468
   name_id: 8902
@@ -1225,6 +1336,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1200
 # Cold Weather Kit Fisto's Hood
 - guid: 2873
   name_id: 44877
@@ -1236,6 +1348,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 800
 # Cold Weather Kit Fisto's Gloves
 - guid: 2874
   name_id: 44878
@@ -1247,6 +1360,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 400
 # Cold Weather Kit Fisto's Boots
 - guid: 2876
   name_id: 44880
@@ -1258,6 +1372,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Flanneled Cold Weather Kit Fisto's Suit
 - guid: 180121
   name_id: 2677
@@ -1268,6 +1383,7 @@
   texture_alias: KitFistoSnowV2
   item_type: 1
   category: 61
+  cost: 5000
 # Flanneled Cold Weather Kit Fisto's Hood
 - guid: 180122
   name_id: 2675
@@ -1278,6 +1394,7 @@
   texture_alias: KitFistoSnowV2
   item_type: 1
   category: 60
+  cost: 5000
 # Flanneled Cold Weather Kit Fisto's Gloves
 - guid: 180123
   name_id: 2676
@@ -1288,6 +1405,7 @@
   texture_alias: KitFistoSnowV2
   item_type: 1
   category: 62
+  cost: 5000
 # Flanneled Cold Weather Kit Fisto's Boots
 - guid: 180124
   name_id: 2678
@@ -1298,6 +1416,7 @@
   texture_alias: KitFistoSnowV2
   item_type: 1
   category: 63
+  cost: 5000
 # Simple Padawan Robes
 - guid: 410
   name_id: 8611
@@ -1308,6 +1427,7 @@
   texture_alias: Padawan1
   item_type: 1
   category: 61
+  cost: 600
 # Light Padawan Helmet
 - guid: 411
   name_id: 8546
@@ -1318,6 +1438,7 @@
   texture_alias: Padawan1
   item_type: 1
   category: 60
+  cost: 300
 # Brown Padawan Boots
 - guid: 9
   name_id: 67
@@ -1328,6 +1449,7 @@
   texture_alias: Padawan1
   item_type: 1
   category: 63
+  cost: 300
 # Green Padawan Robes
 - guid: 448
   name_id: 8610
@@ -1338,6 +1460,7 @@
   texture_alias: Padawan2
   item_type: 1
   category: 61
+  cost: 600
 # Tan Padawan Boots
 - guid: 449
   name_id: 8880
@@ -1348,6 +1471,7 @@
   texture_alias: Padawan2
   item_type: 1
   category: 63
+  cost: 300
 # Dark Padawan Helmet
 - guid: 450
   name_id: 8882
@@ -1358,6 +1482,7 @@
   texture_alias: Padawan2
   item_type: 1
   category: 60
+  cost: 300
 # Long Padawan Robes
 - guid: 453
   name_id: 8609
@@ -1368,6 +1493,7 @@
   texture_alias: LightTan
   item_type: 1
   category: 61
+  cost: 600
 # Rusty Padawan Boots
 - guid: 454
   name_id: 8886
@@ -1378,6 +1504,7 @@
   texture_alias: Cherry
   item_type: 1
   category: 63
+  cost: 300
 # Bariss' Cloak
 - guid: 180133
   name_id: 54470
@@ -1389,6 +1516,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Bariss' Hood
 - guid: 180134
   name_id: 54468
@@ -1400,6 +1528,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Bariss' Gloves
 - guid: 180135
   name_id: 54469
@@ -1411,6 +1540,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Bariss' Shoes
 - guid: 180136
   name_id: 54471
@@ -1422,6 +1552,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Adept Jedi Cloak
 - guid: 180137
   name_id: 4619
@@ -1432,6 +1563,7 @@
   texture_alias: SparkingCrystalBlue
   item_type: 1
   category: 61
+  cost: 5000
 # Adept Jedi Hood
 - guid: 180138
   name_id: 4617
@@ -1442,6 +1574,7 @@
   texture_alias: SparkingCrystalBlue
   item_type: 1
   category: 60
+  cost: 5000
 # Adept Jedi Vambrace
 - guid: 180139
   name_id: 4618
@@ -1452,6 +1585,7 @@
   texture_alias: SparkingCrystalBlue
   item_type: 1
   category: 62
+  cost: 5000
 # Adept Jedi Greaves
 - guid: 180140
   name_id: 4620
@@ -1462,6 +1596,7 @@
   texture_alias: SparkingCrystalBlue
   item_type: 1
   category: 63
+  cost: 5000
 # Kofun Jedi Armor
 - guid: 180141
   name_id: 4818
@@ -1472,6 +1607,7 @@
   texture_alias: SamuraiJediV2
   item_type: 1
   category: 61
+  cost: 5000
 # Kofun Jedi Helm
 - guid: 180142
   name_id: 4816
@@ -1482,6 +1618,7 @@
   texture_alias: SamuraiJediV2
   item_type: 1
   category: 60
+  cost: 5000
 # Kofun Jedi Hand Wraps
 - guid: 180143
   name_id: 4817
@@ -1492,6 +1629,7 @@
   texture_alias: SamuraiJediV2
   item_type: 1
   category: 62
+  cost: 5000
 # Kofun Jedi Leg Wraps
 - guid: 180144
   name_id: 4819
@@ -1502,6 +1640,7 @@
   texture_alias: SamuraiJediV2
   item_type: 1
   category: 63
+  cost: 5000
 # Forgotten Jedi Armor
 - guid: 180145
   name_id: 60289
@@ -1513,6 +1652,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Forgotten Jedi Breather
 - guid: 180146
   name_id: 60287
@@ -1524,6 +1664,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Forgotten Jedi Gloves
 - guid: 180147
   name_id: 60288
@@ -1535,6 +1676,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Forgotten Jedi Boots
 - guid: 180148
   name_id: 60290
@@ -1546,6 +1688,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Jedi Exile Tunic
 - guid: 180149
   name_id: 54600
@@ -1556,6 +1699,7 @@
   texture_alias: Exile
   item_type: 1
   category: 61
+  cost: 5000
 # Jedi Exile Cowl
 - guid: 180150
   name_id: 54598
@@ -1566,6 +1710,7 @@
   texture_alias: Exile
   item_type: 1
   category: 60
+  cost: 5000
 # Jedi Exile Gloves
 - guid: 180151
   name_id: 54599
@@ -1576,6 +1721,7 @@
   texture_alias: Exile
   item_type: 1
   category: 62
+  cost: 5000
 # Jedi Exile Boots
 - guid: 180152
   name_id: 54601
@@ -1586,6 +1732,7 @@
   texture_alias: Exile
   item_type: 1
   category: 63
+  cost: 5000
 # Jedi Champion Robe
 - guid: 180153
   name_id: 52787
@@ -1597,6 +1744,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Jedi Champion Hood
 - guid: 180154
   name_id: 52790
@@ -1608,6 +1756,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Jedi Champion Gauntlets
 - guid: 180155
   name_id: 52788
@@ -1619,6 +1768,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Jedi Champion Boots
 - guid: 180156
   name_id: 52789
@@ -1630,6 +1780,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Even Piell's Climbing Suit
 - guid: 2886
   name_id: 44891
@@ -1641,6 +1792,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Even Piell's Gloves
 - guid: 2885
   name_id: 44890
@@ -1652,6 +1804,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Even Piell's Boots
 - guid: 2887
   name_id: 44892
@@ -1663,6 +1816,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Jocasta Nu's Robes
 - guid: 180160
   name_id: 198
@@ -1674,6 +1828,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Jocasta Nu's Shoes
 - guid: 180161
   name_id: 200
@@ -1685,6 +1840,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Sulon Jedi Suit
 - guid: 180162
   name_id: 54605
@@ -1695,6 +1851,7 @@
   texture_alias: KyleKatarnBlue
   item_type: 1
   category: 61
+  cost: 5000
 # Sulon Jedi Gloves
 - guid: 180163
   name_id: 54604
@@ -1705,6 +1862,7 @@
   texture_alias: KyleKatarnBlue
   item_type: 1
   category: 62
+  cost: 5000
 # Sulon Jedi Boots
 - guid: 180164
   name_id: 54606
@@ -1715,3 +1873,4 @@
   texture_alias: KyleKatarnBlue
   item_type: 1
   category: 63
+  cost: 5000

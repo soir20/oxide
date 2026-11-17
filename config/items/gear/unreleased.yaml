@@ -9,6 +9,7 @@
   texture_alias: LukeTatooine
   item_type: 1
   category: 61
+  cost: 5000
 # Luke Skywalker's Boots
 - guid: 230001
   name_id: 365
@@ -19,6 +20,7 @@
   texture_alias: LukeTatooine
   item_type: 1
   category: 63
+  cost: 5000
 # Kyle Katarn's Uniform
 - guid: 230002
   name_id: 204
@@ -29,6 +31,7 @@
   texture_alias: KyleKatarnDark
   item_type: 1
   category: 61
+  cost: 5000
 # Kyle Katarn's Gloves
 - guid: 230003
   name_id: 202
@@ -39,6 +42,7 @@
   texture_alias: KyleKatarnDark
   item_type: 1
   category: 62
+  cost: 5000
 # Kyle Katarn's Boots
 - guid: 230004
   name_id: 206
@@ -49,6 +53,7 @@
   texture_alias: KyleKatarnDark
   item_type: 1
   category: 63
+  cost: 5000
 # Lando Calrissian's Suit
 - guid: 230005
   name_id: 1462
@@ -59,6 +64,7 @@
   texture_alias: LandoArmor
   item_type: 1
   category: 61
+  cost: 5000
 # Lando Calrissian's Shoes
 - guid: 230006
   name_id: 1472
@@ -69,6 +75,7 @@
   texture_alias: LandoArmor
   item_type: 1
   category: 63
+  cost: 5000
 # Tamtel Skreej's Armor
 - guid: 230007
   name_id: 930
@@ -79,6 +86,7 @@
   texture_alias: TamtelSkreej
   item_type: 1
   category: 61
+  cost: 5000
 # Tamtel Skreej's Helm
 - guid: 230008
   name_id: 928
@@ -89,6 +97,7 @@
   texture_alias: TamtelSkreej
   item_type: 1
   category: 60
+  cost: 5000
 # Tamtel Skreej's Boots
 - guid: 230009
   name_id: 932
@@ -99,6 +108,7 @@
   texture_alias: TamtelSkreej
   item_type: 1
   category: 63
+  cost: 5000
 # Mara Jade's Battle Suit
 - guid: 230010
   name_id: 216
@@ -109,6 +119,7 @@
   texture_alias: MaraJade
   item_type: 1
   category: 61
+  cost: 5000
 # Mara Jade's Gloves
 - guid: 230011
   name_id: 214
@@ -119,6 +130,7 @@
   texture_alias: MaraJade
   item_type: 1
   category: 62
+  cost: 5000
 # Mara Jade's Boots
 - guid: 230012
   name_id: 218
@@ -129,6 +141,7 @@
   texture_alias: MaraJade
   item_type: 1
   category: 63
+  cost: 5000
 # Imperial Royal Guard Armor
 - guid: 230013
   name_id: 1650
@@ -139,6 +152,7 @@
   texture_alias: RoyalGuard
   item_type: 1
   category: 61
+  cost: 5000
 # Imperial Royal Guard Helmet
 - guid: 230014
   name_id: 1646
@@ -149,6 +163,7 @@
   texture_alias: RoyalGuard
   item_type: 1
   category: 60
+  cost: 5000
 # Imperial Royal Guard Gloves
 - guid: 230015
   name_id: 1648
@@ -159,6 +174,7 @@
   texture_alias: RoyalGuard
   item_type: 1
   category: 62
+  cost: 5000
 # Imperial Royal Guard Boots
 - guid: 230016
   name_id: 1652
@@ -169,6 +185,7 @@
   texture_alias: RoyalGuard
   item_type: 1
   category: 63
+  cost: 5000
 # Dash Rendar's Suit
 - guid: 230017
   name_id: 1565
@@ -179,6 +196,7 @@
   texture_alias: DashRendar
   item_type: 1
   category: 61
+  cost: 5000
 # Dash Rendar's Gloves
 - guid: 230018
   name_id: 1563
@@ -189,6 +207,7 @@
   texture_alias: DashRendar
   item_type: 1
   category: 62
+  cost: 5000
 # Dash Rendar's Boots
 - guid: 230019
   name_id: 1567
@@ -199,6 +218,7 @@
   texture_alias: DashRendar
   item_type: 1
   category: 63
+  cost: 5000
 # Han Solo's Outfit
 - guid: 230020
   name_id: 302
@@ -209,6 +229,7 @@
   texture_alias: HanSoloJacket
   item_type: 1
   category: 61
+  cost: 5000
 # Han Solo's Boots
 - guid: 230021
   name_id: 304
@@ -219,6 +240,7 @@
   texture_alias: HanSoloJacket
   item_type: 1
   category: 63
+  cost: 5000
 # Rebel Pilot Jumpsuit
 - guid: 230022
   name_id: 240
@@ -229,6 +251,7 @@
   texture_alias: RebelPilot
   item_type: 1
   category: 61
+  cost: 5000
 # Rebel Pilot Helmet
 - guid: 230023
   name_id: 236
@@ -239,6 +262,7 @@
   texture_alias: RebelPilot
   item_type: 1
   category: 60
+  cost: 5000
 # Rebel Pilot Gloves
 - guid: 230024
   name_id: 238
@@ -249,6 +273,7 @@
   texture_alias: Black
   item_type: 1
   category: 62
+  cost: 5000
 # Rebel Pilot Boots
 - guid: 230025
   name_id: 242
@@ -259,6 +284,7 @@
   texture_alias: Black
   item_type: 1
   category: 63
+  cost: 5000
 # Rebel Pilot Jumpsuit
 - guid: 230026
   name_id: 240
@@ -269,6 +295,7 @@
   texture_alias: Green
   item_type: 1
   category: 61
+  cost: 5000
 # Rebel Pilot Helmet
 - guid: 230027
   name_id: 236
@@ -279,6 +306,7 @@
   texture_alias: Green
   item_type: 1
   category: 60
+  cost: 5000
 # Rebel Pilot Jumpsuit
 - guid: 230028
   name_id: 240
@@ -289,6 +317,7 @@
   texture_alias: Red
   item_type: 1
   category: 61
+  cost: 5000
 # Rebel Pilot Helmet
 - guid: 230029
   name_id: 236
@@ -299,6 +328,7 @@
   texture_alias: Red
   item_type: 1
   category: 60
+  cost: 5000
 # Unknown boots
 - guid: 230030
   description_id: 14
@@ -308,6 +338,7 @@
   texture_alias: BrownIndigo
   item_type: 1
   category: 63
+  cost: 5000
 # C-3PO Backpack
 - guid: 230031
   name_id: 3074
@@ -318,6 +349,7 @@
   texture_alias: C3POPack
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_body_mandalorian_mustafar
 - guid: 230032
   name_id: 2701
@@ -328,6 +360,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_head_mandalorian_mustafar
 - guid: 230033
   name_id: 2699
@@ -338,6 +371,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 60
+  cost: 5000
 # wearable_hands_mandalorian_mustafar
 - guid: 230034
   name_id: 2700
@@ -348,6 +382,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 62
+  cost: 5000
 # wearable_feet_mandalorian_mustafar
 - guid: 230035
   name_id: 2702
@@ -358,6 +393,7 @@
   texture_alias: Mustafar
   item_type: 1
   category: 63
+  cost: 5000
 # Clone Trooper Diver Suit
 - guid: 230036
   name_id: 828
@@ -368,6 +404,7 @@
   texture_alias: CloneDiver
   item_type: 1
   category: 61
+  cost: 5000
 # Clone Trooper Diver Helmet
 - guid: 230037
   name_id: 824
@@ -378,6 +415,7 @@
   texture_alias: CloneDiver
   item_type: 1
   category: 60
+  cost: 5000
 # Clone Trooper Diver Gloves
 - guid: 230038
   name_id: 826
@@ -388,6 +426,7 @@
   texture_alias: CloneDiver
   item_type: 1
   category: 62
+  cost: 5000
 # Clone Trooper Diver Fins
 - guid: 230039
   name_id: 830
@@ -398,6 +437,7 @@
   texture_alias: CloneDiver
   item_type: 1
   category: 63
+  cost: 5000
 # Commander Stone's Armor
 - guid: 230040
   name_id: 1178
@@ -408,6 +448,7 @@
   texture_alias: CommanderStone
   item_type: 1
   category: 61
+  cost: 5000
 # Commander Stone's Helmet
 - guid: 230041
   name_id: 1184
@@ -418,6 +459,7 @@
   texture_alias: CommanderStone
   item_type: 1
   category: 60
+  cost: 5000
 # Commander Stone's Gloves
 - guid: 230042
   name_id: 1182
@@ -428,6 +470,7 @@
   texture_alias: CommanderStone
   item_type: 1
   category: 62
+  cost: 5000
 # Commander Stone's Boots
 - guid: 230043
   name_id: 1180
@@ -438,86 +481,95 @@
   texture_alias: CommanderStone
   item_type: 1
   category: 63
+  cost: 5000
 # wearable_body_clone_blue_squares
 - guid: 230044
-  name_id: 2705
+  name_id: 62021
   description_id: 14
-  icon_set_id: 673
+  icon_set_id: 3881
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
   texture_alias: BlueSquares
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_head_clone_blue_squares
 - guid: 230045
-  name_id: 2703
+  name_id: 62022
   description_id: 14
-  icon_set_id: 677
+  icon_set_id: 3882
   slot: !Equipment Head
   model_name: Wear_Human_<gender>_Head_CloneHelm.adr
   texture_alias: BlueSquares
   item_type: 1
   category: 60
+  cost: 5000
 # wearable_hands_clone_blue_squares
 - guid: 230046
-  name_id: 2704
+  name_id: 62023
   description_id: 14
-  icon_set_id: 676
+  icon_set_id: 3883
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
   texture_alias: BlueSquares
   item_type: 1
   category: 62
+  cost: 5000
 # wearable_feet_clone_blue_squares
 - guid: 230047
-  name_id: 2706
+  name_id: 62024
   description_id: 14
-  icon_set_id: 680
+  icon_set_id: 3884
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
   texture_alias: BlueSquares
   item_type: 1
   category: 63
+  cost: 5000
 # wearable_body_clone_red_stripe
 - guid: 230048
   name_id: 2709
   description_id: 14
-  icon_set_id: 673
+  icon_set_id: 3891
   slot: !Equipment Body
   model_name: Wear_Human_<gender>_Body_CloneBasicArmor.adr
   texture_alias: RedStripe
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_head_clone_red_stripe
 - guid: 230049
   name_id: 2707
   description_id: 14
-  icon_set_id: 677
+  icon_set_id: 3892
   slot: !Equipment Head
   model_name: Wear_Human_<gender>_Head_CloneHelm.adr
   texture_alias: RedStripe
   item_type: 1
   category: 60
+  cost: 5000
 # wearable_hands_clone_red_stripe
 - guid: 230050
   name_id: 2708
   description_id: 14
-  icon_set_id: 676
+  icon_set_id: 3893
   slot: !Equipment Hands
   model_name: Wear_Human_<gender>_Hands_CloneGloves.adr
   texture_alias: RedStripe
   item_type: 1
   category: 62
+  cost: 5000
 # wearable_feet_clone_red_stripe
 - guid: 230051
   name_id: 2710
   description_id: 14
-  icon_set_id: 680
+  icon_set_id: 3894
   slot: !Equipment Feet
   model_name: Wear_Human_<gender>_Feet_CloneBoots.adr
   texture_alias: RedStripe
   item_type: 1
   category: 63
+  cost: 5000
 # Captain Keeli's Armor
 - guid: 230052
   name_id: 1458
@@ -528,6 +580,7 @@
   texture_alias: CaptainKeeli
   item_type: 1
   category: 61
+  cost: 5000
 # Captain Keeli's Helmet
 - guid: 230053
   name_id: 1486
@@ -538,6 +591,7 @@
   texture_alias: CaptainKeeli
   item_type: 1
   category: 60
+  cost: 5000
 # Captain Keeli's Gloves
 - guid: 230054
   name_id: 1480
@@ -548,6 +602,7 @@
   texture_alias: CaptainKeeli
   item_type: 1
   category: 62
+  cost: 5000
 # Captain Keeli's Boots
 - guid: 230055
   name_id: 1468
@@ -558,6 +613,7 @@
   texture_alias: CaptainKeeli
   item_type: 1
   category: 63
+  cost: 5000
 # wearable_body_commander_wolffe
 - guid: 230056
   name_id: 2681
@@ -568,6 +624,7 @@
   texture_alias: CommanderWolffe
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_head_commander_wolffe
 - guid: 230057
   name_id: 2679
@@ -578,6 +635,7 @@
   texture_alias: CommanderWolffe
   item_type: 1
   category: 60
+  cost: 5000
 # wearable_hands_commander_wolffe
 - guid: 230058
   name_id: 2680
@@ -588,6 +646,7 @@
   texture_alias: CommanderWolffe
   item_type: 1
   category: 62
+  cost: 5000
 # wearable_feet_commander_wolffe
 - guid: 230059
   name_id: 2682
@@ -598,6 +657,7 @@
   texture_alias: CommanderWolffe
   item_type: 1
   category: 63
+  cost: 5000
 # Phase II Armor
 - guid: 230060
   name_id: 43699
@@ -608,6 +668,7 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 61
+  cost: 5000
 # Phase II Helmet
 - guid: 230061
   name_id: 1216
@@ -618,6 +679,7 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 60
+  cost: 5000
 # Phase II Gloves
 - guid: 230062
   name_id: 43698
@@ -628,6 +690,7 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 62
+  cost: 5000
 # Phase II Boots
 - guid: 230063
   name_id: 1212
@@ -638,6 +701,7 @@
   texture_alias: CloneBasic
   item_type: 1
   category: 63
+  cost: 5000
 # Azure Death Watch Commander Suit
 - guid: 230064
   name_id: 53721
@@ -648,6 +712,7 @@
   texture_alias: CommanderAqua
   item_type: 1
   category: 61
+  cost: 5000
 # Azure Death Watch Commander Helmet
 - guid: 230065
   name_id: 53719
@@ -658,6 +723,7 @@
   texture_alias: CommanderAqua
   item_type: 1
   category: 60
+  cost: 5000
 # Azure Death Watch Commander Gloves
 - guid: 230066
   name_id: 53720
@@ -668,6 +734,7 @@
   texture_alias: CommanderAqua
   item_type: 1
   category: 62
+  cost: 5000
 # Azure Death Watch Commander Boots
 - guid: 230067
   name_id: 53722
@@ -678,6 +745,7 @@
   texture_alias: CommanderAqua
   item_type: 1
   category: 63
+  cost: 5000
 # Byzantium Death Watch Commander Suit
 - guid: 230068
   name_id: 53713
@@ -688,6 +756,7 @@
   texture_alias: CommanderPlum
   item_type: 1
   category: 61
+  cost: 5000
 # Byzantium Death Watch Commander Helmet
 - guid: 230069
   name_id: 53711
@@ -698,6 +767,7 @@
   texture_alias: CommanderPlum
   item_type: 1
   category: 60
+  cost: 5000
 # Byzantium Death Watch Commander Gloves
 - guid: 230070
   name_id: 53712
@@ -708,6 +778,7 @@
   texture_alias: CommanderPlum
   item_type: 1
   category: 62
+  cost: 5000
 # Byzantium Death Watch Commander Boots
 - guid: 230071
   name_id: 53714
@@ -718,6 +789,7 @@
   texture_alias: CommanderPlum
   item_type: 1
   category: 63
+  cost: 5000
 # Cobalt Death Watch Commander Suit
 - guid: 230072
   name_id: 53717
@@ -728,6 +800,7 @@
   texture_alias: CommanderBlue
   item_type: 1
   category: 61
+  cost: 5000
 # Cobalt Death Watch Commander Helmet
 - guid: 230073
   name_id: 53715
@@ -738,6 +811,7 @@
   texture_alias: CommanderBlue
   item_type: 1
   category: 60
+  cost: 5000
 # Cobalt Death Watch Commander Gloves
 - guid: 230074
   name_id: 53716
@@ -748,6 +822,7 @@
   texture_alias: CommanderBlue
   item_type: 1
   category: 62
+  cost: 5000
 # Cobalt Death Watch Commander Boots
 - guid: 230075
   name_id: 53718
@@ -758,6 +833,7 @@
   texture_alias: CommanderBlue
   item_type: 1
   category: 63
+  cost: 5000
 # Republic General's Snow Hat - Do Not Use
 - guid: 230076
   name_id: 1490
@@ -768,6 +844,7 @@
   texture_alias: GeneralSnowHoodieDown
   item_type: 1
   category: 60
+  cost: 5000
 # Lurmen Suit
 - guid: 230077
   description_id: 14
@@ -777,6 +854,7 @@
   texture_alias: WagToo
   item_type: 1
   category: 61
+  cost: 5000
 # Lurmen Beanie
 - guid: 230078
   description_id: 14
@@ -786,6 +864,7 @@
   texture_alias: WagToo
   item_type: 1
   category: 60
+  cost: 5000
 # Lurmen Gloves
 - guid: 230079
   description_id: 14
@@ -795,6 +874,7 @@
   texture_alias: WagToo
   item_type: 1
   category: 62
+  cost: 5000
 # Lurmen Boots
 - guid: 230080
   description_id: 14
@@ -804,6 +884,7 @@
   texture_alias: WagToo
   item_type: 1
   category: 63
+  cost: 5000
 # Republic Fleet Officer Uniform
 - guid: 230081
   name_id: 8540
@@ -815,6 +896,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Republic Fleet Officer Hat
 - guid: 230082
   name_id: 8542
@@ -826,6 +908,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Senatorial Naboo Bodysuit
 - guid: 230083
   name_id: 248
@@ -836,6 +919,7 @@
   texture_alias: PadmeBodySuit
   item_type: 1
   category: 61
+  cost: 5000
 # Senatorial Naboo Headwrap
 - guid: 230084
   name_id: 246
@@ -846,6 +930,7 @@
   texture_alias: PadmePurple
   item_type: 1
   category: 60
+  cost: 5000
 # Senatorial Naboo Boots
 - guid: 230085
   name_id: 250
@@ -856,6 +941,7 @@
   texture_alias: PadmeBodySuit
   item_type: 1
   category: 63
+  cost: 5000
 # wearable_body_anakin_tatooine
 - guid: 230086
   name_id: 2673
@@ -866,6 +952,7 @@
   texture_alias: Tatooine
   item_type: 1
   category: 61
+  cost: 5000
 # wearable_hands_anakin_tatooine
 - guid: 230087
   name_id: 2672
@@ -876,6 +963,7 @@
   texture_alias: Tatooine
   item_type: 1
   category: 62
+  cost: 5000
 # wearable_feet_anakin_tatooine
 - guid: 230088
   name_id: 2674
@@ -886,6 +974,7 @@
   texture_alias: Tatooine
   item_type: 1
   category: 63
+  cost: 5000
 # Boba Phat's Suit
 - guid: 230089
   name_id: 1454
@@ -916,6 +1005,7 @@
   texture_alias: Plain
   item_type: 1
   category: 61
+  cost: 5000
 # Ming Po Gloves
 - guid: 230092
   name_id: 52834
@@ -926,6 +1016,7 @@
   texture_alias: Plain
   item_type: 1
   category: 62
+  cost: 5000
 # Ming Po Boots
 - guid: 230093
   name_id: 52836
@@ -936,6 +1027,7 @@
   texture_alias: Plain
   item_type: 1
   category: 63
+  cost: 5000
 # DC-17m Interchangable Weapons System
 - guid: 230094
   description_id: 14
@@ -946,6 +1038,7 @@
   texture_alias: CloneCommando
   item_type: 1
   category: 64
+  cost: 5000
 # Blaster Test E11
 - guid: 230095
   name_id: 2561
@@ -957,6 +1050,7 @@
   texture_alias: Stormtrooper
   item_type: 1
   category: 64
+  cost: 5000
 - guid: 230096
   description_id: 14
   icon_set_id: 681
@@ -966,6 +1060,7 @@
   texture_alias: Basic
   item_type: 1
   category: 64
+  cost: 5000
 - guid: 230097
   description_id: 14
   icon_set_id: 681
@@ -975,6 +1070,7 @@
   texture_alias: Metallic
   item_type: 1
   category: 64
+  cost: 5000
 # 'Umbara Academy: Ghost Attack 1'
 - guid: 230098
   name_id: 51036
@@ -986,6 +1082,7 @@
   texture_alias: Ahsoka
   item_type: 25
   category: 64
+  cost: 5000
 # 'Umbara Academy: Ghost Attack 2'
 - guid: 230099
   name_id: 51037
@@ -997,6 +1094,7 @@
   texture_alias: Anakin
   item_type: 25
   category: 64
+  cost: 5000
 # 'Umbara Academy: Ghost Attack 3'
 - guid: 230100
   name_id: 51038
@@ -1008,6 +1106,7 @@
   texture_alias: MaceWindu
   item_type: 25
   category: 64
+  cost: 5000
 # 'Umbara Academy: Ghost Attack 2'
 - guid: 230101
   name_id: 51037
@@ -1018,6 +1117,7 @@
   model_name: Wield_LightsaberHiltStandard_Anakin_Ghost.adr
   texture_alias: Anakin
   item_type: 25
+  cost: 5000
 # 'Umbara Academy: Ghost Attack 3'
 - guid: 230102
   name_id: 51038
@@ -1028,6 +1128,7 @@
   model_name: Wield_LightsaberHiltStandard_MaceWindu_Ghost.adr
   texture_alias: MaceWindu
   item_type: 25
+  cost: 5000
 # Mandalorian Shatterer Battle Rifle
 - guid: 230103
   name_id: 8780
@@ -1039,6 +1140,7 @@
   texture_alias: Deathwatch
   item_type: 1
   category: 64
+  cost: 5000
 # Rebel Pilot Blaster
 - guid: 230104
   name_id: 2412
@@ -1050,6 +1152,7 @@
   texture_alias: RebelPilot
   item_type: 1
   category: 64
+  cost: 5000
 # Covert Diplomat Blaster Pistol
 - guid: 230105
   name_id: 8792
@@ -1061,6 +1164,7 @@
   texture_alias: QueenJamilla
   item_type: 1
   category: 64
+  cost: 5000
 # Imperial Royal Guard Force Pike
 - guid: 230106
   name_id: 8799
@@ -1072,6 +1176,7 @@
   texture_alias: RoyalGuard
   item_type: 1
   category: 64
+  cost: 5000
 # Tamtel Skreej's Pike
 - guid: 230107
   name_id: 8798
@@ -1083,6 +1188,7 @@
   texture_alias: TamtelSkreej
   item_type: 1
   category: 64
+  cost: 5000
 # His cane
 - guid: 230108
   name_id: 10423
@@ -1093,6 +1199,7 @@
   model_name: Wield_YodaCane.adr
   item_type: 1
   category: 64
+  cost: 5000
 # Renegade Heavy Blaster Pistol (Left)
 - guid: 230109
   description_id: 14
@@ -1103,3 +1210,4 @@
   texture_alias: RenegadeHeavyBlaster
   item_type: 1
   category: 64
+  cost: 5000

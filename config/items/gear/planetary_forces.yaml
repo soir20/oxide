@@ -10,6 +10,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Zygerrian Guard Helmet
 - guid: 3250
   name_id: 4452
@@ -21,6 +22,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 300
 # Zygerrian Guard Boots
 - guid: 3253
   name_id: 4454
@@ -32,6 +34,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 300
 # Bo Katan's Death Watch Suit
 - guid: 3338
   name_id: 4552
@@ -42,6 +45,7 @@
   texture_alias: BoKatan
   item_type: 1
   category: 61
+  cost: 2000
 # Bo Katan's Death Watch Helmet
 - guid: 3336
   name_id: 4550
@@ -52,6 +56,7 @@
   texture_alias: BoKatan
   item_type: 1
   category: 60
+  cost: 1500
 # Bo Katan's Death Watch Gloves
 - guid: 3337
   name_id: 4551
@@ -62,6 +67,7 @@
   texture_alias: BoKatan
   item_type: 1
   category: 62
+  cost: 750
 # Bo Katan's Death Watch Boots
 - guid: 3339
   name_id: 4553
@@ -72,6 +78,7 @@
   texture_alias: BoKatan
   item_type: 1
   category: 63
+  cost: 750
 # Krismo Sodi's Kage Uniform
 - guid: 3437
   name_id: 4715
@@ -82,6 +89,7 @@
   texture_alias: KrismoSodi
   item_type: 1
   category: 61
+  cost: 2000
 # Krismo Sodi's Hooded Mask
 - guid: 3435
   name_id: 4713
@@ -92,6 +100,7 @@
   texture_alias: KrismoSodi
   item_type: 1
   category: 60
+  cost: 1000
 # Krismo Sodi's Gloves
 - guid: 3436
   name_id: 4714
@@ -102,6 +111,7 @@
   texture_alias: KrismoSodi
   item_type: 1
   category: 62
+  cost: 500
 # Krismo Sodi's Boots
 - guid: 3438
   name_id: 4716
@@ -112,6 +122,7 @@
   texture_alias: KrismoSodi
   item_type: 1
   category: 63
+  cost: 500
 # Pre Vizsla's Armor
 - guid: 388
   name_id: 1194
@@ -122,6 +133,7 @@
   texture_alias: PreVizsla
   item_type: 1
   category: 61
+  cost: 1000
 # Pre Vizsla's Helmet
 - guid: 391
   name_id: 1200
@@ -132,6 +144,7 @@
   texture_alias: PreVizsla
   item_type: 1
   category: 60
+  cost: 10000
 # Pre Vizsla's Gloves
 - guid: 390
   name_id: 1198
@@ -142,6 +155,7 @@
   texture_alias: PreVizsla
   item_type: 1
   category: 62
+  cost: 500
 # Pre Vizsla's Boots
 - guid: 389
   name_id: 1196
@@ -152,6 +166,7 @@
   texture_alias: PreVizsla
   item_type: 1
   category: 63
+  cost: 500
 # Pre Vizsla's Death Watch Armor
 - guid: 190015
   name_id: 54427
@@ -162,6 +177,7 @@
   texture_alias: PreViz
   item_type: 1
   category: 61
+  cost: 5000
 # Pre Vizsla's Death Watch Helmet
 - guid: 190016
   name_id: 54425
@@ -172,6 +188,7 @@
   texture_alias: PreViz
   item_type: 1
   category: 60
+  cost: 5000
 # Pre Vizsla's Death Watch Gloves
 - guid: 190017
   name_id: 54426
@@ -182,6 +199,7 @@
   texture_alias: PreViz
   item_type: 1
   category: 62
+  cost: 5000
 # Pre Vizsla's Death Watch Boots
 - guid: 190018
   name_id: 54428
@@ -192,6 +210,7 @@
   texture_alias: PreViz
   item_type: 1
   category: 63
+  cost: 5000
 # King Katuunko's Suit
 - guid: 1104
   name_id: 1620
@@ -202,6 +221,7 @@
   texture_alias: Gold
   item_type: 1
   category: 61
+  cost: 1000
 # King Katuunko's Visor
 - guid: 1102
   name_id: 1616
@@ -212,6 +232,7 @@
   texture_alias: KingKatuunko
   item_type: 1
   category: 60
+  cost: 1500
 # King Katuunko's Handguards
 - guid: 1103
   name_id: 1618
@@ -222,6 +243,7 @@
   texture_alias: Gold
   item_type: 1
   category: 62
+  cost: 500
 # King Katuunko's Boots
 - guid: 1105
   name_id: 1622
@@ -232,6 +254,7 @@
   texture_alias: Gold
   item_type: 1
   category: 63
+  cost: 500
 # Baron Papanoida's Suit
 - guid: 1115
   name_id: 1642
@@ -242,6 +265,7 @@
   texture_alias: Papanoida
   item_type: 1
   category: 61
+  cost: 2000
 # Baron Papanoida's Hat
 - guid: 1113
   name_id: 1638
@@ -252,6 +276,7 @@
   texture_alias: Papanoida
   item_type: 1
   category: 60
+  cost: 2000
 # Baron Papanoida's Gloves
 - guid: 1114
   name_id: 1640
@@ -262,6 +287,7 @@
   texture_alias: Papanoida
   item_type: 1
   category: 62
+  cost: 500
 # Baron Papanoida's Boots
 - guid: 1116
   name_id: 1644
@@ -272,6 +298,7 @@
   texture_alias: Papanoida
   item_type: 1
   category: 63
+  cost: 500
 # Satine's Royal Guard Armor
 - guid: 1156
   name_id: 1761
@@ -282,6 +309,7 @@
   texture_alias: SRG
   item_type: 1
   category: 61
+  cost: 2000
 # Satine's Royal Guard Helm
 - guid: 1154
   name_id: 1757
@@ -292,6 +320,7 @@
   texture_alias: SRG
   item_type: 1
   category: 60
+  cost: 1500
 # Satine's Royal Guard Gloves
 - guid: 1155
   name_id: 1759
@@ -302,6 +331,7 @@
   texture_alias: SRG
   item_type: 1
   category: 62
+  cost: 500
 # Satine's Royal Guard Boots
 - guid: 1157
   name_id: 1763
@@ -312,6 +342,7 @@
   texture_alias: SRG
   item_type: 1
   category: 63
+  cost: 500
 # Duchess Satine's Robes
 - guid: 1181
   name_id: 1845
@@ -322,6 +353,7 @@
   texture_alias: DuchessSatine
   item_type: 1
   category: 61
+  cost: 2500
 # Duchess Satine's Headdress
 - guid: 1180
   name_id: 1837
@@ -332,6 +364,7 @@
   texture_alias: DuchessSatine
   item_type: 1
   category: 60
+  cost: 2000
 # Duchess Satine's Boots
 - guid: 1182
   name_id: 1840
@@ -342,6 +375,7 @@
   texture_alias: DuchessSatine
   item_type: 1
   category: 63
+  cost: 1000
 # Mandalorian Secret Service Armor
 - guid: 1160
   name_id: 1769
@@ -352,6 +386,7 @@
   texture_alias: SecretService
   item_type: 1
   category: 61
+  cost: 2000
 # Mandalorian Secret Service Helmet
 - guid: 1158
   name_id: 1765
@@ -362,6 +397,7 @@
   texture_alias: SecretService
   item_type: 1
   category: 60
+  cost: 1000
 # Mandalorian Secret Service Gloves
 - guid: 1159
   name_id: 1767
@@ -372,6 +408,7 @@
   texture_alias: SecretService
   item_type: 1
   category: 62
+  cost: 500
 # Mandalorian Secret Service Boots
 - guid: 1161
   name_id: 1771
@@ -382,6 +419,7 @@
   texture_alias: SecretService
   item_type: 1
   category: 63
+  cost: 500
 # Mother Talzin's Robes
 - guid: 2243
   name_id: 32931
@@ -392,6 +430,7 @@
   texture_alias: MotherTalzin
   item_type: 1
   category: 61
+  cost: 2000
 # Mother Talzin's Hood
 - guid: 2244
   name_id: 32932
@@ -402,6 +441,7 @@
   texture_alias: MotherTalzin
   item_type: 1
   category: 60
+  cost: 1000
 # Mother Talzin's Boots
 - guid: 2246
   name_id: 32934
@@ -412,6 +452,7 @@
   texture_alias: MotherTalzin
   item_type: 1
   category: 63
+  cost: 500
 # Nightsister Ventress' Outfit
 - guid: 2264
   name_id: 32981
@@ -422,6 +463,7 @@
   texture_alias: VentressNightsister
   item_type: 1
   category: 61
+  cost: 2000
 # Nightsister Ventress' Hood
 - guid: 2262
   name_id: 32979
@@ -432,6 +474,7 @@
   texture_alias: VentressNightsister
   item_type: 1
   category: 60
+  cost: 1000
 # Nightsister Ventress' Gloves
 - guid: 2263
   name_id: 32980
@@ -442,6 +485,7 @@
   texture_alias: VentressNightsister
   item_type: 1
   category: 62
+  cost: 1000
 # Nightsister Ventress' Boots
 - guid: 2265
   name_id: 32982
@@ -452,6 +496,7 @@
   texture_alias: VentressNightsister
   item_type: 1
   category: 63
+  cost: 500
 # Mortis Son's Suit
 - guid: 2376
   name_id: 33559
@@ -462,6 +507,7 @@
   texture_alias: MortisSon
   item_type: 1
   category: 61
+  cost: 1000
 # Mortis Son's Collar
 - guid: 2374
   name_id: 33557
@@ -472,6 +518,7 @@
   texture_alias: MortisSon
   item_type: 1
   category: 60
+  cost: 1000
 # Mortis Son's Gloves
 - guid: 2375
   name_id: 33558
@@ -482,6 +529,7 @@
   texture_alias: MortisSon
   item_type: 1
   category: 62
+  cost: 500
 # Mortis Son's Boots
 - guid: 2377
   name_id: 33560
@@ -492,6 +540,7 @@
   texture_alias: MortisSon
   item_type: 1
   category: 63
+  cost: 500
 # Garnac's Suit
 - guid: 2747
   name_id: 43515
@@ -502,6 +551,7 @@
   texture_alias: Garnac
   item_type: 1
   category: 61
+  cost: 2000
 # Mandalorian Deathwatch Suit
 - guid: 3167
   name_id: 4303
@@ -512,6 +562,7 @@
   texture_alias: BlackSilver
   item_type: 1
   category: 61
+  cost: 3000
 # Mandalorian Deathwatch Helmet
 - guid: 3165
   name_id: 4301
@@ -522,6 +573,7 @@
   texture_alias: BlackSilver
   item_type: 1
   category: 60
+  cost: 2000
 # Mandalorian Deathwatch Gloves
 - guid: 3166
   name_id: 4302
@@ -532,6 +584,7 @@
   texture_alias: BlackSilver
   item_type: 1
   category: 62
+  cost: 1000
 # Mandalorian Deathwatch Boots
 - guid: 3168
   name_id: 4304
@@ -542,6 +595,7 @@
   texture_alias: BlackSilver
   item_type: 1
   category: 63
+  cost: 1000
 # Mandalorian Mercenary Armor
 - guid: 2456
   name_id: 2664
@@ -552,6 +606,7 @@
   texture_alias: RedSilver
   item_type: 1
   category: 61
+  cost: 1500
 # Mandalorian Mercenary Helmet
 - guid: 2454
   name_id: 2662
@@ -562,6 +617,7 @@
   texture_alias: RedSilver
   item_type: 1
   category: 60
+  cost: 1500
 # Mandalorian Mercenary Gloves
 - guid: 2455
   name_id: 2663
@@ -572,6 +628,7 @@
   texture_alias: RedSilver
   item_type: 1
   category: 62
+  cost: 500
 # Mandalorian Mercenary Boots
 - guid: 2457
   name_id: 2665
@@ -582,6 +639,7 @@
   texture_alias: RedSilver
   item_type: 1
   category: 63
+  cost: 500
 # Death Watch Armor
 - guid: 589
   name_id: 178
@@ -593,6 +651,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 4000
 # Death Watch Helmet
 - guid: 587
   name_id: 174
@@ -604,6 +663,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 4000
 # Death Watch Gloves
 - guid: 588
   name_id: 176
@@ -615,6 +675,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 1000
 # Death Watch Boots
 - guid: 590
   name_id: 180
@@ -626,6 +687,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 1000
 # Tusken Raider Robes
 - guid: 628
   name_id: 256
@@ -637,6 +699,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Tusken Raider Helmet
 - guid: 626
   name_id: 252
@@ -648,6 +711,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 700
 # Tusken Raider Gloves
 - guid: 627
   name_id: 254
@@ -659,6 +723,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Tusken Raider Boots
 - guid: 629
   name_id: 258
@@ -670,6 +735,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 250
 # Captain Typho's Armor
 - guid: 865
   name_id: 1329
@@ -681,6 +747,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 700
 # Captain Typho's Eyepatch
 - guid: 913
   name_id: 1424
@@ -692,6 +759,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 400
 # Captain Typho's Gloves
 - guid: 897
   name_id: 1392
@@ -703,6 +771,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Captain Typho's Boots
 - guid: 876
   name_id: 1350
@@ -714,6 +783,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Lama Su's Armor
 - guid: 991
   name_id: 1577
@@ -725,6 +795,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Lama Su's Boots
 - guid: 992
   name_id: 1579
@@ -736,6 +807,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Toydarian Royal Guard Uniform
 - guid: 1125
   name_id: 1662
@@ -747,6 +819,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Toydarian Royal Guard Helmet
 - guid: 1123
   name_id: 1658
@@ -758,6 +831,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 2500
 # Toydarian Royal Guard Gloves
 - guid: 1124
   name_id: 1660
@@ -769,6 +843,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 800
 # Toydarian Royal Guard Boots
 - guid: 1126
   name_id: 1664
@@ -780,6 +855,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 800
 # Ion Papanoida's Uniform
 - guid: 989
   name_id: 1573
@@ -791,6 +867,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Ion Papanoida's Hat
 - guid: 987
   name_id: 1569
@@ -802,6 +879,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1000
 # Ion Papanoida's Gloves
 - guid: 988
   name_id: 1571
@@ -813,6 +891,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 300
 # Ion Papanoida's Boots
 - guid: 990
   name_id: 1575
@@ -824,6 +903,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Mandalorian Police Captain Armor
 - guid: 1149
   name_id: 1743
@@ -835,6 +915,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Mandalorian Police Captain Helmet
 - guid: 1147
   name_id: 1739
@@ -846,6 +927,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1600
 # Mandalorian Police Captain Gloves
 - guid: 1148
   name_id: 1741
@@ -857,6 +939,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 400
 # Mandalorian Police Captain Boots
 - guid: 1150
   name_id: 1745
@@ -868,6 +951,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Tee Va's Robe
 - guid: 1162
   name_id: 1773
@@ -879,6 +963,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 400
 # Tee Va's Headdress
 - guid: 1179
   name_id: 1813
@@ -890,6 +975,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 800
 # Tee Va's Sandals
 - guid: 1163
   name_id: 1775
@@ -901,6 +987,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Mandalorian Cadet Uniform
 - guid: 1184
   name_id: 1848
@@ -912,6 +999,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Mandalorian Cadet Visor
 - guid: 1183
   name_id: 1846
@@ -923,6 +1011,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 400
 # Mandalorian Cadet Boots
 - guid: 1185
   name_id: 1850
@@ -934,6 +1023,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Coruscant Engineer Uniform
 - guid: 1283
   name_id: 1911
@@ -945,6 +1035,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Coruscant Engineer Hat
 - guid: 1281
   name_id: 1907
@@ -956,6 +1047,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 600
 # Coruscant Engineer Gloves
 - guid: 1282
   name_id: 1909
@@ -967,6 +1059,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 80
 # Coruscant Engineer Boots
 - guid: 1284
   name_id: 1913
@@ -978,6 +1071,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 80
 # Sochek's Suit
 - guid: 2751
   name_id: 43514
@@ -989,6 +1083,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1800
 # Sochek's Goggles
 - guid: 2750
   name_id: 43513
@@ -1000,6 +1095,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1000
 # Captain Ackbar's Uniform
 - guid: 1308
   name_id: 2340
@@ -1011,6 +1107,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Captain Ackbar's Helmet
 - guid: 1307
   name_id: 2338
@@ -1022,6 +1119,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1500
 # Captain Ackbar's Boots
 - guid: 1309
   name_id: 2342
@@ -1033,6 +1131,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 600
 # Gungan Warrior Armor
 - guid: 1316
   name_id: 2356
@@ -1044,6 +1143,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Gungan Warrior Mask
 - guid: 1314
   name_id: 2352
@@ -1055,6 +1155,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1000
 # Gungan Warrior Gloves
 - guid: 1315
   name_id: 2354
@@ -1066,6 +1167,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 2000
 # Lee-Char's Suit
 - guid: 1319
   name_id: 2362
@@ -1077,6 +1179,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Lee-Char's Crown
 - guid: 1318
   name_id: 2360
@@ -1088,6 +1191,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 4000
 # Lee-Char's Boots
 - guid: 1320
   name_id: 2364
@@ -1099,6 +1203,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 800
 # Boss Lyonie's Robes
 - guid: 3078
   name_id: 2390
@@ -1110,6 +1215,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2500
 # Boss Lyonie's Headdress
 - guid: 3077
   name_id: 2389
@@ -1121,6 +1227,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 2500
 # Balnab Hunter Suit
 - guid: 1586
   name_id: 2949
@@ -1132,6 +1239,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Balnab Hunter Helmet
 - guid: 1585
   name_id: 2947
@@ -1143,6 +1251,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 500
 # Balnab Hunter Boots
 - guid: 1587
   name_id: 2951
@@ -1154,6 +1263,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Umbaran Suit
 - guid: 3163
   name_id: 4299
@@ -1165,6 +1275,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Umbaran Gloves
 - guid: 3162
   name_id: 4298
@@ -1176,6 +1287,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 300
 # Umbaran Boots
 - guid: 3164
   name_id: 4300
@@ -1187,6 +1299,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 300
 # Hondo Ohnaka's Tunic
 - guid: 858
   name_id: 1315
@@ -1238,6 +1351,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Nightsister's Hood
 - guid: 2250
   name_id: 32938
@@ -1249,6 +1363,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 600
 # Nightsister's Wrist Wraps
 - guid: 2251
   name_id: 32939
@@ -1260,6 +1375,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Nightsister's Boots
 - guid: 2253
   name_id: 32941
@@ -1271,6 +1387,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Nightbrother Tunic
 - guid: 2268
   name_id: 32985
@@ -1282,6 +1399,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Nightbrother Bracers
 - guid: 2267
   name_id: 32984
@@ -1293,6 +1411,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Nightbrother Boots
 - guid: 2269
   name_id: 32986
@@ -1304,6 +1423,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Mortis Father's Suit
 - guid: 2379
   name_id: 33784
@@ -1315,6 +1435,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Mortis Father's Hat
 - guid: 2378
   name_id: 33783
@@ -1326,6 +1447,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 500
 # Mortis Father's Boots
 - guid: 2380
   name_id: 33785
@@ -1337,6 +1459,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Cassie Cryar's Suit
 - guid: 234
   name_id: 820
@@ -1348,6 +1471,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Cassie Cryar's Gloves
 - guid: 233
   name_id: 818
@@ -1359,6 +1483,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Cassie Cryar's Shoes
 - guid: 235
   name_id: 822
@@ -1370,6 +1495,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Coruscant Underworld Garb
 - guid: 392
   name_id: 1202
@@ -1381,6 +1507,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 900
 # Coruscant Underworld Headgear
 - guid: 395
   name_id: 1208
@@ -1392,6 +1519,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 700
 # Coruscant Underworld Gloves
 - guid: 394
   name_id: 1206
@@ -1403,6 +1531,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Coruscant Underworld Boots
 - guid: 393
   name_id: 1204
@@ -1414,6 +1543,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Major Rigosso's Suit
 - guid: 190134
   name_id: 4764
@@ -1425,6 +1555,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Major Rigosso's Gloves
 - guid: 190135
   name_id: 4763
@@ -1436,6 +1567,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Major Rigosso's Boots
 - guid: 190136
   name_id: 4765
@@ -1447,6 +1579,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Usk Bunker General Suit
 - guid: 190137
   name_id: 4776
@@ -1458,6 +1591,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Usk Bunker General Gloves
 - guid: 190138
   name_id: 4775
@@ -1469,6 +1603,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Usk Bunker General Boots
 - guid: 190139
   name_id: 4777
@@ -1480,6 +1615,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Grek Bunker General Suit
 - guid: 190140
   name_id: 4772
@@ -1491,6 +1627,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Grek Bunker General Gloves
 - guid: 190141
   name_id: 4771
@@ -1502,6 +1639,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Grek Bunker General Boots
 - guid: 190142
   name_id: 4773
@@ -1513,6 +1651,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Umbaran General Suit
 - guid: 190143
   name_id: 4780
@@ -1524,6 +1663,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Umbaran General Gloves
 - guid: 190144
   name_id: 4779
@@ -1535,6 +1675,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Umbaran General Boots
 - guid: 190145
   name_id: 4781
@@ -1546,6 +1687,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Gerrera's Suit
 - guid: 190146
   name_id: 52906
@@ -1557,6 +1699,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Gerrera's Gloves
 - guid: 190147
   name_id: 52905
@@ -1568,6 +1711,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Gerrera's Boots
 - guid: 190148
   name_id: 52907
@@ -1579,6 +1723,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Onderon Guard Suit
 - guid: 190149
   name_id: 53542
@@ -1590,6 +1735,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Onderon Guard Helmet
 - guid: 190150
   name_id: 53540
@@ -1601,6 +1747,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Onderon Guard Gloves
 - guid: 190151
   name_id: 53541
@@ -1612,6 +1759,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Onderon Guard Boots
 - guid: 190152
   name_id: 53543
@@ -1623,6 +1771,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Police Guard Armor
 - guid: 190153
   name_id: 43707
@@ -1634,6 +1783,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Police Guard Helmet
 - guid: 190154
   name_id: 43705
@@ -1645,6 +1795,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Police Guard Gloves
 - guid: 190155
   name_id: 43706
@@ -1656,6 +1807,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Police Guard Boots
 - guid: 190156
   name_id: 43708
@@ -1667,6 +1819,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Jiro's Suit
 - guid: 190157
   name_id: 52886
@@ -1677,6 +1830,7 @@
   texture_alias: Jiro
   item_type: 1
   category: 61
+  cost: 5000
 # Jiro's Gloves
 - guid: 190158
   name_id: 54547
@@ -1687,6 +1841,7 @@
   texture_alias: Jiro
   item_type: 1
   category: 62
+  cost: 5000
 # Jiro's Boots
 - guid: 190159
   name_id: 52887
@@ -1697,6 +1852,7 @@
   texture_alias: Jiro
   item_type: 1
   category: 63
+  cost: 5000
 # Craggy Pirate Suit
 - guid: 190160
   name_id: 54495
@@ -1708,6 +1864,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Craggy Pirate Gloves
 - guid: 190161
   name_id: 54494
@@ -1719,6 +1876,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Craggy Pirate Boots
 - guid: 190162
   name_id: 54496
@@ -1730,6 +1888,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Weequay Pirate Suit
 - guid: 190163
   name_id: 53546
@@ -1741,6 +1900,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Weequay Pirate Bandana
 - guid: 190164
   name_id: 53544
@@ -1752,6 +1912,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Weequay Pirate Gloves
 - guid: 190165
   name_id: 53545
@@ -1763,6 +1924,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Weequay Pirate Boots
 - guid: 190166
   name_id: 53547
@@ -1774,6 +1936,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Black Sun Armor
 - guid: 190167
   name_id: 54508
@@ -1784,6 +1947,7 @@
   texture_alias: BlackSunSoldier
   item_type: 1
   category: 61
+  cost: 5000
 # Black Sun Helmet
 - guid: 190168
   name_id: 54506
@@ -1794,6 +1958,7 @@
   texture_alias: BlackSunSoldier
   item_type: 1
   category: 60
+  cost: 5000
 # Black Sun Foot Soldier Boots
 - guid: 190169
   name_id: 54203
@@ -1804,6 +1969,7 @@
   texture_alias: BlackSunSoldier
   item_type: 1
   category: 63
+  cost: 5000
 # Nikto Spacesuit
 - guid: 190170
   name_id: 60771
@@ -1814,6 +1980,7 @@
   texture_alias: Nikto
   item_type: 1
   category: 61
+  cost: 5000
 # Nikto Helmet
 - guid: 190171
   name_id: 60774
@@ -1824,6 +1991,7 @@
   texture_alias: Nikto
   item_type: 1
   category: 60
+  cost: 5000
 # Nikto Gloves
 - guid: 190172
   name_id: 60772
@@ -1834,6 +2002,7 @@
   texture_alias: Nikto
   item_type: 1
   category: 62
+  cost: 5000
 # Nikto Boots
 - guid: 190173
   name_id: 60773
@@ -1844,6 +2013,7 @@
   texture_alias: Nikto
   item_type: 1
   category: 63
+  cost: 5000
 # Ming Po Robe
 - guid: 190174
   name_id: 52835
@@ -1855,6 +2025,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Ming Po Gloves
 - guid: 190175
   name_id: 52834
@@ -1866,6 +2037,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Ming Po Boots
 - guid: 190176
   name_id: 52836
@@ -1877,6 +2049,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Ming Po Militia Suit
 - guid: 190177
   name_id: 52855
@@ -1888,6 +2061,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Ming Po Militia Helmet
 - guid: 190178
   name_id: 52853
@@ -1899,6 +2073,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Ming Po Militia Gloves
 - guid: 190179
   name_id: 52854
@@ -1910,6 +2085,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Ming Po Militia Boots
 - guid: 190180
   name_id: 52856
@@ -1921,6 +2097,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Cold Warrior Armor
 - guid: 190181
   name_id: 52062
@@ -1932,6 +2109,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Cold Warrior Helmet
 - guid: 190182
   name_id: 52061
@@ -1943,6 +2121,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Cold Warrior Gloves
 - guid: 190183
   name_id: 52063
@@ -1954,6 +2133,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Cold Warrior Boots
 - guid: 190184
   name_id: 52064
@@ -1965,6 +2145,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Carlac Death Watch Elite Suit
 - guid: 190185
   name_id: 4905
@@ -1975,6 +2156,7 @@
   texture_alias: DeathWatchElite
   item_type: 1
   category: 61
+  cost: 5000
 # Carlac Death Watch Elite Helmet
 - guid: 190186
   name_id: 4903
@@ -1985,6 +2167,7 @@
   texture_alias: DeathWatchElite
   item_type: 1
   category: 60
+  cost: 5000
 # Carlac Death Watch Elite Gloves
 - guid: 190187
   name_id: 4904
@@ -1995,6 +2178,7 @@
   texture_alias: DeathwatchElite
   item_type: 1
   category: 62
+  cost: 5000
 # Carlac Death Watch Elite Boots
 - guid: 190188
   name_id: 4906
@@ -2005,6 +2189,7 @@
   texture_alias: DeathWatchElite
   item_type: 1
   category: 63
+  cost: 5000
 # Orange Death Watch Commander Suit
 - guid: 190189
   name_id: 53709
@@ -2015,6 +2200,7 @@
   texture_alias: CommanderOrange
   item_type: 1
   category: 61
+  cost: 5000
 # Orange Death Watch Commander Helmet
 - guid: 190190
   name_id: 53707
@@ -2025,6 +2211,7 @@
   texture_alias: CommanderOrange
   item_type: 1
   category: 60
+  cost: 5000
 # Orange Death Watch Commander Gloves
 - guid: 190191
   name_id: 53708
@@ -2035,6 +2222,7 @@
   texture_alias: CommanderOrange
   item_type: 1
   category: 62
+  cost: 5000
 # Orange Death Watch Commander Boots
 - guid: 190192
   name_id: 53710
@@ -2045,6 +2233,7 @@
   texture_alias: CommanderOrange
   item_type: 1
   category: 63
+  cost: 5000
 # Death Watch Night Owl Armor
 - guid: 190193
   name_id: 54255
@@ -2056,6 +2245,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Death Watch Night Owl Helmet
 - guid: 190194
   name_id: 54253
@@ -2067,6 +2257,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Death Watch Night Owl Gloves
 - guid: 190195
   name_id: 54254
@@ -2078,6 +2269,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Death Watch Night Owl Boots
 - guid: 190196
   name_id: 54256
@@ -2089,6 +2281,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Death Watch Lieutenant Armor
 - guid: 190197
   name_id: 54249
@@ -2100,6 +2293,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Death Watch Lieutenant Helmet
 - guid: 190198
   name_id: 54247
@@ -2111,6 +2305,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Death Watch Lieutenant Gloves
 - guid: 190199
   name_id: 54248
@@ -2122,6 +2317,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Death Watch Lieutenant Boots
 - guid: 190200
   name_id: 54250
@@ -2133,6 +2329,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Super Commando Captain Armor
 - guid: 190201
   name_id: 54416
@@ -2144,6 +2341,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Super Commando Captain Helmet
 - guid: 190202
   name_id: 54414
@@ -2155,6 +2353,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Super Commando Captain Gloves
 - guid: 190203
   name_id: 54415
@@ -2166,6 +2365,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Super Commando Captain Boots
 - guid: 190204
   name_id: 54417
@@ -2177,6 +2377,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Mandalorian Super Commando Armor
 - guid: 190205
   name_id: 54435
@@ -2188,6 +2389,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Mandalorian Super Commando Helmet
 - guid: 190206
   name_id: 54433
@@ -2199,6 +2401,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Camouflaged Death Watch Armor
 - guid: 2489
   name_id: 2697
@@ -2249,6 +2452,7 @@
   texture_alias: Gold
   item_type: 1
   category: 61
+  cost: 5000
 # Gold Death Watch Helmet
 - guid: 190212
   name_id: 2691
@@ -2259,6 +2463,7 @@
   texture_alias: Gold
   item_type: 1
   category: 60
+  cost: 5000
 # Gold Death Watch Gloves
 - guid: 190213
   name_id: 2692
@@ -2269,6 +2474,7 @@
   texture_alias: Gold
   item_type: 1
   category: 62
+  cost: 5000
 # Gold Death Watch Boots
 - guid: 190214
   name_id: 2694
@@ -2279,6 +2485,7 @@
   texture_alias: Gold
   item_type: 1
   category: 63
+  cost: 5000
 # Vicious Savage's Pants
 - guid: 2881
   name_id: 44885
@@ -2289,6 +2496,7 @@
   texture_alias: OpressDark
   item_type: 1
   category: 61
+  cost: 2000
 # Dark Side Acolyte Suit
 - guid: 190216
   name_id: 4747
@@ -2300,6 +2508,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Dark Side Acolyte Cloak
 - guid: 190217
   name_id: 4745
@@ -2311,6 +2520,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Dark Side Acolyte Gloves
 - guid: 190218
   name_id: 4746
@@ -2322,6 +2532,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Dark Side Acolyte Boots
 - guid: 190219
   name_id: 4748
@@ -2333,6 +2544,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Dark Side Adept Suit
 - guid: 190220
   name_id: 4743
@@ -2344,6 +2556,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Dark Side Adept Cloak
 - guid: 190221
   name_id: 4741
@@ -2355,6 +2568,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 5000
 # Dark Side Adept Gloves
 - guid: 190222
   name_id: 4742
@@ -2366,6 +2580,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Dark Side Adept Boots
 - guid: 190223
   name_id: 4744
@@ -2377,6 +2592,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Byzantium Sith Agent Suit
 - guid: 190224
   name_id: 4947
@@ -2387,6 +2603,7 @@
   texture_alias: PurpleSith
   item_type: 1
   category: 61
+  cost: 5000
 # Byzantium Sith Agent Hood
 - guid: 190225
   name_id: 4945
@@ -2397,6 +2614,7 @@
   texture_alias: PurpleSith
   item_type: 1
   category: 60
+  cost: 5000
 # Byzantium Sith Agent Gloves
 - guid: 190226
   name_id: 4946
@@ -2407,6 +2625,7 @@
   texture_alias: PurpleSith
   item_type: 1
   category: 62
+  cost: 5000
 # Byzantium Sith Agent Boots
 - guid: 190227
   name_id: 4948
@@ -2417,6 +2636,7 @@
   texture_alias: PurpleSith
   item_type: 1
   category: 63
+  cost: 5000
 # Carmine Sith Agent Suit
 - guid: 190228
   name_id: 4951
@@ -2427,6 +2647,7 @@
   texture_alias: RedSith
   item_type: 1
   category: 61
+  cost: 5000
 # Carmine Sith Agent Hood
 - guid: 190229
   name_id: 4949
@@ -2437,6 +2658,7 @@
   texture_alias: RedSith
   item_type: 1
   category: 60
+  cost: 5000
 # Carmine Sith Agent Gloves
 - guid: 190230
   name_id: 4950
@@ -2447,6 +2669,7 @@
   texture_alias: RedSith
   item_type: 1
   category: 62
+  cost: 5000
 # Carmine Sith Agent Boots
 - guid: 190231
   name_id: 4952
@@ -2457,6 +2680,7 @@
   texture_alias: RedSith
   item_type: 1
   category: 63
+  cost: 5000
 # Gray Sith Agent Suit
 - guid: 190232
   name_id: 4955
@@ -2467,6 +2691,7 @@
   texture_alias: GreySith
   item_type: 1
   category: 61
+  cost: 5000
 # Gray Sith Agent Hood
 - guid: 190233
   name_id: 4953
@@ -2477,6 +2702,7 @@
   texture_alias: GreySith
   item_type: 1
   category: 60
+  cost: 5000
 # Gray Sith Agent Gloves
 - guid: 190234
   name_id: 4954
@@ -2487,6 +2713,7 @@
   texture_alias: GreySith
   item_type: 1
   category: 62
+  cost: 5000
 # Gray Sith Agent Boots
 - guid: 190235
   name_id: 4956
@@ -2497,6 +2724,7 @@
   texture_alias: GreySith
   item_type: 1
   category: 63
+  cost: 5000
 # Darth Maul's Suit
 - guid: 190236
   name_id: 54481
@@ -2507,6 +2735,7 @@
   texture_alias: DarthMaulS5
   item_type: 1
   category: 61
+  cost: 5000
 # Darth Maul's Gloves
 - guid: 190237
   name_id: 54480
@@ -2517,6 +2746,7 @@
   texture_alias: DarthMaulS5
   item_type: 1
   category: 62
+  cost: 5000
 # Darth Maul's Robotic Legs
 - guid: 190238
   name_id: 54482
@@ -2527,6 +2757,7 @@
   texture_alias: DarthMaulS5
   item_type: 1
   category: 63
+  cost: 5000
 # Scoundrel Suit
 - guid: 190239
   name_id: 54609
@@ -2537,6 +2768,7 @@
   texture_alias: LandoGreen
   item_type: 1
   category: 61
+  cost: 5000
 # Scoundrel Shoes
 - guid: 190240
   name_id: 54610
@@ -2547,6 +2779,7 @@
   texture_alias: LandoGreen
   item_type: 1
   category: 63
+  cost: 5000
 # Smuggler Vest
 - guid: 190241
   name_id: 54608
@@ -2557,6 +2790,7 @@
   texture_alias: HanSoloBiker
   item_type: 1
   category: 61
+  cost: 5000
 # Smuggler Boots
 - guid: 190242
   name_id: 54607
@@ -2567,3 +2801,4 @@
   texture_alias: HanSoloBiker
   item_type: 1
   category: 63
+  cost: 5000

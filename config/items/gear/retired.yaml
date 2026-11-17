@@ -9,6 +9,7 @@
   texture_alias: HanSolo
   item_type: 1
   category: 61
+  cost: 5000
 # Han Solo's Boots
 - guid: 61
   name_id: 304
@@ -19,6 +20,7 @@
   texture_alias: HanSolo
   item_type: 1
   category: 63
+  cost: 5000
 # Lando Calrissian's Suit
 - guid: 922
   name_id: 1462
@@ -29,6 +31,7 @@
   texture_alias: Lando
   item_type: 1
   category: 61
+  cost: 5000
 # Lando Calrissian's Shoes
 - guid: 927
   name_id: 1472
@@ -39,6 +42,7 @@
   texture_alias: Lando
   item_type: 1
   category: 63
+  cost: 5000
 # Kyle Katarn's Uniform
 - guid: 602
   name_id: 204
@@ -49,6 +53,7 @@
   texture_alias: KyleKatarn
   item_type: 1
   category: 61
+  cost: 5000
 # Kyle Katarn's Gloves
 - guid: 601
   name_id: 202
@@ -59,6 +64,7 @@
   texture_alias: KyleKatarn
   item_type: 1
   category: 62
+  cost: 5000
 # Kyle Katarn's Boots
 - guid: 603
   name_id: 206
@@ -69,3 +75,4 @@
   texture_alias: KyleKatarn
   item_type: 1
   category: 63
+  cost: 5000

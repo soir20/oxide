@@ -54,6 +54,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 750
 # Savek Sith Hood
 - guid: 265
   name_id: 882
@@ -65,6 +66,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 800
 # Savek Sith Gloves
 - guid: 266
   name_id: 884
@@ -76,6 +78,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Savek Sith Boots
 - guid: 268
   name_id: 888
@@ -87,6 +90,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Moralo Eval's Prison Outfit
 - guid: 3352
   name_id: 4588
@@ -98,6 +102,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1250
 # Lux Bonteri's Suit
 - guid: 3334
   name_id: 4548
@@ -108,6 +113,7 @@
   texture_alias: LuxBonteri
   item_type: 1
   category: 61
+  cost: 1500
 # Lux Bonteri's Beanie
 - guid: 3332
   name_id: 4546
@@ -118,6 +124,7 @@
   texture_alias: LuxBonteri
   item_type: 1
   category: 60
+  cost: 1000
 # Lux Bonteri's Gloves
 - guid: 3333
   name_id: 4547
@@ -128,6 +135,7 @@
   texture_alias: LuxBonteri
   item_type: 1
   category: 62
+  cost: 500
 # Lux Bonteri's Boots
 - guid: 3335
   name_id: 4549
@@ -138,6 +146,7 @@
   texture_alias: LuxBonteri
   item_type: 1
   category: 63
+  cost: 500
 # Count Dooku's Original Robes
 - guid: 855
   name_id: 1309
@@ -168,6 +177,7 @@
   texture_alias: CountDookuV2
   item_type: 1
   category: 61
+  cost: 1000
 # Count Dooku's Boots
 - guid: 2242
   name_id: 32930
@@ -178,6 +188,7 @@
   texture_alias: CountDookuV2
   item_type: 1
   category: 63
+  cost: 500
 # Captain Argyus' Armor
 - guid: 485
   name_id: 8918
@@ -229,6 +240,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Osi Sobeck's Bracers
 - guid: 2706
   name_id: 43188
@@ -240,6 +252,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 300
 # Separatist Scientist's Coat
 - guid: 856
   name_id: 1311
@@ -251,6 +264,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Separatist Scientist's Breather
 - guid: 905
   name_id: 1408
@@ -262,6 +276,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 800
 # Separatist Scientist's Gloves
 - guid: 891
   name_id: 1380
@@ -273,6 +288,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 400
 # Separatist Scientist's Boots
 - guid: 874
   name_id: 1346
@@ -284,6 +300,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Lok Durd's Robes
 - guid: 64
   name_id: 361
@@ -295,6 +312,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Lok Durd's Fancy Hat
 - guid: 66
   name_id: 363
@@ -306,6 +324,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 1000
 # Lok Durd's Boots
 - guid: 65
   name_id: 360
@@ -317,6 +336,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 500
 # Mina Bonteri's Suit
 - guid: 1289
   name_id: 1923
@@ -328,6 +348,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 400
 # Mina Bonteri's Boots
 - guid: 1290
   name_id: 1925
@@ -339,6 +360,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 60
 # Zabrak Sith Robes
 - guid: 757
   name_id: 14780
@@ -350,6 +372,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 2000
 # Zabrak Sith Gloves
 - guid: 777
   name_id: 956
@@ -361,6 +384,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Zabrak Sith Boots
 - guid: 774
   name_id: 950
@@ -372,6 +396,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Asajj Ventress' Battle Suit
 - guid: 569
   name_id: 138
@@ -383,6 +408,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Asajj Ventress' Wraps
 - guid: 570
   name_id: 140
@@ -394,6 +420,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 400
 # Savage Opress' Armor
 - guid: 2256
   name_id: 32973
@@ -404,6 +431,7 @@
   texture_alias: Opress
   item_type: 1
   category: 61
+  cost: 1500
 # Savage Opress' Cuffs
 - guid: 2255
   name_id: 32972
@@ -414,6 +442,7 @@
   texture_alias: Opress
   item_type: 1
   category: 62
+  cost: 1000
 # Savage Opress' Boots
 - guid: 2257
   name_id: 32974
@@ -424,6 +453,7 @@
   texture_alias: Opress
   item_type: 1
   category: 63
+  cost: 500
 # Darth Sidious' Robes
 - guid: 862
   name_id: 1323
@@ -434,6 +464,7 @@
   texture_alias: Dark
   item_type: 1
   category: 61
+  cost: 2000
 # Darth Sidious' Hood
 - guid: 910
   name_id: 1418
@@ -444,6 +475,7 @@
   texture_alias: Dark
   item_type: 1
   category: 60
+  cost: 1000
 # Sith Warrior Robe
 - guid: 220042
   name_id: 52793
@@ -454,6 +486,7 @@
   texture_alias: SithAffiliation
   item_type: 1
   category: 61
+  cost: 5000
 # Sith Warrior Mask
 - guid: 220043
   name_id: 52796
@@ -464,6 +497,7 @@
   texture_alias: SithAffiliation
   item_type: 1
   category: 60
+  cost: 5000
 # Sith Warrior Gauntlets
 - guid: 220044
   name_id: 52794
@@ -474,6 +508,7 @@
   texture_alias: SithAffiliation
   item_type: 1
   category: 62
+  cost: 5000
 # Sith Warrior Boots
 - guid: 220045
   name_id: 52795
@@ -484,6 +519,7 @@
   texture_alias: SithAffiliation
   item_type: 1
   category: 63
+  cost: 5000
 # Sith Infiltrator Armor
 - guid: 220046
   name_id: 2685
@@ -494,6 +530,7 @@
   texture_alias: Phase01
   item_type: 1
   category: 61
+  cost: 5000
 # Sith Infiltrator Helm
 - guid: 220047
   name_id: 2683
@@ -504,6 +541,7 @@
   texture_alias: Phase01
   item_type: 1
   category: 60
+  cost: 5000
 # Sith Infiltrator Gauntlets
 - guid: 220048
   name_id: 2684
@@ -514,6 +552,7 @@
   texture_alias: Phase01
   item_type: 1
   category: 62
+  cost: 5000
 # Sith Infiltrator Greaves
 - guid: 220049
   name_id: 2686
@@ -524,6 +563,7 @@
   texture_alias: Phase01
   item_type: 1
   category: 63
+  cost: 5000
 # Sith Marauder Robe
 - guid: 220050
   name_id: 43703
@@ -534,6 +574,7 @@
   texture_alias: Phase03
   item_type: 1
   category: 61
+  cost: 5000
 # Sith Marauder Helm
 - guid: 220051
   name_id: 43701
@@ -544,6 +585,7 @@
   texture_alias: Phase03
   item_type: 1
   category: 60
+  cost: 5000
 # Sith Marauder Vambraces
 - guid: 220052
   name_id: 43702
@@ -554,6 +596,7 @@
   texture_alias: Phase03
   item_type: 1
   category: 62
+  cost: 5000
 # Sith Marauder Greaves
 - guid: 220053
   name_id: 43704
@@ -564,6 +607,7 @@
   texture_alias: Phase03
   item_type: 1
   category: 63
+  cost: 5000
 # Sith Inquisitor Suit
 - guid: 220054
   name_id: 4926
@@ -574,6 +618,7 @@
   texture_alias: Phase02
   item_type: 1
   category: 61
+  cost: 5000
 # Sith Inquisitor Helm
 - guid: 220055
   name_id: 4924
@@ -584,6 +629,7 @@
   texture_alias: Phase02
   item_type: 1
   category: 60
+  cost: 5000
 # Sith Inquisitor Gauntlets
 - guid: 220056
   name_id: 4925
@@ -594,6 +640,7 @@
   texture_alias: Phase02
   item_type: 1
   category: 62
+  cost: 5000
 # Sith Inquisitor Boots
 - guid: 220057
   name_id: 4927
@@ -604,6 +651,7 @@
   texture_alias: Phase02
   item_type: 1
   category: 63
+  cost: 5000
 # Crimson Kofun Armor
 - guid: 220058
   name_id: 53972
@@ -614,6 +662,7 @@
   texture_alias: SamuraiSith
   item_type: 1
   category: 61
+  cost: 5000
 # Crimson Kofun Helmet
 - guid: 220059
   name_id: 53970
@@ -624,6 +673,7 @@
   texture_alias: SamuraiSith
   item_type: 1
   category: 60
+  cost: 5000
 # Crimson Kofun Arm Wraps
 - guid: 220060
   name_id: 53971
@@ -634,6 +684,7 @@
   texture_alias: SamuraiSith
   item_type: 1
   category: 62
+  cost: 5000
 # Crimson Kofun Leg Wraps
 - guid: 220061
   name_id: 53973
@@ -644,6 +695,7 @@
   texture_alias: SamuraiSith
   item_type: 1
   category: 63
+  cost: 5000
 # Dark Sith Cowl
 - guid: 220062
   name_id: 4979
@@ -654,6 +706,7 @@
   texture_alias: RebornRedTrim
   item_type: 1
   category: 60
+  cost: 5000
 # Maroon Sith Cowl
 - guid: 220063
   name_id: 4978
@@ -664,6 +717,7 @@
   texture_alias: RebornRedStripes
   item_type: 1
   category: 60
+  cost: 5000
 # Red Sith Cowl
 - guid: 220064
   name_id: 4977
@@ -674,6 +728,7 @@
   texture_alias: RebornBlack
   item_type: 1
   category: 60
+  cost: 5000
 # Crimson Prowler Suit
 - guid: 220065
   name_id: 60196
@@ -684,6 +739,7 @@
   texture_alias: DarkKnight
   item_type: 1
   category: 61
+  cost: 5000
 # Crimson Prowler Hood
 - guid: 220066
   name_id: 60194
@@ -694,6 +750,7 @@
   texture_alias: DarkKnight
   item_type: 1
   category: 60
+  cost: 5000
 # Crimson Prowler Gloves
 - guid: 220067
   name_id: 60195
@@ -704,6 +761,7 @@
   texture_alias: DarkKnight
   item_type: 1
   category: 62
+  cost: 5000
 # Crimson Prowler Boots
 - guid: 220068
   name_id: 60197
@@ -714,3 +772,4 @@
   texture_alias: DarkKnight
   item_type: 1
   category: 63
+  cost: 5000

@@ -9,6 +9,7 @@
   texture_alias: PadmeScuba
   item_type: 1
   category: 60
+  cost: 1500
 # Senator Ballroom Garb
 - guid: 994
   name_id: 1583
@@ -50,6 +51,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Senator Kharrus' Boots
 - guid: 1122
   name_id: 1656
@@ -61,6 +63,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Palpatine's Robes
 - guid: 859
   name_id: 20387
@@ -72,6 +75,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Palpatine's Shoes
 - guid: 878
   name_id: 1354
@@ -83,6 +87,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Bail Organa's Robes
 - guid: 1100
   name_id: 1612
@@ -94,6 +99,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Bail Organa's Boots
 - guid: 1101
   name_id: 1614
@@ -105,6 +111,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Admiral Yularen's Uniform
 - guid: 568
   name_id: 136
@@ -116,6 +123,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 1000
 # Republic Fleet Officer Gloves
 - guid: 16
   name_id: 312
@@ -127,6 +135,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Republic Fleet Officer Boots
 - guid: 11
   name_id: 310
@@ -138,6 +147,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Orn Free Taa's Robes
 - guid: 263
   name_id: 878
@@ -149,6 +159,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 500
 # Orn Free Taa's Boots
 - guid: 264
   name_id: 880
@@ -160,6 +171,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # Republic Technician's Jumpsuit
 - guid: 249
   name_id: 850
@@ -171,6 +183,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Republic Technician's Helmet
 - guid: 247
   name_id: 846
@@ -182,6 +195,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 900
 # Republic Technician's Gloves
 - guid: 248
   name_id: 848
@@ -193,6 +207,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Republic Technician's Boots
 - guid: 250
   name_id: 852
@@ -204,6 +219,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Medical Officer Uniform
 - guid: 261
   name_id: 874
@@ -215,6 +231,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Medical Officer Cap
 - guid: 259
   name_id: 870
@@ -226,6 +243,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 500
 # Medical Officer Gloves
 - guid: 260
   name_id: 872
@@ -237,6 +255,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Medical Officer Boots
 - guid: 262
   name_id: 876
@@ -248,6 +267,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 100
 # General Snow Uniform Coat
 - guid: 252
   name_id: 856
@@ -258,6 +278,7 @@
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 61
+  cost: 2000
 # General Snow Uniform Hood
 - guid: 254
   name_id: 860
@@ -268,6 +289,7 @@
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 60
+  cost: 1000
 # General Snow Uniform Gloves
 - guid: 251
   name_id: 854
@@ -278,6 +300,7 @@
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 62
+  cost: 500
 # General Snow Uniform Boots
 - guid: 253
   name_id: 858
@@ -288,3 +311,4 @@
   texture_alias: GeneralSnowUniform
   item_type: 1
   category: 63
+  cost: 500

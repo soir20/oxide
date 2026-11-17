@@ -10,6 +10,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 3000
 # Embo's Helmet
 - guid: 906
   name_id: 1410
@@ -21,6 +22,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 3000
 # Embo's Gloves
 - guid: 892
   name_id: 1382
@@ -32,6 +34,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 800
 # Embo's Boots
 - guid: 875
   name_id: 1348
@@ -43,6 +46,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 800
 # Aurra Sing's Body Suit
 - guid: 573
   name_id: 146
@@ -54,6 +58,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 400
 # Aurra Sing's Antenna
 - guid: 571
   name_id: 142
@@ -65,6 +70,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 600
 # Aurra Sing's Wrist Wraps
 - guid: 572
   name_id: 144
@@ -76,6 +82,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 100
 # Aurra Sing's Boots
 - guid: 574
   name_id: 148
@@ -87,6 +94,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Assassin Aurra Sing's Suit
 - guid: 1146
   name_id: 1727
@@ -97,6 +105,7 @@
   texture_alias: AurraSingSniper
   item_type: 1
   category: 61
+  cost: 1500
 # Assassin Aurra Sing's Mask
 - guid: 1145
   name_id: 1725
@@ -107,6 +116,7 @@
   texture_alias: AurraSingSniper
   item_type: 1
   category: 60
+  cost: 1000
 # Assassin Aurra Sing's Boots
 - guid: 1273
   name_id: 1881
@@ -117,6 +127,7 @@
   texture_alias: AurraSingSniper
   item_type: 1
   category: 63
+  cost: 500
 # Robonino's Suit
 - guid: 2153
   name_id: 20055
@@ -127,6 +138,7 @@
   texture_alias: Robonino
   item_type: 1
   category: 61
+  cost: 1500
 # Robonino's Eyepatch
 - guid: 2152
   name_id: 20054
@@ -137,6 +149,7 @@
   texture_alias: Robonino
   item_type: 1
   category: 60
+  cost: 1000
 # Robonino's Boots
 - guid: 2154
   name_id: 20056
@@ -147,6 +160,7 @@
   texture_alias: Robonino
   item_type: 1
   category: 63
+  cost: 500
 # Chata Hyoki's Suit
 - guid: 2150
   name_id: 20052
@@ -157,6 +171,7 @@
   texture_alias: ChataHyoki
   item_type: 1
   category: 61
+  cost: 1500
 # Chata Hyoki's Helmet
 - guid: 2148
   name_id: 20050
@@ -167,6 +182,7 @@
   texture_alias: ChataHyoki
   item_type: 1
   category: 60
+  cost: 1000
 # Chata Hyoki's Gloves
 - guid: 2149
   name_id: 20051
@@ -177,6 +193,7 @@
   texture_alias: ChataHyoki
   item_type: 1
   category: 62
+  cost: 500
 # Chata Hyoki's Boots
 - guid: 2151
   name_id: 20053
@@ -187,6 +204,7 @@
   texture_alias: ChataHyoki
   item_type: 1
   category: 63
+  cost: 500
 # Cad Bane's Jacket
 - guid: 412
   name_id: 8510
@@ -197,6 +215,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 61
+  cost: 3000
 # Cad Bane's Hat
 - guid: 415
   name_id: 8513
@@ -207,6 +226,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 60
+  cost: 2000
 # Cad Bane's Gloves
 - guid: 414
   name_id: 8512
@@ -217,6 +237,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 62
+  cost: 1000
 # Cad Bane's Boots
 - guid: 413
   name_id: 8511
@@ -227,6 +248,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 63
+  cost: 1000
 # Cad Bane's Fugitive Vest
 - guid: 3350
   name_id: 4586
@@ -237,6 +259,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 61
+  cost: 1500
 # Cad Bane's Fugitive Hat
 - guid: 3348
   name_id: 4584
@@ -247,6 +270,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 60
+  cost: 1500
 # Cad Bane's Fugitive Gloves
 - guid: 3349
   name_id: 4585
@@ -257,6 +281,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 62
+  cost: 500
 # Cad Bane's Fugitive Boots
 - guid: 3351
   name_id: 4587
@@ -267,6 +292,7 @@
   texture_alias: CadBane
   item_type: 1
   category: 63
+  cost: 500
 # Quarzite Boba Fett's Suit
 - guid: 3418
   name_id: 4703
@@ -277,6 +303,7 @@
   texture_alias: BobaFettYoung
   item_type: 1
   category: 61
+  cost: 2000
 # Quarzite Boba Fett's Helmet
 - guid: 3416
   name_id: 4701
@@ -287,6 +314,7 @@
   texture_alias: BobaFettYoung
   item_type: 1
   category: 60
+  cost: 500
 # Quarzite Boba Fett's Gauntlets
 - guid: 3417
   name_id: 4702
@@ -297,6 +325,7 @@
   texture_alias: BobaFettYoung
   item_type: 1
   category: 62
+  cost: 500
 # Quarzite Boba Fett's Boots
 - guid: 3419
   name_id: 4704
@@ -307,6 +336,7 @@
   texture_alias: BobaFettYoung
   item_type: 1
   category: 63
+  cost: 500
 # Subtram Hunter Suit
 - guid: 150030
   name_id: 60670
@@ -317,6 +347,7 @@
   texture_alias: BobaGreen
   item_type: 1
   category: 61
+  cost: 5000
 # Subtram Hunter Helmet
 - guid: 150031
   name_id: 60668
@@ -327,6 +358,7 @@
   texture_alias: BobaGreen
   item_type: 1
   category: 60
+  cost: 5000
 # Subtram Hunter Gauntlets
 - guid: 150032
   name_id: 60669
@@ -337,6 +369,7 @@
   texture_alias: BobaGreen
   item_type: 1
   category: 62
+  cost: 5000
 # Subtram Hunter Boots
 - guid: 150033
   name_id: 60671
@@ -347,6 +380,7 @@
   texture_alias: BobaGreen
   item_type: 1
   category: 63
+  cost: 5000
 # Dengar's Armor
 - guid: 3411
   name_id: 4683
@@ -358,6 +392,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Dengar's Headwrap
 - guid: 3409
   name_id: 4681
@@ -369,6 +404,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 300
 # Dengar's Gloves
 - guid: 3410
   name_id: 4682
@@ -380,6 +416,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 200
 # Dengar's Boots
 - guid: 3412
   name_id: 4684
@@ -391,6 +428,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 200
 # Asajj Ventress' Bounty Hunter Suit
 - guid: 3402
   name_id: 4671
@@ -401,6 +439,7 @@
   texture_alias: AsajjSeason4
   item_type: 1
   category: 61
+  cost: 3000
 # Asajj Ventress' Bounty Hunter Helmet
 - guid: 150039
   name_id: 54413
@@ -411,6 +450,7 @@
   texture_alias: VentressMask
   item_type: 1
   category: 60
+  cost: 1000
 # Asajj Ventress' Bounty Hunter Gloves
 - guid: 3401
   name_id: 4670
@@ -421,6 +461,7 @@
   texture_alias: AsajjSeason4
   item_type: 1
   category: 62
+  cost: 1000
 # Asajj Ventress' Bounty Hunter Boots
 - guid: 3403
   name_id: 4672
@@ -431,6 +472,7 @@
   texture_alias: AsajjSeason4
   item_type: 1
   category: 63
+  cost: 1000
 # Derrown's Bounty Suit
 - guid: 3385
   name_id: 4625
@@ -442,6 +484,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 600
 # Derrown's Bounty Helm
 - guid: 3383
   name_id: 4623
@@ -453,6 +496,7 @@
   item_type: 1
   category: 60
   members: true
+  cost: 200
 # Derrown's Bounty Gloves
 - guid: 3384
   name_id: 4624
@@ -464,6 +508,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 150
 # Derrown's Bounty Boots
 - guid: 3386
   name_id: 4626
@@ -475,6 +520,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 150
 # Twazzi's Bounty Suit
 - guid: 3375
   name_id: 4614
@@ -486,6 +532,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 800
 # Twazzi's Bounty Gloves
 - guid: 3374
   name_id: 4613
@@ -497,6 +544,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 300
 # Twazzi's Bounty Boots
 - guid: 3376
   name_id: 4615
@@ -508,6 +556,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 300
 # Rako Hardeen's Fugitive Vest
 - guid: 3356
   name_id: 4593
@@ -518,6 +567,7 @@
   texture_alias: RakoHardeen
   item_type: 1
   category: 61
+  cost: 2000
 # Rako Hardeen's Fugitive Helmet
 - guid: 3354
   name_id: 4591
@@ -528,6 +578,7 @@
   texture_alias: RakoHardeen
   item_type: 1
   category: 60
+  cost: 1000
 # Rako Hardeen's Fugitive Gloves
 - guid: 3355
   name_id: 4592
@@ -538,6 +589,7 @@
   texture_alias: RakoHardeen
   item_type: 1
   category: 62
+  cost: 500
 # Rako Hardeen's Fugitive Boots
 - guid: 3357
   name_id: 4594
@@ -548,6 +600,7 @@
   texture_alias: RakoHardeen
   item_type: 1
   category: 63
+  cost: 500
 # Corrupt Warlord Duster
 - guid: 150053
   name_id: 52806
@@ -558,6 +611,7 @@
   texture_alias: Mercenary
   item_type: 1
   category: 61
+  cost: 5000
 # Corrupt Warlord Visor
 - guid: 150054
   name_id: 52809
@@ -568,6 +622,7 @@
   texture_alias: Mercenary
   item_type: 1
   category: 60
+  cost: 5000
 # Corrupt Warlord Gloves
 - guid: 150055
   name_id: 52807
@@ -578,6 +633,7 @@
   texture_alias: Mercenary
   item_type: 1
   category: 62
+  cost: 5000
 # Corrupt Warlord Boots
 - guid: 150056
   name_id: 52808
@@ -588,6 +644,7 @@
   texture_alias: Mercenary
   item_type: 1
   category: 63
+  cost: 5000
 # Latts Razzi Suit
 - guid: 150057
   name_id: 4821
@@ -599,6 +656,7 @@
   item_type: 1
   category: 61
   members: true
+  cost: 5000
 # Latts Razzi Gloves
 - guid: 150058
   name_id: 4820
@@ -610,6 +668,7 @@
   item_type: 1
   category: 62
   members: true
+  cost: 5000
 # Latts Razzi Boots
 - guid: 150059
   name_id: 4822
@@ -621,6 +680,7 @@
   item_type: 1
   category: 63
   members: true
+  cost: 5000
 # Bossk's Jumpsuit
 - guid: 150060
   name_id: 4739
@@ -631,6 +691,7 @@
   texture_alias: Bossk
   item_type: 1
   category: 61
+  cost: 5000
 # Boba Fett's Armor
 - guid: 577
   name_id: 154
