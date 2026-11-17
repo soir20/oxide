@@ -11,6 +11,7 @@
   item_type: 25
   category: 64
   members: true
+  cost: 1000
 # Ahsoka Tano's Offhand Lightsaber
 - guid: 2140
   name_id: 19893
@@ -22,6 +23,7 @@
   texture_alias: Ahsoka
   item_type: 25
   category: 64
+  cost: 3000
 # Aayla Secura's Lightsaber
 - guid: 140000
   name_id: 306
