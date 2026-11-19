@@ -1,7 +1,7 @@
 ---
 ryloth:
   ambient_npcs:
-    commander_trauma:
+    trauma:
       model_id: 1336
       pos:
         x: 573.0281
