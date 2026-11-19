@@ -365,7 +365,7 @@ ryloth:
               new_rot_y: 0
               new_rot_z: -0.6575
               min_duration_millis: 2500
-    arf_arc_2:
+    trauma_2:
       model_id: 1336
       pos:
         x: 413.3032
