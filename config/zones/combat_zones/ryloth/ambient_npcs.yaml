@@ -584,3 +584,16 @@ ryloth:
         y: 0
         z: -0.8244662
         w: 0
+    clone_technician:
+      model_id: 1582
+      pos:
+        x: 584.61554
+        y: 9.821303
+        z: 637.7804
+        w: 1
+      rot:
+        x: 0.93329144
+        y: 0
+        z: -0.35911947
+        w: 0
+      stand_animation_id: 2542
