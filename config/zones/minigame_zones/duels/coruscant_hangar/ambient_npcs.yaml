@@ -86,6 +86,8 @@ duel_coruscant_hangar_singleplayer:
         w: 0
       removal_mode: &starfighter_removal_config
         !Graceful
+        fade_duration_millis: 1000
+        removal_delay_millis: 0
         enable_death_animation: false
       force_despawn: true
       enable_gravity: false
@@ -96,13 +98,13 @@ duel_coruscant_hangar_singleplayer:
             - spawned_state: OnFirstStepTick
               rail_id: 1045
               composite_effect_id: 1021
-              min_duration_millis: 10000
+              min_duration_millis: 6943
           next_possible_procedures:
             - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 1000
+              min_duration_millis: 60000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -110,7 +112,7 @@ duel_coruscant_hangar_singleplayer:
         empty:
           weight: 1259
           steps:
-            - min_duration_millis: 1000
+            - min_duration_millis: 2000
           next_possible_procedures:
             - procedure: spawn
               weight: 36
@@ -139,13 +141,13 @@ duel_coruscant_hangar_singleplayer:
             - spawned_state: OnFirstStepTick
               rail_id: 1046
               composite_effect_id: 1916
-              min_duration_millis: 10000
+              min_duration_millis: 9022
           next_possible_procedures:
             - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 1000
+              min_duration_millis: 60000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -153,14 +155,14 @@ duel_coruscant_hangar_singleplayer:
         empty:
           weight: 1259
           steps:
-            - min_duration_millis: 1000
+            - min_duration_millis: 2000
           next_possible_procedures:
             - procedure: spawn
               weight: 36
             - procedure: empty
               weight: 1259
-    blue_starfighter:
-      model_id: 722
+    arc-170_fighter_1:
+      model_id: 1167
       pos:
         x: 435.244100
         y: 96.542970
@@ -180,14 +182,14 @@ duel_coruscant_hangar_singleplayer:
           steps:
             - spawned_state: OnFirstStepTick
               rail_id: 1047
-              composite_effect_id: 1021
-              min_duration_millis: 10000
+              composite_effect_id: 2164
+              min_duration_millis: 5162
           next_possible_procedures:
             - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 1000
+              min_duration_millis: 60000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -195,13 +197,13 @@ duel_coruscant_hangar_singleplayer:
         empty:
           weight: 1259
           steps:
-            - min_duration_millis: 1000
+            - min_duration_millis: 2000
           next_possible_procedures:
             - procedure: spawn
               weight: 36
             - procedure: empty
               weight: 1259
-    arc-170_fighter_1:
+    arc-170_fighter_2:
       model_id: 1167
       pos:
         x: 94.103130
@@ -223,13 +225,13 @@ duel_coruscant_hangar_singleplayer:
             - spawned_state: OnFirstStepTick
               rail_id: 1048
               composite_effect_id: 2164
-              min_duration_millis: 10000
+              min_duration_millis: 5217
           next_possible_procedures:
             - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 1000
+              min_duration_millis: 60000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -237,13 +239,13 @@ duel_coruscant_hangar_singleplayer:
         empty:
           weight: 1259
           steps:
-            - min_duration_millis: 1000
+            - min_duration_millis: 2000
           next_possible_procedures:
             - procedure: spawn
               weight: 36
             - procedure: empty
               weight: 1259
-    arc-170_fighter_2:
+    arc-170_fighter_3:
       model_id: 1167
       pos:
         x: 249.374100
@@ -265,13 +267,13 @@ duel_coruscant_hangar_singleplayer:
             - spawned_state: OnFirstStepTick
               rail_id: 1049
               composite_effect_id: 2164
-              min_duration_millis: 30000
+              min_duration_millis: 7008
           next_possible_procedures:
             - procedure: remove
         remove:
           steps:
             - spawned_state: Despawn
-              min_duration_millis: 1000
+              min_duration_millis: 60000
           next_possible_procedures:
             - procedure: spawn
             - procedure: empty
@@ -279,7 +281,7 @@ duel_coruscant_hangar_singleplayer:
         empty:
           weight: 1259
           steps:
-            - min_duration_millis: 1000
+            - min_duration_millis: 2000
           next_possible_procedures:
             - procedure: spawn
               weight: 36
