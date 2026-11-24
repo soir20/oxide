@@ -1,0 +1,291 @@
+---
+jedi_temple:
+  ambient_npcs:
+    hangar_to_rotunda_sign:
+      name_id: 16283
+      terrain_object_id: 1280947426
+      pos:
+        x: 132.761
+        y: 13.54141
+        z: -185.9107
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16282
+    rotunda_to_hangar_sign:
+      name_id: 16278
+      terrain_object_id: 1280944382
+      pos:
+        x: 1242.463
+        y: 14.97681
+        z: 253.2939
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15555
+    rotunda_to_training_room_sign:
+      name_id: 16277
+      terrain_object_id: 1280947419
+      pos:
+        x: 1242.463
+        y: 14.97681
+        z: 275.1142
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15554
+    training_room_to_rotunda_sign:
+      name_id: 16285
+      terrain_object_id: 1280947429
+      pos:
+        x: 160.4418
+        y: 11.28658
+        z: 417.582
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16284
+    rotunda_to_veranda_1_sign:
+      name_id: 15639
+      terrain_object_id: 1280944380
+      pos:
+        x: 1256.379
+        y: 14.97681
+        z: 294.3897
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15550
+    veranda_to_rotunda_1_sign:
+      name_id: 16293
+      terrain_object_id: 1280947444
+      pos:
+        x: 922.6887
+        y: 182.3657
+        z: 1531.045
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16292
+    rotunda_to_veranda_2_sign:
+      name_id: 15639
+      terrain_object_id: 1280944377
+      pos:
+        x: 1305.675
+        y: 14.97681
+        z: 294.4297
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15550
+    veranda_to_rotunda_2_sign:
+      name_id: 16293
+      terrain_object_id: 1280947447
+      pos:
+        x: 922.5555
+        y: 182.3657
+        z: 1562.836
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16292
+    veranda_to_lscc_sign:
+      name_id: 16294
+      terrain_object_id: 1280955806
+      pos:
+        x: 922.5722
+        y: 182.3657
+        z: 1547.01
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15553
+    veranda_to_archives_sign:
+      name_id: 16296
+      terrain_object_id: 1280947440
+      pos:
+        x: 898.6956
+        y: 176.4172
+        z: 1527.112
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15552
+    archives_to_veranda_sign:
+      name_id: 16298
+      terrain_object_id: 1280947450
+      pos:
+        x: 1760.063
+        y: 15.75493
+        z: 1694.008
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16297
+    veranda_to_workshop_sign:
+      name_id: 16295
+      terrain_object_id: 1280947438
+      pos:
+        x: 898.6483
+        y: 176.4172
+        z: 1566.737
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15551
+    workshop_to_veranda_sign:
+      name_id: 16291
+      terrain_object_id: 1280947436
+      pos:
+        x: -359.2302
+        y: 14.06114
+        z: 1780.25
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16290
+    rotunda_to_lounge_sign:
+      name_id: 16280
+      terrain_object_id: 1280947421
+      pos:
+        x: 1319.537
+        y: 14.97681
+        z: 275.1449
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15557
+    lounge_to_officers_club_sign:
+      name_id: 16289
+      terrain_object_id: 1280947434
+      pos:
+        x: -106.5485
+        y: 15.26908
+        z: 1247.056
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16288
+    lounge_to_rotunda_sign:
+      name_id: 16287
+      terrain_object_id: 1280947432
+      pos:
+        x: -136.2873
+        y: 13.41946
+        z: 1274.139
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16286
+    rotunda_to_warroom_sign:
+      name_id: 16279
+      terrain_object_id: 1280944375
+      pos:
+        x: 1319.506
+        y: 14.97681
+        z: 253.3373
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15556
+    warroom_to_rotunda_sign:
+      name_id: 16281
+      terrain_object_id: 1280947423
+      pos:
+        x: 691.1464
+        y: 13.4308
+        z: 1.405955
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 15559

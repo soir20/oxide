@@ -1,0 +1,35 @@
+---
+members_only:
+  ambient_npcs:
+    lscc_to_veranda_sign:
+      name_id: 16300
+      terrain_object_id: 1281994176
+      pos:
+        x: 1489.06
+        y: 74.97
+        z: 887.41
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16299
+    officers_club_to_lounge_sign:
+      name_id: 16302
+      terrain_object_id: 1281995679
+      pos:
+        x: 761.7532
+        y: 15.2758
+        z: 684.03
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      cursor: 0
+      show_name: false
+      hover_description: !OverrideNameId 16301
