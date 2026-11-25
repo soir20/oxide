@@ -16228,6 +16228,56 @@ categories:
               short_name: ''
               stages: []
 
+      # Battle of Umbara
+      - guid: 20000
+        name_id: 45239
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: false
+        param1: 0
+        icon_id: 5453
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 4
+        tutorial_swf: ''
+        stage_group:
+          # Battle of Umbara
+          guid: 110
+          name_id: 45239
+          description_id: 0
+          icon_id: 0
+          stage_icon_id: 0
+          members_only: false
+          stage_select_map_name: ''
+          stages: []
+
+      # Skirmish on Carlac
+      - guid: 20001
+        name_id: 52683
+        description_id: 0
+        members_only: false
+        is_flash: false
+        is_active: false
+        param1: 0
+        icon_id: 5890
+        background_icon_id: 0
+        is_popular: false
+        is_game_of_day: false
+        sort_order: 5
+        tutorial_swf: ''
+        stage_group:
+          # Skirmish on Carlac
+          guid: 122
+          name_id: 52683
+          description_id: 0
+          icon_id: 0
+          stage_icon_id: 0
+          members_only: false
+          stage_select_map_name: ''
+          stages: []
+
   # Dailies
   - guid: 5
     name_id: 51600
