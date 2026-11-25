@@ -1,7 +1,7 @@
 ---
 jedi_temple:
   ambient_npcs:
-    hangar_to_rotunda_sign:
+    hangar_to_main_hall_sign:
       name_id: 16283
       terrain_object_id: 1280947426
       pos:
@@ -17,7 +17,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16282
-    rotunda_to_hangar_sign:
+    main_hall_to_hangar_sign:
       name_id: 16278
       terrain_object_id: 1280944382
       pos:
@@ -33,7 +33,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15555
-    rotunda_to_training_room_sign:
+    main_hall_to_training_room_sign:
       name_id: 16277
       terrain_object_id: 1280947419
       pos:
@@ -49,7 +49,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15554
-    training_room_to_rotunda_sign:
+    training_room_to_main_hall_sign:
       name_id: 16285
       terrain_object_id: 1280947429
       pos:
@@ -65,7 +65,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16284
-    rotunda_to_veranda_1_sign:
+    main_hall_to_veranda_right_sign:
       name_id: 15639
       terrain_object_id: 1280944380
       pos:
@@ -81,7 +81,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15550
-    veranda_to_rotunda_1_sign:
+    veranda_to_main_hall_left_sign:
       name_id: 16293
       terrain_object_id: 1280947444
       pos:
@@ -97,7 +97,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16292
-    rotunda_to_veranda_2_sign:
+    main_hall_to_veranda_left_sign:
       name_id: 15639
       terrain_object_id: 1280944377
       pos:
@@ -113,7 +113,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15550
-    veranda_to_rotunda_2_sign:
+    veranda_to_main_hall_right_sign:
       name_id: 16293
       terrain_object_id: 1280947447
       pos:
@@ -209,7 +209,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16290
-    rotunda_to_lounge_sign:
+    main_hall_to_lounge_sign:
       name_id: 16280
       terrain_object_id: 1280947421
       pos:
@@ -241,7 +241,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16288
-    lounge_to_rotunda_sign:
+    lounge_to_main_hall_sign:
       name_id: 16287
       terrain_object_id: 1280947432
       pos:
@@ -257,7 +257,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16286
-    rotunda_to_warroom_sign:
+    main_hall_to_warroom_sign:
       name_id: 16279
       terrain_object_id: 1280944375
       pos:
@@ -273,7 +273,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15556
-    warroom_to_rotunda_sign:
+    warroom_to_main_hall_sign:
       name_id: 16281
       terrain_object_id: 1280947423
       pos:
