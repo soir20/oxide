@@ -1,0 +1,97 @@
+# Store preview bodies: copies of a stock body model with extra animation effects,
+# so the store preview shows the effects the server plays in the world.
+# Applied by tools/cwa_preview_effects.py (see the docs at the top of that file).
+# The preview figures that use these files are in custom_models.yaml (ids 3092-3098).
+# Effect timings match chat_command.rs (EMOTE_EFFECTS, MIND_TRICKS).
+---
+# Emote listings (one body for every emote; each effect is tied to its animation)
+- file: Char_HumanMaleBody_PreviewEmotes.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - {animation: Emo_ForceLift, effect: PFX_Force_Glow_hands, start: 0.0, end: 4.0}
+    - {animation: Emo_ForcePush, effect: PFX_ForcePush_Emote, start: 0.0, end: 2.0}
+    # The ripple sits on the right hand in the preview, so it only runs while the
+    # fist is on the ground (in the world the server places it on the ground instead)
+    - animation: Emo_Jedi_ForcePound
+      effect: PFX_CMBT_ForceExplosion_GroundRipple
+      start: 0.8
+      end: 1.3
+    - animation: Emo_Jedi_Meditate
+      effect: PFX_Meditation_Force_Distortion
+      start: 0.0
+      end: 4.0
+    - animation: Emo_ForceMeditation
+      effect: PFX_Meditation_Force_Distortion
+      start: 0.0
+      end: 4.0
+    - animation: Emo_Sith_ForceLightning
+      effect: PFX_ForceLightning_Arc_Loop
+      start: 0.0
+      end: 10.0
+    - animation: Emo_Sith_Rage
+      effect: PFX_Force_Explosion_Emo_Sith_Rage
+      start: 0.0
+      end: 2.0
+    - animation: Emo_Sith_Seeth
+      effect: PFX_Force_Explosion_Emo_Sith_Seethe
+      start: 0.0
+      end: 2.0
+
+# Mind trick listings have no animation of their own: the effect is tied to the
+# standing animation (loc_stand, preview_animation_id 1) of a body used only there.
+
+# Jedi Mind Trick Pack I (Fireworks, Proton Torpedoes, Malevolence, Force Explosion)
+- file: Char_HumanMaleBody_PreviewTrickPack1.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Emote_Orbit_ProtonTorpedoes
+      start: 0.0
+      end: 30.0
+      loop: true
+
+# Jedi Mind Trick Pack II (Republic Cruiser, Force Glow, Fighter Battle, Force Push)
+- file: Char_HumanMaleBody_PreviewTrickPack2.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Emote_Orbit_RepublicDestroyer
+      start: 0.0
+      end: 30.0
+      loop: true
+
+- file: Char_HumanMaleBody_PreviewOrbitStarfighters.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Emote_Orbit_Starfighter
+      start: 0.0
+      end: 30.0
+      loop: true
+
+- file: Char_HumanMaleBody_PreviewOrbitVultures.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Emote_Orbit_Vulture
+      start: 0.0
+      end: 30.0
+      loop: true
+
+- file: Char_HumanMaleBody_PreviewOrbitYwings.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Emote_Orbit_Ywing
+      start: 0.0
+      end: 30.0
+      loop: true
+
+- file: Char_HumanMaleBody_PreviewGlowHands.adr
+  source: Char_HumanMaleBody.adr
+  effects:
+    - animation: loc_stand
+      effect: PFX_Force_Glow_hands
+      start: 0.0
+      end: 30.0
+      loop: true
