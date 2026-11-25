@@ -129,7 +129,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16292
-    veranda_to_lscc_sign:
+    veranda_to_construction_chamber_sign:
       name_id: 16294
       terrain_object_id: 1280955806
       pos:

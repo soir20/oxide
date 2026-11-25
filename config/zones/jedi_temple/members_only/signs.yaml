@@ -1,7 +1,7 @@
 ---
 members_only:
   ambient_npcs:
-    lscc_to_veranda_sign:
+    construction_chamber_to_veranda_sign:
       name_id: 16300
       terrain_object_id: 1281994176
       pos:
