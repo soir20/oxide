@@ -257,7 +257,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 16286
-    main_hall_to_warroom_sign:
+    main_hall_to_war_room_sign:
       name_id: 16279
       terrain_object_id: 1280944375
       pos:
@@ -273,7 +273,7 @@ jedi_temple:
       cursor: 0
       show_name: false
       hover_description: !OverrideNameId 15556
-    warroom_to_main_hall_sign:
+    war_room_to_main_hall_sign:
       name_id: 16281
       terrain_object_id: 1280947423
       pos:
