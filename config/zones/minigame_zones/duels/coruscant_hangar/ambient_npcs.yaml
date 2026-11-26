@@ -1,0 +1,289 @@
+---
+duel_coruscant_hangar_singleplayer:
+  ambient_npcs:
+    obi-wan_kenobi:
+      model_id: 105
+      name_id: 1132
+      show_name: false
+      pos:
+        x: 256.05
+        y: 50.815445
+        z: 219.4
+        w: 1.0
+      rot:
+        x: -0.58
+        y: 0
+        z: 0.82
+        w: 0
+      stand_animation_id: 2201
+    captain_rex:
+      model_id: 2056
+      name_id: 6331
+      show_name: false
+      pos:
+        x: 256.0
+        y: 51.0256
+        z: 217.5
+        w: 1.0
+      rot:
+        x: 0.35
+        y: 0
+        z: -0.9
+        w: 0
+      stand_animation_id: 2527
+    coruscant_hanger_ambient_1:
+      possible_model_ids:
+        - 2014
+        - 1949
+        - 654
+      pos:
+        x: 236.73
+        y: 50.815453
+        z: 221.85
+        w: 1.0
+      rot:
+        x: 1
+        y: 0
+        z: 0.2
+        w: 0
+    coruscant_hanger_ambient_2:
+      possible_model_ids:
+        - 1998
+      pos:
+        x: 235.67
+        y: 51.034065
+        z: 217.75
+        w: 1.0
+      rot:
+        x: 0.77
+        y: 0
+        z: 0.63
+        w: 0
+    coruscant_hanger_ambient_3:
+      possible_model_ids:
+        - 2010
+      pos:
+        x: 237.44194
+        y: 51.0256
+        z: 216.18738
+        w: 1.0
+      rot:
+        x: 0.5971
+        y: 0
+        z: 0.8021
+        w: 0
+    green_starfighter:
+      model_id: 721
+      pos:
+        x: 246.065100
+        y: 56.460800
+        z: 259.932500
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      removal_mode: &starfighter_removal_config
+        !Graceful
+        fade_duration_millis: 1000
+        removal_delay_millis: 0
+        enable_death_animation: false
+      force_despawn: true
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 1045
+              composite_effect_id: 1021
+              min_duration_millis: 6943
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 60000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    republic_gunship:
+      model_id: 197
+      scale: 0.5
+      pos:
+        x: 282.78
+        y: 93.32988
+        z: 157.1319
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 1046
+              composite_effect_id: 1916
+              min_duration_millis: 9022
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 60000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    arc-170_fighter_1:
+      model_id: 1167
+      pos:
+        x: 435.244100
+        y: 96.542970
+        z: 150.223900
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 1047
+              composite_effect_id: 2164
+              min_duration_millis: 5162
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 60000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    arc-170_fighter_2:
+      model_id: 1167
+      pos:
+        x: 94.103130
+        y: 68.428250
+        z: 147.601700
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 1048
+              composite_effect_id: 2164
+              min_duration_millis: 5217
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 60000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
+    arc-170_fighter_3:
+      model_id: 1167
+      pos:
+        x: 249.374100
+        y: 33.273180
+        z: 279.877500
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+      removal_mode: *starfighter_removal_config
+      force_despawn: true
+      enable_gravity: false
+      tickable_procedures:
+        spawn:
+          weight: 36
+          steps:
+            - spawned_state: OnFirstStepTick
+              rail_id: 1049
+              composite_effect_id: 2164
+              min_duration_millis: 7008
+          next_possible_procedures:
+            - procedure: remove
+        remove:
+          steps:
+            - spawned_state: Despawn
+              min_duration_millis: 60000
+          next_possible_procedures:
+            - procedure: spawn
+            - procedure: empty
+              weight: 1259
+        empty:
+          weight: 1259
+          steps:
+            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: spawn
+              weight: 36
+            - procedure: empty
+              weight: 1259
