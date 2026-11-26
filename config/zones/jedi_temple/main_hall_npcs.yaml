@@ -1,0 +1,208 @@
+---
+jedi_temple:
+  ambient_npcs:
+    commander_wolffe:
+      model_id: 1967
+      name_id: 51711
+      pos:
+        x: 1312.8413
+        y: 10.038356
+        z: 248.98895
+        w: 1
+      rot:
+        x: -0.61446816
+        y: 0
+        z: 0.7889417
+        w: 0
+      stand_animation_id: 2505
+    zabrak_jedi:
+      model_id: 2025
+      pos:
+        x: 1290.2277
+        y: 10.038905
+        z: 250.7019
+        w: 1
+      rot:
+        x: -0.601205
+        y: 0
+        z: -0.7990948
+        w: 0
+    pantoran_jedi:
+      key: pantoran_jedi
+      model_id: 1991
+      pos:
+        x: 1288.8878
+        y: 9.677713
+        z: 246.28276
+        w: 1
+      rot:
+        x: -0.9932426
+        y: 0
+        z: 0.11605559
+        w: 0
+      stand_animation_id: 2582
+      tickable_procedures:
+        force_juggling:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2531
+              min_duration_millis: 10000
+        empty:
+          weight: 588
+          steps:
+            - min_duration_millis: 15000
+          next_possible_procedures:
+            - procedure: force_juggling
+              weight: 300
+            - procedure: empty
+    juggling_clone_a:
+      model_id: 1952
+      pos:
+        x: 1288.8878
+        y: 9.677713
+        z: 246.28276
+        w: 1
+      rot:
+        x: -0.9932426
+        y: 0
+        z: 0.11605559
+        w: 0
+      stand_animation_id: 2583
+      tickable_procedures:
+        force_juggling:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2532
+              min_duration_millis: 10000
+        empty:
+          weight: 588
+          steps:
+            - min_duration_millis: 15000
+          next_possible_procedures:
+            - procedure: force_juggling
+              weight: 300
+            - procedure: empty
+      synchronize_with: pantoran_jedi
+    juggling_clone_b:
+      model_id: 1958
+      pos:
+        x: 1288.8878
+        y: 9.677713
+        z: 246.28276
+        w: 1
+      rot:
+        x: -0.9932426
+        y: 0
+        z: 0.11605559
+        w: 0
+      stand_animation_id: 2584
+      tickable_procedures:
+        force_juggling:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2533
+              min_duration_millis: 10000
+        empty:
+          weight: 588
+          steps:
+            - min_duration_millis: 15000
+          next_possible_procedures:
+            - procedure: force_juggling
+              weight: 300
+            - procedure: empty
+      synchronize_with: pantoran_jedi
+    juggling_items:
+      model_id: 348
+      pos:
+        x: 1288.8878
+        y: 9.677713
+        z: 246.28276
+        w: 1
+      rot:
+        x: -0.9932426
+        y: 0
+        z: 0.11605559
+        w: 0
+      stand_animation_id: 2582
+      tickable_procedures:
+        force_juggling:
+          is_interruptible: false
+          steps:
+            - one_shot_animation_id: 2531
+              min_duration_millis: 10000
+        empty:
+          weight: 588
+          steps:
+            - min_duration_millis: 15000
+          next_possible_procedures:
+            - procedure: force_juggling
+              weight: 300
+            - procedure: empty
+      synchronize_with: pantoran_jedi
+    twilek_jedi:
+      model_id: 2011
+      pos:
+        x: 1275.7418
+        y: 9.677961
+        z: 244.02313
+        w: 1
+      rot:
+        x: -0.059067838
+        y: 0
+        z: -0.99825394
+        w: 0
+    togruta_jedi:
+      model_id: 2003
+      pos:
+        x: 1276.7377
+        y: 9.677272
+        z: 240.61807
+        w: 1
+      rot:
+        x: -0.38228506
+        y: 0
+        z: 0.9240444
+        w: 0
+    yellow_zabrak_jedi:
+      model_id: 2022
+      pos:
+        x: 1263.0415
+        y: 10.077163
+        z: 250.61707
+        w: 1
+      rot:
+        x: -0.096494906
+        y: 0
+        z: -0.99533343
+        w: 0
+    zabrak_female_jedi:
+      model_id: 2017
+      pos:
+        x: 1264.951
+        y: 10.038356
+        z: 249.6088
+        w: 1
+      rot:
+        x: -0.99999183
+        y: 0
+        z: 0.004036189
+        w: 0
+      tickable_procedures:
+        nod_along:
+          steps:
+            - one_shot_animation_id: 3007
+              min_duration_millis: 2000
+            - min_duration_millis: 4000
+    red_clone_captain:
+      model_id: 1882
+      pos:
+        x: 1261.5084
+        y: 10.038356
+        z: 249.48235
+        w: 1
+      rot:
+        x: 0.9988263
+        y: 0
+        z: 0.048435044
+        w: 0
+      stand_animation_id: 2207
