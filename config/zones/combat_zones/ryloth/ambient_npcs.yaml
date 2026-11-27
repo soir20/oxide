@@ -345,41 +345,85 @@ ryloth:
         z: 667.7215
         w: 1
       rot:
-        x: -0.75346
+        x: -0.75423
         y: 0
-        z: -0.6575
+        z: -0.65661
         w: 0
       tickable_procedures:
-        walk_back_and_forth:
+        walk_circuit:
           steps:
             - speed: 2.5
               animation_id: 2
-              new_pos_offset_x: -26.80730
+              new_pos_offset_x: -26.7674
               new_pos_offset_y: -0.09913
-              new_pos_offset_z: -23.39325
-              new_rot_x: -0.75346
+              new_pos_offset_z: -23.303
+              new_rot_x: -0.75423
               new_rot_y: 0
-              new_rot_z: -0.6575
+              new_rot_z: -0.65661
               min_duration_millis: 0
-            - animation_id: 1
-              new_rot_x: 0.75346
-              new_rot_y: 0
-              new_rot_z: 0.6575
-              min_duration_millis: 2500
             - speed: 2.5
               animation_id: 2
-              new_pos_offset_x: 26.80730
-              new_pos_offset_y: 0.09913
-              new_pos_offset_z: 23.39325
-              new_rot_x: 0.75346
+              new_pos_offset_x: -8.19482
+              new_pos_offset_y: 0
+              new_pos_offset_z: -17.1352
+              new_rot_x: -0.43144
               new_rot_y: 0
-              new_rot_z: 0.6575
+              new_rot_z: -0.90214
               min_duration_millis: 0
-            - animation_id: 1
-              new_rot_x: -0.75346
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: -13.0303
+              new_pos_offset_y: -0.01
+              new_pos_offset_z: 10.5367
+              new_rot_x: -0.77758
               new_rot_y: 0
-              new_rot_z: -0.6575
-              min_duration_millis: 2500
+              new_rot_z: 0.62878
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 4.2809
+              new_pos_offset_y: 0.01
+              new_pos_offset_z: 4.74793
+              new_rot_x: 0.66964
+              new_rot_y: 0
+              new_rot_z: 0.74269
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 6.14684
+              new_pos_offset_y: 0
+              new_pos_offset_z: 0.85527
+              new_rot_x: 0.99046
+              new_rot_y: 0
+              new_rot_z: 0.13781
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 0.60696
+              new_pos_offset_y: 0
+              new_pos_offset_z: 5.88423
+              new_rot_x: 0.10261
+              new_rot_y: 0
+              new_rot_z: 0.99472
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 25.0336
+              new_pos_offset_y: 0.1194
+              new_pos_offset_z: 21.3015
+              new_rot_x: 0.76159
+              new_rot_y: 0
+              new_rot_z: 0.64805
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 11.9243
+              new_pos_offset_y: -0.02027
+              new_pos_offset_z: -2.88745
+              new_rot_x: 0.97191
+              new_rot_y: 0
+              new_rot_z: -0.23535
+              min_duration_millis: 0
     trauma_2:
       model_id: 1336
       pos:
