@@ -201,3 +201,23 @@ jedi_temple:
         choices:
           - button_key: Lightsaber Duel
             button_text_id: 3793
+
+    - button_key: Commander Wolffe
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 44154
+        speaker_animation_id: 2207
+        speaker_sound_id: 5446
+        camera_placement:
+          x: 1310.6257
+          y: 11.88
+          z: 252.45493
+          w: 1.0
+        look_at:
+          x: 1312.7188
+          y: 11.40
+          z: 249.45
+          w: 1
+        choices:
+          - button_key: Exit
+            button_text_id: 33704

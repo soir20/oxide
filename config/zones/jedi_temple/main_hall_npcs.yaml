@@ -2,20 +2,27 @@
 jedi_temple:
   ambient_npcs:
     commander_wolffe:
+      key: commander_wolffe
       model_id: 1967
-      name_id: 51711
+      name_id: 44152
       pos:
-        x: 1312.8413
+        x: 1312.7188
         y: 10.038356
-        z: 248.98895
-        w: 1
+        z: 249.45
+        w: 1.0
       rot:
-        x: -0.61446816
+        x: -0.3
         y: 0
-        z: 0.7889417
+        z: 0.9
         w: 0
-      stand_animation_id: 2505
-    zabrak_jedi:
+      stand_animation_id: 2201
+      cursor: 53
+      interact_radius: 5.3
+      enable_interact_popup: true
+      one_shot_interaction:
+        dialog_option_key: Commander Wolffe
+        duration_millis: 1
+    main_hall_ambient_1:
       model_id: 2025
       pos:
         x: 1290.2277
@@ -27,119 +34,80 @@ jedi_temple:
         y: 0
         z: -0.7990948
         w: 0
-    pantoran_jedi:
-      key: pantoran_jedi
-      model_id: 1991
-      pos:
-        x: 1288.8878
-        y: 9.677713
-        z: 246.28276
+    main_hall_juggling_jedi:
+      key: main_hall_juggling_jedi
+      model_id: 1929
+      pos: &juggling_pos
+        x: 1288.5
+        y: 9.677853
+        z: 247.1
         w: 1
-      rot:
-        x: -0.9932426
+      rot: &juggling_rot
+        x: -0.95
         y: 0
-        z: 0.11605559
+        z: -0.25
         w: 0
       stand_animation_id: 2582
       tickable_procedures:
-        force_juggling:
+        juggling: &juggling_action
           is_interruptible: false
           steps:
             - one_shot_animation_id: 2531
-              min_duration_millis: 10000
+              min_duration_millis: 16000
+          next_possible_procedures: &to_empty
+            - procedure: empty
         empty:
-          weight: 588
-          steps:
+          steps: &empty_steps
             - min_duration_millis: 15000
           next_possible_procedures:
-            - procedure: force_juggling
-              weight: 300
+            - procedure: juggling
+              weight: 1
             - procedure: empty
-    juggling_clone_a:
-      model_id: 1952
-      pos:
-        x: 1288.8878
-        y: 9.677713
-        z: 246.28276
-        w: 1
-      rot:
-        x: -0.9932426
-        y: 0
-        z: 0.11605559
-        w: 0
+              weight: 14
+      first_possible_procedures: [empty]
+    main_hall_juggling_items:
+      model_id: 348
+      pos: *juggling_pos
+      rot: *juggling_rot
+      stand_animation_id: 2582
+      tickable_procedures:
+        juggling: *juggling_action
+        empty: &synced_empty
+          steps: *empty_steps
+          next_possible_procedures: []
+      first_possible_procedures: [empty]
+      synchronize_with: main_hall_juggling_jedi
+    main_hall_juggling_ambient_1:
+      model_id: 1959
+      pos: *juggling_pos
+      rot: *juggling_rot
       stand_animation_id: 2583
       tickable_procedures:
-        force_juggling:
+        juggling:
           is_interruptible: false
           steps:
             - one_shot_animation_id: 2532
-              min_duration_millis: 10000
-        empty:
-          weight: 588
-          steps:
-            - min_duration_millis: 15000
-          next_possible_procedures:
-            - procedure: force_juggling
-              weight: 300
-            - procedure: empty
-      synchronize_with: pantoran_jedi
-    juggling_clone_b:
-      model_id: 1958
-      pos:
-        x: 1288.8878
-        y: 9.677713
-        z: 246.28276
-        w: 1
-      rot:
-        x: -0.9932426
-        y: 0
-        z: 0.11605559
-        w: 0
+              min_duration_millis: 16000
+          next_possible_procedures: *to_empty
+        empty: *synced_empty
+      first_possible_procedures: [empty]
+      synchronize_with: main_hall_juggling_jedi
+    main_hall_juggling_ambient_2:
+      model_id: 1947
+      pos: *juggling_pos
+      rot: *juggling_rot
       stand_animation_id: 2584
       tickable_procedures:
-        force_juggling:
+        juggling:
           is_interruptible: false
           steps:
             - one_shot_animation_id: 2533
-              min_duration_millis: 10000
-        empty:
-          weight: 588
-          steps:
-            - min_duration_millis: 15000
-          next_possible_procedures:
-            - procedure: force_juggling
-              weight: 300
-            - procedure: empty
-      synchronize_with: pantoran_jedi
-    juggling_items:
-      model_id: 348
-      pos:
-        x: 1288.8878
-        y: 9.677713
-        z: 246.28276
-        w: 1
-      rot:
-        x: -0.9932426
-        y: 0
-        z: 0.11605559
-        w: 0
-      stand_animation_id: 2582
-      tickable_procedures:
-        force_juggling:
-          is_interruptible: false
-          steps:
-            - one_shot_animation_id: 2531
-              min_duration_millis: 10000
-        empty:
-          weight: 588
-          steps:
-            - min_duration_millis: 15000
-          next_possible_procedures:
-            - procedure: force_juggling
-              weight: 300
-            - procedure: empty
-      synchronize_with: pantoran_jedi
-    twilek_jedi:
+              min_duration_millis: 16000
+          next_possible_procedures: *to_empty
+        empty: *synced_empty
+      first_possible_procedures: [empty]
+      synchronize_with: main_hall_juggling_jedi
+    main_hall_ambient_2:
       model_id: 2011
       pos:
         x: 1275.3751
@@ -151,7 +119,7 @@ jedi_temple:
         y: 0
         z: -0.9437743
         w: 0
-    togruta_jedi:
+    main_hall_ambient_3:
       model_id: 2003
       pos:
         x: 1276.7377
@@ -163,7 +131,7 @@ jedi_temple:
         y: 0
         z: 0.9240444
         w: 0
-    yellow_zabrak_jedi:
+    main_hall_ambient_4:
       model_id: 2022
       pos:
         x: 1263.0415
@@ -175,7 +143,7 @@ jedi_temple:
         y: 0
         z: -0.99533343
         w: 0
-    zabrak_female_jedi:
+    main_hall_ambient_5:
       model_id: 2017
       pos:
         x: 1264.951
@@ -193,7 +161,7 @@ jedi_temple:
             - one_shot_animation_id: 3007
               min_duration_millis: 2000
             - min_duration_millis: 4000
-    red_clone_captain:
+    main_hall_ambient_6:
       model_id: 1882
       pos:
         x: 1261.5084
