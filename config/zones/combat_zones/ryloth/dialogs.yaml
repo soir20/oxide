@@ -30,3 +30,26 @@ ryloth:
           y: 11.761304
           z: 629.4775
           w: 1
+
+    - button_key: Exit
+      close_dialog: true
+
+    - button_key: Captain Rex
+      npc_key: captain_rex
+      new_dialog:
+        dialog_message_id: 51241
+        speaker_animation_id: 2208
+        speaker_sound_id: 5045
+        camera_placement:
+          x: 403.8246
+          y: 3.5
+          z: 464.3900
+          w: 1
+        look_at:
+          x: 409.15
+          y: 2.975
+          z: 471
+          w: 1
+        choices:
+          - button_key: Exit
+            button_text_id: 5300

@@ -4,45 +4,55 @@ ryloth:
     trauma:
       model_id: 1336
       pos:
-        x: 573.0281
-        y: 9.831306
-        z: 642.3272
+        x: 573.9
+        y: 9.831307
+        z: 640.8
         w: 1
       rot:
-        x: -0.8663511
+        x: -1
         y: 0
-        z: -0.49943528
+        z: -0.3
         w: 0
-      tickable_procedures:
+      tickable_procedures: &trauma_possible_procedures
         holoprojector_call:
           steps:
             - one_shot_animation_id: 3501
               min_duration_millis: 8000
-            - min_duration_millis: 2000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          steps:
+            - min_duration_millis: 2500
+          next_possible_procedures:
+            - procedure: holoprojector_call
+              weight: 1
+            - procedure: empty
+              weight: 2
+      first_possible_procedures: &trauma_first_possible_procedures [empty]
     mace_windu:
       model_id: 46
       name_id: 32005
       pos:
-        x: 550.6549
+        x: 550.3
         y: 9.821304
-        z: 627.1341
+        z: 626.9
         w: 1
       rot:
-        x: -0.7483317
+        x: -0.75
         y: 0
-        z: -0.6633247
+        z: -0.66
         w: 0
     arc_trooper_1:
       model_id: 1397
       pos:
-        x: 549.1147
+        x: 549.15
         y: 9.821304
-        z: 628.4636
+        z: 628.5
         w: 1
       rot:
-        x: -0.6013329
+        x: -0.6
         y: 0
-        z: -0.7989985
+        z: -0.8
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
@@ -89,85 +99,85 @@ ryloth:
     arc_trooper_2:
       model_id: 1397
       pos:
-        x: 532.8729
-        y: 9.591429
-        z: 620.8512
+        x: 532.9
+        y: 9.65775
+        z: 623.25
         w: 1
       rot:
-        x: 0.24757421
+        x: -0.8
         y: 0
-        z: -0.96886885
+        z: -0.5
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_3:
       model_id: 1397
       pos:
-        x: 551.2017
-        y: 9.707989
-        z: 601.22455
+        x: 552.15
+        y: 9.704552
+        z: 602.5
         w: 1
       rot:
-        x: -0.9985271
+        x: -1
         y: 0
-        z: 0.054255884
+        z: -0.25
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_4:
       model_id: 1397
       pos:
-        x: 522.92926
-        y: 3.599029
-        z: 574.83185
+        x: 523.75
+        y: 3.6416461
+        z: 575
         w: 1
       rot:
-        x: -0.7243875
+        x: -1
         y: 0
-        z: 0.6893929
+        z: -0.5
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_5:
       model_id: 1397
       pos:
-        x: 507.05252
-        y: 3.9232383
-        z: 588.122
+        x: 510.166
+        y: 3.831181
+        z: 588.4362
         w: 1
       rot:
-        x: -0.8795524
+        x: -0.5
         y: 0
-        z: -0.47580203
+        z: -0.86
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
-    obi_wan_kenobi:
+    obi-wan_kenobi:
       model_id: 105
       name_id: 31945
       pos:
-        x: 512.7839
-        y: 3.867073
-        z: 588.08344
+        x: 514.15
+        y: 3.951016
+        z: 589.41
         w: 1
       rot:
-        x: -0.8483086
+        x: -0.675
         y: 0
-        z: -0.529502
+        z: -0.75
         w: 0
       stand_animation_id: 2201
     anakin_skywalker:
       model_id: 52
       name_id: 31927
       pos:
-        x: 502.43835
-        y: 1.7099935
-        z: 560.8015
+        x: 502.75
+        y: 1.7270658
+        z: 560.9
         w: 1
       rot:
-        x: -0.99841005
+        x: -0.75
         y: 0
-        z: -0.05636826
+        z: 0.5
         w: 0
     r2_d2:
       model_id: 31
@@ -195,99 +205,104 @@ ryloth:
             - animation_id: 1
               min_duration_millis: 5000
     captain_rex:
+      key: captain_rex
       model_id: 2056
       name_id: 6331
       pos:
-        x: 406.1591
-        y: 1.2682096
-        z: 465.1832
+        x: 406.45
+        y: 1.4973593
+        z: 466.0
         w: 1
       rot:
-        x: -0.70063066
+        x: -1
         y: 0
-        z: -0.71352404
+        z: -0.5
         w: 0
+      cursor: 53
+      one_shot_interaction:
+        dialog_option_key: Captain Rex
+        duration_millis: 1
     arc_trooper_6:
       model_id: 1397
       pos:
-        x: 390.75125
-        y: 5.533417
-        z: 428.81354
+        x: 391.8
+        y: 5.4874854
+        z: 425
         w: 1
       rot:
-        x: 0.73748547
+        x: 0.95
         y: 0
-        z: 0.675363
+        z: 0.32
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_7:
       model_id: 1397
       pos:
-        x: 390.8172
-        y: 5.499522
-        z: 426.54492
+        x: 392.25
+        y: 5.4746866
+        z: 423.55
         w: 1
       rot:
-        x: 0.70096654
+        x: 0.75
         y: 0
-        z: 0.71319413
+        z: 0.6
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_8:
       model_id: 1397
       pos:
-        x: 393.0939
-        y: 5.5854807
-        z: 427.5135
+        x: 394.75
+        y: 5.5408807
+        z: 423.05
         w: 1
       rot:
-        x: 0.5080893
+        x: 0.3
         y: 0
-        z: 0.8613044
+        z: 1
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_9:
       model_id: 1397
       pos:
-        x: 393.4288
-        y: 5.5765495
-        z: 425.7873
+        x: 395.55
+        y: 5.531391
+        z: 421.6
         w: 1
       rot:
-        x: 0.5790021
+        x: 0.1
         y: 0
-        z: 0.815326
+        z: 1
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_10:
       model_id: 1397
       pos:
-        x: 395.3909
-        y: 5.6957345
-        z: 426.99374
+        x: 396.8
+        y: 5.632162
+        z: 422.75
         w: 1
       rot:
-        x: 0.5314968
+        x: 0
         y: 0
-        z: 0.8470603
+        z: 1
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
-    twilek_jedi:
-      model_id: 2014
+    twilek_general:
+      model_id: 1255
       pos:
-        x: 394.48788
-        y: 5.6139607
-        z: 430.60132
+        x: 395.6
+        y: 5.699542
+        z: 426.7
         w: 1
       rot:
-        x: -0.4804885
+        x: -0.5
         y: 0
-        z: -0.87700105
+        z: -0.85
         w: 0
       tickable_procedures:
         brief_arc_squad:
@@ -368,21 +383,17 @@ ryloth:
     trauma_2:
       model_id: 1336
       pos:
-        x: 413.3032
-        y: 2.4760234
-        z: 449.73346
+        x: 412.95
+        y: 2.478457
+        z: 450.0
         w: 1
       rot:
-        x: -0.19994472
+        x: 0.15
         y: 0
-        z: 0.9798071
+        z: 1
         w: 0
-      tickable_procedures:
-        holoprojector_call:
-          steps:
-            - one_shot_animation_id: 3501
-              min_duration_millis: 8000
-            - min_duration_millis: 2000
+      tickable_procedures: *trauma_possible_procedures
+      first_possible_procedures: *trauma_first_possible_procedures
     running_arc_trooper_1:
       model_id: 1397
       pos:
@@ -396,6 +407,7 @@ ryloth:
         z: -0.80778
         w: 0
       stand_animation_id: 1607
+      hostility: Friendly
       tickable_procedures:
         run_back_and_forth:
           steps:
@@ -427,112 +439,127 @@ ryloth:
               new_rot_y: 0
               new_rot_z: -0.80778
               min_duration_millis: 3000
-    phase1_clone_1:
+    ryloth_ambient_1:
       model_id: 624
       pos:
-        x: 592.0322
+        x: 591.5
         y: 9.930433
-        z: 674.564
+        z: 675.25
         w: 1
       rot:
-        x: 0.6567751
+        x: 0.66
         y: 0
-        z: -0.75408643
+        z: -0.75
         w: 0
     arc_trooper_11:
       model_id: 1397
       pos:
-        x: 497.91107
-        y: 1.8684169
-        z: 569.40454
+        x: 497
+        y: 1.5459445
+        z: 566.0
         w: 1
       rot:
-        x: -0.95735705
+        x: -0.95
         y: 0
-        z: -0.2889074
+        z: -0.3
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_12:
       model_id: 1397
       pos:
-        x: 425.243
-        y: 2.4922397
-        z: 461.2281
+        x: 425.25
+        y: 2.6473703
+        z: 461.65
         w: 1
       rot:
-        x: 0.15652844
+        x: 0
         y: 0
-        z: 0.9876735
+        z: 1
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_13:
       model_id: 1397
       pos:
-        x: 412.7435
-        y: 2.719603
-        z: 465.87375
+        x: 412.2
+        y: 2.740065
+        z: 466.15
         w: 1
       rot:
-        x: 0.36232793
+        x: 0.5
         y: 0
-        z: 0.9320507
+        z: 0.8
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
     arc_trooper_14:
       model_id: 1397
       pos:
-        x: 404.31036
-        y: 1.1948254
-        z: 470.81598
+        x: 405.15
+        y: 1.203786
+        z: 472.85
         w: 1
       rot:
-        x: 0.50956345
+        x: 1
         y: 0
-        z: 0.8604331
+        z: 0.25
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
-    arc_trooper_15:
+    running_arc_trooper_2:
       model_id: 1397
       pos:
-        x: 393.37753
-        y: 4.9497747
-        z: 442.93866
+        x: 389.15
+        y: 5.491226
+        z: 436.85
         w: 1
       rot:
-        x: 0.41560453
+        x: 0.15
         y: 0
-        z: 0.90954536
+        z: 1
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
-    snow_clone_nohelmet_1:
+      tickable_procedures:
+        run_back_and_forth:
+          steps:
+            - new_pos_offset_x: -1.63984
+              new_pos_offset_z: -9.73562
+              min_duration_millis: 3000
+              speed: 6
+            - animation_id: 261
+              min_duration_millis: 13000
+            - new_pos_offset_x: 1.63984
+              new_pos_offset_z: 9.73562
+              min_duration_millis: 3000
+              speed: 6
+            - animation_id: 261
+              min_duration_millis: 13000
+    ryloth_ambient_2:
       model_id: 1877
       pos:
-        x: 601.83215
+        x: 601.75
         y: 9.930433
-        z: 670.58984
+        z: 669.8
         w: 1
       rot:
-        x: 0.763126
+        x: 0.8
         y: 0
-        z: 0.6462496
+        z: 0.5
         w: 0
       stand_animation_id: 2599
-    zabrak_jedi_white_1:
+    ryloth_ambient_3:
       model_id: 2016
       pos:
-        x: 601.7456
+        x: 602
         y: 9.930433
-        z: 672.5898
+        z: 672.25
         w: 1
       rot:
-        x: 0.5430445
+        x: 0.75
         y: 0
-        z: -0.83970386
+        z: -0.65
         w: 0
     phase1_clone_nohelmet_1:
       model_id: 2032
@@ -547,53 +574,53 @@ ryloth:
         z: -0.720324
         w: 0
       stand_animation_id: 2590
-    phase1_clone_nohelmet_2:
+    ryloth_ambient_4:
       model_id: 2032
       pos:
-        x: 600.67145
+        x: 600.225
         y: 10.017641
-        z: 663.1194
+        z: 662.975
         w: 1
       rot:
-        x: -0.38872257
+        x: -0.6
         y: 0
-        z: -0.9213548
+        z: -0.8
         w: 0
       stand_animation_id: 2600
-    phase1_clone_3:
+    ryloth_ambient_5:
       model_id: 624
       pos:
-        x: 598.60754
+        x: 598.475
         y: 10.017641
-        z: 661.05035
+        z: 661.05
         w: 1
       rot:
-        x: 0.90629244
+        x: 0.9
         y: 0
-        z: -0.4226509
+        z: -0.4
         w: 0
-    clone_officer_1:
+    ryloth_ambient_6:
       model_id: 1267
       pos:
-        x: 595.1935
+        x: 594.6
         y: 9.930433
-        z: 675.4514
+        z: 674.9
         w: 1
       rot:
-        x: -0.56591094
+        x: -0.3
         y: 0
-        z: -0.8244662
+        z: -0.9
         w: 0
     clone_technician:
       model_id: 1582
       pos:
-        x: 584.61554
-        y: 9.821303
-        z: 637.7804
+        x: 584.25
+        y: 9.821304
+        z: 638.15
         w: 1
       rot:
-        x: 0.93329144
+        x: 1
         y: 0
-        z: -0.35911947
+        z: -0.3
         w: 0
       stand_animation_id: 2542
