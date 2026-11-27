@@ -624,3 +624,195 @@ ryloth:
         z: -0.3
         w: 0
       stand_animation_id: 2542
+    tower_ambient_1:
+      model_id: 8
+      pos:
+        x: 432
+        y: 3.6
+        z: 568
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_2:
+      model_id: 8
+      pos:
+        x: 427
+        y: 3.6
+        z: 568
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_3:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 548
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_3_turret:
+      model_id: 16
+      pos:
+        x: 437
+        y: 3.6
+        z: 548
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_4:
+      model_id: 8
+      pos:
+        x: 442
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_5:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_5_turret:
+      model_id: 1796
+      pos:
+        x: 437
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_6:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 528
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_7:
+      model_id: 8
+      pos:
+        x: 442
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_8:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_8_turret:
+      model_id: 1743
+      pos:
+        x: 437
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_9:
+      model_id: 8
+      pos:
+        x: 462
+        y: 3.6
+        z: 528
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_10:
+      model_id: 8
+      pos:
+        x: 462
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_10_turret:
+      model_id: 1743
+      pos:
+        x: 462
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_11:
+      model_id: 8
+      pos:
+        x: 457
+        y: 3.6
+        z: 503
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_11_turret:
+      model_id: 16
+      pos:
+        x: 457
+        y: 3.6
+        z: 503
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
