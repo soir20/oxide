@@ -1,0 +1,895 @@
+---
+ryloth:
+  ambient_npcs:
+    trauma:
+      model_id: 1336
+      pos:
+        x: 573.9
+        y: 9.831307
+        z: 640.8
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: -0.3
+        w: 0
+      tickable_procedures: &trauma_possible_procedures
+        holoprojector_call:
+          steps:
+            - one_shot_animation_id: 3501
+              min_duration_millis: 8000
+          next_possible_procedures:
+            - procedure: empty
+        empty:
+          steps:
+            - min_duration_millis: 2500
+          next_possible_procedures:
+            - procedure: holoprojector_call
+              weight: 1
+            - procedure: empty
+              weight: 2
+      first_possible_procedures: &trauma_first_possible_procedures [empty]
+    mace_windu:
+      model_id: 46
+      name_id: 32005
+      pos:
+        x: 550.3
+        y: 9.821304
+        z: 626.9
+        w: 1
+      rot:
+        x: -0.75
+        y: 0
+        z: -0.66
+        w: 0
+    arc_trooper_1:
+      model_id: 1397
+      pos:
+        x: 549.15
+        y: 9.821304
+        z: 628.5
+        w: 1
+      rot:
+        x: -0.6
+        y: 0
+        z: -0.8
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    jedi_gear_vendor:
+      key: jedi_gear_vendor
+      model_id: 891
+      name_id: 16681
+      sub_title_id: 16682
+      scale: 1.2
+      pos:
+        x: 544.8762
+        y: 9.821304
+        z: 632.44684
+        w: 1
+      rot:
+        x: 0.54569197
+        y: 0
+        z: -0.83798575
+        w: 0
+      cursor: 53
+      one_shot_interaction:
+        dialog_option_key: Jedi Gear Vendor
+        duration_millis: 1
+    clone_gear_vendor:
+      key: clone_gear_vendor
+      model_id: 891
+      name_id: 16675
+      sub_title_id: 16676
+      scale: 1.2
+      pos:
+        x: 541.8144
+        y: 9.821304
+        z: 629.4775
+        w: 1
+      rot:
+        x: 0.5834475
+        y: 0
+        z: -0.8121509
+        w: 0
+      cursor: 53
+      one_shot_interaction:
+        dialog_option_key: Clone Gear Vendor
+        duration_millis: 1
+    arc_trooper_2:
+      model_id: 1397
+      pos:
+        x: 532.9
+        y: 9.65775
+        z: 623.25
+        w: 1
+      rot:
+        x: -0.8
+        y: 0
+        z: -0.5
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_3:
+      model_id: 1397
+      pos:
+        x: 552.15
+        y: 9.704552
+        z: 602.5
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: -0.25
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_4:
+      model_id: 1397
+      pos:
+        x: 523.75
+        y: 3.6416461
+        z: 575
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: -0.5
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_5:
+      model_id: 1397
+      pos:
+        x: 510.166
+        y: 3.831181
+        z: 588.4362
+        w: 1
+      rot:
+        x: -0.5
+        y: 0
+        z: -0.86
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    obi-wan_kenobi:
+      model_id: 105
+      name_id: 31945
+      pos:
+        x: 514.15
+        y: 3.951016
+        z: 589.41
+        w: 1
+      rot:
+        x: -0.675
+        y: 0
+        z: -0.75
+        w: 0
+      stand_animation_id: 2201
+    anakin_skywalker:
+      model_id: 52
+      name_id: 31927
+      pos:
+        x: 502.75
+        y: 1.7270658
+        z: 560.9
+        w: 1
+      rot:
+        x: -0.75
+        y: 0
+        z: 0.5
+        w: 0
+    r2_d2:
+      model_id: 31
+      name_id: 2482
+      pos:
+        x: 508.051
+        y: 1.6488527
+        z: 565.7204
+        w: 1
+      rot:
+        x: 0.15647173
+        y: 0
+        z: 0.9876824
+        w: 0
+      tickable_procedures:
+        roll_around:
+          steps:
+            - speed: 1.5
+              animation_id: 3
+              wander:
+                radius: 1.5
+                min_offset: 0.5
+                origin: {x: 508.051, y: 1.6488527, z: 565.7204, w: 1}
+              min_duration_millis: 0
+            - animation_id: 1
+              min_duration_millis: 5000
+    captain_rex:
+      key: captain_rex
+      model_id: 2056
+      name_id: 6331
+      pos:
+        x: 406.45
+        y: 1.4973593
+        z: 466.0
+        w: 1
+      rot:
+        x: -1
+        y: 0
+        z: -0.5
+        w: 0
+      cursor: 53
+      one_shot_interaction:
+        dialog_option_key: Captain Rex
+        duration_millis: 1
+    arc_trooper_6:
+      model_id: 1397
+      pos:
+        x: 391.8
+        y: 5.4874854
+        z: 425
+        w: 1
+      rot:
+        x: 0.95
+        y: 0
+        z: 0.32
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_7:
+      model_id: 1397
+      pos:
+        x: 392.25
+        y: 5.4746866
+        z: 423.55
+        w: 1
+      rot:
+        x: 0.75
+        y: 0
+        z: 0.6
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_8:
+      model_id: 1397
+      pos:
+        x: 394.75
+        y: 5.5408807
+        z: 423.05
+        w: 1
+      rot:
+        x: 0.3
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_9:
+      model_id: 1397
+      pos:
+        x: 395.55
+        y: 5.531391
+        z: 421.6
+        w: 1
+      rot:
+        x: 0.1
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_10:
+      model_id: 1397
+      pos:
+        x: 396.8
+        y: 5.632162
+        z: 422.75
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    twilek_general:
+      model_id: 1255
+      pos:
+        x: 395.6
+        y: 5.699542
+        z: 426.7
+        w: 1
+      rot:
+        x: -0.5
+        y: 0
+        z: -0.85
+        w: 0
+      tickable_procedures:
+        brief_arc_squad:
+          steps:
+            - one_shot_animation_id: 2202
+              min_duration_millis: 4000
+            - one_shot_animation_id: 3009
+              min_duration_millis: 3000
+            - min_duration_millis: 3000
+    phase1_clone_2:
+      model_id: 624
+      pos:
+        x: 584.4494
+        y: 10.01764
+        z: 679.8473
+        w: 1
+      rot:
+        x: -0.157272
+        y: 0
+        z: 0.98755527
+        w: 0
+    clone_nohelmet_2:
+      model_id: 2032
+      pos:
+        x: 585.8355
+        y: 10.01764
+        z: 680.9734
+        w: 1
+      rot:
+        x: -0.943864
+        y: 0
+        z: 0.33033422
+        w: 0
+      stand_animation_id: 2600
+    walking_clone_1:
+      model_id: 2032
+      pos:
+        x: 597.606
+        y: 9.930433
+        z: 667.7215
+        w: 1
+      rot:
+        x: -0.75423
+        y: 0
+        z: -0.65661
+        w: 0
+      tickable_procedures:
+        walk_circuit:
+          steps:
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: -26.7674
+              new_pos_offset_y: -0.09913
+              new_pos_offset_z: -23.303
+              new_rot_x: -0.75423
+              new_rot_y: 0
+              new_rot_z: -0.65661
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: -8.19482
+              new_pos_offset_y: 0
+              new_pos_offset_z: -17.1352
+              new_rot_x: -0.43144
+              new_rot_y: 0
+              new_rot_z: -0.90214
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: -13.0303
+              new_pos_offset_y: -0.01
+              new_pos_offset_z: 10.5367
+              new_rot_x: -0.77758
+              new_rot_y: 0
+              new_rot_z: 0.62878
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 4.2809
+              new_pos_offset_y: 0.01
+              new_pos_offset_z: 4.74793
+              new_rot_x: 0.66964
+              new_rot_y: 0
+              new_rot_z: 0.74269
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 6.14684
+              new_pos_offset_y: 0
+              new_pos_offset_z: 0.85527
+              new_rot_x: 0.99046
+              new_rot_y: 0
+              new_rot_z: 0.13781
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 0.60696
+              new_pos_offset_y: 0
+              new_pos_offset_z: 5.88423
+              new_rot_x: 0.10261
+              new_rot_y: 0
+              new_rot_z: 0.99472
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 25.0336
+              new_pos_offset_y: 0.1194
+              new_pos_offset_z: 21.3015
+              new_rot_x: 0.76159
+              new_rot_y: 0
+              new_rot_z: 0.64805
+              min_duration_millis: 0
+            - speed: 2.5
+              animation_id: 2
+              new_pos_offset_x: 11.9243
+              new_pos_offset_y: -0.02027
+              new_pos_offset_z: -2.88745
+              new_rot_x: 0.97191
+              new_rot_y: 0
+              new_rot_z: -0.23535
+              min_duration_millis: 0
+    trauma_2:
+      model_id: 1336
+      pos:
+        x: 412.95
+        y: 2.478457
+        z: 450.0
+        w: 1
+      rot:
+        x: 0.15
+        y: 0
+        z: 1
+        w: 0
+      tickable_procedures: *trauma_possible_procedures
+      first_possible_procedures: *trauma_first_possible_procedures
+    running_arc_trooper_1:
+      model_id: 1397
+      pos:
+        x: 548.44763
+        y: 9.821304
+        z: 623.8792
+        w: 1
+      rot:
+        x: -0.58949
+        y: 0
+        z: -0.80778
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+      tickable_procedures:
+        run_back_and_forth:
+          steps:
+            - speed: 6
+              animation_id: 243
+              new_pos_offset_x: -39.89111
+              new_pos_offset_y: -8.08220
+              new_pos_offset_z: -54.66314
+              new_rot_x: -0.58949
+              new_rot_y: 0
+              new_rot_z: -0.80778
+              min_duration_millis: 0
+            - animation_id: 261
+              new_rot_x: 0.58949
+              new_rot_y: 0
+              new_rot_z: 0.80778
+              min_duration_millis: 3000
+            - speed: 6
+              animation_id: 243
+              new_pos_offset_x: 39.89111
+              new_pos_offset_y: 8.08220
+              new_pos_offset_z: 54.66314
+              new_rot_x: 0.58949
+              new_rot_y: 0
+              new_rot_z: 0.80778
+              min_duration_millis: 0
+            - animation_id: 261
+              new_rot_x: -0.58949
+              new_rot_y: 0
+              new_rot_z: -0.80778
+              min_duration_millis: 3000
+    ryloth_ambient_1:
+      possible_model_ids:
+        - 624
+      pos:
+        x: 591.5
+        y: 9.930433
+        z: 675.25
+        w: 1
+      rot:
+        x: 0.66
+        y: 0
+        z: -0.75
+        w: 0
+    arc_trooper_11:
+      model_id: 1397
+      pos:
+        x: 497
+        y: 1.5459445
+        z: 566.0
+        w: 1
+      rot:
+        x: -0.95
+        y: 0
+        z: -0.3
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_12:
+      model_id: 1397
+      pos:
+        x: 425.25
+        y: 2.6473703
+        z: 461.65
+        w: 1
+      rot:
+        x: 0
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_13:
+      model_id: 1397
+      pos:
+        x: 412.2
+        y: 2.740065
+        z: 466.15
+        w: 1
+      rot:
+        x: 0.5
+        y: 0
+        z: 0.8
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_14:
+      model_id: 1397
+      pos:
+        x: 405.15
+        y: 1.203786
+        z: 472.85
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: 0.25
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    arc_trooper_15:
+      model_id: 1397
+      pos:
+        x: 502.85992
+        y: 2.0524118
+        z: 555.25586
+        w: 1
+      rot:
+        x: -0.85
+        y: 0
+        z: 0.5
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+    running_arc_trooper_2:
+      model_id: 1397
+      pos:
+        x: 389.15
+        y: 5.491226
+        z: 436.85
+        w: 1
+      rot:
+        x: 0.15
+        y: 0
+        z: 1
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
+      tickable_procedures:
+        run_back_and_forth:
+          steps:
+            - new_pos_offset_x: -1.63984
+              new_pos_offset_z: -9.73562
+              min_duration_millis: 3000
+              speed: 6
+            - animation_id: 261
+              min_duration_millis: 13000
+            - new_pos_offset_x: 1.63984
+              new_pos_offset_z: 9.73562
+              min_duration_millis: 3000
+              speed: 6
+            - animation_id: 261
+              min_duration_millis: 13000
+    ryloth_ambient_2:
+      possible_model_ids:
+        - 1877
+      pos:
+        x: 601.75
+        y: 9.930433
+        z: 669.8
+        w: 1
+      rot:
+        x: 0.8
+        y: 0
+        z: 0.5
+        w: 0
+      stand_animation_id: 2599
+    ryloth_ambient_3:
+      possible_model_ids:
+        - 2016
+      pos:
+        x: 602
+        y: 9.930433
+        z: 672.25
+        w: 1
+      rot:
+        x: 0.75
+        y: 0
+        z: -0.65
+        w: 0
+    phase1_clone_nohelmet_1:
+      model_id: 2032
+      pos:
+        x: 604.4867
+        y: 10.017641
+        z: 665.29987
+        w: 1
+      rot:
+        x: 0.69363767
+        y: 0
+        z: -0.720324
+        w: 0
+      stand_animation_id: 2590
+    ryloth_ambient_4:
+      possible_model_ids:
+        - 2032
+      pos:
+        x: 600.225
+        y: 10.017641
+        z: 662.975
+        w: 1
+      rot:
+        x: -0.6
+        y: 0
+        z: -0.8
+        w: 0
+      stand_animation_id: 2600
+    ryloth_ambient_5:
+      possible_model_ids:
+        - 624
+      pos:
+        x: 598.475
+        y: 10.017641
+        z: 661.05
+        w: 1
+      rot:
+        x: 0.9
+        y: 0
+        z: -0.4
+        w: 0
+    ryloth_ambient_6:
+      possible_model_ids:
+        - 1267
+      pos:
+        x: 594.6
+        y: 9.930433
+        z: 674.9
+        w: 1
+      rot:
+        x: -0.3
+        y: 0
+        z: -0.9
+        w: 0
+    clone_technician:
+      model_id: 1582
+      pos:
+        x: 584.25
+        y: 9.821304
+        z: 638.15
+        w: 1
+      rot:
+        x: 1
+        y: 0
+        z: -0.3
+        w: 0
+      stand_animation_id: 2542
+    tower_ambient_1:
+      model_id: 8
+      pos:
+        x: 432
+        y: 3.6
+        z: 568
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_2:
+      model_id: 8
+      pos:
+        x: 427
+        y: 3.6
+        z: 568
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_3:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 548
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_3_turret:
+      model_id: 16
+      pos:
+        x: 437
+        y: 3.6
+        z: 548
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_4:
+      model_id: 8
+      pos:
+        x: 442
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_5:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_5_turret:
+      model_id: 1796
+      pos:
+        x: 437
+        y: 3.6
+        z: 543
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_6:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 528
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_7:
+      model_id: 8
+      pos:
+        x: 442
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_8:
+      model_id: 8
+      pos:
+        x: 437
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_8_turret:
+      model_id: 1743
+      pos:
+        x: 437
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_9:
+      model_id: 8
+      pos:
+        x: 462
+        y: 3.6
+        z: 528
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_10:
+      model_id: 8
+      pos:
+        x: 462
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_10_turret:
+      model_id: 1743
+      pos:
+        x: 462
+        y: 3.6
+        z: 523
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_11:
+      model_id: 8
+      pos:
+        x: 457
+        y: 3.6
+        z: 503
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    tower_ambient_11_turret:
+      model_id: 16
+      pos:
+        x: 457
+        y: 3.6
+        z: 503
+        w: 1.0
+      rot:
+        x: 0
+        y: 0
+        z: 0
+        w: 0
+    ryloth_ambient_7:
+      possible_model_ids:
+        - 2032
+      pos:
+        x: 587.3691
+        y: 10.017641
+        z: 683.0315
+        w: 1
+      rot:
+        x: -0.57239974
+        y: 0
+        z: 0.8199747
+        w: 0

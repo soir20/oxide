@@ -1,0 +1,64 @@
+---
+ryloth:
+  dialog_choices:
+    #
+    # General Dialog Options
+    #
+    - button_key: Exit
+      close_dialog: true
+
+    #
+    # Vendors
+    #
+    - button_key: Jedi Gear Vendor
+      npc_key: jedi_gear_vendor
+      new_dialog:
+        dialog_message_id: 16683
+        camera_placement:
+          x: 546.1859
+          y: 11.761304
+          z: 630.4356
+          w: 1
+        look_at:
+          x: 544.8762
+          y: 11.761304
+          z: 632.44684
+          w: 1
+
+    - button_key: Clone Gear Vendor
+      npc_key: clone_gear_vendor
+      new_dialog:
+        dialog_message_id: 16679
+        camera_placement:
+          x: 543.2147
+          y: 11.761304
+          z: 627.5283
+          w: 1
+        look_at:
+          x: 541.8144
+          y: 11.761304
+          z: 629.4775
+          w: 1
+
+    #
+    # Characters
+    #
+    - button_key: Captain Rex
+      npc_key: captain_rex
+      new_dialog:
+        dialog_message_id: 51241
+        speaker_animation_id: 2208
+        speaker_sound_id: 5045
+        camera_placement:
+          x: 403.8246
+          y: 3.5
+          z: 464.3900
+          w: 1
+        look_at:
+          x: 409.15
+          y: 2.975
+          z: 471
+          w: 1
+        choices:
+          - button_key: Exit
+            button_text_id: 5300
