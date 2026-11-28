@@ -484,7 +484,8 @@ ryloth:
               new_rot_z: -0.80778
               min_duration_millis: 3000
     ryloth_ambient_1:
-      model_id: 624
+      possible_model_ids:
+        - 624
       pos:
         x: 591.5
         y: 9.930433
@@ -551,6 +552,20 @@ ryloth:
         w: 0
       stand_animation_id: 1607
       hostility: Friendly
+    arc_trooper_15:
+      model_id: 1397
+      pos:
+        x: 502.85992
+        y: 2.0524118
+        z: 555.25586
+        w: 1
+      rot:
+        x: -0.85
+        y: 0
+        z: 0.5
+        w: 0
+      stand_animation_id: 1607
+      hostility: Friendly
     running_arc_trooper_2:
       model_id: 1397
       pos:
@@ -581,7 +596,8 @@ ryloth:
             - animation_id: 261
               min_duration_millis: 13000
     ryloth_ambient_2:
-      model_id: 1877
+      possible_model_ids:
+        - 1877
       pos:
         x: 601.75
         y: 9.930433
@@ -594,7 +610,8 @@ ryloth:
         w: 0
       stand_animation_id: 2599
     ryloth_ambient_3:
-      model_id: 2016
+      possible_model_ids:
+        - 2016
       pos:
         x: 602
         y: 9.930433
@@ -619,7 +636,8 @@ ryloth:
         w: 0
       stand_animation_id: 2590
     ryloth_ambient_4:
-      model_id: 2032
+      possible_model_ids:
+        - 2032
       pos:
         x: 600.225
         y: 10.017641
@@ -632,7 +650,8 @@ ryloth:
         w: 0
       stand_animation_id: 2600
     ryloth_ambient_5:
-      model_id: 624
+      possible_model_ids:
+        - 624
       pos:
         x: 598.475
         y: 10.017641
@@ -644,7 +663,8 @@ ryloth:
         z: -0.4
         w: 0
     ryloth_ambient_6:
-      model_id: 1267
+      possible_model_ids:
+        - 1267
       pos:
         x: 594.6
         y: 9.930433
@@ -861,7 +881,8 @@ ryloth:
         z: 0
         w: 0
     ryloth_ambient_7:
-      model_id: 2032
+      possible_model_ids:
+        - 2032
       pos:
         x: 587.3691
         y: 10.017641

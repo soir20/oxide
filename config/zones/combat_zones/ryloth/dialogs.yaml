@@ -1,6 +1,15 @@
 ---
 ryloth:
   dialog_choices:
+    #
+    # General Dialog Options
+    #
+    - button_key: Exit
+      close_dialog: true
+
+    #
+    # Vendors
+    #
     - button_key: Jedi Gear Vendor
       npc_key: jedi_gear_vendor
       new_dialog:
@@ -31,9 +40,9 @@ ryloth:
           z: 629.4775
           w: 1
 
-    - button_key: Exit
-      close_dialog: true
-
+    #
+    # Characters
+    #
     - button_key: Captain Rex
       npc_key: captain_rex
       new_dialog:
