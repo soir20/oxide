@@ -11,6 +11,10 @@ jedi_temple:
       script: OpenGalaxyMap
       close_dialog: true
 
+    - button_key: Felucia Teleport
+      point_of_interest: 36
+      close_dialog: true
+
     #
     # Minigames
     #
@@ -201,3 +205,47 @@ jedi_temple:
         choices:
           - button_key: Lightsaber Duel
             button_text_id: 3793
+
+    #
+    # Main Hall
+    #
+    - button_key: Commander Wolffe
+      npc_key: commander_wolffe
+      new_dialog:
+        dialog_message_id: 44154
+        speaker_animation_id: 2207
+        speaker_sound_id: 5446
+        camera_placement:
+          x: 1310.6257
+          y: 11.88
+          z: 252.45493
+          w: 1.0
+        look_at:
+          x: 1312.7188
+          y: 11.40
+          z: 249.45
+          w: 1
+        choices:
+          - button_key: Exit
+            button_text_id: 33704
+
+    - button_key: Main Hall Recruiter
+      npc_key: main_hall_recruiter
+      new_dialog:
+        dialog_message_id: 60266
+        speaker_animation_id: 2203
+        speaker_sound_id: 6222
+        zoom: 52
+        camera_placement:
+          x: 1281.56836
+          y: 11.9
+          z: 263.85892
+          w: 1.0
+        look_at:
+          x: 1280.6094
+          y: 11.6
+          z: 267.2397
+          w: 1
+        choices:
+          - button_key: Felucia Teleport
+            button_text_id: 60267
