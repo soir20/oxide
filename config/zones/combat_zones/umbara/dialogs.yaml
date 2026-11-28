@@ -1,15 +1,13 @@
 ---
-# Umbara Republic Outpost - NPC dialogue. All text IDs are the original 2014 client strings.
 umbara:
   dialog_choices:
     - button_key: Exit
       close_dialog: true
 
-    # --- Captain Rex: arrival briefing ---
     - button_key: Rex
       npc_key: captain_rex
       new_dialog:
-        dialog_message_id: 50397  # "Welcome to Umbara, sir... would you like a quick briefing...
+        dialog_message_id: 50397
         speaker_animation_id: 2202
         camera_placement:
           x: 73.8099
@@ -23,13 +21,13 @@ umbara:
           w: 1
         choices:
           - button_key: Rex 2
-            button_text_id: 3981   # "Yes"
+            button_text_id: 3981
           - button_key: Exit
-            button_text_id: 44554  # "No thanks."
+            button_text_id: 44554
     - button_key: Rex 2
       npc_key: captain_rex
       new_dialog:
-        dialog_message_id: 50400  # "Directly north of us is a heavily defended Umbaran airfield..."
+        dialog_message_id: 50400
         speaker_animation_id: 2202
         camera_placement:
           x: 73.8099
@@ -43,11 +41,11 @@ umbara:
           w: 1
         choices:
           - button_key: Rex 3
-            button_text_id: 3794   # "Next"
+            button_text_id: 3794
     - button_key: Rex 3
       npc_key: captain_rex
       new_dialog:
-        dialog_message_id: 50674  # "There's also a depot located here if you want to purchase...
+        dialog_message_id: 50674
         speaker_animation_id: 2202
         camera_placement:
           x: 73.8099
@@ -61,11 +59,11 @@ umbara:
           w: 1
         choices:
           - button_key: Rex 4
-            button_text_id: 3794   # "Next"
+            button_text_id: 3794
     - button_key: Rex 4
       npc_key: captain_rex
       new_dialog:
-        dialog_message_id: 50404   # "And there are plenty of other places to explore as well..."
+        dialog_message_id: 50404
         speaker_animation_id: 2202
         camera_placement:
           x: 73.8099
@@ -79,33 +77,31 @@ umbara:
           w: 1
         choices:
           - button_key: Exit
-            button_text_id: 3870   # "Exit"
+            button_text_id: 3870
 
-    # --- Kix: medical station ---
     - button_key: Kix
       npc_key: kix
       new_dialog:
-        dialog_message_id: 50650   # "Our medical equipment is all up and running, sir..."
-        speaker_animation_id: 2202
+        dialog_message_id: 50650
+        speaker_sound_id: 5981
         camera_placement:
-          x: 64.6523
-          y: 3.9167
-          z: 33.8076
+          x: 65.62
+          y: 3.86
+          z: 35.94
           w: 1
         look_at:
-          x: 62.678593
-          y: 3.6167
-          z: 32.83576
+          x: 60
+          y: 3.25
+          z: 31.5
           w: 1
         choices:
           - button_key: Exit
-            button_text_id: 3870   # "Exit"
+            button_text_id: 3870
 
-    # --- Razor: mount vendor (also opened by clicking the display mounts) ---
     - button_key: Razor
       npc_key: razor
       new_dialog:
-        dialog_message_id: 50590  # "Would you like to see the vehicles we have available for...
+        dialog_message_id: 50590
         camera_placement:
           x: 113.1021
           y: 3.7094
@@ -118,20 +114,18 @@ umbara:
           w: 1
         choices:
           - button_key: Razor Mounts
-            button_text_id: 3981   # "Yes"
+            button_text_id: 3981
           - button_key: Exit
-            button_text_id: 44554  # "No thanks."
+            button_text_id: 44554
     - button_key: Razor Mounts
       script: !CustomStringParams
-        script_name: CombatHandler.ShowMounts   # combat-zone HUD mount window
+        script_name: CombatHandler.ShowMounts
       close_dialog: true
 
-
-    # --- Fives: airfield infiltration briefing (mission launch not wired yet) ---
     - button_key: Fives
       npc_key: fives
       new_dialog:
-        dialog_message_id: 50412  # "Sir, the situation here is not good. The Umbarans have a...
+        dialog_message_id: 50412
         speaker_animation_id: 2202
         camera_placement:
           x: 314.5519
@@ -145,11 +139,11 @@ umbara:
           w: 1
         choices:
           - button_key: Fives 2
-            button_text_id: 3794   # "Next"
+            button_text_id: 3794
     - button_key: Fives 2
       npc_key: fives
       new_dialog:
-        dialog_message_id: 50414  # "A large scale attack will not do well here, but you might...
+        dialog_message_id: 50414
         speaker_animation_id: 2202
         camera_placement:
           x: 314.5519
@@ -163,11 +157,11 @@ umbara:
           w: 1
         choices:
           - button_key: Fives 3
-            button_text_id: 3794   # "Next"
+            button_text_id: 3794
     - button_key: Fives 3
       npc_key: fives
       new_dialog:
-        dialog_message_id: 50416  # "Get in there, take out as many of those shadow people as...
+        dialog_message_id: 50416
         speaker_animation_id: 2202
         camera_placement:
           x: 314.5519
@@ -181,6 +175,6 @@ umbara:
           w: 1
         choices:
           - button_key: Exit
-            button_text_id: 3981   # "Yes" (TODO: launch Airfield Mission)
+            button_text_id: 3981
           - button_key: Exit
-            button_text_id: 44554   # "No thanks."
+            button_text_id: 44554

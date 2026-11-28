@@ -1,14 +1,10 @@
 ---
-# Umbara Republic Outpost - interior command room (piece 1 of the rebuild)
-# Positions and facings measured in-game with ./loc on 8 Oct 2026.
-# Models and name text taken from the 2014 client (Models.txt / en_us locale).
-# The earlier 38-NPC test is backed up in backups\before-interior-room-2026-10-08\
 umbara:
   ambient_npcs:
     captain_rex:
       key: captain_rex
-      model_id: 2056          # Grp_HumanMale_cloneRexHelmetv2 - "Rex Season 4 NPC"
-      name_id: 6331           # "Captain Rex"
+      model_id: 2056
+      name_id: 6331
       show_name: true
       pos:
         x: 75.01113
@@ -30,31 +26,31 @@ umbara:
         duration_millis: 1
     kix:
       key: kix
-      model_id: 2219          # Grp_Clone_KixNPC - "Kix NPC"
-      name_id: 4366           # "Kix"
+      model_id: 2219
+      name_id: 4366
+      sub_title_id: 12787
       show_name: true
       pos:
-        x: 62.678593
-        y: 2.016664
-        z: 32.83576
+        x: 63.075
+        y: 1.9294564
+        z: 34.6
         w: 1
       rot:
-        x: 0.89714235
+        x: -0.85
         y: 0
-        z: 0.44174135
+        z: -0.5
         w: 0
-      stand_animation_id: 2505
-      hostility: "Friendly"
+      stand_animation_id: 2527
       cursor: 53
-      enable_interact_popup: false
+      enable_interact_popup: true
       interact_radius: 6
       one_shot_interaction:
         dialog_option_key: Kix
         duration_millis: 1
     arc_trooper_door_left:
       key: arc_trooper_door_left
-      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
-      name_id: 50384          # "ARC Trooper"
+      model_id: 1397
+      name_id: 50384
       show_name: true
       pos:
         x: 77.39937
@@ -66,15 +62,15 @@ umbara:
         y: 0
         z: 0.15168335
         w: 0
-      stand_animation_id: 1607   # Com_BlasterRifle_Stand - combat-ready
+      stand_animation_id: 1607
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     arc_trooper_door_right:
       key: arc_trooper_door_right
-      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
-      name_id: 50384          # "ARC Trooper"
+      model_id: 1397
+      name_id: 50384
       show_name: true
       pos:
         x: 92.20601
@@ -86,15 +82,14 @@ umbara:
         y: 0
         z: 0.9095769
         w: 0
-      stand_animation_id: 1607   # Com_BlasterRifle_Stand - combat-ready
+      stand_animation_id: 1607
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
-    # --- Interior room ambient NPCs #1-#7: BEST GUESSES from a reference screenshot, not ./loc...
     ambient_clone_1:
       key: ambient_clone_1
-      model_id: 2138          # Ambient S4 Clone, no helmet
+      model_id: 2138
       show_name: false
       pos:
         x: 63.24118
@@ -106,14 +101,14 @@ umbara:
         y: 0
         z: 0.5492697
         w: 0
-      stand_animation_id: 2590   # Amb_StandAtConsole
+      stand_animation_id: 2590
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     ambient_clone_2:
       key: ambient_clone_2
-      model_id: 2139          # Ambient S4 Clone, no helmet
+      model_id: 2139
       show_name: false
       pos:
         x: 63.359795
@@ -125,14 +120,14 @@ umbara:
         y: 0
         z: -0.27313563
         w: 0
-      stand_animation_id: 2590   # Amb_StandAtConsole
+      stand_animation_id: 2590
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     ambient_clone_3:
       key: ambient_clone_3
-      model_id: 2140          # Ambient S4 Clone, no helmet
+      model_id: 2140
       show_name: false
       pos:
         x: 61.991615
@@ -144,16 +139,16 @@ umbara:
         y: 0
         z: 0.822228
         w: 0
-      stand_animation_id: 2590   # Amb_StandAtConsole
+      stand_animation_id: 2590
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     ambient_officer_4:
       key: ambient_officer_4
-      model_id: 2221          # #4 human in dark uniform (confirmed model)
+      model_id: 2221
       show_name: false
-      stand_animation_id: 2601   # Amb_StandingAroundC - chin/thinking pose (confirmed in-game)
+      stand_animation_id: 2601
       pos:
         x: 76.9552
         y: 1.9294564
@@ -170,7 +165,7 @@ umbara:
       enable_interact_popup: false
     ambient_twilek_5:
       key: ambient_twilek_5
-      model_id: 2222          # #5 red Twi'lek woman ("Ambient Jedi female red twilek")
+      model_id: 2222
       show_name: false
       pos:
         x: 76.4607
@@ -188,7 +183,7 @@ umbara:
       enable_interact_popup: false
     ambient_clone_6:
       key: ambient_clone_6
-      model_id: 2141          # #6 unhelmeted clone facing holotable
+      model_id: 2141
       show_name: false
       pos:
         x: 71.75852
@@ -207,7 +202,7 @@ umbara:
       enable_interact_popup: false
     ambient_clone_7:
       key: ambient_clone_7
-      model_id: 1936          # helmeted Season 4 clone - patrols between two points
+      model_id: 1936
       show_name: false
       pos:
         x: 62.287163
@@ -227,44 +222,39 @@ umbara:
       tickable_procedures:
         patrol:
           steps:
-            # walk A -> B (21.2 units)
             - speed: 2.5
-              animation_id: 2          # loc_walk
-              new_pos_offset_x: 18.4425   # fixed distance, relative to where he is
+              animation_id: 2
+              new_pos_offset_x: 18.4425
               new_pos_offset_y: 0.0171
               new_pos_offset_z: -10.5288
               new_rot_x: 0.8684
               new_rot_y: 0
               new_rot_z: -0.4958
-              min_duration_millis: 0   # step ends the moment he arrives
-            # pause at B and turn around
-            - animation_id: 1          # loc_stand
+              min_duration_millis: 0
+            - animation_id: 1
               new_rot_x: -0.8684
               new_rot_y: 0
               new_rot_z: 0.4958
               min_duration_millis: 2500
-            # walk B -> A
             - speed: 2.5
               animation_id: 2
-              new_pos_offset_x: -18.4425   # fixed distance, relative to where he is
+              new_pos_offset_x: -18.4425
               new_pos_offset_y: -0.0171
               new_pos_offset_z: 10.5288
               new_rot_x: -0.8684
               new_rot_y: 0
               new_rot_z: 0.4958
-              min_duration_millis: 0   # step ends the moment he arrives
-            # pause at A and turn around
+              min_duration_millis: 0
             - animation_id: 1
               new_rot_x: 0.8684
               new_rot_y: 0
               new_rot_z: -0.4958
               min_duration_millis: 2500
-    # --- Yard ---
     razor:
       key: razor
-      model_id: 2144  # Grp_CloneS4_DataPad - ARF scout helmet + Season 4 armour + datapad in...
-      name_id: 50589          # "Razor"
-      sub_title_id: 50598     # "Mount Vendor" (as shown in original footage)
+      model_id: 2144
+      name_id: 50589
+      sub_title_id: 50598
       show_name: true
       pos:
         x: 114.495415
@@ -276,7 +266,7 @@ umbara:
         y: 0
         z: 0.773894
         w: 0
-      stand_animation_id: 2542   # Amb_DataPadIdle - using the datapad
+      stand_animation_id: 2542
       hostility: "Friendly"
       cursor: 53
       enable_interact_popup: false
@@ -284,10 +274,9 @@ umbara:
       one_shot_interaction:
         dialog_option_key: Razor
         duration_millis: 1
-    # --- Yard: mounts on display behind Razor (positions estimated from reference screenshot) ---
     mount_atrt_1:
       key: mount_atrt_1
-      model_id: 1940          # AT-RT, beside Razor
+      model_id: 1940
       texture_alias: ATRT
       show_name: false
       pos:
@@ -309,7 +298,7 @@ umbara:
         duration_millis: 1
     mount_atrt_2:
       key: mount_atrt_2
-      model_id: 1940          # AT-RT
+      model_id: 1940
       texture_alias: ATRT
       show_name: false
       pos:
@@ -331,7 +320,7 @@ umbara:
         duration_millis: 1
     mount_atrt_3:
       key: mount_atrt_3
-      model_id: 1940          # AT-RT
+      model_id: 1940
       texture_alias: ATRT
       show_name: false
       pos:
@@ -353,7 +342,7 @@ umbara:
         duration_millis: 1
     mount_barc_1:
       key: mount_barc_1
-      model_id: 2264          # BARC speeder
+      model_id: 2264
       texture_alias: UmbaranBlue
       show_name: false
       pos:
@@ -373,11 +362,10 @@ umbara:
       one_shot_interaction:
         dialog_option_key: Razor
         duration_millis: 1
-    # --- Extra ARC troopers outside the base (same setup as the doorway pair) ---
     arc_trooper_outer_1:
       key: arc_trooper_outer_1
-      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
-      name_id: 50384          # "ARC Trooper"
+      model_id: 1397
+      name_id: 50384
       show_name: true
       pos:
         x: 94.43234
@@ -389,15 +377,15 @@ umbara:
         y: 0
         z: 0.5344245
         w: 0
-      stand_animation_id: 1607   # Com_BlasterRifle_Stand - combat-ready
+      stand_animation_id: 1607
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     arc_trooper_outer_2:
       key: arc_trooper_outer_2
-      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
-      name_id: 50384          # "ARC Trooper"
+      model_id: 1397
+      name_id: 50384
       show_name: true
       pos:
         x: 116.59979
@@ -409,15 +397,15 @@ umbara:
         y: 0
         z: 0.9939256
         w: 0
-      stand_animation_id: 1607   # Com_BlasterRifle_Stand - combat-ready
+      stand_animation_id: 1607
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     arc_trooper_outer_3:
       key: arc_trooper_outer_3
-      model_id: 1397          # Char_CloneArcTrooperNPC (yellow)
-      name_id: 50384          # "ARC Trooper"
+      model_id: 1397
+      name_id: 50384
       show_name: true
       pos:
         x: 165.31042
@@ -429,15 +417,14 @@ umbara:
         y: 0
         z: 0.7757195
         w: 0
-      stand_animation_id: 1607   # Com_BlasterRifle_Stand - combat-ready
+      stand_animation_id: 1607
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
-    # --- Mechanic / technician ---
     mechanic_1:
       key: mechanic_1
-      model_id: 1582  # Grp_Clone_FleetMechanic_Datapad - clone fleet mechanic holding a datapad
+      model_id: 1582
       show_name: false
       pos:
         x: 88.040886
@@ -449,14 +436,14 @@ umbara:
         y: 0
         z: 0.83945256
         w: 0
-      stand_animation_id: 2542   # Amb_DataPadIdle - working on the datapad
+      stand_animation_id: 2542
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     mechanic_2:
       key: mechanic_2
-      model_id: 1582  # Grp_Clone_FleetMechanic_Datapad - clone fleet mechanic holding a datapad
+      model_id: 1582
       show_name: false
       pos:
         x: 119.0208
@@ -468,14 +455,14 @@ umbara:
         y: 0
         z: 0.908113
         w: 0
-      stand_animation_id: 2542   # Amb_DataPadIdle - working on the datapad
+      stand_animation_id: 2542
       hostility: "Friendly"
       cursor: 54
       clickable: false
       enable_interact_popup: false
     yard_walker_1:
       key: yard_walker_1
-      model_id: 2140          # Ambient S4 Clone, no helmet - patrols the yard
+      model_id: 2140
       show_name: false
       pos:
         x: 90.57024
@@ -495,9 +482,8 @@ umbara:
       tickable_procedures:
         patrol:
           steps:
-            # walk start -> end (36.7 units), pause, turn, walk back, pause, turn
             - speed: 2.5
-              animation_id: 2          # loc_walk
+              animation_id: 2
               new_pos_offset_x: 20.5423
               new_pos_offset_y: 0.0
               new_pos_offset_z: -30.4181
@@ -505,13 +491,13 @@ umbara:
               new_rot_y: 0
               new_rot_z: -0.8287
               min_duration_millis: 0
-            - animation_id: 1          # loc_stand
+            - animation_id: 1
               new_rot_x: -0.5597
               new_rot_y: 0
               new_rot_z: 0.8287
               min_duration_millis: 2500
             - speed: 2.5
-              animation_id: 2          # loc_walk
+              animation_id: 2
               new_pos_offset_x: -20.5423
               new_pos_offset_y: -0.0
               new_pos_offset_z: 30.4181
@@ -519,16 +505,15 @@ umbara:
               new_rot_y: 0
               new_rot_z: 0.8287
               min_duration_millis: 0
-            - animation_id: 1          # loc_stand
+            - animation_id: 1
               new_rot_x: 0.5597
               new_rot_y: 0
               new_rot_z: -0.8287
               min_duration_millis: 2500
-    # --- Fives, at the airfield infiltration entry ---
     fives:
       key: fives
-      model_id: 2137          # Grp_Clone_Fives_Season4 - "Arc Trooper Fives"
-      name_id: 50395          # "Fives"
+      model_id: 2137
+      name_id: 50395
       show_name: true
       pos:
         x: 316.579
@@ -548,10 +533,9 @@ umbara:
       one_shot_interaction:
         dialog_option_key: Fives
         duration_millis: 1
-    # --- Trandoshan pirate camp: Captain Dheeb, his lieutenants Grahssk and Sarkh, and a pirate...
     captain_dheeb:
       key: captain_dheeb
-      model_id: 2120  # Grp_Trandoshan_PirateCaptain - eye-piece, pegleg, dual-trigger pistol...
+      model_id: 2120
       name_id: 11021
       show_name: true
       show_health: true
@@ -571,7 +555,7 @@ umbara:
       enable_interact_popup: false
     grahssk:
       key: grahssk
-      model_id: 2292  # Char_TrandoshanNPC02 - armoured Trandoshan hunter, rifle (lieutenant)
+      model_id: 2292
       name_id: 50653
       show_name: true
       show_health: true
@@ -591,7 +575,7 @@ umbara:
       enable_interact_popup: false
     sarkh:
       key: sarkh
-      model_id: 2294  # Grp_Trandoshan_PiratePistol4 - goggles, dual-trigger pistol (lieutenant)
+      model_id: 2294
       name_id: 50652
       show_name: true
       show_health: true
@@ -611,7 +595,7 @@ umbara:
       enable_interact_popup: false
     trandoshan_pirate_1:
       key: trandoshan_pirate_1
-      model_id: 2174          # Grp_Trandoshan_PirateRifle1 - generic pirate, "Trandoshan Rifler"
+      model_id: 2174
       name_id: 50455
       show_name: true
       show_health: true
