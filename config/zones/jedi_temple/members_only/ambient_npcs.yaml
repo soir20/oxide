@@ -402,7 +402,7 @@ members_only:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 20000
+          stage_group_id: 89
         duration_millis: 1
     members_only_arcade_machine_fleet_commander_popup:
       model_id: 44
@@ -423,7 +423,7 @@ members_only:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 20000
+          stage_group_id: 89
         duration_millis: 1
     members_only_arcade_machine_force_connection:
       terrain_object_id: 1359413047
@@ -537,7 +537,7 @@ members_only:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 13000
+          stage_group_id: 55
         duration_millis: 1
     members_only_arcade_machine_republic_gunship_popup:
       model_id: 44
@@ -558,7 +558,7 @@ members_only:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 13000
+          stage_group_id: 55
         duration_millis: 1
     members_only_arcade_machine_mine_buster_1:
       terrain_object_id: 1281995748
@@ -582,7 +582,7 @@ members_only:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 21000
+          stage_group_id: 54
         duration_millis: 1
     members_only_arcade_machine_mine_buster_1_popup:
       model_id: 44
@@ -603,7 +603,7 @@ members_only:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 21000
+          stage_group_id: 54
         duration_millis: 1
     members_only_arcade_machine_mine_buster_2:
       terrain_object_id: 1281995747
@@ -627,7 +627,7 @@ members_only:
       move_to_interact_offset: 4.9
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 21000
+          stage_group_id: 54
         duration_millis: 1
     members_only_arcade_machine_mine_buster_2_popup:
       model_id: 44
@@ -648,5 +648,5 @@ members_only:
       interact_radius: 5
       one_shot_interaction:
         script: !OpenMinigameStageGroup
-          stage_group_id: 21000
+          stage_group_id: 54
         duration_millis: 1
